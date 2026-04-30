@@ -1,0 +1,215 @@
+/* ============================================================
+   VAULT · motion.css
+   Reveals, cursor base, page-transition overlay, magnetic.
+   La lógica avanzada vive en motion.js.
+   ============================================================ */
+
+/* ─── REVEALS — palabra/letra por palabra/letra ───────────── */
+[data-reveal] .word,
+[data-reveal] .char {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: transform var(--dur-cinematic) var(--ease-out-expo),
+              opacity var(--dur-reg) var(--ease-out-expo);
+}
+[data-reveal] .word { white-space: pre; }
+[data-reveal].is-revealed .word,
+[data-reveal].is-revealed .char {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Block fade-in para elementos no-tipográficos */
+[data-fade] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--dur-reg) var(--ease-out-expo),
+              transform var(--dur-reg) var(--ease-out-expo);
+  will-change: transform, opacity;
+}
+[data-fade].is-revealed { opacity: 1; transform: translateY(0); }
+
+/* ─── CUSTOM CURSOR ───────────────────────────────────────── */
+.cursor-dot,
+.cursor-blob {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  border-radius: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform, width, height, background, opacity;
+}
+.cursor-dot {
+  width: 4px; height: 4px;
+  background: var(--text-primary);
+  transition: background var(--dur-fast) var(--ease-out-quart),
+              opacity var(--dur-fast) var(--ease-out-quart);
+}
+.cursor-blob {
+  width: 40px; height: 40px;
+  border: 1px solid var(--text-secondary);
+  background: transparent;
+  mix-blend-mode: difference;
+  transition: width var(--dur-fast) var(--ease-out-quart),
+              height var(--dur-fast) var(--ease-out-quart),
+              background var(--dur-fast) var(--ease-out-quart),
+              border-color var(--dur-fast) var(--ease-out-quart),
+              opacity var(--dur-fast) var(--ease-out-quart);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cursor-blob .cb-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out-quart);
+}
+.cursor-blob.is-link {
+  width: 80px; height: 80px;
+}
+.cursor-blob.is-button {
+  width: 100px; height: 100px;
+  background: var(--accent);
+  border-color: var(--accent);
+  opacity: 0.4;
+}
+.cursor-blob.is-view {
+  width: 96px; height: 96px;
+  background: var(--bg);
+  border-color: var(--text-primary);
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+.cursor-blob.is-view .cb-label { opacity: 1; }
+.cursor-blob.is-hidden { opacity: 0; }
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-blob { display: none; }
+}
+
+/* ─── PAGE TRANSITION OVERLAY ─────────────────────────────── */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: var(--z-page-transition);
+  pointer-events: none;
+  transform: translateY(100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-transition.is-covering {
+  transition: transform 800ms var(--ease-in-out-quart);
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.page-transition.is-uncovering {
+  transition: transform 1000ms var(--ease-in-out-quart);
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+.page-transition .pt-mark {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 10vw, 140px);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-display);
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--dur-reg) var(--ease-out-expo) 200ms,
+              transform var(--dur-reg) var(--ease-out-expo) 200ms;
+}
+.page-transition.is-covering .pt-mark {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── GRAIN OVERLAY — textura analógica permanente ────────── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1   0 0 0 0 1   0 0 0 0 1   0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+  will-change: background-position;
+}
+
+/* ─── BG ROOT TRANSITION — crossfade entre fondos al scroll ─ */
+body { transition: background-color 600ms var(--ease-out-expo); }
+
+/* ─── REVEAL STAGGER — cards en grid entran al viewport ──────
+   Comunica: "el contenido carga progresivamente, hay más debajo".
+   Hookeado por motion.js → initRevealStagger() vía data-reveal-stagger en
+   el contenedor. Cada hijo recibe inline transition-delay. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Progressive enhancement: opacity:0 SOLO si JS confirmó que initRevealStagger
+     corrió (data-stagger-ready en <html>). Sin JS → cards visibles. */
+  html[data-stagger-ready] [data-reveal-stagger] > * {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--dur-cinematic) var(--ease-out-expo),
+                transform var(--dur-cinematic) var(--ease-out-expo);
+    will-change: opacity, transform;
+  }
+  html[data-stagger-ready] [data-reveal-stagger].is-revealed > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── FORM STEP FADE — transición entre pasos del form ───────
+   Comunica: "avanzaste / retrocediste un paso". Sin fade el cambio
+   se siente abrupto. JS alterna .is-active-step / .is-hidden-step;
+   el atributo `hidden` se conserva como fallback no-JS. */
+@media (prefers-reduced-motion: no-preference) {
+  fieldset[data-step].is-active-step,
+  fieldset[data-step].is-hidden-step {
+    transition: opacity var(--dur-reg) var(--ease-out-quart),
+                transform var(--dur-reg) var(--ease-out-quart);
+  }
+  fieldset[data-step].is-active-step {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  fieldset[data-step].is-hidden-step {
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  fieldset[data-step].is-hidden-step { display: none; }
+  fieldset[data-step].is-active-step { display: block; }
+}
+
+/* ─── REDUCED MOTION ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .cursor-dot, .cursor-blob { display: none; }
+  [data-reveal] .word,
+  [data-reveal] .char,
+  [data-fade] { transform: none !important; opacity: 1 !important; }
+  [data-reveal-stagger] > * { transform: none !important; opacity: 1 !important; }
+  .grain { display: none; }
+  .hairline-drift, .t-breathe, .cta-input-wrap::after { animation: none !important; }
+}

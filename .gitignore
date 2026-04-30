@@ -1,0 +1,31 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+scripts/.venv/
+.venv/
+
+# Dev server
+.devserver.pid
+nohup.out
+
+# Logs
+*.log
+
+# Node (por si en algún momento se agrega)
+node_modules/
+
+# OneDrive temporales
+~$*
+*.tmp

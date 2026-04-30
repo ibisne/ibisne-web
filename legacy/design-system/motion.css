@@ -1,0 +1,176 @@
+/* ============================================================
+   iBisne — Motion & signature effects
+   ============================================================ */
+
+/* --- Particles background (CSS only) --- */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--cyan);
+  opacity: 0;
+  animation: drift linear infinite;
+}
+.particle.v-violet { background: var(--violet); box-shadow: 0 0 4px var(--violet); }
+@keyframes drift {
+  0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.8; }
+  100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+}
+
+/* --- Grid backdrop --- */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent 80%);
+  pointer-events: none;
+}
+
+/* --- Glitch title --- */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.glitch.is-glitching::before {
+  opacity: 0.85;
+  color: var(--cyan);
+  transform: translate(-2px, 0);
+  clip-path: polygon(0 10%, 100% 10%, 100% 28%, 0 28%);
+  mix-blend-mode: screen;
+  animation: glitch-a 0.35s steps(2) infinite;
+}
+.glitch.is-glitching::after {
+  opacity: 0.85;
+  color: var(--violet);
+  transform: translate(2px, 0);
+  clip-path: polygon(0 55%, 100% 55%, 100% 78%, 0 78%);
+  mix-blend-mode: screen;
+  animation: glitch-b 0.35s steps(2) infinite;
+}
+@keyframes glitch-a {
+  0%   { clip-path: polygon(0 10%, 100% 10%, 100% 28%, 0 28%); transform: translate(-2px, 0); }
+  50%  { clip-path: polygon(0 60%, 100% 60%, 100% 70%, 0 70%); transform: translate(-3px, 1px); }
+  100% { clip-path: polygon(0 25%, 100% 25%, 100% 35%, 0 35%); transform: translate(-1px, -1px); }
+}
+@keyframes glitch-b {
+  0%   { clip-path: polygon(0 55%, 100% 55%, 100% 78%, 0 78%); transform: translate(2px, 0); }
+  50%  { clip-path: polygon(0 15%, 100% 15%, 100% 25%, 0 25%); transform: translate(3px, -1px); }
+  100% { clip-path: polygon(0 80%, 100% 80%, 100% 95%, 0 95%); transform: translate(1px, 1px); }
+}
+
+/* --- Hero title treatment --- */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-xl);
+  font-weight: 600;
+  letter-spacing: var(--ls-heading);
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-wrap: balance;
+  margin: 0;
+}
+.hero-sub {
+  font-size: var(--fs-body-l);
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: var(--lh-body);
+  margin: var(--sp-5) 0 var(--sp-8);
+}
+
+/* --- Terminal typing cursor --- */
+.typewriter { display: inline-flex; align-items: baseline; gap: 2px; }
+.typewriter::after {
+  content: '▊';
+  color: var(--cyan);
+  animation: blink 1s steps(2) infinite;
+}
+
+/* --- Scramble text: no special CSS, JS swaps .innerText --- */
+
+/* --- Scanline overlay (optional decorative) --- */
+.scanlines {
+  position: relative;
+}
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 240, 255, 0.025) 2px,
+    rgba(0, 240, 255, 0.025) 3px
+  );
+  pointer-events: none;
+}
+
+/* --- Reveal on mount --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--dur-lazy) var(--ease-out), transform var(--dur-lazy) var(--ease-out);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* --- Radar sweep (for loaders / heros) --- */
+.radar {
+  position: relative;
+  width: 180px; height: 180px;
+  border: 1px solid var(--cyan-soft);
+  border-radius: 50%;
+  overflow: hidden;
+}
+.radar::before, .radar::after {
+  content: ''; position: absolute; inset: 0;
+  border: 1px solid var(--cyan-soft);
+  border-radius: 50%;
+}
+.radar::before { inset: 20%; }
+.radar::after  { inset: 40%; }
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 0 270deg, var(--cyan-soft) 340deg, var(--cyan) 360deg);
+  border-radius: 50%;
+  animation: radar 3s linear infinite;
+  mix-blend-mode: screen;
+}
+@keyframes radar { to { transform: rotate(360deg); } }
+
+/* --- Scroll reveal for cards --- */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: rise 0.7s var(--ease-out) forwards;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger > *:nth-child(6) { animation-delay: 0.40s; }
+
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
