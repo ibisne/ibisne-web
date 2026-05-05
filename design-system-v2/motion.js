@@ -510,12 +510,19 @@
     const overlay = document.querySelector('.nav-overlay');
     if (!toggle || !overlay) return;
 
+    const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    function getFocusables() {
+      return Array.from(overlay.querySelectorAll(focusableSelector))
+        .filter((el) => !el.hasAttribute('aria-disabled') || el.getAttribute('aria-disabled') === 'false');
+    }
     function openMenu() {
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       toggle.setAttribute('aria-expanded', 'true');
       toggle.setAttribute('aria-label', 'Cerrar menú');
       document.body.classList.add('menu-locked');
+      const focusables = getFocusables();
+      if (focusables.length) requestAnimationFrame(() => focusables[0].focus());
     }
     function closeMenu() {
       overlay.classList.remove('is-open');
@@ -523,6 +530,7 @@
       toggle.setAttribute('aria-expanded', 'false');
       toggle.setAttribute('aria-label', 'Abrir menú');
       document.body.classList.remove('menu-locked');
+      requestAnimationFrame(() => toggle.focus());
     }
     function toggleMenu() {
       const isOpen = overlay.classList.contains('is-open');
@@ -539,9 +547,18 @@
     overlay.querySelectorAll('a[href]').forEach((a) => {
       a.addEventListener('click', () => setTimeout(closeMenu, 60));
     });
-    // ESC cierra
+    // ESC cierra + Tab atrapado dentro del overlay
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeMenu();
+      if (!overlay.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { closeMenu(); return; }
+      if (e.key === 'Tab') {
+        const focusables = getFocusables();
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
     });
     // tap en backdrop (target === overlay) cierra
     overlay.addEventListener('click', (e) => {

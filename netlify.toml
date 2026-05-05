@@ -1,0 +1,31 @@
+# Netlify config — sitio estático puro, sin build
+[build]
+  publish = "."
+  command = ""
+
+# Form handling
+[forms]
+  # Netlify auto-detecta formularios con el atributo `netlify` en el HTML
+
+# Headers de seguridad básicos
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Cache largo para assets versionados (CSS/JS con ?v=)
+[[headers]]
+  for = "/design-system-v2/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML siempre se revalida
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# El index.html raíz ya redirige a /pages/index.html (meta refresh + JS).

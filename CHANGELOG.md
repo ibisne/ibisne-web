@@ -4,6 +4,65 @@ Formato: cambios listados por versión con prefix tipo `fix(scope):` para audita
 
 ---
 
+## v2.7.0 — 2026-05-05 · Auditoría global · Tandas 1 + 2
+
+Aplicación de hallazgos de [AUDIT-GLOBAL.md](AUDIT-GLOBAL.md) (7 CRITICAL · 15 WARN · 15 NIT). Incluye fixes de UX/a11y, integración Netlify Forms y Open Graph completo.
+
+### Bugs visibles + a11y crítico
+- **fix(portafolio/nav): "Aplicar" `btn-line` → `btn-accent`** (UX-C1) — alinea jerarquía CTA con resto del sitio.
+- **fix(portafolio/mobile-overlay): `href="#verticales"` → `/pages/index.html#verticales`** (UX-W1) — el ancla solo existe en home.
+- **feat(nav-mega-card): regla `.is-active`** (UX-W4) — agrega `border-color: var(--accent-mint)` + `background: var(--bg-paper)` para vertical activa en mega-menu, ahora visible (antes la clase se aplicaba sin estilo).
+- **fix(nav-mobile/a11y): focus-trap + restore focus al toggle al cerrar** (AP-C1) — previene "perder" el cursor al navegar con teclado. Ya tenía Esc; faltaba trap y devolución.
+- **feat(contacto/a11y): `<fieldset>` + `<legend class="sr-only">` en intent radiogroup** (AP-C2) — semántica nativa correcta para SR.
+- **chore(perf): `defer` en `<script src=motion.js>` en las 9 páginas** (AP-W3) — no bloquea parser. 3 verticales ya lo tenían, agregado a las 6 restantes.
+- **feat(a11y): utility class `.sr-only` en components.css** — pattern estándar de visualmente-oculto-para-SR.
+- **fix(contacto/copy): "hasta 3 semanas" → "3 semanas"** (CP-W2) — alinea con venture-lab.
+
+### Form completo + OG/Twitter meta
+- **feat(form/netlify): Netlify Forms integration** (AR-C2) — `name="contacto"` + `data-netlify="true"` + `netlify-honeypot` + hidden `form-name` + IIFE submit ahora hace `fetch` POST a `/` (form-encoded) en lugar del setTimeout fake. Fallback action `/pages/contacto-success.html` para no-JS.
+- **feat(form/error): estados visuales `.field.is-error` + `[aria-invalid]`** (UX-C2) — borde mint en field inválido, label mint, limpia al corregir. Mensaje de error de envío en `.form-error` con `role="alert"`.
+- **feat(form/a11y): announcer `role="status" aria-live="polite"` para cambios de step** (AP-W2).
+- **feat(seo): bloque OG + Twitter Card en las 9 páginas** (AR-C3) — `og:title/description/url/image` únicos por página, `og:image` apunta a `/assets/og-default.png` (1200×630 generado en este commit con la marca y tagline en VAULT). Incluye `<link rel="canonical">`. `og:locale` `es_MX`.
+- **feat(asset): `assets/og-default.{svg,png}`** — placeholder editorial dark con logo + tagline + 4 ciudades + ibisne.com. SVG es la fuente, PNG es el render para social platforms.
+- **feat(deploy): `netlify.toml` con headers de seguridad + cache largo en `/design-system-v2/*` + revalidate en HTML**.
+- **feat(deploy): `pages/contacto-success.html`** — fallback de éxito por si el form se envía sin JS.
+
+### Cache-bust
+- `?v=2.6.3 → ?v=2.7.0` en las 9 páginas + UI Kit. CSS/JS modificados (components.css, motion.js).
+
+### Verificación post-tanda
+- ✅ Las 9 URLs sirven 200 con `?v=2.7.0`.
+- ✅ Cero errors/warns de consola en home + contacto + commerce-growth.
+- ✅ Mobile overlay: Esc cierra, ariaHidden vuelve a `true`, `menu-locked` removido del body.
+- ✅ Mega-menu: card activa muestra `border-color: rgb(174,255,200)` (mint) y `bg: var(--bg-paper)`.
+- ✅ Form: atributos Netlify correctos, hidden inputs presentes (`form-name`, `bot-field`).
+- ✅ Fieldset intent: `legend.sr-only` con `offsetWidth: 1` (oculto visualmente).
+- ✅ Las 9 páginas con `og:title`, `canonical`, `twitter:card`.
+
+### Pendiente (Tanda 3)
+Animaciones de navegación (hamburger origin, page transitions, indicador phosphor en nav-main, micro-feedback en CTAs).
+
+---
+
+## v2.6.3 — 2026-05-04 · Auditoría post-migración a MacBook M1
+
+Auditoría profunda en sesión nueva tras migrar de Windows. Hallazgos y correcciones:
+
+- **chore(cache-bust): align all to ?v=2.6.3** — al auditar se detectó drift no documentado: home + 4 verticales + UI Kit en `?v=2.5.0`, los 4 finales (portafolio/nosotros/contacto/blog) en `?v=2.6.2` (esta versión nunca apareció en CHANGELOG ni PROGRESS, contexto huérfano de Windows). Se bumpea todo a `?v=2.6.3` para fijar baseline trazable. Cero cambios en CSS/JS.
+- **chore(launch.json): python → npx http-server** — el comando `python -m http.server` falla con `PermissionError` bajo el sandbox de macOS. Reemplazado por `npx -y http-server . -p 8787 -c-1 --silent`.
+
+### Verificación post-migración (smoke test)
+
+- ✅ 10/10 URLs responden 200 (8 páginas del sitio + UI Kit + redirect raíz).
+- ✅ Cero contaminación v1 (`--cyan|--violet|Space Grotesk|Chakra Petch|scanline`) en el árbol activo.
+- ✅ `window.__VAULT__` expone los 9 inits esperados; grain inyectado.
+- ✅ Desktop 1440: `.nav-topbar` + `.nav-main` visibles, `.nav-mobile-bar` oculto, sin overflow horizontal.
+- ✅ Mobile 375: `.nav-mobile-bar` visible, topbar oculto, sin overflow horizontal.
+- ✅ Cero errors/warnings de consola en home tras carga limpia.
+- ✅ `--accent` resuelve a `#3DFF7F` (phosphor).
+
+---
+
 ## site-v0.2 — Fase 4 · Home rebuild (Ruta A)
 
 > Aplicada el 2026-04-26. Rebuild completo de `pages/index.html` tras copy-audit que detectó 14 ítems inventados en v0.1. Ruta A aprobada por Eduardo.
