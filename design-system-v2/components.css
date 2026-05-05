@@ -200,7 +200,15 @@ html.has-cursor * { cursor: none !important; }
   cursor: pointer;
   text-decoration: none;
   transition: border-color var(--dur-fast) var(--ease-out-quart),
-              background var(--dur-fast) var(--ease-out-quart);
+              background var(--dur-fast) var(--ease-out-quart),
+              transform 80ms var(--ease-out-quart);
+}
+/* Micro-feedback táctil al click — comunica "presionado" */
+.btn:active:not([disabled]):not([aria-disabled="true"]):not(.is-loading) {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn:active { transform: none; }
 }
 .btn[disabled],
 .btn[aria-disabled="true"] {

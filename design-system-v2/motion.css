@@ -93,42 +93,57 @@
   .cursor-dot, .cursor-blob { display: none; }
 }
 
-/* ─── PAGE TRANSITION OVERLAY ─────────────────────────────── */
+/* ─── PAGE TRANSITION OVERLAY — slide horizontal ──────────────
+   Cover: entra de la derecha. Uncover: sale a la izquierda.
+   Total ~640ms (320 + 320). Pausa al final del cover lo controla JS.
+   La pieza visible es una hairline + label mono pequeña, no un wipe pesado.
+*/
 .page-transition {
   position: fixed;
   inset: 0;
   background: var(--bg);
   z-index: var(--z-page-transition);
   pointer-events: none;
-  transform: translateY(100%);
+  transform: translateX(100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-left: var(--hairline);
 }
 .page-transition.is-covering {
-  transition: transform 800ms var(--ease-in-out-quart);
-  transform: translateY(0);
+  transition: transform 320ms var(--ease-out-expo);
+  transform: translateX(0);
   pointer-events: auto;
 }
 .page-transition.is-uncovering {
-  transition: transform 1000ms var(--ease-in-out-quart);
-  transform: translateY(-100%);
+  transition: transform 320ms var(--ease-in-out-quart);
+  transform: translateX(-100%);
   pointer-events: none;
 }
 .page-transition .pt-mark {
-  font-family: var(--font-display);
-  font-size: clamp(48px, 10vw, 140px);
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--ls-display);
-  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity var(--dur-reg) var(--ease-out-expo) 200ms,
-              transform var(--dur-reg) var(--ease-out-expo) 200ms;
+  transform: translateX(8px);
+  transition: opacity 200ms var(--ease-out-expo) 100ms,
+              transform 200ms var(--ease-out-expo) 100ms;
 }
 .page-transition.is-covering .pt-mark {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
+}
+.page-transition .pt-mark::before {
+  content: '— ';
+  color: var(--accent-mint);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition.is-covering,
+  .page-transition.is-uncovering { transition: none; }
 }
 
 /* ─── GRAIN OVERLAY — textura analógica permanente ────────── */

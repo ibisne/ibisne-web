@@ -280,7 +280,7 @@
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.className = 'page-transition';
-      overlay.innerHTML = '<span class="pt-mark">IBISNE</span>';
+      overlay.innerHTML = '<span class="pt-mark">cargando</span>';
       document.body.appendChild(overlay);
     }
 
@@ -297,7 +297,7 @@
     async function navigate(href) {
       overlay.classList.remove('is-uncovering');
       overlay.classList.add('is-covering');
-      const cover = new Promise((res) => setTimeout(res, 800));
+      const cover = new Promise((res) => setTimeout(res, 320));
 
       let html;
       try {
@@ -336,7 +336,7 @@
       requestAnimationFrame(() => {
         overlay.classList.remove('is-covering');
         overlay.classList.add('is-uncovering');
-        setTimeout(() => overlay.classList.remove('is-uncovering'), 1000);
+        setTimeout(() => overlay.classList.remove('is-uncovering'), 320);
       });
     }
 
@@ -516,6 +516,12 @@
         .filter((el) => !el.hasAttribute('aria-disabled') || el.getAttribute('aria-disabled') === 'false');
     }
     function openMenu() {
+      // Origen del clip-path circular: centro del botón ×
+      const rect = toggle.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      overlay.style.setProperty('--clip-x', x + 'px');
+      overlay.style.setProperty('--clip-y', y + 'px');
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       toggle.setAttribute('aria-expanded', 'true');

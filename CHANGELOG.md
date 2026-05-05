@@ -4,6 +4,31 @@ Formato: cambios listados por versión con prefix tipo `fix(scope):` para audita
 
 ---
 
+## v3.0.0 — 2026-05-05 · Animaciones de navegación
+
+Tanda 3 del plan post-auditoría. Animaciones que comunican estado y transición — ningún efecto decorativo. Todas respetan `prefers-reduced-motion`.
+
+### Hamburger → overlay con clip-path circular
+- **feat(nav-mobile/anim): clip-path circular originado desde el botón ×** — al abrir el overlay, JS captura el rect del `.nav-toggle` y setea `--clip-x` / `--clip-y` en píxeles. CSS anima `clip-path: circle(0% → 150% at var(--clip-x) var(--clip-y))` con `360ms cubic-bezier(.7,0,.3,1)`. Reverso simétrico al cerrar. Fallback `prefers-reduced-motion`: snap (no transition, opacity).
+
+### Page transitions horizontales
+- **fix(page-transition): vertical slide-up → horizontal slide-from-right** — antes: cover 800ms + uncover 1000ms (pesado, ~1.8s). Ahora: cover 320ms + uncover 320ms (~640ms). Etiqueta cambiada de "IBISNE" 140px display → "— cargando" mono pequeño con prefijo phosphor. Border-left hairline cuando entra el cover, mantiene la estética editorial. Comunica que algo está pasando sin tomar el escenario.
+
+### Micro-feedback en botones
+- **feat(btn): scale(0.98) en :active** — feedback táctil para todos los `.btn` (no solo accent). Excluye estados disabled/loading. Transición 80ms `var(--ease-out-quart)`. Respeta reduced-motion (transform: none).
+
+### Cache-bust
+- `?v=2.7.0 → ?v=3.0.0` — major bump (cambios en animation curves del design system, justificado per HANDOFF).
+
+### Verificación post-tanda
+- ✅ Mobile overlay: abre con clip-path circular desde la posición del × (verificado inline `--clip-x: 329px; --clip-y: 27.5px` y screenshot del overlay completamente revelado). Esc cierra simétricamente.
+- ✅ Page transition: navegación de home → portafolio muestra cover horizontal con etiqueta "— cargando" en mono mint, completa en ~640ms, h1 nuevo presente y main reemplazado correctamente.
+- ✅ Cero errors/warns de consola en home + portafolio post-transición.
+- ✅ `transition` de `.btn` ahora incluye `transform 80ms` (verificado).
+- ✅ Las 9 páginas + UI Kit en `?v=3.0.0`.
+
+---
+
 ## v2.7.0 — 2026-05-05 · Auditoría global · Tandas 1 + 2
 
 Aplicación de hallazgos de [AUDIT-GLOBAL.md](AUDIT-GLOBAL.md) (7 CRITICAL · 15 WARN · 15 NIT). Incluye fixes de UX/a11y, integración Netlify Forms y Open Graph completo.
