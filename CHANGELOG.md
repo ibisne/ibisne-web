@@ -44,12 +44,12 @@ Aplicación de hallazgos de [AUDIT-GLOBAL.md](AUDIT-GLOBAL.md) (7 CRITICAL · 15
 - **fix(contacto/copy): "hasta 3 semanas" → "3 semanas"** (CP-W2) — alinea con venture-lab.
 
 ### Form completo + OG/Twitter meta
-- **feat(form/netlify): Netlify Forms integration** (AR-C2) — `name="contacto"` + `data-netlify="true"` + `netlify-honeypot` + hidden `form-name` + IIFE submit ahora hace `fetch` POST a `/` (form-encoded) en lugar del setTimeout fake. Fallback action `/pages/contacto-success.html` para no-JS.
+- **feat(form/web3forms): Web3Forms integration** (AR-C2) — POST JSON a `https://api.web3forms.com/submit` con `access_key`, `subject`, `from_name`, honeypot `botcheck`, `redirect` para fallback no-JS. Eduardo: pegar access_key en `pages/contacto.html` (placeholder `TU_ACCESS_KEY_WEB3FORMS`). 250 envíos/mes gratis.
 - **feat(form/error): estados visuales `.field.is-error` + `[aria-invalid]`** (UX-C2) — borde mint en field inválido, label mint, limpia al corregir. Mensaje de error de envío en `.form-error` con `role="alert"`.
 - **feat(form/a11y): announcer `role="status" aria-live="polite"` para cambios de step** (AP-W2).
 - **feat(seo): bloque OG + Twitter Card en las 9 páginas** (AR-C3) — `og:title/description/url/image` únicos por página, `og:image` apunta a `/assets/og-default.png` (1200×630 generado en este commit con la marca y tagline en VAULT). Incluye `<link rel="canonical">`. `og:locale` `es_MX`.
 - **feat(asset): `assets/og-default.{svg,png}`** — placeholder editorial dark con logo + tagline + 4 ciudades + ibisne.com. SVG es la fuente, PNG es el render para social platforms.
-- **feat(deploy): `netlify.toml` con headers de seguridad + cache largo en `/design-system-v2/*` + revalidate en HTML**.
+- **feat(deploy): `vercel.json` con headers de seguridad + cache largo en `/design-system-v2/*` + `/assets/*` + revalidate en HTML**.
 - **feat(deploy): `pages/contacto-success.html`** — fallback de éxito por si el form se envía sin JS.
 
 ### Cache-bust

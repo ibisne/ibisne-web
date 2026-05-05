@@ -428,9 +428,15 @@
         <span class="h-progress-line" data-step-line="3"><span class="h-progress-num">03</span></span>
       </div>
 
-      <form id="contactForm" class="contact-form" name="contacto" method="post" netlify netlify-honeypot="bot-field" data-netlify="true" action="/pages/contacto-success.html" novalidate data-step="1">
-        <input type="hidden" name="form-name" value="contacto">
-        <p style="position:absolute;left:-9999px;" aria-hidden="true"><label>No llenar: <input name="bot-field"></label></p>
+      <!-- Web3Forms · gratis 250 envíos/mes · sin backend.
+           Eduardo: pega tu access_key abajo (saca una en https://web3forms.com → Create Access Key, llega por email).
+           Hasta que reemplaces TU_ACCESS_KEY_WEB3FORMS, el form mostrará error de envío. -->
+      <form id="contactForm" class="contact-form" method="post" action="https://api.web3forms.com/submit" novalidate data-step="1">
+        <input type="hidden" name="access_key" value="TU_ACCESS_KEY_WEB3FORMS">
+        <input type="hidden" name="subject" value="Nuevo contacto desde ibisne.com">
+        <input type="hidden" name="from_name" value="iBisne · Contacto">
+        <input type="hidden" name="redirect" value="https://ibisne.com/pages/contacto-success.html">
+        <p style="position:absolute;left:-9999px;" aria-hidden="true"><label>No llenar: <input type="checkbox" name="botcheck"></label></p>
 
         <!-- Step 1 · Identidad -->
         <fieldset data-step="1">
@@ -782,23 +788,29 @@
     btnNext.classList.add('is-loading');
     btnNext.disabled = true;
     var fd = new FormData(form);
-    var body = new URLSearchParams();
-    fd.forEach(function(v, k){ body.append(k, v); });
-    fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
-      .then(function(res){
+    var payload = {};
+    fd.forEach(function(v, k){ payload[k] = v; });
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok && data.success, data: data }; }); })
+      .then(function(out){
         btnNext.classList.remove('is-loading');
         btnNext.disabled = false;
-        if (!res.ok) throw new Error('submit_failed');
+        if (!out.ok) throw new Error(out.data && out.data.message ? out.data.message : 'submit_failed');
         var intent = (form.querySelector('input[name="intent"]:checked') || {}).value;
         successBody.textContent = (intent === 'idea') ? 'Recibido. Venture Lab opera con cohortes — te contactamos en 3 semanas.' : 'Recibido. Te contactamos en 48h al correo que dejaste.';
         form.hidden = true; success.hidden = false; window.scrollTo({top: success.offsetTop - 120, behavior: 'smooth'});
       })
-      .catch(function(){
+      .catch(function(err){
         btnNext.classList.remove('is-loading');
         btnNext.disabled = false;
         var errEl = document.getElementById('formError');
-        if (errEl) { errEl.hidden = false; errEl.textContent = 'No se pudo enviar. Revisa tu conexión o escríbenos directo a proyectos@ibisne.com.'; }
-        else { alert('No se pudo enviar. Escríbenos directo a proyectos@ibisne.com.'); }
+        var msg = 'No se pudo enviar. Escríbenos directo a proyectos@ibisne.com.';
+        if (errEl) { errEl.hidden = false; errEl.textContent = msg; }
+        else { alert(msg); }
       });
   });
   render();
