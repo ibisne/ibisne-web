@@ -25,10 +25,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="../design-system-v2/tokens.css?v=3.0.0">
-<link rel="stylesheet" href="../design-system-v2/components.css?v=3.0.0">
-<link rel="stylesheet" href="../design-system-v2/components-extra.css?v=3.0.0">
-<link rel="stylesheet" href="../design-system-v2/motion.css?v=3.0.0">
+<link rel="stylesheet" href="../design-system-v2/tokens.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/components.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/components-extra.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/motion.css?v=3.1.0">
 
 <style>
   /* Local — solo composición, no nuevos componentes ni tokens nuevos */
@@ -192,14 +192,6 @@
   <div class="nav-mobile-bar">
     <a href="/pages/index.html" class="nav-brand">iBisne</a>
     <div class="nav-mobile-bar-right">
-      <span class="toggle is-sm" role="group" aria-label="Tema">
-        <button type="button" class="is-active" aria-pressed="true" aria-label="Modo oscuro">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-        </button>
-        <button type="button" aria-disabled="true" aria-label="Modo claro — próximamente">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-        </button>
-      </span>
       <button type="button" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navOverlay">
         <svg class="nt-icon nt-burger" viewBox="0 0 22 14" aria-hidden="true">
           <line x1="0" y1="3" x2="22" y2="3"/>
@@ -235,11 +227,6 @@
           <a href="mailto:proyectos@ibisne.com" aria-label="Email">
             <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="M3 7l9 6 9-6"/></svg>
           </a>
-        </span>
-        <span class="tb-sep" aria-hidden="true"></span>
-        <span class="tb-toggle" role="group" aria-label="Idioma">
-          <button type="button" class="is-active" aria-disabled="true" aria-pressed="true">ES</button>
-          <button type="button" aria-disabled="true">EN</button>
         </span>
       </div>
     </div>
@@ -278,22 +265,13 @@
             </div>
           </div>
         </li>
+        <li><a href="/pages/precios.html">Membresías</a></li>
         <li><a href="/pages/portafolio.html">Portafolio</a></li>
         <li><a href="/pages/nosotros.html">Nosotros</a></li>
         <li><a href="/pages/blog.html">Blog</a></li>
         <li><a href="/pages/contacto.html" class="is-active" aria-current="page">Contacto</a></li>
       </ul>
-      <div style="display: inline-flex; gap: var(--sp-3); align-items: center;">
-        <span class="toggle is-sm" role="group" aria-label="Tema">
-          <button type="button" class="is-active" aria-pressed="true" aria-label="Modo oscuro">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-          </button>
-          <button type="button" aria-disabled="true" aria-label="Modo claro — próximamente">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          </button>
-        </span>
-        <a href="/pages/contacto.html" class="btn btn-accent btn-sm"><span class="btn-label" data-text="Aplicar">Aplicar</span></a>
-      </div>
+      <a href="/pages/contacto.html" class="btn btn-accent btn-sm"><span class="btn-label" data-text="Aplicar">Aplicar</span></a>
     </div>
   </div>
 </nav>
@@ -305,6 +283,7 @@
     <section class="menu-section">
       <a class="menu-link" href="/pages/index.html">Home<span class="ml-arr" aria-hidden="true">→</span></a>
       <a class="menu-link" href="/pages/index.html#verticales">Verticales<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/precios.html">Membresías<span class="ml-arr" aria-hidden="true">→</span></a>
       <a class="menu-link" href="/pages/portafolio.html">Portafolio<span class="ml-arr" aria-hidden="true">→</span></a>
       <a class="menu-link" href="/pages/nosotros.html">Nosotros<span class="ml-arr" aria-hidden="true">→</span></a>
       <a class="menu-link" href="/pages/blog.html">Blog<span class="ml-arr" aria-hidden="true">→</span></a>
@@ -337,10 +316,6 @@
         <a href="#">Cookies</a>
       </div>
       <div class="menu-foot-meta">
-        <span class="toggle is-sm" role="group" aria-label="Idioma">
-          <button type="button" class="is-active" aria-pressed="true">ES</button>
-          <button type="button" aria-disabled="true">EN</button>
-        </span>
         <span>© 2026 · iBisne</span>
       </div>
     </footer>
@@ -685,6 +660,7 @@
         <h4>iBisne</h4>
         <ul>
           <li><a href="/pages/portafolio.html">Portafolio</a></li>
+          <li><a href="/pages/precios.html">Membresías</a></li>
           <li><a href="/pages/nosotros.html">Nosotros</a></li>
           <li><a href="/pages/blog.html">Blog</a></li>
           <li><a href="/pages/contacto.html">Contacto</a></li>
@@ -816,6 +792,6 @@
   render();
 })();
 </script>
-<script src="../design-system-v2/motion.js?v=3.0.0" defer></script>
+<script src="../design-system-v2/motion.js?v=3.1.0" defer></script>
 </body>
 </html>

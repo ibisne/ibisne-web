@@ -4,6 +4,47 @@ Formato: cambios listados por versión con prefix tipo `fix(scope):` para audita
 
 ---
 
+## v3.1.0 — 2026-05-07 · Membresías + cleanup toggles
+
+Nueva sección `/pages/precios.html` con modelo de membresías (3 tiers + Hunter custom) que conecta el ecosistema iBisne (Commerce Growth · Smart Capital · Emergente · Venture Lab) como upside de cada tier. Posicionamiento anti-upsell explícito.
+
+### Página nueva
+- **feat(precios): nueva página `/pages/precios.html`** con 9 secciones:
+  1. Hero — "Lo incluye todo, porque tu negocio lo es todo para nosotros."
+  2. Manifiesto anti-agencia (3 cards)
+  3. Los 3 tiers (Operativo $12K · Estratégico $40K · Total $150K MXN/año)
+  4. Comparativa detallada (tier-table 16 filas × 4 cols)
+  5. Hunter custom desde $400K
+  6. Cómo conecta con el ecosistema (4 verticales como upside)
+  7. Cómo se desbloquea un servicio (3 pasos)
+  8. FAQ 6 preguntas
+  9. CTA final
+- Reuso 100% de componentes VAULT existentes. Cero tokens nuevos.
+- OG meta + canonical específicos. Cargado en `?v=3.1.0`.
+
+### Integración al sitio
+- **feat(nav): link "Membresías" en nav-main de las 9 páginas existentes** entre Verticales (mega) y Portafolio.
+- **feat(footer): "Membresías" en columna `iBisne` de las 9 páginas**.
+- **feat(mobile-overlay): "Membresías" entre Verticales y Portafolio**.
+
+### Cleanup
+- **chore(nav): remove botones ES/EN (Idioma) de las 9 páginas** — topbar desktop + mobile overlay footer. EN no se va a implementar por ahora; preferimos UI honesta.
+- **chore(nav): remove botones sol/luna (Tema) de las 9 páginas** — mobile bar + nav-main desktop. Light mode no implementado todavía; preferimos UI honesta.
+- **chore(nav): clean wrapper huérfano del nav-main desktop** después de remover el theme toggle (ahora solo `<a btn-accent>` directo, sin el `<div style="display:inline-flex...">`).
+
+### Cache-bust
+- `?v=3.0.0 → ?v=3.1.0` (minor: nueva página + cleanup, sin breaking changes).
+
+### Verificación post-tanda
+- ✅ 10/10 URLs sirven 200 con `?v=3.1.0`.
+- ✅ "Membresías" presente 3x por página (nav + overlay + footer).
+- ✅ Cero `aria-label="Tema"` y cero `aria-label="Idioma"` en el árbol.
+- ✅ Mega-menu sigue mostrando los 4 verticales (no se tocó).
+- ✅ `/pages/precios.html`: hero h1 correcto, 3 tier cards, 6 FAQs, 4 eco-cards, nav activa "Membresías".
+- ✅ Cero errors/warns de consola.
+
+---
+
 ## v3.0.0 — 2026-05-05 · Animaciones de navegación
 
 Tanda 3 del plan post-auditoría. Animaciones que comunican estado y transición — ningún efecto decorativo. Todas respetan `prefers-reduced-motion`.

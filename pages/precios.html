@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="iBisne · Membresías. 3 tiers + Hunter custom. Una iguala anual, un equipo dedicado, cuatro verticales como upside. Lo incluye todo, porque tu negocio lo es todo para nosotros." />
+<title>Membresías — iBisne · 3 tiers + Hunter</title>
+<!-- Open Graph + Twitter -->
+<link rel="canonical" href="https://ibisne.com/pages/precios.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="iBisne">
+<meta property="og:locale" content="es_MX">
+<meta property="og:url" content="https://ibisne.com/pages/precios.html">
+<meta property="og:title" content="Membresías — iBisne · 3 tiers + Hunter">
+<meta property="og:description" content="Una iguala anual, un equipo dedicado, cuatro verticales como upside. No vendemos servicios — te abrimos la puerta al ecosistema iBisne.">
+<meta property="og:image" content="https://ibisne.com/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Membresías — iBisne · 3 tiers + Hunter">
+<meta name="twitter:description" content="Una iguala anual, un equipo dedicado, cuatro verticales como upside.">
+<meta name="twitter:image" content="https://ibisne.com/assets/og-default.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../design-system-v2/tokens.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/components.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/components-extra.css?v=3.1.0">
+<link rel="stylesheet" href="../design-system-v2/motion.css?v=3.1.0">
+
+<style>
+  /* Composición local — sin tokens nuevos, sin componentes nuevos */
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gutter);
+    margin-top: var(--sp-8);
+  }
+  .tier-card {
+    border: var(--hairline);
+    padding: var(--sp-7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+    background: transparent;
+  }
+  .tier-card.is-popular {
+    border-color: var(--accent);
+  }
+  .tier-card .tier-num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .tier-card.is-popular .tier-num {
+    color: var(--accent);
+  }
+  .tier-card .tier-name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-medium);
+    line-height: 1.05;
+    letter-spacing: var(--ls-h2);
+    margin: 0;
+  }
+  .tier-card .tier-price {
+    font-family: var(--font-display);
+    font-size: var(--fs-display);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    letter-spacing: var(--ls-display);
+    color: var(--text-primary);
+    margin-top: var(--sp-2);
+  }
+  .tier-card .tier-price .currency {
+    font-size: 0.4em;
+    color: var(--text-muted);
+    margin-right: 4px;
+    vertical-align: top;
+  }
+  .tier-card .tier-price .unit {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-top: var(--sp-2);
+  }
+  .tier-card .tier-includes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--hairline);
+    padding-top: var(--sp-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    color: var(--text-secondary);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .tier-card .tier-includes li {
+    padding-left: var(--sp-4);
+    position: relative;
+  }
+  .tier-card .tier-includes li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    color: var(--accent-mint);
+    font-family: var(--font-mono);
+  }
+  .tier-card .tier-upside {
+    border-top: var(--hairline);
+    padding-top: var(--sp-4);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--accent-mint);
+    line-height: 1.5;
+  }
+  .tier-card .tier-upside .upside-tag {
+    color: var(--text-muted);
+    margin-right: var(--sp-2);
+  }
+  .tier-card .tier-cta {
+    margin-top: var(--sp-2);
+  }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gutter);
+    margin-top: var(--sp-8);
+  }
+  .manifesto-card {
+    padding: var(--sp-6);
+    border: var(--hairline);
+    border-left: 2px solid var(--accent);
+  }
+  .manifesto-card .mc-num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--sp-3);
+  }
+  .manifesto-card .mc-body {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-medium);
+    line-height: 1.2;
+    letter-spacing: var(--ls-h2);
+  }
+
+  .ecosystem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+    margin-top: var(--sp-8);
+  }
+  .eco-card {
+    padding: var(--sp-6);
+    border: var(--hairline);
+  }
+  .eco-card .eco-tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-3);
+  }
+  .eco-card h3 {
+    font-size: var(--fs-h3);
+    font-family: var(--font-display);
+    font-weight: var(--fw-medium);
+    margin: 0 0 var(--sp-3);
+    letter-spacing: var(--ls-h2);
+  }
+  .eco-card p {
+    color: var(--text-secondary);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    margin-bottom: var(--sp-4);
+  }
+  .eco-card .eco-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gutter);
+    margin-top: var(--sp-8);
+  }
+  .step-card {
+    padding: var(--sp-6) 0;
+    border-top: var(--hairline);
+  }
+  .step-card .step-num {
+    font-family: var(--font-display);
+    font-size: var(--fs-display);
+    font-weight: var(--fw-medium);
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: var(--sp-4);
+  }
+  .step-card h4 {
+    font-size: var(--fs-h3);
+    font-family: var(--font-display);
+    font-weight: var(--fw-medium);
+    margin: 0 0 var(--sp-3);
+    letter-spacing: var(--ls-h2);
+  }
+  .step-card p {
+    color: var(--text-secondary);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+
+  .hunter-card {
+    margin-top: var(--sp-9);
+    padding: var(--sp-8);
+    border: var(--hairline);
+    background: var(--bg-paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8);
+    align-items: center;
+  }
+  .hunter-card .hc-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--sp-4);
+  }
+  .hunter-card h3 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-medium);
+    line-height: 1.05;
+    letter-spacing: var(--ls-h2);
+    margin: 0 0 var(--sp-4);
+  }
+  .hunter-card .hc-body p {
+    color: var(--text-secondary);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    margin-bottom: var(--sp-3);
+  }
+  .hunter-card .hc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    color: var(--text-secondary);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+  .hunter-card .hc-list li {
+    padding-left: var(--sp-4);
+    position: relative;
+  }
+  .hunter-card .hc-list li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+
+  /* Tabla comparativa — reusa .tier-table del sistema */
+  .compare-table th.tier-col,
+  .compare-table td.tier-col {
+    text-align: center;
+  }
+  .compare-table .tier-col-popular {
+    background: rgba(61, 255, 127, 0.04);
+  }
+  .compare-table .check {
+    color: var(--accent-mint);
+    font-family: var(--font-mono);
+  }
+  .compare-table .cross {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 1024px) {
+    .tiers-grid,
+    .manifesto-grid,
+    .steps-grid { grid-template-columns: 1fr; }
+    .ecosystem-grid { grid-template-columns: 1fr; }
+    .hunter-card { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ─────────────────────── NAVBAR ─────────────────────── -->
+<nav class="nav" aria-label="Navegación principal">
+
+  <!-- Mobile bar -->
+  <div class="nav-mobile-bar">
+    <a href="/pages/index.html" class="nav-brand">iBisne</a>
+    <div class="nav-mobile-bar-right">
+      <button type="button" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navOverlay">
+        <svg class="nt-icon nt-burger" viewBox="0 0 22 14" aria-hidden="true">
+          <line x1="0" y1="3" x2="22" y2="3"/>
+          <line x1="0" y1="11" x2="22" y2="11"/>
+        </svg>
+        <svg class="nt-icon nt-close" viewBox="0 0 22 22" aria-hidden="true">
+          <line x1="3" y1="3" x2="19" y2="19"/>
+          <line x1="19" y1="3" x2="3" y2="19"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="nav-topbar">
+    <div class="nav-topbar-inner">
+      <span class="tb-locations">
+        <span>§ 2026</span>
+        <span class="tb-sep" aria-hidden="true"></span>
+        <span>GDL · CDMX · BOG · MED</span>
+      </span>
+      <div class="tb-right">
+        <span class="tb-social" aria-label="Redes">
+          <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.7" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24"><rect x="4" y="9" width="4" height="11"/><rect x="4" y="4" width="4" height="4"/><path d="M11 9h4v2c1-1.5 2.5-2 4-2 2.5 0 4 2 4 4.5V20h-4v-5c0-1-.7-2-2-2s-2 1-2 2v5h-4z"/></svg>
+          </a>
+          <a href="https://wa.me/523300000000" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.6 13.7L3 21l4.5-1.3A9 9 0 1 0 12 3z"/></svg>
+          </a>
+          <a href="mailto:proyectos@ibisne.com" aria-label="Email">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="M3 7l9 6 9-6"/></svg>
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main row -->
+  <div class="nav-main">
+    <div class="nav-inner">
+      <a href="/pages/index.html" class="nav-brand">iBisne</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/pages/index.html">Home</a></li>
+        <li class="has-mega" aria-expanded="false">
+          <button type="button" class="nav-mega-trigger" aria-haspopup="true" aria-expanded="false">
+            Verticales
+            <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-mega" role="menu">
+            <span class="nav-mega-eyebrow">§ 4 verticales operativas</span>
+            <div class="nav-mega-grid">
+              <a class="nav-mega-card" role="menuitem" href="/pages/verticales/commerce-growth.html">
+                <span class="nmc-name">Commerce Growth Partner</span>
+                <span class="nmc-tag">Nosotros cobramos cuando tú ganas. Revenue share 12 meses, sin fees, sin pitch decks.</span>
+              </a>
+              <a class="nav-mega-card" role="menuitem" href="/pages/verticales/smart-capital.html">
+                <span class="nmc-name">Smart Capital</span>
+                <span class="nmc-tag">Tu capital trabaja con el mismo equipo que lo despliega. Sin intermediarios, sin gestores pasivos.</span>
+              </a>
+              <a class="nav-mega-card" role="menuitem" href="/pages/verticales/emergente.html">
+                <span class="nmc-name">Emergente</span>
+                <span class="nmc-tag">El marketplace que no te compite. Comisión regresiva 1–30%.</span>
+              </a>
+              <a class="nav-mega-card" role="menuitem" href="/pages/verticales/venture-lab.html">
+                <span class="nmc-name">Venture Lab</span>
+                <span class="nmc-tag">La incubadora donde no te damos consejos — te damos un equipo que construye tu producto contigo.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li><a href="/pages/precios.html" class="is-active" aria-current="page">Membresías</a></li>
+        <li><a href="/pages/portafolio.html">Portafolio</a></li>
+        <li><a href="/pages/nosotros.html">Nosotros</a></li>
+        <li><a href="/pages/blog.html">Blog</a></li>
+        <li><a href="/pages/contacto.html">Contacto</a></li>
+      </ul>
+      <a href="/pages/contacto.html?intent=membership" class="btn btn-accent btn-sm"><span class="btn-label" data-text="Aplicar">Aplicar</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────────── NAV OVERLAY ─────────────────────── -->
+<aside class="nav-overlay" id="navOverlay" aria-hidden="true" aria-label="Menú principal">
+  <div class="nav-overlay-inner">
+    <section class="menu-section">
+      <a class="menu-link" href="/pages/index.html">Home<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/index.html#verticales">Verticales<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link is-active" href="/pages/precios.html" aria-current="page">Membresías<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/portafolio.html">Portafolio<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/nosotros.html">Nosotros<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/blog.html">Blog<span class="ml-arr" aria-hidden="true">→</span></a>
+      <a class="menu-link" href="/pages/contacto.html">Contacto<span class="ml-arr" aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="menu-section menu-connect">
+      <p class="menu-eyebrow">— Conecta</p>
+      <div class="menu-connect-row">
+        <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="menu-connect-pill">
+          <span>Instagram</span><span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="menu-connect-pill">
+          <span>LinkedIn</span><span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://wa.me/523300000000" target="_blank" rel="noopener" class="menu-connect-pill">
+          <span>WhatsApp</span><span aria-hidden="true">↗</span>
+        </a>
+        <a href="mailto:proyectos@ibisne.com" class="menu-connect-pill">
+          <span>Email</span><span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <a href="/pages/contacto.html?intent=membership" class="btn btn-accent menu-cta">
+      <span class="btn-label" data-text="Aplicar a membresía">Aplicar a membresía</span>
+      <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+    </a>
+
+    <footer class="menu-foot">
+      <div class="menu-legal">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#">Cookies</a>
+      </div>
+      <div class="menu-foot-meta">
+        <span>© 2026 · iBisne</span>
+      </div>
+    </footer>
+  </div>
+</aside>
+
+<!-- ─────────────────────── MAIN ─────────────────────── -->
+<main>
+
+  <!-- ═══════════ § 00 · HERO ═══════════ -->
+  <section id="hero" class="section bg-deep" data-bg="deep" style="padding-top: 0; padding-bottom: 0;">
+    <span class="section-num is-corner">§ 00.MEMBRESÍAS</span>
+    <div class="hero container">
+      <p class="eyebrow hero-eyebrow">§ Membresías · 3 tiers + Hunter</p>
+      <h1 class="t-hero" data-reveal="word">
+        Lo incluye todo, porque tu negocio <span class="t-accent">lo es todo</span> para nosotros.
+      </h1>
+      <p class="t-h2" style="color: var(--text-secondary); margin-top: var(--sp-5); max-width: 44ch;" data-fade>
+        Una iguala anual. Un equipo dedicado. Cuatro verticales como upside.
+      </p>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch; margin-top: var(--sp-4);" data-fade>
+        No vendemos servicios. Cazamos ideas. Pero si tu proyecto necesita un equipo operativo sin entrar como inversión, te abrimos la puerta al ecosistema iBisne — sin upsell, sin sustos.
+      </p>
+
+      <div class="metrics-row" style="margin-top: var(--sp-7);">
+        <div class="metric"><span class="num">3<span class="unit">tiers</span></span><span class="label">+ Hunter custom</span></div>
+        <div class="metric"><span class="num">12<span class="unit">+ servicios</span></span><span class="label">Cubiertos por iguala</span></div>
+        <div class="metric"><span class="num">4<span class="unit">verticales</span></span><span class="label">Como upside</span></div>
+        <div class="metric"><span class="num">0<span class="unit">% upsell</span></span><span class="label">Política firme</span></div>
+      </div>
+
+      <div class="hero-cta" style="margin-top: var(--sp-7);">
+        <a href="#tiers" class="btn btn-accent">
+          <span class="btn-label" data-text="Ver los 3 tiers">Ver los 3 tiers</span>
+          <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </a>
+        <a href="/pages/contacto.html?intent=membership" class="link-arrow" style="margin-left: var(--sp-5);">
+          Aplicar directamente <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="scroll-indicator" aria-hidden="true">
+        <span class="line"></span>
+        <span class="label">Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 01 · MANIFIESTO ANTI-AGENCIA ═══════════ -->
+  <section class="section bg-base" data-bg="base">
+    <span class="section-num is-corner">§ 01.MANIFIESTO</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Por qué no somos una agencia</p>
+      <h2 class="t-h2" style="max-width: 26ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        Tres reglas que cambian el juego.
+      </h2>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch;">
+        El problema con las agencias y los freelancers: te facturan más cuando logran venderte más. Nuestra economía está al revés. Te facturamos lo mismo todo el año — la diferencia la hace la calidad de lo que producimos contigo.
+      </p>
+
+      <div class="manifesto-grid">
+        <article class="manifesto-card">
+          <p class="mc-num">— 01</p>
+          <p class="mc-body">No te vendemos lo que no necesitas. Tu tier crece contigo, no al revés.</p>
+        </article>
+        <article class="manifesto-card">
+          <p class="mc-num">— 02</p>
+          <p class="mc-body">Cada servicio se desbloquea cuando tu operación lo justifica — no cuando nuestro equipo necesita facturar.</p>
+        </article>
+        <article class="manifesto-card">
+          <p class="mc-num">— 03</p>
+          <p class="mc-body">Si en 12 meses no usaste todo lo que cubre tu tier, te bajamos al inferior. Sin pelear el upgrade.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 02 · LOS 3 TIERS ═══════════ -->
+  <section id="tiers" class="section bg-deep" data-bg="deep">
+    <span class="section-num is-corner">§ 02.TIERS</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Los tres caminos</p>
+      <h2 class="t-h2" style="max-width: 22ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        Una iguala. Cero sorpresas.
+      </h2>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch;">
+        Anualidad obligatoria — porque la operación seria no se construye en 30 días. Pago anual o mensual con cargo automático. Si en cualquier momento rebasas tu tier, te subimos sin penalty.
+      </p>
+
+      <div class="tiers-grid">
+
+        <!-- Tier 01 -->
+        <article class="tier-card">
+          <div>
+            <p class="tier-num">— 01 · OPERATIVO</p>
+            <h3 class="tier-name">Para arrancar serio.</h3>
+            <p class="tier-price">
+              <span class="currency">$</span>12,000
+              <span class="unit">MXN/año · ≈ $1,000/mes</span>
+            </p>
+          </div>
+          <ul class="tier-includes">
+            <li>1 marca · hasta 3 proyectos pequeños</li>
+            <li>Link bio (linktree-style) · landing page · chatbot 1 plataforma</li>
+            <li>Mesa de trabajo mensual (1h)</li>
+            <li>Asesoramiento de marca · actualizaciones continuas</li>
+            <li>Marketing + diseño básico</li>
+          </ul>
+          <p class="tier-upside">
+            <span class="upside-tag">— Upside</span>
+            Tu marca entra al radar de Emergente cuando lance.
+          </p>
+          <a href="/pages/contacto.html?intent=membership&tier=01" class="btn btn-line tier-cta">
+            <span class="btn-label" data-text="Aplicar a Tier 01">Aplicar a Tier 01</span>
+          </a>
+        </article>
+
+        <!-- Tier 02 (popular) -->
+        <article class="tier-card is-popular">
+          <div>
+            <p class="tier-num">— 02 · ESTRATÉGICO · MÁS ELEGIDO</p>
+            <h3 class="tier-name">Para escalar con cabeza.</h3>
+            <p class="tier-price">
+              <span class="currency">$</span>40,000
+              <span class="unit">MXN/año · ≈ $3,300/mes</span>
+            </p>
+          </div>
+          <ul class="tier-includes">
+            <li>Hasta 2 marcas · hasta 6 proyectos</li>
+            <li>Todo lo del Tier 01</li>
+            <li>Sitios web animados / 100% personalizados</li>
+            <li>Automatizaciones · integración CRM · app Android base</li>
+            <li>Mesa de trabajo quincenal</li>
+            <li>Equipo asignado: PM + diseñador + 1 dev</li>
+          </ul>
+          <p class="tier-upside">
+            <span class="upside-tag">— Upside</span>
+            Acceso a deal-flow de Smart Capital + curaduría informal de Venture Lab.
+          </p>
+          <a href="/pages/contacto.html?intent=membership&tier=02" class="btn btn-accent tier-cta">
+            <span class="btn-label" data-text="Aplicar a Tier 02">Aplicar a Tier 02</span>
+          </a>
+        </article>
+
+        <!-- Tier 03 -->
+        <article class="tier-card">
+          <div>
+            <p class="tier-num">— 03 · TOTAL</p>
+            <h3 class="tier-name">Para operación seria.</h3>
+            <p class="tier-price">
+              <span class="currency">$</span>150,000
+              <span class="unit">MXN/año · ≈ $12,500/mes</span>
+            </p>
+          </div>
+          <ul class="tier-includes">
+            <li>Hasta 5 marcas · proyectos ilimitados dentro del scope</li>
+            <li>Todo lo del Tier 02</li>
+            <li>App iOS + PWA · ERP base · integración cripto / blockchain</li>
+            <li>Mesa de trabajo semanal</li>
+            <li>Viáticos incluidos en territorio nacional (México)</li>
+            <li>Equipo dedicado: PM + diseñador + frontend + backend + marketing</li>
+          </ul>
+          <p class="tier-upside">
+            <span class="upside-tag">— Upside</span>
+            Co-inversión Smart Capital posible · lanzamiento en Emergente al go-live · path a Venture Lab si la idea trasciende.
+          </p>
+          <a href="/pages/contacto.html?intent=membership&tier=03" class="btn btn-line tier-cta">
+            <span class="btn-label" data-text="Aplicar a Tier 03">Aplicar a Tier 03</span>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 03 · COMPARATIVA DETALLADA ═══════════ -->
+  <section class="section bg-base" data-bg="base">
+    <span class="section-num is-corner">§ 03.COMPARATIVA</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Qué incluye cada tier</p>
+      <h2 class="t-h2" style="max-width: 22ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        El detalle, sin asteriscos.
+      </h2>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch;">
+        Si algo no está aquí, no se cobra extra dentro de tu tier — se evalúa caso por caso. Si rebasa el scope de 03, hablamos de Hunter.
+      </p>
+
+      <div class="tier-table-wrap" style="margin-top: var(--sp-8);">
+        <table class="tier-table compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="tier-col">Tier 01<br><span class="sub">$12K</span></th>
+              <th class="tier-col tier-col-popular">Tier 02<br><span class="sub">$40K</span></th>
+              <th class="tier-col">Tier 03<br><span class="sub">$150K</span></th>
+              <th class="tier-col">Hunter<br><span class="sub">$400K+</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Marcas</th>
+              <td class="tier-col">1</td>
+              <td class="tier-col tier-col-popular">2</td>
+              <td class="tier-col">5</td>
+              <td class="tier-col">Sin techo</td>
+            </tr>
+            <tr>
+              <th>Proyectos por año</th>
+              <td class="tier-col">3</td>
+              <td class="tier-col tier-col-popular">6</td>
+              <td class="tier-col">Ilimitados</td>
+              <td class="tier-col">A medida</td>
+            </tr>
+            <tr>
+              <th>Link bio · Landing</th>
+              <td class="tier-col"><span class="check">✓</span></td>
+              <td class="tier-col tier-col-popular"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <th>Sitio web personalizado</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <th>Chatbot · Automatizaciones</th>
+              <td class="tier-col">1 plataforma</td>
+              <td class="tier-col tier-col-popular"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <th>App Android</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular">Base</td>
+              <td class="tier-col">Avanzada</td>
+              <td class="tier-col">A medida</td>
+            </tr>
+            <tr>
+              <th>App iOS · PWA</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular"><span class="cross">—</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+              <td class="tier-col"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <th>CRM</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular">Integración</td>
+              <td class="tier-col">A medida</td>
+              <td class="tier-col">A medida</td>
+            </tr>
+            <tr>
+              <th>ERP</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular"><span class="cross">—</span></td>
+              <td class="tier-col">Base</td>
+              <td class="tier-col">A medida</td>
+            </tr>
+            <tr>
+              <th>Cripto · Blockchain</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular"><span class="cross">—</span></td>
+              <td class="tier-col">Si aplica</td>
+              <td class="tier-col"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <th>Mesa de trabajo</th>
+              <td class="tier-col">Mensual</td>
+              <td class="tier-col tier-col-popular">Quincenal</td>
+              <td class="tier-col">Semanal</td>
+              <td class="tier-col">Onsite mensual</td>
+            </tr>
+            <tr>
+              <th>Viáticos onsite</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular"><span class="cross">—</span></td>
+              <td class="tier-col">Nacional</td>
+              <td class="tier-col">LATAM</td>
+            </tr>
+            <tr>
+              <th>Equipo dedicado</th>
+              <td class="tier-col">Compartido</td>
+              <td class="tier-col tier-col-popular">PM + diseño + 1 dev</td>
+              <td class="tier-col">PM + diseño + FE + BE + mkt</td>
+              <td class="tier-col">Equipo extendido + socios</td>
+            </tr>
+            <tr>
+              <th>Acceso Emergente</th>
+              <td class="tier-col">Radar</td>
+              <td class="tier-col tier-col-popular">Curaduría</td>
+              <td class="tier-col">Lanzamiento al go-live</td>
+              <td class="tier-col">Prioritario</td>
+            </tr>
+            <tr>
+              <th>Acceso Smart Capital</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular">Deal-flow</td>
+              <td class="tier-col">Co-inversión posible</td>
+              <td class="tier-col">Mesa con socios</td>
+            </tr>
+            <tr>
+              <th>Acceso Venture Lab</th>
+              <td class="tier-col"><span class="cross">—</span></td>
+              <td class="tier-col tier-col-popular">Curaduría informal</td>
+              <td class="tier-col">Path a incubación</td>
+              <td class="tier-col">Pipeline directo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 04 · HUNTER ═══════════ -->
+  <section class="section bg-deep" data-bg="deep">
+    <span class="section-num is-corner">§ 04.HUNTER</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Cuando rebasas Tier 03</p>
+      <h2 class="t-h2" style="max-width: 22ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        Hunter · operación enterprise.
+      </h2>
+
+      <div class="hunter-card">
+        <div class="hc-body">
+          <p class="hc-eyebrow">— Desde $400,000 MXN / año</p>
+          <h3>Mesa directa con socios fundadores. El ecosistema completo a tu disposición.</h3>
+          <p>Pensado para grupos empresariales que ya tienen operación seria y necesitan que iBisne entre como brazo operativo extendido. Cotización individual basada en alcance, territorios y equipo asignado.</p>
+          <a href="mailto:hunter@ibisne.com?subject=Hunter%20%C2%B7%20Cotizaci%C3%B3n%20Membres%C3%ADa" class="btn btn-accent" style="margin-top: var(--sp-4);">
+            <span class="btn-label" data-text="hunter@ibisne.com">hunter@ibisne.com</span>
+            <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </a>
+        </div>
+        <ul class="hc-list">
+          <li>Multi-territorio LATAM (México · Colombia · y más)</li>
+          <li>Equipo extendido + onsite mensual</li>
+          <li>Roadmap y deliverables a medida</li>
+          <li>Acceso prioritario a las 4 verticales del ecosistema</li>
+          <li>Reporte directo a socios fundadores iBisne</li>
+          <li>SLA y compromiso de respuesta dedicado</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 05 · CÓMO CONECTA CON EL ECOSISTEMA ═══════════ -->
+  <section class="section bg-base" data-bg="base">
+    <span class="section-num is-corner">§ 05.ECOSISTEMA</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Tu membresía como puerta</p>
+      <h2 class="t-h2" style="max-width: 26ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        Cuatro verticales. Cuatro upsides reales.
+      </h2>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch;">
+        Tu membresía no es un gasto operativo. Es la entrada al pipeline de iBisne. Si lo que construyes con nosotros tiene tracción, los caminos a continuación se abren orgánicamente.
+      </p>
+
+      <div class="ecosystem-grid">
+        <article class="eco-card">
+          <p class="eco-tag">— Vertical 01</p>
+          <h3>Commerce Growth Partner.</h3>
+          <p>Tu marca opera con el mismo equipo que construye nuestras propias marcas. Sin agencia intermedia, sin handoff, sin "te paso con tu account manager".</p>
+          <a href="/pages/verticales/commerce-growth.html" class="link-arrow eco-link">Ver Commerce Growth <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="eco-card">
+          <p class="eco-tag">— Vertical 02</p>
+          <h3>Smart Capital.</h3>
+          <p>Si tu modelo cumple thesis Smart Capital y rebasas tracción mínima, accedes a co-inversión interna. 0% management fee, hurdle 8%, equipo propio operando.</p>
+          <a href="/pages/verticales/smart-capital.html" class="link-arrow eco-link">Ver Smart Capital <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="eco-card">
+          <p class="eco-tag">— Vertical 03</p>
+          <h3>Emergente.</h3>
+          <p>Si tu producto despega, lo subimos al marketplace Emergente — el lugar donde no compites con tu plataforma. Comisión regresiva 1–30%.</p>
+          <a href="/pages/verticales/emergente.html" class="link-arrow eco-link">Ver Emergente <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="eco-card">
+          <p class="eco-tag">— Vertical 04</p>
+          <h3>Venture Lab.</h3>
+          <p>Si tu idea trasciende el scope de la membresía y se convierte en algo más grande, Venture Lab puede incubarla — ya con todo el camino recorrido.</p>
+          <a href="/pages/verticales/venture-lab.html" class="link-arrow eco-link">Ver Venture Lab <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+
+      <p class="t-mono" style="margin-top: var(--sp-7); color: var(--accent-mint); font-size: var(--fs-small);">
+        — Tu membresía no es un gasto. Es la entrada al pipeline.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 06 · CÓMO SE DESBLOQUEA UN SERVICIO ═══════════ -->
+  <section class="section bg-deep" data-bg="deep">
+    <span class="section-num is-corner">§ 06.DESBLOQUEO</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Cómo se activa cada cosa</p>
+      <h2 class="t-h2" style="max-width: 22ch; margin-bottom: var(--sp-4);" data-reveal="word" data-stagger="40">
+        Tres pasos · cero sorpresas.
+      </h2>
+      <p class="t-body" style="color: var(--text-secondary); max-width: 56ch;">
+        Cada servicio dentro de tu tier se activa por consenso operativo, no por timing comercial nuestro. Esto es lo que pasa el día que firmas:
+      </p>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <p class="step-num">01</p>
+          <h4>Mesa de trabajo.</h4>
+          <p>Analizamos tu operación: nicho, mercado objetivo, cliente final, qué te impide crecer hoy. No es discovery genérico — es trabajo conjunto desde el día 0.</p>
+        </article>
+        <article class="step-card">
+          <p class="step-num">02</p>
+          <h4>Identificamos prioridad.</h4>
+          <p>Decidimos juntos cuál de los servicios cubiertos por tu tier mueve la aguja <strong>ahora</strong>. No "todo a la vez" — lo que tiene impacto medible primero.</p>
+        </article>
+        <article class="step-card">
+          <p class="step-num">03</p>
+          <h4>Activamos sin costo extra.</h4>
+          <p>Lo construimos, lo lanzamos, lo iteramos. Si el siguiente servicio sigue dentro de tu tier, lo activamos cuando la operación lo justifique — no antes.</p>
+        </article>
+      </div>
+
+      <p class="t-mono" style="margin-top: var(--sp-7); color: var(--text-muted); font-size: var(--fs-small); max-width: 60ch;">
+        — Si rebasas tu tier en cualquier momento del año, te subimos. No hay sobreprecio sorpresa, no hay "ah, esto no estaba incluido". Te lo decimos antes de empezar.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 07 · FAQ ═══════════ -->
+  <section class="section bg-base" data-bg="base">
+    <span class="section-num is-corner">§ 07.FAQ</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Lo que más nos preguntan</p>
+      <h2 class="t-h2" style="max-width: 22ch; margin-bottom: var(--sp-9);" data-reveal="word">
+        Preguntas frecuentes.
+      </h2>
+
+      <div class="faq" role="list">
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-01" aria-expanded="false" type="button">
+            <span>01 · ¿Por qué iguala anual y no mensual sin compromiso?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-01" role="region">
+            <div class="faq-panel-inner">
+              Porque la operación seria no se construye en 30 días. Equipo, mesa de trabajo, integraciones, branding — todo eso requiere continuidad. La anualidad protege a las dos partes: tú aseguras un equipo que conoce tu negocio, nosotros podemos invertir en planeación de mediano plazo. Pago anual de un golpe o mensualidad por cargo automático con compromiso de 12 meses.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-02" aria-expanded="false" type="button">
+            <span>02 · ¿Qué pasa si en 6 meses no he usado todo lo de mi tier?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-02" role="region">
+            <div class="faq-panel-inner">
+              Te lo decimos antes que tú. Hacemos revisión a los 6 meses; si la operación no justifica el tier que firmaste, te recomendamos bajar al inferior y reembolsamos la diferencia prorrateada. No tenemos incentivo para mantenerte sobreservido — preferimos clientes alineados que clientes resentidos.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-03" aria-expanded="false" type="button">
+            <span>03 · ¿Cómo se diferencia esto de contratar agencia + freelancers?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-03" role="region">
+            <div class="faq-panel-inner">
+              Contratar 5 proveedores te cuesta tiempo de coordinación, handoffs perdidos, y nadie con visión total de tu negocio. Aquí tienes un solo equipo con dueño claro, una sola factura, y métricas compartidas. Además — y esto es lo que ninguna agencia puede ofrecerte — tu marca entra al ecosistema iBisne con acceso a Smart Capital, Emergente, Venture Lab y Commerce Growth. Eso no se compra suelto.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-04" aria-expanded="false" type="button">
+            <span>04 · ¿Qué proyectos NO entran en ningún tier?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-04" role="region">
+            <div class="faq-panel-inner">
+              Proyectos que requieren licencias regulatorias específicas (banca, salud, gambling), proyectos con scope superior a 3,000 horas/año (ahí entras a Hunter), o ideas que están en fase de validación temprana sin operación atrás (ahí mejor te invitamos a Venture Lab directamente como incubación, no como membresía). Te lo decimos en la primera mesa.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-05" aria-expanded="false" type="button">
+            <span>05 · ¿Cómo funciona el upside del ecosistema?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-05" role="region">
+            <div class="faq-panel-inner">
+              No es promesa, es path natural. Si tu marca crece dentro de la membresía y cumple los criterios de cada vertical, hay puertas que se abren: Emergente (marketplace) si ya tienes producto y tracción; Smart Capital (co-inversión) si tu modelo cumple thesis y necesitas capital; Venture Lab si tu siguiente proyecto justifica incubación con equity. Nada de esto está garantizado por la membresía — pero la membresía es lo que te pone en el radar.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem" aria-expanded="false">
+          <button class="faq-trigger" aria-controls="faq-panel-pr-06" aria-expanded="false" type="button">
+            <span>06 · ¿Puedo subir o bajar de tier?</span>
+            <span class="faq-mark" aria-hidden="true"></span>
+          </button>
+          <div class="faq-panel" id="faq-panel-pr-06" role="region">
+            <div class="faq-panel-inner">
+              Subir, en cualquier momento — pagas el delta prorrateado. Bajar, en la renovación anual o en revisión semestral si la operación lo justifica. No te pelearemos el upgrade — preferimos mantenerte alineado a forzar un tier que no te sirve.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 08 · CTA FINAL ═══════════ -->
+  <section id="cta" class="cta-final section bg-deep" data-bg="deep">
+    <span class="section-num is-corner">§ 08.CTA</span>
+    <div class="container">
+      <p class="eyebrow" style="margin-bottom: var(--sp-5);">§ Cierre · Membresías</p>
+      <h2 data-reveal="word">¿Listo para dejar de pagar 5 proveedores y entrar al pipeline?</h2>
+      <div class="cta-foot">
+        <div>
+          <a href="/pages/contacto.html?intent=membership" class="btn btn-accent">
+            <span class="btn-label" data-text="Aplicar a una membresía">Aplicar a una membresía</span>
+            <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </a>
+        </div>
+        <div>
+          <p class="t-mono">— Iguala anual · cero upsell · 4 verticales como upside</p>
+          <p class="t-mono" style="margin-top: var(--sp-2);">hunter@ibisne.com · proyectos@ibisne.com</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─────────────────────── FOOTER ─────────────────────── -->
+<footer id="footer" class="footer">
+  <div class="container">
+    <div class="footer-mark">IBISNE</div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Verticales</h4>
+        <ul>
+          <li><a href="/pages/verticales/commerce-growth.html">Commerce Growth Partner</a></li>
+          <li><a href="/pages/verticales/smart-capital.html">Smart Capital</a></li>
+          <li><a href="/pages/verticales/emergente.html">Emergente</a></li>
+          <li><a href="/pages/verticales/venture-lab.html">Venture Lab</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>iBisne</h4>
+        <ul>
+          <li><a href="/pages/portafolio.html">Portafolio</a></li>
+          <li><a href="/pages/precios.html">Membresías</a></li>
+          <li><a href="/pages/nosotros.html">Nosotros</a></li>
+          <li><a href="/pages/blog.html">Blog</a></li>
+          <li><a href="/pages/contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Aplicar</h4>
+        <ul>
+          <li><a href="/pages/contacto.html?intent=founder">Como founder</a></li>
+          <li><a href="/pages/contacto.html?intent=lp">Como LP</a></li>
+          <li><a href="/pages/contacto.html?intent=membership">A una membresía</a></li>
+          <li><a href="mailto:hunter@ibisne.com">Hunter (custom)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="mailto:eduardo@ibisne.com">eduardo@ibisne.com</a></li>
+          <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
+          <li><a href="mailto:legal@ibisne.com">legal@ibisne.com</a></li>
+          <li><span>Guadalajara · CDMX · BOG · MED</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 iBisne · Holding LATAM</span>
+      <span>Si funciona, es porque lo operamos.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../design-system-v2/motion.js?v=3.1.0" defer></script>
+</body>
+</html>
