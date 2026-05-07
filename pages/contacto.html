@@ -5,15 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="iBisne — Contacto. 3 caminos: founder operando, inversionista LP, idea desde cero. Respuesta entre 48 horas y 3 semanas según el caso." />
 <title>iBisne — Contacto · 3 caminos.</title>
+<!-- Open Graph + Twitter -->
+<link rel="canonical" href="https://ibisne.com/pages/contacto.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="iBisne">
+<meta property="og:locale" content="es_MX">
+<meta property="og:url" content="https://ibisne.com/pages/contacto.html">
+<meta property="og:title" content="iBisne — Contacto · 3 caminos.">
+<meta property="og:description" content="iBisne — Contacto. 3 caminos: founder operando, inversionista LP, idea desde cero. Respuesta entre 48 horas y 3 semanas según el caso.">
+<meta property="og:image" content="https://ibisne.com/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="iBisne — Contacto · 3 caminos.">
+<meta name="twitter:description" content="iBisne — Contacto. 3 caminos: founder operando, inversionista LP, idea desde cero. Respuesta entre 48 horas y 3 semanas según el caso.">
+<meta name="twitter:image" content="https://ibisne.com/assets/og-default.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="../design-system-v2/tokens.css?v=2.6.2">
-<link rel="stylesheet" href="../design-system-v2/components.css?v=2.6.2">
-<link rel="stylesheet" href="../design-system-v2/components-extra.css?v=2.6.2">
-<link rel="stylesheet" href="../design-system-v2/motion.css?v=2.6.2">
+<link rel="stylesheet" href="../design-system-v2/tokens.css?v=3.0.0">
+<link rel="stylesheet" href="../design-system-v2/components.css?v=3.0.0">
+<link rel="stylesheet" href="../design-system-v2/components-extra.css?v=3.0.0">
+<link rel="stylesheet" href="../design-system-v2/motion.css?v=3.0.0">
 
 <style>
   /* Local — solo composición, no nuevos componentes ni tokens nuevos */
@@ -103,6 +118,26 @@
     margin-top: var(--sp-7);
     padding-top: var(--sp-5);
     border-top: var(--hairline);
+  }
+
+  /* Error states */
+  .form-error {
+    margin-top: var(--sp-5);
+    padding: var(--sp-4);
+    border: 1px solid var(--accent-mint);
+    color: var(--text-primary);
+    font-size: var(--fs-small);
+    line-height: var(--lh-body);
+  }
+  .field.is-error input,
+  .field.is-error textarea,
+  .field.is-error select,
+  .contact-form input:not(:placeholder-shown):invalid,
+  .contact-form textarea:not(:placeholder-shown):invalid {
+    border-bottom-color: var(--accent-mint);
+  }
+  .field.is-error label {
+    color: var(--accent-mint);
   }
 
   /* Conditional fields */
@@ -339,7 +374,8 @@
       <p class="eyebrow" style="margin-bottom: var(--sp-3);">§ Elige tu camino</p>
       <h2 class="t-h2" style="max-width: 24ch;" data-reveal="word" data-stagger="40">¿Quién eres en este momento?</h2>
 
-      <div class="intent-grid" role="radiogroup" aria-label="Selecciona tu intent">
+      <fieldset class="intent-grid" style="border: 0; padding: 0; margin: 0;">
+        <legend class="sr-only">Selecciona tu camino</legend>
 
         <!-- 01 · Founder operando -->
         <label class="editorial-card intent-card" for="i-founder" style="grid-template-columns: 1fr; padding: var(--sp-6); border: var(--hairline);">
@@ -374,7 +410,7 @@
           <span class="ec-meta">Respuesta en 3 semanas · Sin NDA inicial</span>
         </label>
 
-      </div>
+      </fieldset>
     </div>
   </section>
 
@@ -392,7 +428,15 @@
         <span class="h-progress-line" data-step-line="3"><span class="h-progress-num">03</span></span>
       </div>
 
-      <form id="contactForm" class="contact-form" action="" method="post" novalidate data-step="1">
+      <!-- Web3Forms · gratis 250 envíos/mes · sin backend.
+           Eduardo: pega tu access_key abajo (saca una en https://web3forms.com → Create Access Key, llega por email).
+           Hasta que reemplaces TU_ACCESS_KEY_WEB3FORMS, el form mostrará error de envío. -->
+      <form id="contactForm" class="contact-form" method="post" action="https://api.web3forms.com/submit" novalidate data-step="1">
+        <input type="hidden" name="access_key" value="TU_ACCESS_KEY_WEB3FORMS">
+        <input type="hidden" name="subject" value="Nuevo contacto desde ibisne.com">
+        <input type="hidden" name="from_name" value="iBisne · Contacto">
+        <input type="hidden" name="redirect" value="https://ibisne.com/pages/contacto-success.html">
+        <p style="position:absolute;left:-9999px;" aria-hidden="true"><label>No llenar: <input type="checkbox" name="botcheck"></label></p>
 
         <!-- Step 1 · Identidad -->
         <fieldset data-step="1">
@@ -545,6 +589,12 @@
           </label>
         </fieldset>
 
+        <!-- Anuncio de cambios de step para SR -->
+        <p id="stepAnnouncer" class="sr-only" role="status" aria-live="polite"></p>
+
+        <!-- Mensaje de error de envío -->
+        <p id="formError" class="form-error" role="alert" hidden></p>
+
         <!-- Acciones -->
         <div class="form-actions">
           <button type="button" class="btn btn-line" id="btnBack" disabled>
@@ -682,6 +732,8 @@
   radios.forEach(function(r){ r.addEventListener('change', function(){ setIntent(r.value); }); });
   var qs = new URLSearchParams(location.search);
   if(qs.get('intent') === 'nda'){ ndaNote.hidden = false; var lp = document.getElementById('i-lp'); lp.checked = true; setIntent('lp'); }
+  var announcer = document.getElementById('stepAnnouncer');
+  var stepNames = { 1: 'Paso 1 de 3 · Quién eres', 2: 'Paso 2 de 3 · Tu situación', 3: 'Paso 3 de 3 · Tu mensaje' };
   function render(){
     fieldsets.forEach(function(fs){
       var isActive = parseInt(fs.dataset.step,10) === step;
@@ -694,34 +746,76 @@
     var lbl = (step === 3) ? 'Enviar' : 'Continuar';
     var label = btnNext.querySelector('.btn-label');
     label.setAttribute('data-text', lbl); label.textContent = lbl;
+    if (announcer) announcer.textContent = stepNames[step] || '';
   }
   function validateStep(){
     var fs = form.querySelector('fieldset[data-step="'+step+'"]');
     var inputs = fs.querySelectorAll('input, select, textarea');
-    var ok = true;
-    inputs.forEach(function(i){ if(i.offsetParent === null) return; if(!i.checkValidity()){ ok = false; i.reportValidity(); } });
-    if(step === 1 && !form.querySelector('input[name="intent"]:checked')){ ok = false; alert('Selecciona un camino arriba antes de continuar.'); }
+    var ok = true; var firstInvalid = null;
+    inputs.forEach(function(i){
+      if(i.offsetParent === null) return;
+      var fieldEl = i.closest('.field');
+      if(!i.checkValidity()){
+        ok = false;
+        if (fieldEl) fieldEl.classList.add('is-error');
+        i.setAttribute('aria-invalid', 'true');
+        if (!firstInvalid) firstInvalid = i;
+      } else {
+        if (fieldEl) fieldEl.classList.remove('is-error');
+        i.removeAttribute('aria-invalid');
+      }
+    });
+    if(step === 1 && !form.querySelector('input[name="intent"]:checked')){
+      ok = false;
+      if (announcer) announcer.textContent = 'Selecciona un camino arriba antes de continuar.';
+    }
+    if (!ok && firstInvalid) firstInvalid.focus();
     return ok;
   }
+  // Limpia el estado al corregir
+  form.addEventListener('input', function(e){
+    var fieldEl = e.target.closest('.field');
+    if (fieldEl && e.target.checkValidity()) {
+      fieldEl.classList.remove('is-error');
+      e.target.removeAttribute('aria-invalid');
+    }
+  });
   btnBack.addEventListener('click', function(){ if(step > 1){ step--; render(); window.scrollTo({top: form.offsetTop - 120, behavior: 'smooth'}); } });
   btnNext.addEventListener('click', function(){
     if(!validateStep()) return;
     if(step < 3){ step++; render(); window.scrollTo({top: form.offsetTop - 120, behavior: 'smooth'}); return; }
     var pCheck = form.querySelector('input[name="privacy"]'); if(!pCheck.checked){ pCheck.reportValidity(); return; }
-    /* Loading real: comunica "estamos procesando, no toques" — 800ms */
     btnNext.classList.add('is-loading');
     btnNext.disabled = true;
-    setTimeout(function(){
-      btnNext.classList.remove('is-loading');
-      btnNext.disabled = false;
-      var intent = (form.querySelector('input[name="intent"]:checked') || {}).value;
-      successBody.textContent = (intent === 'idea') ? 'Recibido. Venture Lab opera con cohortes — te contactamos en hasta 3 semanas.' : 'Recibido. Te contactamos en 48h al correo que dejaste.';
-      form.hidden = true; success.hidden = false; window.scrollTo({top: success.offsetTop - 120, behavior: 'smooth'});
-    }, 800);
+    var fd = new FormData(form);
+    var payload = {};
+    fd.forEach(function(v, k){ payload[k] = v; });
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok && data.success, data: data }; }); })
+      .then(function(out){
+        btnNext.classList.remove('is-loading');
+        btnNext.disabled = false;
+        if (!out.ok) throw new Error(out.data && out.data.message ? out.data.message : 'submit_failed');
+        var intent = (form.querySelector('input[name="intent"]:checked') || {}).value;
+        successBody.textContent = (intent === 'idea') ? 'Recibido. Venture Lab opera con cohortes — te contactamos en 3 semanas.' : 'Recibido. Te contactamos en 48h al correo que dejaste.';
+        form.hidden = true; success.hidden = false; window.scrollTo({top: success.offsetTop - 120, behavior: 'smooth'});
+      })
+      .catch(function(err){
+        btnNext.classList.remove('is-loading');
+        btnNext.disabled = false;
+        var errEl = document.getElementById('formError');
+        var msg = 'No se pudo enviar. Escríbenos directo a proyectos@ibisne.com.';
+        if (errEl) { errEl.hidden = false; errEl.textContent = msg; }
+        else { alert(msg); }
+      });
   });
   render();
 })();
 </script>
-<script src="../design-system-v2/motion.js?v=2.6.2"></script>
+<script src="../design-system-v2/motion.js?v=3.0.0" defer></script>
 </body>
 </html>

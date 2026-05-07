@@ -6,6 +6,17 @@
 
 /* ─── RESET / NORMALIZE ───────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* a11y · oculto visualmente, expuesto a screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 html, body { margin: 0; padding: 0; }
 body {
   background: var(--bg);
@@ -189,7 +200,15 @@ html.has-cursor * { cursor: none !important; }
   cursor: pointer;
   text-decoration: none;
   transition: border-color var(--dur-fast) var(--ease-out-quart),
-              background var(--dur-fast) var(--ease-out-quart);
+              background var(--dur-fast) var(--ease-out-quart),
+              transform 80ms var(--ease-out-quart);
+}
+/* Micro-feedback táctil al click — comunica "presionado" */
+.btn:active:not([disabled]):not([aria-disabled="true"]):not(.is-loading) {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn:active { transform: none; }
 }
 .btn[disabled],
 .btn[aria-disabled="true"] {
@@ -595,7 +614,9 @@ html.has-cursor * { cursor: none !important; }
   align-items: stretch;
 }
 .nav-links a.nav-mega-card:hover,
-.nav-mega-card:hover {
+.nav-mega-card:hover,
+.nav-links a.nav-mega-card.is-active,
+.nav-mega-card.is-active {
   background: var(--bg-paper);
   border-color: var(--accent-mint);
   color: var(--text-primary) !important;

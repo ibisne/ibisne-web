@@ -470,26 +470,35 @@
   flex-wrap: wrap;
 }
 
-/* ─── NAV OVERLAY (mobile ≤768) — full-screen menu ────────── */
+/* ─── NAV OVERLAY (mobile ≤768) — full-screen menu ──────────
+   Reveal con clip-path circular originado desde el botón × del nav-mobile-bar.
+   --clip-x / --clip-y se setean desde JS al abrir; fallback al centro.
+*/
 .nav-overlay {
   position: fixed;
   inset: 0;
   z-index: var(--z-overlay);
   background: var(--bg-deep);
   color: var(--text-primary);
-  opacity: 0;
+  --clip-x: 50%;
+  --clip-y: 50%;
+  clip-path: circle(0% at var(--clip-x) var(--clip-y));
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--dur-reg) var(--ease-out-expo),
-              visibility 0s linear var(--dur-reg);
+  transition: clip-path 360ms cubic-bezier(.7, 0, .3, 1),
+              visibility 0s linear 360ms;
   overscroll-behavior: contain;
 }
 .nav-overlay.is-open {
-  opacity: 1;
+  clip-path: circle(150% at var(--clip-x) var(--clip-y));
   visibility: visible;
   pointer-events: auto;
-  transition: opacity var(--dur-reg) var(--ease-out-expo),
+  transition: clip-path 360ms cubic-bezier(.7, 0, .3, 1),
               visibility 0s linear 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-overlay { transition: visibility 0s linear 0s; clip-path: none; opacity: 0; }
+  .nav-overlay.is-open { clip-path: none; opacity: 1; }
 }
 .nav-overlay-inner {
   position: relative;
