@@ -29,3 +29,6 @@ node_modules/
 # OneDrive temporales
 ~$*
 *.tmp
+
+# Claude Code worktrees (local-only, no commitear)
+.claude/worktrees/
