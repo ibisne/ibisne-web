@@ -5,7 +5,7 @@
 
 Si abres un chat nuevo para iterar este sistema, lee este archivo completo antes de tocar código. No infieras nada del v1; los dos sistemas son intencionalmente antitéticos.
 
-Versión actual: **v2.3.6** · Última iteración real: la mega-card del nav desktop con padding 24/22px y min-height 180px.
+Versión actual: **v3.2.0** · Última iteración real: primera pasada de imágenes editoriales (stock curado Unsplash) en 6 páginas reemplazando 43 `.placeholder`, + extensión de `filter: grayscale(1)` a `.editorial-card .ec-media img` para mantener regla 9.
 
 ---
 

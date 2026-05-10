@@ -160,7 +160,7 @@ Cualquier uso adicional requiere defensa explícita.
 ## Roadmap
 
 1. **Fonts** — VAULT usa Inter Tight (Google Fonts) como primario. Cuando exista licencia de Söhne (Klim Type Foundry), reemplazar `--font-display` y `--font-body` apuntando a `/assets/fonts/` con `@font-face`.
-2. **Imágenes reales** — todos los `.placeholder` deben sustituirse por `<img>` cuando exista fotografía dirigida (oficina CDMX/GDL, founders, sala de ops). Mantener `aspect-ratio` original y `filter: grayscale(1)` por default.
+2. **Imágenes reales** — primera pasada de stock editorial curado (Unsplash, licencia free) ya aplicada en 6 páginas (`assets/img/stock/`); 13 placeholders se mantienen para fotografía dirigida real (6 retratos del equipo, 4 portfolio companies, 2 portafolio público, 1 formulario decorativo). Treatment fijo: `filter: grayscale(1)` default → `grayscale(0)` en hover de la card.
 3. **Páginas internas** — el sistema SPA-lite ya está activo. Cuando se construyan `nosotros.html`, `portafolio.html`, etc., funciona automáticamente sin código adicional, siempre que cada página tenga un `<main>` y los mismos imports CSS+JS.
 4. **Toggle theme** — VAULT por ahora es dark only. Si se decide habilitar light theme, todos los tokens están preparados para ser sobreescritos en un selector `[data-theme="light"]`.
 

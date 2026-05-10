@@ -196,7 +196,17 @@
 .editorial-card .ec-media {
   aspect-ratio: 4 / 3;
   background: var(--bg-paper);
+  overflow: hidden;
 }
+.editorial-card .ec-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1);
+  transition: filter var(--dur-reg) var(--ease-out-expo);
+}
+.editorial-card:hover .ec-media img { filter: grayscale(0); }
 
 /* ─── CASE-STUDY TILE (hover mask grayscale) ──────────────── */
 .case-grid {
