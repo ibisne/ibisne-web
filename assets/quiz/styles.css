@@ -1116,6 +1116,67 @@ body.has-bottom-bar-expanded .quiz-main{
   text-transform: uppercase; letter-spacing: 0.18em;
   color: var(--accent-mint); font-weight: 500; margin-bottom: 20px;
 }
+
+/* ─── DESGLOSE AGRUPADO · cards por grupo (Plataforma/Funcionalidad/etc) ─── */
+.qb-group{
+  margin: 18px 0;
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius, 14px);
+  background: var(--bg-tint);
+  overflow: hidden;
+}
+.qb-group-head{
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--accent-mint) 6%, transparent);
+  border-bottom: 1px solid var(--bg-line);
+}
+.qb-group-head .li-icon{
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-mint);
+  flex-shrink: 0;
+}
+.qb-group-head .li-icon svg{ width: 18px; height: 18px; }
+.qb-group-name{
+  flex: 1;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--text-primary); font-weight: 500;
+}
+.qb-group-sub{
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent-mint);
+  font-variant-numeric: tabular-nums;
+}
+.qb-group-body{ padding: 4px 0; }
+.qb-group-body .item{ padding: 10px 16px; border-bottom: 1px solid var(--bg-line); }
+.qb-group-body .item:last-child{ border-bottom: none; }
+
+/* Icono pequeño en cada line item del breakdown */
+.cotizacion-preview .item .li-icon{
+  width: 20px; height: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.cotizacion-preview .item .li-icon svg{ width: 16px; height: 16px; }
+/* Ajuste de grid para item con icono al inicio */
+.cotizacion-preview .qb-group-body .item{
+  display: grid;
+  grid-template-columns: auto 1fr auto 34px;
+  column-gap: 12px;
+  align-items: center;
+}
+.cotizacion-preview .item.base{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 12px;
+  align-items: center;
+}
+.cotizacion-preview .item.base .li-icon{ color: var(--accent); }
+.cotizacion-preview .item.base .li-icon svg{ width: 18px; height: 18px; }
+
 .cotizacion-preview .item{
   display: grid;
   grid-template-columns: 1fr auto 34px;
@@ -1773,3 +1834,186 @@ vercel-live-feedback,
 [data-vercel-toolbar],
 .vercel-toolbar,
 iframe[src*="vercel.live"]{ display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT THEME · overrides para superficies oscuras hardcoded
+   (HUD, bottom bar, mobile menu, backdrop, etc.)
+   ═══════════════════════════════════════════════════════════════════ */
+:root[data-theme="light"] .hud{
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--bg-line);
+}
+:root[data-theme="light"] .hud-mobile-menu{
+  background: rgba(255, 255, 255, 0.96);
+}
+:root[data-theme="light"] .quiz-bottom{
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px solid var(--bg-line);
+}
+:root[data-theme="light"] .edit-modal-backdrop{
+  background: rgba(13, 17, 23, 0.4);
+}
+:root[data-theme="light"] .boot-loader.is-migrating{
+  background: rgba(247, 248, 250, 0.85);
+}
+/* Tinte sutil de fondos hover/selected que estaban hardcoded en rgba verde */
+:root[data-theme="light"] .option.is-selected{
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+:root[data-theme="light"] .option:hover{
+  background: var(--bg-paper);
+}
+:root[data-theme="light"] .qb-group{
+  background: var(--bg-paper);
+}
+:root[data-theme="light"] .qb-group-head{
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+:root[data-theme="light"] .cotizacion-preview .item.editable:hover{
+  background: var(--bg-tint);
+}
+/* Theme-color en navegador móvil: actualizado dinámicamente vía JS (prefs.js) */
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT · cotización formal (oculta en pantalla, visible solo al imprimir)
+   ═══════════════════════════════════════════════════════════════════ */
+.print-cotizacion{ display: none; }
+
+@media print {
+  /* Reset general · todo en blanco para PDF */
+  *, *::before, *::after { background: transparent !important; box-shadow: none !important; }
+  html, body{ background: #FFFFFF !important; color: #0D1117 !important; font-family: 'Inter Tight', 'Helvetica', sans-serif; }
+  .hud, .hud-mobile-menu, .progress-rail, .quiz-bottom, .ambient-dots, .ambient-scan,
+  .boot-loader, .legal-strip, .result-cta, .result-cta-stack,
+  .cotizacion-preview, .result-headline, .result-veredicto, .result-body,
+  .result-grid, .edit-modal { display: none !important; }
+
+  .result-screen{ animation: none !important; padding: 0 !important; min-height: 0 !important; }
+  .print-cotizacion{
+    display: block !important;
+    color: #0D1117;
+    font-family: 'Inter Tight', 'Helvetica', sans-serif;
+    font-size: 11pt; line-height: 1.5;
+    max-width: 760px; margin: 0 auto;
+    padding: 24pt 28pt;
+  }
+  .pc-header{
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 18pt; margin-bottom: 24pt;
+    border-bottom: 2pt solid #0D1117;
+  }
+  .pc-brand img{ height: 28pt; filter: invert(1) brightness(0.4); }
+  .pc-brand-tagline{
+    font-size: 9pt; color: #666; margin-top: 4pt;
+    letter-spacing: 0.04em;
+  }
+  .pc-meta{ text-align: right; }
+  .pc-meta-row{ display: flex; gap: 12pt; justify-content: flex-end; margin-bottom: 3pt; font-size: 10pt; }
+  .pc-k{ color: #666; text-transform: uppercase; letter-spacing: 0.1em; font-size: 8.5pt; min-width: 60pt; }
+  .pc-v{ font-weight: 600; }
+  .pc-title{
+    font-size: 28pt; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.1;
+    margin: 0 0 4pt;
+  }
+  .pc-subtitle{
+    font-size: 11pt; color: #555;
+    margin: 0 0 20pt;
+  }
+  .pc-grid-2{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16pt;
+    margin-bottom: 18pt;
+  }
+  .pc-block{
+    border: 1pt solid #DDD;
+    padding: 12pt 14pt;
+    border-radius: 6pt;
+    page-break-inside: avoid;
+  }
+  .pc-block-title{
+    font-size: 8.5pt; text-transform: uppercase;
+    letter-spacing: 0.14em; color: #666;
+    margin-bottom: 8pt; font-weight: 600;
+  }
+  .pc-info-row{ font-size: 10pt; margin-bottom: 3pt; }
+  .pc-info-blanks .pc-info-row{ display: flex; gap: 8pt; }
+  .pc-blank-key{ color: #666; min-width: 54pt; font-size: 9pt; }
+  .pc-blank{ flex: 1; color: #999; font-family: monospace; font-size: 10pt; }
+
+  .pc-breakdown{ margin-bottom: 16pt; }
+  .pc-line{
+    display: flex; justify-content: space-between;
+    padding: 5pt 0;
+    font-size: 10pt;
+    border-bottom: 0.5pt solid #EEE;
+  }
+  .pc-line:last-child{ border-bottom: none; }
+  .pc-line-base{
+    font-weight: 600;
+    border-bottom: 1pt solid #0D1117;
+    padding-bottom: 6pt; margin-bottom: 8pt;
+  }
+  .pc-group{ margin: 10pt 0; }
+  .pc-group-head{
+    font-size: 9pt; text-transform: uppercase;
+    letter-spacing: 0.12em; color: #0D1117;
+    font-weight: 600; margin: 8pt 0 4pt;
+    border-bottom: 0.5pt solid #999;
+    padding-bottom: 3pt;
+  }
+  .pc-group-sub{
+    display: flex; justify-content: space-between;
+    margin-top: 4pt; padding-top: 4pt;
+    font-size: 9pt; color: #555;
+    border-top: 0.5pt dashed #DDD;
+  }
+  .pc-totals{
+    margin: 16pt 0 18pt;
+    border-top: 2pt solid #0D1117;
+    padding-top: 10pt;
+    page-break-inside: avoid;
+  }
+  .pc-total-row{
+    display: flex; justify-content: space-between;
+    padding: 4pt 0; font-size: 11pt;
+  }
+  .pc-total-final{
+    font-size: 16pt; font-weight: 700;
+    margin-top: 6pt; padding-top: 8pt;
+    border-top: 1pt solid #0D1117;
+  }
+  .pc-chips{ display: flex; flex-wrap: wrap; gap: 4pt; }
+  .pc-chip{
+    display: inline-block;
+    padding: 3pt 8pt;
+    border: 0.75pt solid #0D1117;
+    border-radius: 99pt;
+    font-size: 9pt; font-weight: 500;
+  }
+  .pc-list{ margin: 0; padding-left: 14pt; }
+  .pc-list li{ font-size: 10pt; margin-bottom: 3pt; }
+  .pc-conditions li{ margin-bottom: 5pt; }
+  .pc-signatures{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20pt;
+    margin: 30pt 0 20pt;
+    page-break-inside: avoid;
+  }
+  .pc-sign-line{
+    border-bottom: 0.75pt solid #0D1117;
+    height: 26pt;
+  }
+  .pc-sign-label{
+    font-size: 8.5pt; color: #666;
+    margin-top: 4pt; text-align: center;
+    letter-spacing: 0.06em;
+  }
+  .pc-footer{
+    display: flex; justify-content: space-between;
+    padding-top: 12pt; margin-top: 20pt;
+    border-top: 0.5pt solid #DDD;
+    font-size: 8pt; color: #888;
+  }
+
+  /* Page setup */
+  @page { size: A4; margin: 14mm 12mm; }
+}
