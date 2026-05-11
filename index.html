@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>iBisne — Holding LATAM</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0D1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iBisne">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
 <meta name="description" content="iBisne. Capital operativo. Mentalidad operadora. Holding LATAM con 4 verticales operativas.">
 <meta property="og:title" content="iBisne — Capital operativo. Mentalidad operadora.">
 <meta property="og:description" content="Holding LATAM. Capital + ejecución para founders que ya facturan.">
@@ -96,26 +102,42 @@
 
 <!-- HUD persistente -->
 <header class="hud">
-  <a href="index.html" class="hud-brand" aria-label="iBisne — Inicio"><img class="hud-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
+  <a href="index.html" class="hud-brand" aria-label="iBisne — Inicio" id="hud-brand">
+    <img class="hud-logo" src="brand/iBisne_blanco.png" alt="iBisne">
+  </a>
   <div class="hud-spacer"></div>
 
-  <div class="hud-group">
+  <!-- Grupo 1 · Redes sociales -->
+  <div class="hud-group hud-group-social">
     <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram" aria-label="Instagram"></a>
     <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin" aria-label="LinkedIn"></a>
     <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x" aria-label="X (Twitter)"></a>
   </div>
 
-  <div class="hud-group">
-    <button class="hud-lang" id="hud-lang" type="button" aria-label="Cambiar idioma">
-      <span class="active">ES</span>&nbsp;/&nbsp;<span style="opacity:0.4;">EN</span>
+  <span class="hud-divider" aria-hidden="true"></span>
+
+  <!-- Grupo 2 · Preferencias regionales -->
+  <div class="hud-group hud-group-pref">
+    <button class="hud-toggle" id="hud-lang" type="button" aria-label="Cambiar idioma">
+      <span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span>
     </button>
-    <button class="hud-btn is-disabled" id="hud-theme" type="button" data-icon="moon" aria-label="Cambiar tema (light próximamente)"></button>
+    <button class="hud-toggle" id="hud-currency" type="button" aria-label="Cambiar moneda">
+      <span class="active" data-currency="mxn">MX$</span><span class="slash">/</span><span data-currency="usd">US$</span>
+    </button>
+  </div>
+
+  <span class="hud-divider" aria-hidden="true"></span>
+
+  <!-- Grupo 3 · Apariencia -->
+  <div class="hud-group hud-group-ui">
+    <button class="hud-btn" id="hud-theme" type="button" data-icon="moon" aria-label="Cambiar tema"></button>
     <button class="hud-btn" id="hud-music" type="button" data-icon="play" aria-label="Reproducir música ambient"></button>
+    <button class="hud-btn" id="hud-install" type="button" data-icon="plus" aria-label="Instalar app" hidden></button>
   </div>
 
   <a href="https://wa.me/523329575274?text=Hola%2C%20quiero%20hablar%20con%20un%20hunter%20de%20iBisne" target="_blank" rel="noopener" class="hud-cta">
     <span data-icon="whatsapp"></span>
-    Hablar con un hunter
+    <span data-i18n="hud.cta.hunter">Hablar con un hunter</span>
   </a>
 
   <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="menu" aria-label="Abrir menú" aria-expanded="false"></button>
@@ -147,27 +169,33 @@
 <!-- HERO -->
 <main>
   <div class="question-block">
-    <h2 class="question">¿Estás cansado de las<br><span class="highlight">agencias patito</span> de LATAM?</h2>
+    <h2 class="question">
+      <span data-i18n="hero.question.tired">¿Estás cansado de las</span><br>
+      <span class="highlight" data-i18n="hero.question.agencies">agencias patito</span>
+      <span data-i18n="hero.question.suffix"> de LATAM?</span>
+    </h2>
     <div class="cta-row">
-      <a href="quiz.html#/servicio/1" class="cta-big primary">Sí — cuéntame</a>
-      <a href="no.html" class="cta-big line">No, ya tengo una</a>
+      <a href="quiz.html#/servicio/1" class="cta-big primary" data-i18n="hero.cta.yes">Sí — cuéntame</a>
+      <a href="no.html" class="cta-big line" data-i18n="hero.cta.no">No, ya tengo una</a>
     </div>
   </div>
 </main>
 
 <!-- Footer legales -->
 <footer class="legal-strip">
-  <div class="left">iBisne S.A.S de C.V. · 2026</div>
   <div class="right">
-    <a href="quiz.html#/inversor/1">¿Buscas oportunidades de inversión? →</a>
     <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
     <a href="#" onclick="alert('Aviso de privacidad — próximamente'); return false;">Aviso de privacidad</a>
     <a href="#" onclick="alert('Términos — próximamente'); return false;">Términos</a>
   </div>
 </footer>
 
+<script src="assets/quiz/loader.js"></script>
+<script src="assets/quiz/prefs.js"></script>
+<script src="assets/quiz/i18n.js"></script>
 <script src="assets/quiz/icons.js"></script>
 <script src="assets/quiz/ambient.js"></script>
 <script src="assets/quiz/hud.js"></script>
+<script src="/assets/quiz/pwa.js" defer></script>
 </body>
 </html>

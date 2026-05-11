@@ -31,8 +31,16 @@
   const $$ = sel => document.querySelectorAll(sel);
 
   // ─── UTILS ───────────────────────────────────────────────────────────
+  // Formato de moneda: respeta prefs (MXN/USD). Mantiene el nombre legacy `formatMxn`
+  // por compatibilidad — todos los precios base se almacenan en MXN.
   function formatMxn(n){
+    if (window.IBISNE_PREFS) return window.IBISNE_PREFS.format(Number(n));
     return '$ ' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  // Traducción puntual: t('key', 'fallback en ES')
+  function t(key, fallback){
+    if (window.IBISNE_PREFS) return window.IBISNE_PREFS.t(key, fallback);
+    return fallback || key;
   }
   function ease(t){ return 1 - Math.pow(1 - t, 3); }
   function countUp(el, to, ms){
@@ -103,7 +111,8 @@
   let _advanceTimer = null;
   function scheduleAdvance(targetHash, delayMs){
     if (_advanceTimer) { clearTimeout(_advanceTimer); _advanceTimer = null; }
-    _advanceTimer = setTimeout(() => { _advanceTimer = null; navigate(targetHash); }, delayMs || 450);
+    // Auto-advance corto pero suficiente para que el usuario vea el feedback de selección
+    _advanceTimer = setTimeout(() => { _advanceTimer = null; navigate(targetHash); }, delayMs || 380);
   }
   function cancelAdvance(){
     if (_advanceTimer) { clearTimeout(_advanceTimer); _advanceTimer = null; }
@@ -486,6 +495,9 @@
     if (State.route !== 'servicio' || !State.answers._init) {
       State.answers = { _init: true };
       State.flags = new Set();
+      // Nueva sesión de cotización: limpia el folio cacheado para que el siguiente
+      // resultado pida uno nuevo (en lugar de reusar el de la cotización anterior).
+      State.servicioFolio = null;
     }
     const steps = getServicioSteps();
     const idx = State.step - 1;
@@ -779,17 +791,22 @@
     }
 
     // ─── CASO 2: cotización normal ────────────────────────────────────
-    const folio = nextFolio();
-    persistLead({
-      route: 'servicio', stage: 1,
-      vertical: vertical?.id, subtipo: subtipo?.id,
-      total_mxn: calc.total, tier: calc.tier.label,
-      respuestas: State.answers,
-      equipo: calc.team, tiempo: calc.time,
-      plazoMul: calc.plazoMul,
-      contacto: State.answers.datos || {},
-      pdf_folio: folio,
-    });
+    // Folio se cachea en State para que las ediciones del modal no consuman folios extra.
+    if (!State.servicioFolio) {
+      State.servicioFolio = nextFolio();
+      // Persistimos UNA sola vez por sesión de cotización (el re-render por edición no duplica).
+      persistLead({
+        route: 'servicio', stage: 1,
+        vertical: vertical?.id, subtipo: subtipo?.id,
+        total_mxn: calc.total, tier: calc.tier.label,
+        respuestas: State.answers,
+        equipo: calc.team, modulos: calc.modules,
+        plazoMul: calc.plazoMul,
+        contacto: State.answers.datos || {},
+        pdf_folio: State.servicioFolio,
+      });
+    }
+    const folio = State.servicioFolio;
     const isEnterprise = calc.tier.id === 'enterprise';
 
     // Build WhatsApp message with config summary
@@ -1175,7 +1192,8 @@ Quiero hablar para precisar el alcance.`;
         </div>
         <div class="qb-total-block">
           <div class="qb-total-label">Inversión estimada · <span id="qb-modules-inline">—</span></div>
-          <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency">MXN + IVA</span></div>
+          <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency" id="qb-currency-code">MXN</span></div>
+          <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">Subtotal · IVA aparte</div>
         </div>
         <div class="qb-nav-block">
           <button class="qb-nav-btn qb-nav-prev" id="qb-nav-prev" type="button" aria-label="Pregunta anterior">← Anterior</button>
@@ -1296,7 +1314,7 @@ Quiero hablar para precisar el alcance.`;
     total = total * plazoMul;
     if (plazoLabel && plazoMul !== 1.0) {
       const ajuste = total - subtotalAntesPlazo;
-      lineItems.push({ label: plazoLabel, add: ajuste });
+      lineItems.push({ qid: 'plazo', id: a.plazo.id, label: plazoLabel, add: ajuste });
     }
 
     // Velocidad de salida (reemplaza el mapa de calor de intención)
@@ -1405,6 +1423,8 @@ Quiero hablar para precisar el alcance.`;
       navNext.textContent = isLast ? 'Ver cotización →' : 'Continuar →';
     }
     const elTotal = $('#qb-total'); if (elTotal) countUp(elTotal, calc.total);
+    const elCurr  = $('#qb-currency-code');
+    if (elCurr && window.IBISNE_PREFS) elCurr.textContent = window.IBISNE_PREFS.currencyCode();
 
     // Línea de velocidad de salida
     const elDot = $('#qb-intent-dot');
@@ -1822,9 +1842,11 @@ Quiero hablar para precisar el alcance.`;
 
         <div class="cotizacion-preview">
           <h3>— DESGLOSE</h3>
-          <div class="item"><span>${State.consultoria?.modalidad_tipo?.label || ''} (base)</span><span class="amount">${formatMxn(calc.base || 0)}</span></div>
+          <div class="item base"><span>${State.consultoria?.modalidad_tipo?.label || ''} (base)</span><span class="amount">${formatMxn(calc.base || 0)}</span></div>
           ${calc.lineItems.map(li => `<div class="item"><span>${li.label}</span><span class="amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span></div>`).join('')}
-          <div class="item total"><span>Total MXN + IVA</span><span class="amount">${formatMxn(calc.total)}</span></div>
+          <div class="item subtotal"><span>Subtotal</span><span class="amount">${formatMxn(calc.total)}</span></div>
+          <div class="item iva"><span>IVA · 16%</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
+          <div class="item total"><span>Total ${window.IBISNE_PREFS ? window.IBISNE_PREFS.currencyCode() : 'MXN'}</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
           <div class="stamp">INDICATIVO · sujeto a alcance · folio ${folio}</div>
         </div>
 
@@ -1868,10 +1890,10 @@ Quiero hablar para precisar el alcance.`;
       all.push(payload);
       localStorage.setItem('ibisne.leads', JSON.stringify(all.slice(-200)));
     } catch(e){}
-    if (window.console) console.info('[iBisne] Lead persisted', payload);
+    // (telemetría silenciada en producción)
   }
   function triggerAlert(score, answers, inferencia, tags){
-    if (window.console) console.warn('[iBisne] Top-tier alert', { score, answers, inferencia, tags });
+    // (alerta de top-tier — handler externo si se configura)
   }
   function nextFolio(){
     let n = parseInt(localStorage.getItem('ibisne.folio') || '424', 10);
@@ -1880,6 +1902,17 @@ Quiero hablar para precisar el alcance.`;
     return n;
   }
   function getCurrentFolio(){ return parseInt(localStorage.getItem('ibisne.folio') || '425', 10); }
+
+  // ─── API PÚBLICA — re-render desde otros módulos (lang/currency toggle) ──
+  window.IBISNE_QUIZ = {
+    rerender: function(){
+      try { render(); } catch(e){ if (window.console) console.warn('[iBisne] rerender fail', e); }
+    },
+  };
+  // Suscripción a cambios de preferencias: re-pinta para reflejar idioma/moneda
+  window.addEventListener('ibisne:prefs', () => {
+    try { render(); } catch(e){}
+  });
 
   // ─── INIT ────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {

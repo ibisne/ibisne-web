@@ -4,7 +4,7 @@
    ============================================================ */
 
 :root {
-  /* ─── COLOR ───────────────────────────────────────────────── */
+  /* ─── COLOR · TEMA OSCURO (default) ───────────────────────── */
   --bg-deep: #0A0E13;         /* abismo — solo hero y CTA final */
   --bg: #0D1117;              /* base — la mayoría */
   --bg-paper: #14191F;        /* elevado — secciones de data / testimonios */
@@ -133,3 +133,21 @@ html {
   50%, 100% { opacity: 0; }
 }
 
+
+/* ─── LIGHT THEME OVERRIDE ──────────────────────────────────── */
+/* Activado por window.IBISNE_PREFS.setTheme('light') → data-theme="light" en <html> */
+:root[data-theme="light"] {
+  --bg-deep: #FFFFFF;
+  --bg: #F7F8FA;
+  --bg-paper: #FFFFFF;
+  --bg-line: #DEE2E8;
+
+  --text-primary: #0D1117;
+  --text-secondary: #4A5058;
+  --text-muted: #8B9099;
+
+  --accent: #00A346;
+  --accent-mint: #2DC066;
+  --accent-glow: rgba(0, 163, 70, 0.18);
+  --accent-soft: rgba(0, 163, 70, 0.06);
+}
