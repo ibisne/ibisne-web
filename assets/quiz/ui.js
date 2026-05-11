@@ -547,8 +547,8 @@
     $('#main').innerHTML = `
       <div class="question-card">
         <div class="eyebrow">Servicio</div>
-        <h2 class="question-title">¿Qué vertical estás construyendo?</h2>
-        <p class="question-help">Selecciona el camino. Cada uno tiene sus propias preguntas y precio base.</p>
+        <h2 class="question-title">¿Qué deseas construir?</h2>
+        <p class="question-help">Elige por dónde empezamos. Cada camino abre sus propias opciones.</p>
         <div class="options ${gridClassByCount(PRICING.verticales.length)}">${cards}</div>
         <div class="actions">
           <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
@@ -597,8 +597,8 @@
     $('#main').innerHTML = `
       <div class="question-card">
         <div class="eyebrow">${vertical.label}</div>
-        <h2 class="question-title">¿Qué tipo dentro de ${vertical.label}?</h2>
-        <p class="question-help">Cada sub-tipo tiene su propio alcance y precio base.</p>
+        <h2 class="question-title">¿Qué tipo de ${vertical.label.toLowerCase()}?</h2>
+        <p class="question-help">Elige el que más se parezca a lo que tienes en mente.</p>
         <div class="options ${gridClassByCount(subs.length)}">${cards}</div>
         <div class="actions">
           <button class="btn-ghost btn" data-prev type="button">← Anterior</button>

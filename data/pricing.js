@@ -94,7 +94,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'pasarelas', label: '¿Qué pasarelas / canales de pago quieres integrar?', multi: true,
+        id: 'pasarelas', label: '¿Cómo van a pagarte?', multi: true,
         help: 'Selecciona todas las que apliquen. Cada una se cobra como módulo de integración.',
         opciones: [
           { id: 'stripe',       label: 'Stripe (tarjetas internacional)',      add: 1500, icon: 'fintech', intent: 'marketing' },
@@ -119,7 +119,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'pasarelas', label: '¿Qué pasarelas / canales de pago quieres integrar?', multi: true,
+        id: 'pasarelas', label: '¿Cómo van a pagarte?', multi: true,
         help: 'Selecciona todas las que apliquen.',
         opciones: [
           { id: 'stripe',       label: 'Stripe (tarjetas internacional)',      add: 2000, icon: 'fintech', intent: 'marketing' },
@@ -134,7 +134,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'integraciones', label: '¿Necesitas integraciones?', multi: true,
+        id: 'integraciones', label: '¿Con qué sistemas se va a conectar?', multi: true,
         opciones: [
           { id: 'erp',  label: 'ERP (SAP / Odoo)',     add: 15000, icon: 'serverapp' },
           { id: 'crm',  label: 'CRM (HubSpot)',        add: 8000,  icon: 'partnership' },
@@ -157,7 +157,7 @@ window.IBISNE_PRICING = {
     // App nativa / híbrida (mismo set de preguntas)
     'app-native': [
       {
-        id: 'tipo_app', label: '¿Qué tipo de app quieres construir?',
+        id: 'tipo_app', label: '¿Qué hace tu app?',
         opciones: [
           { id: 'info',    label: 'Informativa / catálogo', icon: 'info_app', add: 0, intent: 'lanzamiento',
             description: 'App que muestra contenido, productos o información. Sin login.' },
@@ -170,7 +170,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'funciones', label: '¿Qué funciones clave necesita?', multi: true,
+        id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         help: 'Selecciona todas las que apliquen. Cada una se cobra como módulo.',
         opciones: [
           { id: 'push',       label: 'Notificaciones push',           add: 4000,  icon: 'info_app',  intent: 'engagement',
@@ -194,7 +194,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'backend', label: '¿Backend del proyecto?',
+        id: 'backend', label: '¿Dónde vive la información?',
         opciones: [
           { id: 'firebase', label: 'Firebase / Supabase',          add: 10000, icon: 'shield',
             description: 'Backend como servicio: rápido de montar, plan free hasta cierto uso.' },
@@ -207,7 +207,7 @@ window.IBISNE_PRICING = {
     ],
     'app-hybrid': [
       {
-        id: 'tipo_app', label: '¿Qué tipo de app quieres construir?',
+        id: 'tipo_app', label: '¿Qué hace tu app?',
         opciones: [
           { id: 'info',    label: 'Informativa / catálogo', icon: 'info_app', add: 0, intent: 'lanzamiento',
             description: 'App que muestra contenido, productos o información. Sin login.' },
@@ -220,7 +220,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'funciones', label: '¿Qué funciones clave necesita?', multi: true,
+        id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         help: 'Selecciona todas las que apliquen.',
         opciones: [
           { id: 'push',       label: 'Notificaciones push',           add: 4000,  icon: 'info_app',    intent: 'engagement' },
@@ -235,7 +235,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'backend', label: '¿Backend del proyecto?',
+        id: 'backend', label: '¿Dónde vive la información?',
         opciones: [
           { id: 'firebase', label: 'Firebase / Supabase',          add: 10000, icon: 'shield',
             description: 'Backend como servicio: rápido de montar.' },
@@ -248,7 +248,7 @@ window.IBISNE_PRICING = {
     ],
     'app-nocode': [
       {
-        id: 'plataforma', label: '¿Plataforma no-code preferida?',
+        id: 'plataforma', label: '¿Con qué herramienta lo armamos?',
         opciones: [
           { id: 'flutterflow', label: 'FlutterFlow',  add: 0, icon: 'hybrid',
             description: 'Genera apps nativas con interface visual. Mejor para apps con backend.' },
@@ -261,7 +261,7 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'funciones', label: '¿Qué funciones clave necesita?', multi: true,
+        id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         opciones: [
           { id: 'push',       label: 'Notificaciones push',           add: 2500, icon: 'info_app', intent: 'engagement' },
           { id: 'login',      label: 'Login social',                  add: 2000, icon: 'login',    intent: 'engagement' },
@@ -276,7 +276,7 @@ window.IBISNE_PRICING = {
   // ═══ Q4-Q8 — UNIVERSALES (aplican a todos los caminos) ══════════════
   universales: [
     {
-      id: 'diseno', label: '¿Estilo del diseño?',
+      id: 'diseno', label: '¿Cómo quieres que se vea?',
       opciones: [
         { id: 'template', label: 'Adaptado de template',       add: 0,    icon: 'landing',
           description: 'Partimos de un diseño base y lo adaptamos a tu marca.' },
@@ -310,7 +310,7 @@ window.IBISNE_PRICING = {
       ],
     },
     {
-      id: 'soporte', label: '¿Qué tipo de soporte necesitas?',
+      id: 'soporte', label: '¿Quién lo cuida después de lanzar?',
       help: 'Cobertura post-lanzamiento. Define qué equipo de iBisne queda asignado a tu proyecto.',
       opciones: [
         { id: 'sin',  label: 'Sin soporte',
