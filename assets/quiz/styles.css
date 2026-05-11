@@ -2233,3 +2233,61 @@ iframe[src*="vercel.live"]{ display: none !important; }
 @media (max-width: 540px){
   .memberships-grid{ grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   BRAND PROMISE · qué incluye SIEMPRE iBisne (independiente del pago)
+   ═══════════════════════════════════════════════════════════════════ */
+.brand-promise{
+  margin: 12px 0 24px;
+  padding: 22px 26px;
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius, 14px);
+  background: color-mix(in srgb, var(--accent-mint) 3%, var(--bg-elevated));
+}
+.bp-eyebrow{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent-mint);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.bp-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.bp-item{
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.bp-icon{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent-mint);
+  flex-shrink: 0;
+}
+.bp-icon svg{ width: 16px; height: 16px; }
+.bp-item strong{
+  display: block;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  letter-spacing: -0.005em;
+}
+.bp-item p{
+  font-size: 12.5px; line-height: 1.4;
+  color: var(--text-secondary);
+  margin: 0;
+}
+@media (max-width: 900px){
+  .brand-promise{ padding: 18px 18px; }
+  .bp-grid{
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+}
+@media (max-width: 540px){
+  .bp-grid{ grid-template-columns: 1fr; }
+}

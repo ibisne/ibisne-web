@@ -67,7 +67,7 @@
   }
   // Totales fijos por flow (evita que la barra retroceda cuando steps dinámicos cambian)
   const FLOW_TOTAL = {
-    servicio:    9,    // 2 (vert+sub) + max 2 alcance + 5 universales · datos removido (captura en CTAs)
+    servicio:    8,    // 2 (vert+sub) + max 2 alcance + 4 universales (diseño · identidad · plazo · — soporte movido a membresía)
     socio:       10,
     inversor:    6,
     consultoria: 6,    // 1 modalidad + 5 preguntas
@@ -856,20 +856,17 @@
       diseno: 'diseno', identidad: 'diseno',
       // Tiempo de entrega
       plazo: 'tiempo',
-      // Soporte y operación
-      soporte: 'soporte',
     };
     const GROUP_META = {
       plataforma:    { label: 'Plataforma y alcance',  icon: 'sitio' },
       funcionalidad: { label: 'Funcionalidad técnica', icon: 'serverapp' },
       diseno:        { label: 'Diseño y marca',        icon: 'palette' },
       tiempo:        { label: 'Tiempo de entrega',     icon: 'clock' },
-      soporte:       { label: 'Soporte y operación',   icon: 'shield' },
       otros:         { label: 'Otros',                 icon: 'star' },
     };
     function groupLineItems(items){
       const groups = {};
-      const order = ['plataforma','funcionalidad','diseno','tiempo','soporte','otros'];
+      const order = ['plataforma','funcionalidad','diseno','tiempo','otros'];
       for (const li of items) {
         const g = GROUP_MAP[li.qid] || 'otros';
         if (!groups[g]) groups[g] = [];
@@ -983,6 +980,43 @@ Quiero hablar para precisar el alcance.`;
         <p class="result-body">${isEnterprise
           ? 'Para proyectos de este nivel preferimos discovery primero. El equipo de iBisne te contacta en menos de 24 horas.'
           : 'Cifra indicativa, sujeta a discovery. Un hunter te contacta para precisar el alcance y entregar propuesta firmable.'}</p>
+
+        ${!isEnterprise ? `
+        <!-- ─── BRAND PROMISE · qué incluye siempre iBisne (independiente del pago) ─── -->
+        <section class="brand-promise">
+          <div class="bp-eyebrow">— TU PROYECTO IBISNE INCLUYE SIEMPRE</div>
+          <div class="bp-grid">
+            <div class="bp-item">
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('partnership','line') : '✓'}</span>
+              <div>
+                <strong>Equipo asignado</strong>
+                <p>${(calc.team || []).join(' · ')} dedicados a tu proyecto.</p>
+              </div>
+            </div>
+            <div class="bp-item">
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('serverapp','line') : '✓'}</span>
+              <div>
+                <strong>Stack moderno</strong>
+                <p>${(stackItems[0] || 'Stack adecuado al alcance')}. Sin dependencias frágiles.</p>
+              </div>
+            </div>
+            <div class="bp-item">
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('shield','line') : '✓'}</span>
+              <div>
+                <strong>Infra incluida</strong>
+                <p>Hosting + base de datos + dominio configurado. Primer año sin costo.</p>
+              </div>
+            </div>
+            <div class="bp-item">
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('edit','line') : '✓'}</span>
+              <div>
+                <strong>Discovery firmable</strong>
+                <p>Antes de cobrar un peso: alcance definido y propuesta firmable.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        ` : ''}
 
         ${!isEnterprise && recommended ? `
         <!-- ─── COMPARATIVA · pago único vs membresía recomendada ─────────── -->
@@ -1182,13 +1216,23 @@ Quiero hablar para precisar el alcance.`;
           </div>
 
           <section class="pc-block">
+            <div class="pc-block-title">Tu proyecto iBisne incluye siempre</div>
+            <ul class="pc-list pc-conditions">
+              <li><strong>Equipo asignado</strong> · ${(calc.team || []).join(' · ')} dedicados.</li>
+              <li><strong>Infraestructura</strong> · hosting + dominio + DB · primer año sin costo.</li>
+              <li><strong>Discovery firmable</strong> antes de cobrar · alcance cerrado.</li>
+              <li><strong>3 rondas de ajustes</strong> gratuitas durante el primer año.</li>
+            </ul>
+          </section>
+
+          <section class="pc-block">
             <div class="pc-block-title">Condiciones comerciales</div>
             <ul class="pc-list pc-conditions">
               <li><strong>50% anticipo</strong> al firmar · 50% contra entrega.</li>
-              <li>3 rondas de ajustes gratuitas durante el primer año.</li>
               <li>Cifra <strong>indicativa</strong> · sujeta a discovery firmable.</li>
-              <li>Vigencia: 30 días desde emisión · precios en MXN + IVA 16%.</li>
+              <li>Vigencia: 30 días desde emisión · precios MXN + IVA 16%.</li>
               <li>Pago: SPEI · Mercado Pago · PayPal · Cripto (USDC/BTC).</li>
+              <li><strong>KAM, consultoría y soporte continuo</strong> son parte de la membresía iBisne (ver propuesta).</li>
             </ul>
           </section>
 
