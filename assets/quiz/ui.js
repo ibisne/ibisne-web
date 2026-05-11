@@ -927,6 +927,40 @@
     const stackItems = window.IBISNE_PRICING?.getStack
       ? window.IBISNE_PRICING.getStack(vertical?.id, subtipo?.id)
       : [];
+
+    // ─── MEMBRESÍA RECOMENDADA · cálculo y comparativa ───────────────
+    const totalConIva = calc.total * 1.16;
+    const memberships = window.IBISNE_PRICING?.memberships || [];
+    const recommended = (window.IBISNE_PRICING?.getMembership)
+      ? window.IBISNE_PRICING.getMembership(totalConIva)
+      : null;
+    const ahorroPrimerAno = recommended
+      ? Math.max(0, totalConIva - (recommended.price * 1.16))
+      : 0;
+    function membershipCardHtml(m, isRecommended){
+      const priceIva = m.price * 1.16;
+      return `
+        <div class="mb-card${isRecommended ? ' is-recommended' : ''}" data-membership="${m.id}">
+          ${isRecommended ? '<div class="mb-badge">RECOMENDADA</div>' : ''}
+          <div class="mb-head">
+            ${iconHtml(m.icon)}
+            <div>
+              <div class="mb-name">${m.label}</div>
+              <div class="mb-tag">${m.tagline}</div>
+            </div>
+          </div>
+          <div class="mb-price">
+            <span class="mb-amount">${formatMxn(priceIva)}</span>
+            <span class="mb-period">/año · IVA incluido</span>
+          </div>
+          <div class="mb-cover">Cubre proyectos hasta ${formatMxn(m.maxProject)}</div>
+          <ul class="mb-includes">
+            ${m.includes.map(it => '<li>' + it + '</li>').join('')}
+          </ul>
+          <button class="btn btn-primary mb-cta" type="button" data-pick-membership="${m.id}">Elegir ${m.label} →</button>
+        </div>
+      `;
+    }
     const waMessage = `Hola, vengo del cotizador iBisne con folio #${folio}.
 
 Subtotal: ${formatMxn(calc.total)} MXN
@@ -949,6 +983,48 @@ Quiero hablar para precisar el alcance.`;
         <p class="result-body">${isEnterprise
           ? 'Para proyectos de este nivel preferimos discovery primero. El equipo de iBisne te contacta en menos de 24 horas.'
           : 'Cifra indicativa, sujeta a discovery. Un hunter te contacta para precisar el alcance y entregar propuesta firmable.'}</p>
+
+        ${!isEnterprise && recommended ? `
+        <!-- ─── COMPARATIVA · pago único vs membresía recomendada ─────────── -->
+        <div class="vs-block">
+          <div class="vs-card vs-card-onetime">
+            <div class="vs-eyebrow">Pago único</div>
+            <div class="vs-title">Cotización proyecto</div>
+            <div class="vs-amount">${formatMxn(totalConIva)} <small>MXN</small></div>
+            <div class="vs-note">Lo que pagarías con cualquier agencia.</div>
+            <ul class="vs-list">
+              <li>Proyecto entregado · sin soporte continuo</li>
+              <li>50% anticipo · 50% contra entrega</li>
+              <li>Iteraciones puntuales · cobradas aparte</li>
+              <li>Cambios post-launch: cotización adicional</li>
+            </ul>
+            <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-line vs-cta">Pagar proyecto</a>
+          </div>
+          <div class="vs-card vs-card-member is-recommended">
+            <div class="vs-badge">RECOMENDADA · AHORRAS ${formatMxn(ahorroPrimerAno)}</div>
+            <div class="vs-eyebrow">Membresía iBisne · ${recommended.label}</div>
+            <div class="vs-title">Sociedad anual</div>
+            <div class="vs-amount accent">${formatMxn(recommended.price * 1.16)} <small>MXN/año</small></div>
+            <div class="vs-note">Tu proyecto + KAM + consultoría + iteraciones todo el año.</div>
+            <ul class="vs-list">
+              ${recommended.includes.map(it => '<li>' + it + '</li>').join('')}
+            </ul>
+            <button class="btn btn-primary vs-cta" type="button" data-pick-membership="${recommended.id}">Contratar membresía →</button>
+            <div class="vs-savings">vs proyecto puntual · te ahorras <strong>${formatMxn(ahorroPrimerAno)}</strong> el primer año</div>
+          </div>
+        </div>
+
+        <!-- ─── 4 PLANES · expandible · usuario explora todos los tiers ───── -->
+        <details class="memberships-all">
+          <summary>
+            <span>Ver los 4 planes de membresía</span>
+            <span class="memberships-toggle-icon">▼</span>
+          </summary>
+          <div class="memberships-grid">
+            ${memberships.map(m => membershipCardHtml(m, m.id === recommended.id)).join('')}
+          </div>
+        </details>
+        ` : ''}
 
         <div class="result-grid">
           <div class="result-col-main">
@@ -1153,6 +1229,31 @@ Quiero hablar para precisar el alcance.`;
 
     $('#btn-print')?.addEventListener('click', () => window.print());
     bindEditModal();
+    // Listener para selección de membresía · todos los botones data-pick-membership
+    $$('[data-pick-membership]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.currentTarget.dataset.pickMembership;
+        const m = (window.IBISNE_PRICING?.memberships || []).find(x => x.id === id);
+        if (!m) return;
+        const priceIva = m.price * 1.16;
+        const projectTotal = formatMxn(calc.total * 1.16);
+        const savings = formatMxn(Math.max(0, calc.total * 1.16 - priceIva));
+        const memberMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.
+
+Quiero contratar la MEMBRESÍA ${m.label.toUpperCase()}: ${formatMxn(priceIva)} MXN/año (IVA incluido).
+
+Mi proyecto cotizado: ${projectTotal} MXN
+Ahorro vs proyecto puntual: ${savings} el primer año.
+
+Configuración del proyecto:
+• ${verticalLabel} · ${subtipoLabel}
+${lineItemsText}
+
+Quiero arrancar la membresía y el discovery.`;
+        const url = `https://wa.me/523329575274?text=${encodeURIComponent(memberMsg)}`;
+        window.open(url, '_blank', 'noopener');
+      });
+    });
     showAsideB();
   }
 
@@ -1655,52 +1756,10 @@ Quiero hablar para precisar el alcance.`;
       elIntentText.textContent = subtipo ? (calc.speedText || '') : 'Selecciona opciones para ver la velocidad de salida';
     }
 
-    // Resumen vivo en el panel mobile (espejo del bottom bar desktop)
-    refreshMobileMenu(calc, vertical, subtipo);
+    // refreshMobileMenu removido en v3.12 · el resumen ahora vive en el resultado final
   }
   // legacy alias
   const refreshPanelB = refreshBottomB;
-
-  // ─── PANEL MOBILE · resumen vivo dentro del menú ────────────────────
-  function refreshMobileMenu(calc, vertical, subtipo){
-    const wrap = $('#menu-resumen');
-    if (!wrap) return; // solo existe en quiz.html
-    if (!subtipo) {
-      wrap.hidden = true;
-      return;
-    }
-    wrap.hidden = false;
-    const tipo = $('#menu-tipo');
-    if (tipo) tipo.textContent = (vertical?.label || '') + ' · ' + subtipo.label;
-    const total = $('#menu-total');
-    if (total) {
-      const amount = window.IBISNE_PREFS
-        ? window.IBISNE_PREFS.format(calc.total * 1.16)
-        : '$ ' + (calc.total * 1.16).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const curr = window.IBISNE_PREFS ? window.IBISNE_PREFS.currencyCode() : 'MXN';
-      total.innerHTML = amount + ' <small>' + curr + '</small>';
-    }
-    const mods = $('#menu-modules');
-    if (mods) {
-      const n = calc.modules || 0;
-      mods.textContent = n + (n === 1 ? ' módulo' : ' módulos');
-    }
-    const dot = $('#menu-speed-dot');
-    if (dot) {
-      dot.style.left = (calc.speed != null ? calc.speed : 50) + '%';
-      dot.classList.remove('intent-mvp','intent-estandar','intent-premium');
-      if (calc.speedZone) dot.classList.add('intent-' + calc.speedZone);
-    }
-    const speedText = $('#menu-speed-text');
-    if (speedText) speedText.textContent = calc.speedText || '';
-    const team = $('#menu-team');
-    if (team) team.textContent = (calc.team || []).join(' · ');
-    const stack = $('#menu-stack');
-    if (stack && window.IBISNE_PRICING?.getStack) {
-      const s = window.IBISNE_PRICING.getStack(vertical.id, subtipo.id);
-      stack.textContent = s.join(' · ');
-    }
-  }
 
   // ─── BOTTOM BAR A (Socio) ────────────────────────────────────────────
   function renderBottomBarA(){

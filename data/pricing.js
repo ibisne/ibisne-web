@@ -402,6 +402,86 @@ window.IBISNE_PRICING = {
   // Regla: hosting económico (Hostinger) para sitios estáticos / livianos.
   // Vercel sólo cuando hay SSR/edge real (Next.js dinámico, headless, SaaS).
   // Shopify se hostea solo. Apps no se "deployan" en un host web.
+  // ═══ MEMBRESÍAS · modelo alternativo a pago único ═══════════════════
+  // 4 tiers que escalan con tamaño de proyecto. Cada membresía INCLUYE
+  // 1 proyecto base + soporte/KAM/consultoría/iteraciones del año.
+  // Proyectos adicionales: −50% sobre cotización pública.
+  memberships: [
+    {
+      id: 'foundation',
+      label: 'Foundation',
+      tagline: 'Para arrancar',
+      price: 3000,          // anual MXN sin IVA
+      maxProject: 25000,
+      icon: 'biolink',
+      includes: [
+        '1 proyecto base incluido (hasta $25,000)',
+        'KAM compartido · responde en 24h',
+        'Consultoría grupal mensual',
+        'Soporte por email',
+        'Iteraciones ilimitadas durante el año',
+        'Proyectos adicionales: −50% sobre cotización',
+      ],
+    },
+    {
+      id: 'growth',
+      label: 'Growth',
+      tagline: 'El más elegido',
+      price: 15000,
+      maxProject: 100000,
+      icon: 'partnership',
+      includes: [
+        '1 proyecto base incluido (hasta $100,000)',
+        'KAM compartido · responde en 4h',
+        'Consultoría 1:1 mensual',
+        'Soporte por WhatsApp',
+        'Iteraciones ilimitadas durante el año',
+        'Proyectos adicionales: −50% sobre cotización',
+        'Acceso a comunidad de socios iBisne',
+      ],
+    },
+    {
+      id: 'scale',
+      label: 'Scale',
+      tagline: 'Para crecer en serio',
+      price: 60000,
+      maxProject: 250000,
+      icon: 'shield',
+      includes: [
+        '1 proyecto base incluido (hasta $250,000)',
+        'KAM dedicado · responde en 1h',
+        'Consultoría 1:1 semanal',
+        'Soporte 24/5',
+        'Iteraciones premium ilimitadas',
+        'Proyectos adicionales: −50% sobre cotización',
+        'Acceso a verticales iBisne (smart capital, ventures)',
+      ],
+    },
+    {
+      id: 'holding',
+      label: 'Holding',
+      tagline: 'Sociedad estratégica',
+      price: 150000,
+      maxProject: 1200000,
+      icon: 'marketplace',
+      includes: [
+        '1 proyecto base incluido (hasta $1.2M)',
+        'Mesa de trabajo dedicada (KAM + diseño + dev)',
+        'Consultoría ejecutiva semanal',
+        'Soporte 24/7',
+        'Iteraciones premium ilimitadas',
+        'Co-inversión preferente en venture lab',
+        'Acceso completo a verticales iBisne',
+      ],
+    },
+  ],
+
+  // Devuelve la membresía mínima que cubre el monto del proyecto cotizado
+  getMembership(totalConIva){
+    const list = this.memberships || [];
+    return list.find(m => totalConIva <= m.maxProject) || list[list.length - 1];
+  },
+
   getStack(vertical, subtipo){
     const key = (vertical || '') + '/' + (subtipo || '');
     const map = {
