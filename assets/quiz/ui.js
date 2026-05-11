@@ -828,6 +828,91 @@
     const subtipoLabel = subtipo?.label || '';
     const verticalLabel = State.answers.vertical?.label || '';
     const lineItemsText = calc.lineItems.map(li => `• ${li.label}`).join('\n');
+
+    // ─── AGRUPACIÓN DEL DESGLOSE POR CATEGORÍA ───────────────────
+    // Cada line item lleva qid (id de la pregunta). Lo mapeamos a un grupo
+    // semántico para que la cotización lea como un brief, no como un dump.
+    const GROUP_MAP = {
+      // Plataforma y alcance (subtipo + alcance específico)
+      catalogo: 'plataforma', plataforma: 'plataforma', modelo: 'plataforma',
+      // Funcionalidad técnica
+      pasarelas: 'funcionalidad', integraciones: 'funcionalidad',
+      funciones: 'funcionalidad', tipo_app: 'funcionalidad', backend: 'funcionalidad',
+      // Diseño y marca
+      diseno: 'diseno', identidad: 'diseno',
+      // Tiempo de entrega
+      plazo: 'tiempo',
+      // Soporte y operación
+      soporte: 'soporte',
+    };
+    const GROUP_META = {
+      plataforma:    { label: 'Plataforma y alcance',  icon: 'sitio' },
+      funcionalidad: { label: 'Funcionalidad técnica', icon: 'serverapp' },
+      diseno:        { label: 'Diseño y marca',        icon: 'palette' },
+      tiempo:        { label: 'Tiempo de entrega',     icon: 'clock' },
+      soporte:       { label: 'Soporte y operación',   icon: 'shield' },
+      otros:         { label: 'Otros',                 icon: 'star' },
+    };
+    function groupLineItems(items){
+      const groups = {};
+      const order = ['plataforma','funcionalidad','diseno','tiempo','soporte','otros'];
+      for (const li of items) {
+        const g = GROUP_MAP[li.qid] || 'otros';
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(li);
+      }
+      return order.filter(g => groups[g]).map(g => ({
+        key: g,
+        meta: GROUP_META[g],
+        items: groups[g],
+        subtotal: groups[g].reduce((s, li) => s + (li.add || 0), 0),
+      }));
+    }
+    const groups = groupLineItems(calc.lineItems);
+    function iconHtml(id){
+      return window.IBISNE_ICONS ? '<span class="li-icon">' + window.IBISNE_ICONS.get(id || 'otro','line') + '</span>' : '';
+    }
+    function renderGroup(g){
+      return `
+        <div class="qb-group">
+          <div class="qb-group-head">
+            ${iconHtml(g.meta.icon)}
+            <span class="qb-group-name">${g.meta.label}</span>
+            <span class="qb-group-sub">${formatMxn(g.subtotal)}</span>
+          </div>
+          <div class="qb-group-body">
+            ${g.items.map(li => `
+              <div class="item editable" data-q="${li.qid || ''}" data-opt="${li.id || ''}">
+                ${iconHtml(li.icon)}
+                <span class="label">${li.label}</span>
+                <span class="amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span>
+                <button class="edit-btn" data-q="${li.qid || ''}" type="button" aria-label="Editar ${li.label}">
+                  ${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('edit', 'line') : '✎'}
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    const groupsHtml = groups.map(renderGroup).join('');
+
+    // ─── DATOS FORMALES PARA EL PDF ──────────────────────────────
+    const IBISNE_INFO = {
+      razonSocial: 'iBisne S.A.S de C.V.',
+      email: 'proyectos@ibisne.com',
+      whatsapp: '+52 33 2957 5274',
+      web: 'www.ibisne.com',
+      direccion: 'Guadalajara, Jalisco · México',
+    };
+    const fechaHoy = new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+    const fechaVigencia = (() => {
+      const d = new Date(); d.setDate(d.getDate() + 30);
+      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+    })();
+    const stackItems = window.IBISNE_PRICING?.getStack
+      ? window.IBISNE_PRICING.getStack(vertical?.id, subtipo?.id)
+      : [];
     const waMessage = `Hola, vengo del cotizador iBisne con folio #${folio}.
 
 Subtotal: ${formatMxn(calc.total)} MXN
@@ -855,16 +940,12 @@ Quiero hablar para precisar el alcance.`;
           <div class="result-col-main">
             <div class="cotizacion-preview">
               <h3>— DESGLOSE · CLICK EDITAR PARA AJUSTAR</h3>
-              <div class="item base"><span>${subtipoLabel}</span><span class="amount">${formatMxn(subtipo?.base || 0)}</span></div>
-              ${calc.lineItems.map(li => `
-                <div class="item editable" data-q="${li.qid || ''}" data-opt="${li.id || ''}">
-                  <span class="label">${li.label}</span>
-                  <span class="amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span>
-                  <button class="edit-btn" data-q="${li.qid || ''}" type="button" aria-label="Editar ${li.label}">
-                    ${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('edit', 'line') : '✎'}
-                  </button>
-                </div>
-              `).join('')}
+              <div class="item base">
+                ${iconHtml(subtipo?.icon)}
+                <span class="label">${subtipoLabel}</span>
+                <span class="amount">${formatMxn(subtipo?.base || 0)}</span>
+              </div>
+              ${groupsHtml}
               <div class="item subtotal"><span>Subtotal</span><span class="amount">${formatMxn(calc.total)}</span></div>
               <div class="item iva"><span>IVA · 16%</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
               <div class="item total"><span>Total MXN</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
@@ -874,22 +955,22 @@ Quiero hablar para precisar el alcance.`;
                 <div class="payment-section-label">— FORMA DE PAGO · disponible al cerrar discovery</div>
                 <div class="payment-grid">
                   <button class="payment-method" type="button" disabled aria-label="PayPal">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('fintech','line') : ''}</span>
+                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">PayPal</span>
                     <span class="pm-meta">Disponible pronto</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="Mercado Pago">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('marketplace','line') : ''}</span>
+                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">Mercado Pago</span>
                     <span class="pm-meta">Disponible pronto</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="SPEI / Transferencia">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('servicio','line') : ''}</span>
+                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('cash','line') : ''}</span>
                     <span class="pm-name">SPEI · Transferencia</span>
                     <span class="pm-meta">Disponible pronto</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="Criptomonedas">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('star','line') : ''}</span>
+                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('coin','line') : ''}</span>
                     <span class="pm-name">Cripto · USDC / BTC</span>
                     <span class="pm-meta">Disponible pronto</span>
                   </button>
@@ -925,6 +1006,121 @@ Quiero hablar para precisar el alcance.`;
             </div>
           </div>
         </div>
+
+        <!-- ─── COTIZACIÓN FORMAL · solo visible en print (PDF) ─────────────── -->
+        <section class="print-cotizacion" aria-hidden="true">
+          <header class="pc-header">
+            <div class="pc-brand">
+              <img src="brand/iBisne_blanco.png" alt="iBisne">
+              <div class="pc-brand-tagline">Holding LATAM · Capital + ejecución</div>
+            </div>
+            <div class="pc-meta">
+              <div class="pc-meta-row"><span class="pc-k">Folio</span><span class="pc-v">#${folio}</span></div>
+              <div class="pc-meta-row"><span class="pc-k">Fecha</span><span class="pc-v">${fechaHoy}</span></div>
+              <div class="pc-meta-row"><span class="pc-k">Vigencia</span><span class="pc-v">${fechaVigencia}</span></div>
+            </div>
+          </header>
+
+          <h1 class="pc-title">Cotización indicativa</h1>
+          <p class="pc-subtitle">${verticalLabel} · ${subtipoLabel} · ${calc.modules} módulos configurados</p>
+
+          <div class="pc-grid pc-grid-2">
+            <section class="pc-block">
+              <div class="pc-block-title">Atendido por</div>
+              <div class="pc-info">
+                <div class="pc-info-row"><strong>${IBISNE_INFO.razonSocial}</strong></div>
+                <div class="pc-info-row">${IBISNE_INFO.email}</div>
+                <div class="pc-info-row">WhatsApp: ${IBISNE_INFO.whatsapp}</div>
+                <div class="pc-info-row">${IBISNE_INFO.web}</div>
+                <div class="pc-info-row">${IBISNE_INFO.direccion}</div>
+              </div>
+            </section>
+            <section class="pc-block">
+              <div class="pc-block-title">Cliente</div>
+              <div class="pc-info pc-info-blanks">
+                <div class="pc-info-row"><span class="pc-blank-key">Nombre</span><span class="pc-blank">_______________________________</span></div>
+                <div class="pc-info-row"><span class="pc-blank-key">Empresa</span><span class="pc-blank">_______________________________</span></div>
+                <div class="pc-info-row"><span class="pc-blank-key">Email</span><span class="pc-blank">_______________________________</span></div>
+                <div class="pc-info-row"><span class="pc-blank-key">WhatsApp</span><span class="pc-blank">_______________________________</span></div>
+                <div class="pc-info-row"><span class="pc-blank-key">RFC</span><span class="pc-blank">_______________________________</span></div>
+              </div>
+            </section>
+          </div>
+
+          <section class="pc-block pc-breakdown">
+            <div class="pc-block-title">Desglose del proyecto</div>
+            <div class="pc-line pc-line-base">
+              <span class="pc-line-name">${subtipoLabel}</span>
+              <span class="pc-line-amount">${formatMxn(subtipo?.base || 0)}</span>
+            </div>
+            ${groups.map(g => `
+              <div class="pc-group">
+                <div class="pc-group-head">${g.meta.label}</div>
+                ${g.items.map(li => `
+                  <div class="pc-line">
+                    <span class="pc-line-name">${li.label}</span>
+                    <span class="pc-line-amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span>
+                  </div>
+                `).join('')}
+                <div class="pc-group-sub">
+                  <span>Subtotal ${g.meta.label.toLowerCase()}</span>
+                  <span>${formatMxn(g.subtotal)}</span>
+                </div>
+              </div>
+            `).join('')}
+          </section>
+
+          <section class="pc-totals">
+            <div class="pc-total-row"><span>Subtotal</span><span>${formatMxn(calc.total)}</span></div>
+            <div class="pc-total-row"><span>IVA · 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
+            <div class="pc-total-row pc-total-final"><span>TOTAL MXN</span><span>${formatMxn(calc.total * 1.16)}</span></div>
+          </section>
+
+          <div class="pc-grid pc-grid-2">
+            <section class="pc-block">
+              <div class="pc-block-title">Equipo asignado</div>
+              <div class="pc-chips">
+                ${(calc.team || []).map(t => `<span class="pc-chip">${t}</span>`).join('')}
+              </div>
+            </section>
+            <section class="pc-block">
+              <div class="pc-block-title">Stack tecnológico</div>
+              <ul class="pc-list">
+                ${stackItems.map(s => `<li>${s}</li>`).join('')}
+              </ul>
+            </section>
+          </div>
+
+          <section class="pc-block">
+            <div class="pc-block-title">Condiciones comerciales</div>
+            <ul class="pc-list pc-conditions">
+              <li>50% anticipo al firmar propuesta · 50% contra entrega del lanzamiento.</li>
+              <li>3 rondas de ajustes gratuitas durante el primer año (UX/UI menores).</li>
+              <li>Cotización <strong>indicativa</strong> · sujeta a discovery firmable con alcance final.</li>
+              <li>Vigencia: 30 días desde la fecha de emisión.</li>
+              <li>Precios en pesos mexicanos. IVA 16% aplica adicional cuando se indica subtotal.</li>
+              <li>Forma de pago: PayPal · Mercado Pago · SPEI/Transferencia · Criptomonedas (USDC, BTC).</li>
+              <li>Una vez aprobada, el equipo de iBisne se asigna en un máximo de 5 días hábiles.</li>
+            </ul>
+          </section>
+
+          <section class="pc-signatures">
+            <div class="pc-sign-block">
+              <div class="pc-sign-line">_____________________________</div>
+              <div class="pc-sign-label">Cliente · Nombre y firma</div>
+            </div>
+            <div class="pc-sign-block">
+              <div class="pc-sign-line">_____________________________</div>
+              <div class="pc-sign-label">iBisne S.A.S de C.V. · Hunter asignado</div>
+            </div>
+          </section>
+
+          <footer class="pc-footer">
+            <span>${IBISNE_INFO.razonSocial}</span>
+            <span>${IBISNE_INFO.email} · ${IBISNE_INFO.whatsapp}</span>
+            <span>Folio #${folio} · ${fechaHoy}</span>
+          </footer>
+        </section>
 
         <div class="edit-modal" id="edit-modal" hidden>
           <div class="edit-modal-backdrop" data-close></div>
@@ -1285,25 +1481,27 @@ Quiero hablar para precisar el alcance.`;
           total += item.add || 0;
           if (item.flag) flags.add(item.flag);
           addIntent(item);
-          if (item.add) lineItems.push({ qid: q.id, id: item.id, label: item.label, add: item.add });
+          if (item.add) lineItems.push({ qid: q.id, id: item.id, label: item.label, add: item.add, icon: item.icon });
         }
       } else {
         total += ans.add || 0;
         if (ans.flag) flags.add(ans.flag);
         addIntent(ans);
-        if (ans.add) lineItems.push({ qid: q.id, id: ans.id, label: ans.label, add: ans.add });
+        if (ans.add) lineItems.push({ qid: q.id, id: ans.id, label: ans.label, add: ans.add, icon: ans.icon });
       }
     }
 
     // 2. Sumar universales (excepto plazo que es multiplicador)
     let plazoMul = 1.0;
     let plazoLabel = null;
+    let plazoIcon = null;
     for (const q of (PRICING.universales || [])) {
       const ans = a[q.id];
       if (!ans) continue;
       if (q.id === 'plazo') {
         plazoMul = ans.mul || 1.0;
         plazoLabel = ans.label + (ans.metaSuffix ? ' (' + ans.metaSuffix + ')' : '');
+        plazoIcon = ans.icon;
         addIntent(ans);
         continue;
       }
@@ -1312,12 +1510,12 @@ Quiero hablar para precisar el alcance.`;
           total += item.add || 0;
           if (item.flag) flags.add(item.flag);
           addIntent(item);
-          if (item.add) lineItems.push({ qid: q.id, id: item.id, label: item.label, add: item.add });
+          if (item.add) lineItems.push({ qid: q.id, id: item.id, label: item.label, add: item.add, icon: item.icon });
         }
       } else {
         if (ans.add) {
           total += ans.add;
-          lineItems.push({ qid: q.id, id: ans.id, label: ans.label, add: ans.add });
+          lineItems.push({ qid: q.id, id: ans.id, label: ans.label, add: ans.add, icon: ans.icon });
         }
         if (ans.flag) flags.add(ans.flag);
         addIntent(ans);
@@ -1329,7 +1527,7 @@ Quiero hablar para precisar el alcance.`;
     total = total * plazoMul;
     if (plazoLabel && plazoMul !== 1.0) {
       const ajuste = total - subtotalAntesPlazo;
-      lineItems.push({ qid: 'plazo', id: a.plazo.id, label: plazoLabel, add: ajuste });
+      lineItems.push({ qid: 'plazo', id: a.plazo.id, label: plazoLabel, add: ajuste, icon: plazoIcon });
     }
 
     // Velocidad de salida (reemplaza el mapa de calor de intención)

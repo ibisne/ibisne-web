@@ -72,12 +72,17 @@
   }
   function syncTheme(theme){
     var btn = document.getElementById('hud-theme');
-    if (!btn) return;
-    btn.setAttribute('data-icon', theme === 'light' ? 'sun' : 'moon');
-    btn.setAttribute('aria-label', theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro');
-    // Si IBISNE_ICONS ya está cargado, re-inyectar icono
-    if (window.IBISNE_ICONS && btn.firstChild) {
-      btn.innerHTML = window.IBISNE_ICONS.get(theme === 'light' ? 'sun' : 'moon', 'line') || '';
+    if (btn) {
+      btn.setAttribute('data-icon', theme === 'light' ? 'sun' : 'moon');
+      btn.setAttribute('aria-label', theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro');
+      if (window.IBISNE_ICONS && btn.firstChild) {
+        btn.innerHTML = window.IBISNE_ICONS.get(theme === 'light' ? 'sun' : 'moon', 'line') || '';
+      }
+    }
+    // Sincroniza el theme-color del navegador móvil (barra superior iOS/Android)
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'light' ? '#F7F8FA' : '#0D1117');
     }
   }
 
