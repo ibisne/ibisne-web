@@ -192,6 +192,16 @@ window.IBISNE_I18N_DATA = {
   'Contratar membresía →': 'Get membership →',
   'Ver los 4 planes de membresía': 'See all 4 membership plans',
   'RECOMENDADA': 'RECOMMENDED',
+  // Brand promise box
+  '— TU PROYECTO IBISNE INCLUYE SIEMPRE': '— YOUR IBISNE PROJECT ALWAYS INCLUDES',
+  'Equipo asignado': 'Assigned team',
+  'Stack moderno': 'Modern stack',
+  'Infra incluida': 'Infra included',
+  'Discovery firmable': 'Signable discovery',
+  'Sin dependencias frágiles.': 'No fragile dependencies.',
+  'Hosting + base de datos + dominio configurado. Primer año sin costo.': 'Hosting + database + domain configured. First year free.',
+  'Antes de cobrar un peso: alcance definido y propuesta firmable.': 'Before we charge a cent: scope defined and signable proposal.',
+  'Tu proyecto iBisne incluye siempre': 'Your iBisne project always includes',
   // Verticales redibujadas
   'Tienda en línea': 'Online store',
   'Tech especializado': 'Specialized tech',
