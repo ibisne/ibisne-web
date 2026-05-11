@@ -1263,7 +1263,7 @@ body.has-bottom-bar-expanded .quiz-main{
 }
 .payment-method{
   display: flex; flex-direction: column; align-items: center;
-  gap: 8px; padding: 18px 12px;
+  gap: 6px; padding: 14px 10px;
   background: transparent;
   border: 1px solid var(--bg-line);
   border-radius: var(--radius, 14px);
@@ -1278,19 +1278,24 @@ body.has-bottom-bar-expanded .quiz-main{
   border-color: var(--accent-mint); opacity: 1;
 }
 .payment-method .pm-icon{
-  width: 32px; height: 32px;
+  width: 28px; height: 28px;
   display: inline-flex; align-items: center; justify-content: center;
   color: var(--text-muted);
 }
-.payment-method .pm-icon svg{ width: 24px; height: 24px; }
-.payment-method .pm-name{ font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.005em; }
+.payment-method .pm-icon svg{ width: 22px; height: 22px; }
+.payment-method .pm-name{ font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.005em; line-height: 1.2; }
 .payment-method .pm-meta{
   font-family: var(--font-mono); font-size: 9px;
-  text-transform: uppercase; letter-spacing: 0.16em;
-  color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-muted); line-height: 1.2;
 }
 @media (max-width: 768px){
-  .payment-grid{ grid-template-columns: repeat(2, 1fr); }
+  .payment-grid{ grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .payment-method{ gap: 4px; padding: 12px 10px; }
+  .payment-method .pm-icon{ width: 26px; height: 26px; }
+  .payment-method .pm-icon svg{ width: 20px; height: 20px; }
+  .payment-method .pm-name{ font-size: 12px; }
+  .payment-method .pm-meta{ font-size: 8px; }
 }
 .cotizacion-preview .stamp{
   display: inline-block; margin-top: 20px;
@@ -1374,29 +1379,28 @@ body.has-bottom-bar-expanded .quiz-main{
     grid-template-columns: none !important;
     gap: 8px !important;
   }
-  /* Cards horizontales mobile · grid flex con icono fijo izquierda y contenido derecho.
-     min-height auto · crece para que TODO el texto quepa (cero ellipsis). */
+  /* Cards horizontales mobile · grid limpio con icono · texto · meta.
+     Solo UN texto verde (subtitle) · cero ellipsis · cero palomita encima del precio. */
   .options:not(.is-hero) .option{
     min-height: 0;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    column-gap: 16px;
+    column-gap: 14px;
     text-align: left;
-    padding: 16px 18px;
+    padding: 14px 16px;
     border-radius: var(--radius, 14px);
   }
-  /* Icono · columna 1 · centrado vertical */
+  /* Icono · columna 1 · siempre centrado vertical (span todas las rows) */
   .options:not(.is-hero) .option > .icon{
-    grid-column: 1;
-    width: 40px; height: 40px; margin: 0;
+    grid-column: 1; grid-row: 1 / -1;
+    width: 38px; height: 38px; margin: 0;
     align-self: center;
   }
-  .options:not(.is-hero) .option > .icon svg{ width: 28px; height: 28px; }
-  /* Bloque texto central · columna 2 · contiene title + subtitle + category */
+  .options:not(.is-hero) .option > .icon svg{ width: 26px; height: 26px; }
+  /* Bloque texto · solo title + subtitle (categoría se oculta en mobile · era redundante) */
   .options:not(.is-hero) .option > .option-title,
-  .options:not(.is-hero) .option > .option-subtitle,
-  .options:not(.is-hero) .option > .option-category{
+  .options:not(.is-hero) .option > .option-subtitle{
     grid-column: 2;
     margin: 0;
   }
@@ -1406,19 +1410,16 @@ body.has-bottom-bar-expanded .quiz-main{
   }
   .options:not(.is-hero) .option > .option-subtitle{
     font-size: 12px; line-height: 1.3;
-    margin-top: 2px;
+    margin-top: 1px;
     opacity: 0.65;
   }
-  .options:not(.is-hero) .option > .option-category{
-    font-size: 9px; letter-spacing: 0.16em;
-    margin-bottom: 2px;
-    opacity: 0.7;
-    order: -1; /* aparece arriba del título dentro de la columna */
-  }
-  /* Meta · columna 3 · precio · centrado vertical */
+  /* Categoría: oculta en mobile lista (deja solo el subtitle como info contextual) */
+  .options:not(.is-hero) .option > .option-category{ display: none; }
+  /* Meta (precio) · columna 3 · siempre centrado vertical (span todas las rows) */
   .options:not(.is-hero) .option > .option-meta{
-    grid-column: 3; align-self: center;
-    margin: 0; padding: 0 6px 0 0;
+    grid-column: 3; grid-row: 1 / -1;
+    align-self: center;
+    margin: 0; padding: 0;
     font-size: 13px;
     white-space: nowrap;
   }
@@ -1426,18 +1427,12 @@ body.has-bottom-bar-expanded .quiz-main{
   .options:not(.is-hero) .option > .option-schedule{ display: none; }
   .options:not(.is-hero) .option > .option-description{ display: none; }
   .options:not(.is-hero) .option > .option-help{ display: none; }
-  /* Meta (precio): columna 3, span 2 filas, centrado vertical */
-  .options:not(.is-hero) .option > .option-meta{
-    grid-column: 3; grid-row: 1 / 3;
-    margin: 0; padding: 0 6px 0 0;
-    font-size: 13px;
-    white-space: nowrap;
-    align-self: center;
-  }
-
-  /* Check de selección: en lista horizontal va más pequeño y al lado del meta */
-  .option.is-selected::after{ width: 16px; height: 16px; font-size: 10px; top: 50%; right: 12px; transform: translateY(-50%); }
-  .options.is-hero .option.is-selected::after{ top: 8px; right: 8px; transform: none; width: 18px; height: 18px; }
+  /* Check de selección en mobile:
+     · Lista horizontal: OCULTO · el border + bg de selección ya indican estado
+       (la palomita se encimaba con el precio)
+     · Hero 2×2: pequeña esquina superior derecha */
+  .options:not(.is-hero) .option.is-selected::after{ display: none; }
+  .options.is-hero .option.is-selected::after{ top: 8px; right: 8px; transform: none; width: 18px; height: 18px; font-size: 11px; }
   .classifier-grid{ grid-template-columns: 1fr; gap: 12px; }
   .classifier-grid .option{ min-height: 160px; padding: 22px 20px; }
   .classifier-grid .option .option-title{ font-size: 19px; }
