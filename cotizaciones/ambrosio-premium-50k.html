@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne · Cotización #424 · Ambrosio · Tier Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:           #FFFFFF;
+    --bg-paper:     #F5F5F2;
+    --bg-tint:      #FAFAF8;
+    --text-primary: #0A0E13;
+    --text-secondary:#4A5058;
+    --text-muted:   #8B9099;
+    --hairline:     #DCDCD8;
+    --hairline-strong:#0A0E13;
+    --accent:       #00754A;
+    --accent-soft:  #E8F4EC;
+    --accent-line:  #00754A;
+    --font-display: 'Inter Tight', -apple-system, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+    --fs-title:     26pt;
+    --fs-h2:        12pt;
+    --fs-body:      8.5pt;
+    --fs-mono:      6.75pt;
+    --fs-micro:     6pt;
+    --fs-total:     19pt;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+  @page { size: letter; margin: 0; }
+
+  html,body{
+    background: #E5E5E5;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet{
+    width: 215.9mm;
+    height: 279.4mm;
+    background: var(--bg);
+    padding: 9mm 12mm 7mm 12mm;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    font-size: var(--fs-body);
+    line-height: 1.35;
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  /* — RAIL accent vertical izquierdo — */
+  .sheet::before{
+    content: "";
+    position: absolute;
+    left: 5.5mm;
+    top: 9mm;
+    bottom: 7mm;
+    width: 1px;
+    background: var(--hairline);
+  }
+  .sheet::after{
+    content: "";
+    position: absolute;
+    left: 5.5mm;
+    top: 9mm;
+    width: 3px;
+    height: 14mm;
+    background: var(--accent);
+    transform: translateX(-1px);
+  }
+
+  /* — HEADER PRO — */
+  .q-head{
+    border-bottom: 1px solid var(--hairline-strong);
+    padding-bottom: 3.5mm;
+  }
+  .q-head-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 4mm;
+  }
+  .q-head-top .brand-tag{ color: var(--text-primary); font-weight:500; }
+  .q-head-top .brand-tag .dot{
+    display:inline-block;
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin: 0 2mm;
+    vertical-align: middle;
+  }
+  .q-head-top .tier-tag{
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 1mm 2.5mm;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+  }
+
+  .q-head-main{
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 10mm;
+    align-items: end;
+  }
+  .q-title-block .q-title{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-title);
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+    color: var(--text-primary);
+  }
+  .q-title-block .q-title .num{
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .q-title-block .q-subtitle{
+    margin-top: 3mm;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 11pt;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+    line-height: 1.25;
+  }
+  .q-meta-block{
+    display: flex;
+    flex-direction: column;
+    gap: 1.2mm;
+    border-left: 1px solid var(--hairline);
+    padding-left: 6mm;
+  }
+  .q-meta-block .meta-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    line-height: 1.4;
+  }
+  .q-meta-block .meta-row .k{
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .q-meta-block .meta-row .v{
+    color: var(--text-primary);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* — PARTES — */
+  .q-parties{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    padding: 3mm 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .party{
+    padding: 0 6mm 0 0;
+    border-right: 1px solid var(--hairline);
+  }
+  .party + .party{ padding-left: 6mm; }
+  .party:last-child{ border-right: none; padding-right: 0; }
+  .party .label{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 2mm;
+  }
+  .party .label .num{ color: var(--accent); font-weight: 500; }
+  .party .name{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 10.5pt;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.2mm;
+    line-height: 1.2;
+    color: var(--text-primary);
+  }
+  .party .meta{
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .party .meta strong{ color: var(--text-primary); font-weight: 500; }
+
+  /* — SECCIONES — */
+  .q-section{ padding: 2.5mm 0 0 0; }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 2.5mm;
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+  .eyebrow .num{ color: var(--accent); font-weight: 500; }
+  .eyebrow::after{
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  /* — STACK CHIPS — */
+  .stack-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5mm;
+  }
+  .stack-chips .chip{
+    border: 1px solid var(--hairline);
+    padding: 1.2mm 3mm;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    background: var(--bg-tint);
+    line-height: 1.2;
+  }
+  .stack-chips .chip.is-accent{
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 500;
+  }
+
+  /* — TABLA DESGLOSE — */
+  .tier-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5mm;
+    font-size: var(--fs-body);
+  }
+  .tier-table thead th{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 2.2mm 3mm 2mm 0;
+    border-top: 2px solid var(--hairline-strong);
+    border-bottom: 1px solid var(--hairline);
+    background: var(--bg-tint);
+  }
+  .tier-table thead th.right{ text-align:right; padding-right: 3mm; }
+  .tier-table thead th.idx{ width: 10mm; padding-left: 3mm; }
+  .tier-table tbody td{
+    padding: 1.9mm 3mm 1.9mm 0;
+    vertical-align: top;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--font-display);
+    font-size: var(--fs-body);
+    line-height: 1.3;
+  }
+  .tier-table tbody td.idx{
+    width: 10mm;
+    padding-left: 3mm;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .tier-table tbody td.concept{
+    font-weight: 600;
+    width: 28%;
+    letter-spacing: -0.005em;
+    color: var(--text-primary);
+  }
+  .tier-table tbody td.detail{
+    width: 48%;
+    color: var(--text-secondary);
+    padding-right: 4mm;
+  }
+  .tier-table tbody td.amount{
+    width: 14%;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    padding-right: 3mm;
+    font-variant-numeric: tabular-nums;
+  }
+  .tier-table tbody tr:last-child td{ border-bottom: 1px solid var(--hairline-strong); }
+
+  /* — TOTAL — */
+  .q-total{
+    margin-top: 3mm;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-left: 3px solid var(--accent);
+    padding: 3mm 5mm 3mm 5mm;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 8mm;
+    align-items: center;
+  }
+  .q-total-meta{}
+  .q-total-meta .label{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 2mm;
+  }
+  .q-total-meta .tier{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-total);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    color: var(--text-primary);
+  }
+  .q-total-meta .tier-tag-sub{
+    margin-top: 2mm;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .q-total-figures{
+    border-left: 1px solid var(--accent);
+    padding-left: 6mm;
+  }
+  .q-total-figures .row{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--text-secondary);
+    padding: 1.2mm 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .q-total-figures .row.divider{
+    border-top: 1px solid var(--accent);
+    margin-top: 1mm;
+    padding-top: 2mm;
+  }
+  .q-total-figures .row .k{
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .q-total-figures .row.big{
+    font-family: var(--font-display);
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    padding: 1mm 0 0 0;
+  }
+  .q-total-figures .row.big .k{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  /* — BOTTOM (notas + firma) — */
+  .q-bottom{
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 8mm;
+    padding: 2.5mm 0 0 0;
+  }
+  .notes-list{
+    list-style: none;
+    counter-reset: notes;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 5mm;
+    row-gap: 0.8mm;
+    margin-top: 0.5mm;
+  }
+  .notes-list li{
+    counter-increment: notes;
+    padding-left: 7mm;
+    position: relative;
+    font-size: var(--fs-body);
+    line-height: 1.35;
+    color: var(--text-secondary);
+  }
+  .notes-list li::before{
+    content: counter(notes, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.3mm;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .notes-list strong{ color: var(--text-primary); font-weight: 600; }
+
+  .q-signoff{
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    padding-left: 6mm;
+    border-left: 1px solid var(--hairline);
+  }
+  .q-signoff .sign-line{
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+  }
+  .q-signoff .sign-line .line{
+    height: 1px;
+    background: var(--text-primary);
+    margin-top: 5mm;
+  }
+  .q-signoff .sign-line .caption{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* — FOOTER — */
+  .q-foot{
+    margin-top: auto;
+    padding-top: 3mm;
+    border-top: 1px solid var(--hairline-strong);
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.9fr;
+    gap: 6mm;
+  }
+  .q-foot-col{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+  }
+  .q-foot-col .label{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 1mm;
+  }
+  .q-foot-col .brand{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: -0.005em;
+    color: var(--text-primary);
+  }
+  .q-foot-col .legal{
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+  .q-foot-col .legal strong{
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .q-foot-col .slogan{
+    margin-top: 1.5mm;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: -0.005em;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .q-foot-col .slogan::before{
+    content: "— ";
+    color: var(--accent);
+  }
+  .social-list{
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+  .social-list li{
+    display: flex;
+    gap: 2mm;
+    align-items: baseline;
+  }
+  .social-list li .net{
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    width: 14mm;
+    flex-shrink: 0;
+  }
+  .social-list li .handle{ color: var(--text-primary); }
+  .q-foot-col.tail{
+    align-items: flex-end;
+    text-align: right;
+  }
+  .q-foot-col.tail .label{ align-self: flex-end; }
+  .q-foot-col.tail .hash{
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .q-foot-col.tail .hash strong{ color: var(--accent); font-weight: 500; }
+
+  @media print{
+    html,body{ background: var(--bg); }
+    .sheet{ margin: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <header class="q-head">
+    <div class="q-head-top">
+      <div class="brand-tag">iBisne<span class="dot"></span>HOLDING LATAM<span class="dot"></span>2026</div>
+      <div class="tier-tag">Tier · Premium</div>
+    </div>
+    <div class="q-head-main">
+      <div class="q-title-block">
+        <div class="q-title">Cotización <span class="num">#424</span></div>
+        <div class="q-subtitle">Proyecto Ambrosio — Sitio web alto impacto para arquitectura</div>
+      </div>
+      <div class="q-meta-block">
+        <div class="meta-row"><span class="k">Emisión</span><span class="v">2026.05.07</span></div>
+        <div class="meta-row"><span class="k">Vigencia</span><span class="v">15 días naturales</span></div>
+        <div class="meta-row"><span class="k">Moneda</span><span class="v">MXN — IVA 16%</span></div>
+        <div class="meta-row"><span class="k">Hunter</span><span class="v">Willy Vergara</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="q-parties">
+    <div class="party">
+      <div class="label"><span class="num">§ 01</span> — Cliente</div>
+      <div class="name">Proyecto Ambrosio</div>
+      <div class="meta">Arquitectura<br>Sitio web alto impacto<br>Hasta <strong>25 proyectos</strong></div>
+    </div>
+    <div class="party">
+      <div class="label"><span class="num">§ 02</span> — Emisor</div>
+      <div class="name">iBisne S.A.S de C.V.</div>
+      <div class="meta">RFC: <strong>IBI12054GA</strong><br>Tajín #1658, Zapopan<br>Jalisco · México</div>
+    </div>
+    <div class="party">
+      <div class="label"><span class="num">§ 03</span> — Hunter</div>
+      <div class="name">Willy Vergara</div>
+      <div class="meta">+52 999 113 2184<br>willy@ibisne.com<br>Comercial · iBisne</div>
+    </div>
+  </section>
+
+  <section class="q-section q-stack">
+    <div class="eyebrow"><span class="num">§ 04</span> — Stack técnico propuesto</div>
+    <div class="stack-chips">
+      <span class="chip is-accent">Next.js 15</span>
+      <span class="chip">React 19</span>
+      <span class="chip">TypeScript</span>
+      <span class="chip">Vercel</span>
+      <span class="chip">Framer Motion</span>
+      <span class="chip is-accent">Sanity CMS</span>
+      <span class="chip">Schema.org</span>
+      <span class="chip">CSS Modules</span>
+    </div>
+  </section>
+
+  <section class="q-section q-breakdown">
+    <div class="eyebrow"><span class="num">§ 05</span> — Desglose de servicios</div>
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th class="idx">N°</th>
+          <th>Concepto</th>
+          <th>Detalle</th>
+          <th class="right">Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="idx">01</td>
+          <td class="concept">Diseño Frontend</td>
+          <td class="detail">UI editorial Inter Tight + grid responsive, hasta 8 vistas, page transitions, hero scroll-driven y parallax cinematográfico.</td>
+          <td class="amount">$ 14,000.00</td>
+        </tr>
+        <tr>
+          <td class="idx">02</td>
+          <td class="concept">Diseño Backend</td>
+          <td class="detail">CMS headless con login (Sanity recomendado), panel admin custom para que el cliente cargue/edite proyectos sin tocar código.</td>
+          <td class="amount">$ 12,000.00</td>
+        </tr>
+        <tr>
+          <td class="idx">03</td>
+          <td class="concept">Diseño Animado</td>
+          <td class="detail">Animaciones cinemáticas + micro-interacciones + transiciones de página orquestadas con Framer Motion.</td>
+          <td class="amount">$ 9,000.00</td>
+        </tr>
+        <tr>
+          <td class="idx">04</td>
+          <td class="concept">Mano de Obra</td>
+          <td class="detail">Ensamble e integración + case-studies individuales por proyecto (galería, ficha técnica, narrativa).</td>
+          <td class="amount">$ 10,000.00</td>
+        </tr>
+        <tr>
+          <td class="idx">05</td>
+          <td class="concept">Deploy &amp; QA</td>
+          <td class="detail">Vercel + QA cross-browser + SEO técnico avanzado: Schema.org, sitemap dinámico, OG dinámicos por proyecto.</td>
+          <td class="amount">$ 5,000.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="q-total">
+    <div class="q-total-meta">
+      <div class="label">— Inversión total · Tier Premium</div>
+      <div class="tier">$ 58,000.00 <span style="font-size:9pt; color:var(--text-secondary); font-weight:500; letter-spacing:0.05em;">MXN</span></div>
+      <div class="tier-tag-sub">Cifras en pesos mexicanos. IVA mexicano 16% incluido en el total con IVA.</div>
+    </div>
+    <div class="q-total-figures">
+      <div class="row"><span class="k">Subtotal</span><span class="v">$ 50,000.00</span></div>
+      <div class="row"><span class="k">IVA · 16%</span><span class="v">$  8,000.00</span></div>
+      <div class="row big divider"><span class="k">Total con IVA</span><span class="v">$ 58,000.00</span></div>
+    </div>
+  </section>
+
+  <section class="q-bottom">
+    <div class="q-notes">
+      <div class="eyebrow"><span class="num">§ 06</span> — Notas y condiciones</div>
+      <ol class="notes-list">
+        <li>Se requiere el <strong>50% de anticipo</strong> para iniciar el ensamble.</li>
+        <li>Cliente entrega <strong>≥ 5 proyectos</strong> en los primeros 5 días post-firma.</li>
+        <li><strong>30 días naturales</strong> tras la primera entrega para cargar la totalidad.</li>
+        <li>Los <strong>primeros 3 ajustes</strong> son gratuitos durante el primer año; ajustes adicionales se cotizan según complejidad.</li>
+        <li>Stack opera en <strong>plan free de Vercel y Next.js</strong>; sin costos recurrentes para este alcance.</li>
+        <li><strong>Dominio</strong> a cargo del cliente. Adquisición/configuración nueva se cotiza aparte.</li>
+      </ol>
+    </div>
+    <div class="q-signoff">
+      <div class="eyebrow"><span class="num">§ 07</span> — Aceptación</div>
+      <div class="sign-line">
+        <span class="line"></span>
+        <span class="caption">Firma del cliente</span>
+      </div>
+      <div class="sign-line">
+        <span class="line"></span>
+        <span class="caption">Nombre / Fecha</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="q-foot">
+    <div class="q-foot-col">
+      <div class="brand">iBisne S.A.S de C.V.</div>
+      <div class="legal">
+        RFC: <strong>IBI12054GA</strong><br>
+        Tajín #1658, C.P. 45050 — Col. El Zapote<br>
+        Zapopan, Jalisco · México<br>
+        +52 33 2957 5274 · proyectos@ibisne.com<br>
+        www.ibisne.com
+      </div>
+      <div class="slogan">Capital operativo. Mentalidad operadora.</div>
+    </div>
+    <div class="q-foot-col">
+      <div class="label">— Redes</div>
+      <ul class="social-list">
+        <li><span class="net">Instagram</span><span class="handle">@ibisne</span></li>
+        <li><span class="net">LinkedIn</span><span class="handle">/company/ibisne</span></li>
+        <li><span class="net">X</span><span class="handle">@ibisne</span></li>
+        <li><span class="net">Web</span><span class="handle">www.ibisne.com</span></li>
+      </ul>
+    </div>
+    <div class="q-foot-col tail">
+      <div class="label">— Documento</div>
+      <div class="hash"><strong>COT</strong> · #424 / 2026</div>
+      <div class="hash">REV · v1.0 · 2026.05.07</div>
+      <div class="hash">VIGENCIA · 15 días</div>
+      <div class="hash" style="margin-top:1.5mm; color:var(--accent); font-weight:500;">— iBisne · 2026</div>
+    </div>
+  </footer>
+
+</main>
+</body>
+</html>

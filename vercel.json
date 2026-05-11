@@ -2,7 +2,26 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/legacy-v2", "destination": "/legacy-v2/index.html" },
+    { "source": "/legacy-v2/", "destination": "/legacy-v2/index.html" }
+  ],
+  "redirects": [
+    { "source": "/pages/(.*)", "destination": "/legacy-v2/pages/$1", "permanent": false }
+  ],
   "headers": [
+    {
+      "source": "/legacy-v2/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
