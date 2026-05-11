@@ -59,6 +59,9 @@ window.IBISNE_ICONS = (function(){
     // No-code: bloques con + central (Lego-style)
     nocode: variant('<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="17" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="17" r="1" fill="currentColor"/><circle cx="17" cy="17" r="1" fill="currentColor"/>'),
 
+    // Grid limpio · trigger del panel mobile (resumen + redes + prefs)
+    grid: variant('<rect x="3" y="3" width="8" height="8" rx="1.2"/><rect x="13" y="3" width="8" height="8" rx="1.2"/><rect x="3" y="13" width="8" height="8" rx="1.2"/><rect x="13" y="13" width="8" height="8" rx="1.2"/>'),
+
     // ─── UNIVERSALES y misc ─────────────────────────────────────────
     palette: variant('<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="17" cy="13.5" r="1.2" fill="currentColor"/><path d="M12 21 a3 3 0 0 1 0 -6 a2 2 0 0 0 0 -4"/>'),
 

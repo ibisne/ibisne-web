@@ -389,6 +389,84 @@ body::before{
     text-decoration: none;
     border-radius: 4px;
   }
+
+  /* ─── Panel mobile · resumen vivo de la cotización ─────────── */
+  .menu-resumen{ gap: 14px !important; }
+  .menu-resumen[hidden]{ display: none !important; }
+  .menu-resumen-grid{
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .menu-resumen-row{
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-line);
+  }
+  .menu-resumen-row:last-child{ border-bottom: none; }
+  .menu-resumen-key{
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .menu-resumen-val{
+    font-family: var(--font-display);
+    font-size: 15px; color: var(--text-primary);
+    text-align: right; max-width: 60%;
+  }
+  .menu-resumen-totalrow{ padding: 14px 0; }
+  .menu-resumen-total{
+    font-size: 26px; font-weight: 700;
+    color: var(--accent-mint);
+    font-variant-numeric: tabular-nums;
+  }
+  .menu-resumen-total small{
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-muted); margin-left: 4px;
+    font-weight: 400; letter-spacing: 0.12em;
+  }
+  .menu-resumen-speed{
+    display: flex; flex-direction: column; gap: 10px;
+    padding-top: 6px;
+  }
+  .menu-resumen-speed .qb-intent-line{
+    margin: 6px 0 4px; height: 2px; position: relative;
+    background: linear-gradient(90deg, rgba(61,255,127,0.4), rgba(174,255,200,0.85), rgba(61,255,127,0.4));
+  }
+  .menu-resumen-speed .qb-intent-dot{
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--bg-deep);
+    box-shadow: 0 0 0 1px var(--accent);
+    transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .menu-resumen-speed .qb-intent-labels{
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .menu-resumen-speedtext{
+    font-family: var(--font-display); font-size: 13px;
+    line-height: 1.45; color: var(--accent-mint);
+    margin-top: 4px;
+  }
+  .menu-resumen-details{
+    border-top: 1px solid var(--bg-line);
+    padding-top: 14px;
+  }
+  .menu-resumen-details summary{
+    cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent-mint);
+    list-style: none;
+    padding-bottom: 8px;
+  }
+  .menu-resumen-details summary::-webkit-details-marker{ display: none; }
+  .menu-resumen-details summary::after{
+    content: ' +';
+    color: var(--text-muted);
+  }
+  .menu-resumen-details[open] summary::after{ content: ' −'; }
 }
 
 /* ─── FOOTER LEGALES (persistente, minimal) ─────────────────────────── */
@@ -1178,12 +1256,39 @@ body.has-bottom-bar-expanded .quiz-main{
   }
   /* Una sola opción se mantiene en columna única */
   .options.cols-1{ grid-template-columns: 1fr !important; }
-  .option{ min-height: 150px; padding: 18px 16px; }
-  .option .option-title{ font-size: 16px; line-height: 1.22; }
+  /* ─── Cards mobile · refactor v3.2 ─────────────────────────────────
+     · min-height sube de 150 → 180 (espacio para description + meta sin compresión)
+     · padding superior generoso para que la pill de categoría no roce con el icono
+     · pill de categoría sale del position:absolute y vive como primer elemento
+       de la card (order:-1), eliminando el overlap reportado
+     · spacing consistente entre icono → título → meta para que ningún elemento
+       "baile" entre cards */
+  .option{
+    min-height: 180px;
+    padding: 14px 14px 16px;
+    align-items: stretch;
+  }
+  .option .option-category{
+    position: static;
+    align-self: flex-start;
+    margin: 0 0 10px 0;
+    font-size: 9px;
+    padding: 3px 7px;
+    order: -1;
+  }
+  .option .icon{
+    width: 34px; height: 34px;
+    margin: 0 0 12px 0;
+  }
+  .option .icon svg{ width: 26px; height: 26px; }
+  .option .option-title{
+    font-size: 15px; line-height: 1.22;
+    margin: 0;
+  }
+  .option .option-schedule{ font-size: 9px; padding: 3px 6px; margin-top: 4px; }
+  .option .option-description{ display: none; } /* en cards comprimidas estorba */
   .option .option-help{ display: none; }
-  .option .option-meta{ font-size: 12px; }
-  .option .icon{ width: 36px; height: 36px; margin-bottom: 12px; }
-  .option .icon svg{ width: 28px; height: 28px; }
+  .option .option-meta{ font-size: 12px; margin-top: auto; padding-top: 8px; }
   .classifier-grid{ grid-template-columns: 1fr; gap: 12px; }
   .classifier-grid .option{ min-height: 160px; padding: 22px 20px; }
   .classifier-grid .option .option-title{ font-size: 19px; }
@@ -1412,38 +1517,36 @@ body.has-bottom-bar .question-card{ min-height: 0; }
 }
 .qb-channels{ display: flex; flex-wrap: wrap; gap: 6px; }
 
-/* Mobile bottom bar — DOS FILAS:
-   Fila 1: tipo + total · Fila 2: botones de navegación full-width */
+/* Mobile bottom bar v3.2 — SOLO NAVEGACIÓN.
+   Todo el resumen vivo se movió al panel del HUD (icono grid).
+   El bottom bar mobile queda como un footer fijo de 72px con Anterior / Continuar. */
 @media (max-width: 900px){
-  .quiz-bottom{ max-height: 138px; }
+  .quiz-bottom{ max-height: 72px; overflow: hidden; }
+  .quiz-bottom.is-expanded{ max-height: 72px; } /* no expandible en mobile */
   .qb-summary{
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "tipo   total"
-      "nav    nav";
-    row-gap: 10px; column-gap: 12px;
-    padding: 12px 18px 14px;
-    height: auto;
-  }
-  .qb-summary .qb-tipo-block  { grid-area: tipo; }
-  .qb-summary .qb-total-block { grid-area: total; }
-  .qb-summary .qb-nav-block   { grid-area: nav; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .qb-summary .qb-meta-block{ display: none; } /* oculta velocidad en mobile */
-  .qb-nav-btn{ padding: 12px 14px; font-size: 12px; letter-spacing: 0.1em; }
-  .qb-tipo{ font-size: 15px; }
-  .qb-config{ font-size: 10px; }
-  .qb-total-number{ font-size: 20px; }
-  .qb-toggle{ width: 40px; height: 40px; top: -20px; }
-  .qb-toggle svg{ width: 16px; height: 16px; }
-  .qb-expanded-content{
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 22px;
-    padding: 22px 18px 26px;
+    gap: 10px;
+    padding: 12px 16px;
+    height: auto;
+    cursor: default; /* ya no abre nada */
   }
-  /* En expanded, recalcular el max-height del contenido */
-  .quiz-bottom.is-expanded .qb-expanded-content{ max-height: calc(64vh - 138px); }
-  body.has-bottom-bar .quiz-main{ padding-bottom: 158px; }
+  /* Resumen oculto · vive en el panel grid */
+  .qb-summary .qb-tipo-block,
+  .qb-summary .qb-total-block,
+  .qb-summary .qb-meta-block{ display: none; }
+  /* Nav ocupa todo el bar */
+  .qb-summary .qb-nav-block{
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .qb-nav-btn{ padding: 14px 14px; font-size: 12px; letter-spacing: 0.1em; }
+  /* Toggle del panel expandible: oculto · ya no hay panel expandible */
+  .qb-toggle{ display: none !important; }
+  .qb-expanded-content{ display: none !important; }
+  /* Padding del contenido principal · solo el alto del nav fijo */
+  body.has-bottom-bar .quiz-main{ padding-bottom: 92px; }
+  body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 92px; } /* sin diff */
 }
 
 /* ─── CTA SECUNDARIO (asesoría 1-a-1) ───────────────────────────────── */

@@ -105,7 +105,7 @@
     if (!btn || !menu) return;
     btn.addEventListener('click', () => {
       const open = menu.classList.toggle('is-open');
-      btn.innerHTML = window.IBISNE_ICONS.get(open ? 'close' : 'menu', 'line');
+      btn.innerHTML = window.IBISNE_ICONS.get(open ? 'close' : 'grid', 'line');
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       document.body.style.overflow = open ? 'hidden' : '';
     });

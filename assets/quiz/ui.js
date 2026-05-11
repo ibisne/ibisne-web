@@ -1429,9 +1429,53 @@ Quiero hablar para precisar el alcance.`;
     if (elIntentText) {
       elIntentText.textContent = subtipo ? (calc.speedText || '') : 'Selecciona opciones para ver la velocidad de salida';
     }
+
+    // Resumen vivo en el panel mobile (espejo del bottom bar desktop)
+    refreshMobileMenu(calc, vertical, subtipo);
   }
   // legacy alias
   const refreshPanelB = refreshBottomB;
+
+  // ─── PANEL MOBILE · resumen vivo dentro del menú ────────────────────
+  function refreshMobileMenu(calc, vertical, subtipo){
+    const wrap = $('#menu-resumen');
+    if (!wrap) return; // solo existe en quiz.html
+    if (!subtipo) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+    const tipo = $('#menu-tipo');
+    if (tipo) tipo.textContent = (vertical?.label || '') + ' · ' + subtipo.label;
+    const total = $('#menu-total');
+    if (total) {
+      const amount = window.IBISNE_PREFS
+        ? window.IBISNE_PREFS.format(calc.total * 1.16)
+        : '$ ' + (calc.total * 1.16).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const curr = window.IBISNE_PREFS ? window.IBISNE_PREFS.currencyCode() : 'MXN';
+      total.innerHTML = amount + ' <small>' + curr + '</small>';
+    }
+    const mods = $('#menu-modules');
+    if (mods) {
+      const n = calc.modules || 0;
+      mods.textContent = n + (n === 1 ? ' módulo' : ' módulos');
+    }
+    const dot = $('#menu-speed-dot');
+    if (dot) {
+      dot.style.left = (calc.speed != null ? calc.speed : 50) + '%';
+      dot.classList.remove('intent-mvp','intent-estandar','intent-premium');
+      if (calc.speedZone) dot.classList.add('intent-' + calc.speedZone);
+    }
+    const speedText = $('#menu-speed-text');
+    if (speedText) speedText.textContent = calc.speedText || '';
+    const team = $('#menu-team');
+    if (team) team.textContent = (calc.team || []).join(' · ');
+    const stack = $('#menu-stack');
+    if (stack && window.IBISNE_PRICING?.getStack) {
+      const s = window.IBISNE_PRICING.getStack(vertical.id, subtipo.id);
+      stack.textContent = s.join(' · ');
+    }
+  }
 
   // ─── BOTTOM BAR A (Socio) ────────────────────────────────────────────
   function renderBottomBarA(){
