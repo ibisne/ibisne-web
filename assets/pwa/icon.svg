@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0D1117"/>
+  <!-- Inner safe area · 80% (maskable spec) -->
+  <!-- iBisne wordmark stylized as "iB" monogram in accent green -->
+  <g fill="#3DFF7F">
+    <!-- letter i: dot + stem -->
+    <circle cx="160" cy="138" r="28"/>
+    <rect x="132" y="188" width="56" height="190" rx="8"/>
+    <!-- letter B: stem + two bumps -->
+    <rect x="240" y="138" width="56" height="240" rx="8"/>
+    <path d="M296 138 H360 a52 52 0 0 1 0 104 H296 V138 Z M296 258 H372 a52 52 0 0 1 0 120 H296 V258 Z"/>
+  </g>
+  <!-- Subtle "iBisne" word below -->
+  <text x="256" y="450" font-family="Inter, system-ui, sans-serif" font-size="40" font-weight="700" fill="#AEFFC8" text-anchor="middle" letter-spacing="-0.02em">iBisne</text>
+</svg>
