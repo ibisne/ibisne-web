@@ -328,6 +328,36 @@ body::before{
 .hud-cta svg{ width: 14px; height: 14px; }
 .hud-cta:hover{ background: var(--accent-mint); }
 
+/* CTA "Instalar app" desktop · pill outline · vive entre prefs y WhatsApp */
+.hud-install-cta{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 9px 14px;
+  background: transparent;
+  color: var(--accent-mint);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  border-radius: var(--radius-input, 10px);
+  transition: all 0.2s ease;
+}
+.hud-install-cta[hidden]{ display: none !important; }
+.hud-install-cta:hover{
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+.hud-install-cta .install-icon{
+  display: inline-flex; align-items: center;
+}
+.hud-install-cta .install-icon svg{ width: 14px; height: 14px; }
+.hud-install-cta .install-label{ display: inline-block; }
+/* En mobile el botón vive en el menu hamburguesa · no se muestra el del HUD */
+@media (max-width: 900px){
+  .hud-install-cta{ display: none !important; }
+}
+
 /* Mobile HUD — hamburguesa */
 .hud-mobile-toggle{ display: none; }
 .hud-mobile-menu{ display: none; }
