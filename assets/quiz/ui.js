@@ -100,6 +100,7 @@
       inner += '<div class="option-marker">' + opts.marker + '</div>';
     }
     inner += '<div class="option-title">' + L(opts.label) + '</div>';
+    if (opts.subtitle)    inner += '<div class="option-subtitle">' + L(opts.subtitle) + '</div>';
     if (opts.schedule)    inner += '<div class="option-schedule">' + L(opts.schedule) + '</div>';
     if (opts.help)        inner += '<div class="option-help">' + L(opts.help) + '</div>';
     if (opts.description) inner += '<div class="option-description">' + L(opts.description) + '</div>';
@@ -451,7 +452,7 @@
           ${v.ctaUrl
             ? `<a href="${v.ctaUrl}" class="btn btn-primary">${v.cta} →</a>
                <a href="mailto:proyectos@ibisne.com" class="btn btn-line">Suscribirme al newsletter</a>`
-            : `<a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quizz%20de%20iBisne%20%E2%80%94%20fit-score%20${result.score}" target="_blank" rel="noopener" class="btn btn-primary">${v.cta} →</a>
+            : `<a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quiz%20de%20iBisne%20%E2%80%94%20fit-score%20${result.score}" target="_blank" rel="noopener" class="btn btn-primary">${v.cta} →</a>
                <a href="index.html" class="btn btn-line">Volver al inicio</a>`}
         </div>
         <div class="result-summary">
@@ -562,6 +563,7 @@
       id: v.id,
       icon: v.icon,
       label: v.label,
+      subtitle: v.subtitle,
       category: v.category,
       help: v.help,
       isSelected: sel === v.id,
@@ -611,9 +613,9 @@
       id: s.id,
       icon: s.icon,
       label: s.label,
+      subtitle: s.subtitle,
       category: s.category,
-      description: s.description,
-      meta: s.contact ? 'Contactar' : (s.base > 0 ? 'Base ' + formatMxn(s.base) : null),
+      meta: s.contact ? L('Contactar') : (s.base > 0 ? formatMxn(s.base) : null),
       isSelected: sel === s.id,
     })).join('');
 
@@ -682,6 +684,7 @@
         id: o.id,
         icon: o.icon,
         label: o.label,
+        subtitle: o.subtitle,
         schedule: o.schedule,
         description: o.description,
         meta,
@@ -802,7 +805,7 @@
         <div class="result-screen">
           <div class="result-veredicto">— ALCANCE AVANZADO</div>
           <h2 class="result-headline">${subtipo.label}<br><span class="accent">amerita conversación directa.</span></h2>
-          <p class="result-body">Los proyectos de IA, Web3, SaaS y plataformas custom no se cotizan desde un quizz. Necesitamos entender tu modelo, equipo y objetivos antes de proponer alcance. El equipo de iBisne te responde personalmente en menos de 24 horas.</p>
+          <p class="result-body">Los proyectos de IA, Web3, SaaS y plataformas custom no se cotizan desde un quiz. Necesitamos entender tu modelo, equipo y objetivos antes de proponer alcance. El equipo de iBisne te responde personalmente en menos de 24 horas.</p>
           <div class="result-cta">
             <a href="https://wa.me/523329575274?text=Hola%2C%20quiero%20discovery%20para%20un%20proyecto%20${encodeURIComponent(subtipo.label)}" target="_blank" rel="noopener" class="btn btn-primary">Agendar discovery ahora →</a>
             <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
@@ -998,8 +1001,8 @@ Quiero hablar para precisar el alcance.`;
                 <div class="value">${calc.modules} ${calc.modules === 1 ? 'módulo' : 'módulos'} configurados</div>
               </div>
               <div class="item">
-                <div class="label">${L("Velocidad de salida")}</div>
-                <div class="value">${calc.speedZone === 'mvp' ? 'MVP rápido' : (calc.speedZone === 'premium' ? 'Premium acabado' : 'Estándar')}</div>
+                <div class="label">${L("Acabado del proyecto")}</div>
+                <div class="value">${calc.speedZone === 'mvp' ? 'MVP' : (calc.speedZone === 'premium' ? 'Premium' : 'Estándar')}</div>
               </div>
               <div class="item">
                 <div class="label">${L("Folio")}</div>
@@ -1401,12 +1404,12 @@ Quiero hablar para precisar el alcance.`;
           <div class="qb-config" id="qb-config-mini">${L("Selecciona tu producto para empezar")}</div>
         </div>
         <div class="qb-meta-block qb-intent-block">
-          <div class="qb-meta-label">${L("Velocidad de salida")}</div>
+          <div class="qb-meta-label">${L("Acabado del proyecto")}</div>
           <div class="qb-intent-line">
             <div class="qb-intent-dot" id="qb-intent-dot" style="left: 50%;"></div>
           </div>
           <div class="qb-intent-labels">
-            <span>MVP rápido</span><span>Estándar</span><span>Premium</span>
+            <span>MVP</span><span>Estándar</span><span>Premium</span>
           </div>
         </div>
         <div class="qb-total-block">
@@ -1438,7 +1441,7 @@ Quiero hablar para precisar el alcance.`;
           </ul>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">${L("— Velocidad de salida")}</div>
+          <div class="qb-block-label">${L("— Acabado del proyecto")}</div>
           <div class="qb-intent-text" id="qb-intent-text" style="font-family:var(--font-display); font-size:14px; line-height:1.5; color:var(--accent-mint);">Selecciona opciones para ver la velocidad de salida</div>
           <ul class="qb-config-list" style="margin-top:10px;">
             <li>${L("50% anticipo · 50% entrega")}</li>
@@ -1538,7 +1541,7 @@ Quiero hablar para precisar el alcance.`;
       lineItems.push({ qid: 'plazo', id: a.plazo.id, label: plazoLabel, add: ajuste, icon: plazoIcon });
     }
 
-    // Velocidad de salida (reemplaza el mapa de calor de intención)
+    // Acabado del proyecto (reemplaza el mapa de calor de intención)
     const totalRedondeado = Math.round(total);
     const speed = PRICING.getSpeed(totalRedondeado, subtipo, flags, plazoMul);
     const speedZone = PRICING.getSpeedZone(speed);
