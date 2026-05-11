@@ -119,10 +119,11 @@
     },
     format: function(mxnAmount){
       var amount = this.convert(mxnAmount);
-      if (state.currency === 'usd') {
-        return '$ ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      }
-      return '$ ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      var isInt = amount === Math.floor(amount);
+      var opts = isInt
+        ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+        : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+      return '$ ' + amount.toLocaleString('en-US', opts);
     },
     currencyCode: function(){ return state.currency === 'usd' ? 'USD' : 'MXN'; },
 

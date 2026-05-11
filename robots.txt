@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /quiz.html
+Disallow: /assets/pwa/
+Disallow: /legacy-v2/
+
+Sitemap: https://www.ibisne.com/sitemap.xml
