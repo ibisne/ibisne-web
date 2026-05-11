@@ -1399,3 +1399,12 @@ body.has-bottom-bar .question-card{ min-height: 0; }
 /* ─── HELPERS ───────────────────────────────────────────────────────── */
 [data-countup]{ display: inline-block; font-variant-numeric: tabular-nums; }
 .hidden{ display: none !important; }
+
+/* ─── HIDE VERCEL TOOLBAR / LIVE FEEDBACK WIDGET ─────────────────────── */
+/* El toolbar de Vercel solo lo ve el dueño del proyecto cuando está logueado.
+   Lo ocultamos para que no contamine la vista de testing en mobile. */
+#__vercel-toolbar-root,
+vercel-live-feedback,
+[data-vercel-toolbar],
+.vercel-toolbar,
+iframe[src*="vercel.live"]{ display: none !important; }
