@@ -270,7 +270,7 @@ body::before{
   background: transparent; border: none;
   color: var(--text-secondary, #8B9099);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   transition: all 0.2s ease;
   text-decoration: none;
 }
@@ -294,7 +294,7 @@ body::before{
   background: transparent; border: 1px solid var(--bg-line);
   padding: 0 10px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   height: 30px;
   transition: all 0.2s ease;
 }
@@ -306,7 +306,7 @@ body::before{
   font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--text-muted);
   background: transparent; border: 1px solid var(--bg-line);
-  padding: 6px 10px; cursor: pointer; border-radius: 4px; height: 32px;
+  padding: 6px 10px; cursor: pointer; border-radius: var(--radius-input, 10px); height: 32px;
   transition: all 0.2s ease;
 }
 .hud-lang .active{ color: var(--accent-mint); }
@@ -322,7 +322,7 @@ body::before{
   background: var(--accent);
   color: var(--bg-deep);
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   transition: all 0.2s ease;
 }
 .hud-cta svg{ width: 14px; height: 14px; }
@@ -342,7 +342,7 @@ body::before{
     color: var(--text-primary);
     background: transparent;
     border: 1px solid var(--text-secondary);
-    border-radius: 4px;
+    border-radius: var(--radius-input, 10px);
     cursor: pointer;
     margin-left: auto;
   }
@@ -387,7 +387,7 @@ body::before{
     text-transform: uppercase;
     letter-spacing: 0.12em;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: var(--radius-input, 10px);
   }
 
   /* ─── Panel mobile · resumen vivo de la cotización ─────────── */
@@ -620,6 +620,7 @@ body.has-bottom-bar-expanded .quiz-main{
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius, 14px);
 }
 .option:hover{
   border-color: var(--accent);
@@ -702,10 +703,14 @@ body.has-bottom-bar-expanded .quiz-main{
   color: var(--accent-mint);
   padding: 5px 10px;
   border: 1px solid var(--bg-line);
-  border-radius: 2px;
+  border-radius: var(--radius-pill, 999px);
   background: rgba(174, 255, 200, 0.05);
   margin-top: 2px;
   width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1;
 }
 .option.is-selected .option-schedule,
@@ -733,11 +738,14 @@ body.has-bottom-bar-expanded .quiz-main{
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--text-muted);
-  padding: 4px 8px;
+  padding: 4px 10px;
   border: 1px solid var(--bg-line);
-  border-radius: 2px;
+  border-radius: var(--radius-pill, 999px);
   line-height: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 32px); /* nunca se desborda · respeta padding lateral */
   background: rgba(255,255,255,0.015);
   transition: all 0.22s ease;
   pointer-events: none;
@@ -776,7 +784,7 @@ body.has-bottom-bar-expanded .quiz-main{
   border: 1px solid var(--bg-line);
   background: var(--bg-elevated);
   padding: 32px 36px;
-  border-radius: 6px;
+  border-radius: var(--radius-btn, 12px);
 }
 .form-field{ display: flex; flex-direction: column; gap: 8px; }
 .form-field.full{ grid-column: 1 / -1; }
@@ -794,7 +802,7 @@ body.has-bottom-bar-expanded .quiz-main{
 .form-field textarea{
   background: var(--bg-deep);
   border: 1px solid var(--bg-line);
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   padding: 13px 14px;
   font-family: var(--font-display);
   font-size: 17px;
@@ -838,7 +846,7 @@ body.has-bottom-bar-expanded .quiz-main{
   transition: all 0.22s ease;
   text-decoration: none;
   display: inline-flex; align-items: center; gap: 10px;
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
 }
 .btn-primary{
   background: var(--accent);
@@ -898,7 +906,7 @@ body.has-bottom-bar-expanded .quiz-main{
   color: var(--text-muted);
   background: transparent;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 2px;
+  border-radius: var(--radius-pill, 999px);
 }
 .team-chip.is-active{
   border-color: var(--accent);
@@ -943,7 +951,7 @@ body.has-bottom-bar-expanded .quiz-main{
   color: var(--accent);
   background: rgba(61,255,127,0.04);
   font-weight: 500;
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
 }
 
 /* ─── LÍNEA DE INTENCIÓN (sustituye al tier) ────────────────────────── */
@@ -1016,7 +1024,7 @@ body.has-bottom-bar-expanded .quiz-main{
   padding: 5px 11px;
   border: 1px solid var(--bg-line);
   color: var(--text-muted);
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
 }
 .panel-channel.is-active{
   border-color: var(--accent-mint);
@@ -1101,7 +1109,7 @@ body.has-bottom-bar-expanded .quiz-main{
   background: var(--bg-elevated);
   padding: 36px;
   margin-top: 16px;
-  border-radius: 2px;
+  border-radius: var(--radius, 14px);
 }
 .cotizacion-preview h3{
   font-family: var(--font-mono); font-size: 12px;
@@ -1183,7 +1191,7 @@ body.has-bottom-bar-expanded .quiz-main{
   gap: 8px; padding: 18px 12px;
   background: transparent;
   border: 1px solid var(--bg-line);
-  border-radius: 2px;
+  border-radius: var(--radius, 14px);
   color: var(--text-secondary);
   font-family: var(--font-display);
   cursor: not-allowed;
@@ -1256,39 +1264,45 @@ body.has-bottom-bar-expanded .quiz-main{
   }
   /* Una sola opción se mantiene en columna única */
   .options.cols-1{ grid-template-columns: 1fr !important; }
-  /* ─── Cards mobile · refactor v3.2 ─────────────────────────────────
-     · min-height sube de 150 → 180 (espacio para description + meta sin compresión)
-     · padding superior generoso para que la pill de categoría no roce con el icono
-     · pill de categoría sale del position:absolute y vive como primer elemento
-       de la card (order:-1), eliminando el overlap reportado
-     · spacing consistente entre icono → título → meta para que ningún elemento
-       "baile" entre cards */
+  /* ─── Cards mobile · v3.3 · TODO CENTRADO (H + V) ──────────────────
+     · pill de categoría centrada arriba (capsule), nunca se desborda
+     · icono centrado horizontalmente, mismo margin-bottom siempre
+     · título centrado, mismas dimensiones entre cards
+     · meta centrada al fondo
+     · estructura predecible: pill → icon → title → schedule? → meta
+     · todas las cards al mismo height (min-height fijo + content centrado) */
   .option{
     min-height: 180px;
     padding: 14px 14px 16px;
-    align-items: stretch;
+    align-items: center;        /* ← horizontal center */
+    justify-content: center;    /* ← vertical center */
+    text-align: center;         /* ← texto centrado */
+    gap: 8px;
   }
   .option .option-category{
     position: static;
-    align-self: flex-start;
-    margin: 0 0 10px 0;
-    font-size: 9px;
-    padding: 3px 7px;
     order: -1;
+    align-self: center;
+    margin: 0;
+    font-size: 9px;
+    padding: 3px 9px;
+    max-width: 100%;
   }
   .option .icon{
     width: 34px; height: 34px;
-    margin: 0 0 12px 0;
+    margin: 0;
   }
   .option .icon svg{ width: 26px; height: 26px; }
   .option .option-title{
     font-size: 15px; line-height: 1.22;
     margin: 0;
   }
-  .option .option-schedule{ font-size: 9px; padding: 3px 6px; margin-top: 4px; }
+  .option .option-schedule{ font-size: 9px; padding: 3px 8px; margin: 0; }
   .option .option-description{ display: none; } /* en cards comprimidas estorba */
   .option .option-help{ display: none; }
-  .option .option-meta{ font-size: 12px; margin-top: auto; padding-top: 8px; }
+  .option .option-meta{ font-size: 12px; margin: 4px 0 0; padding: 0; }
+  /* El check de selección sigue en la esquina, pero más pequeño en mobile */
+  .option.is-selected::after{ width: 18px; height: 18px; font-size: 11px; top: 8px; right: 8px; }
   .classifier-grid{ grid-template-columns: 1fr; gap: 12px; }
   .classifier-grid .option{ min-height: 160px; padding: 22px 20px; }
   .classifier-grid .option .option-title{ font-size: 19px; }
@@ -1349,7 +1363,7 @@ body.has-bottom-bar-expanded .quiz-main{
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
   white-space: nowrap;
 }
 .qb-nav-btn:hover:not(:disabled){
@@ -1494,7 +1508,7 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   padding: 5px 10px;
   border: 1px solid var(--bg-line);
   color: var(--text-muted);
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .qb-block .team-chip.is-active{
@@ -1508,7 +1522,7 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   padding: 5px 10px;
   border: 1px solid var(--bg-line);
   color: var(--text-muted);
-  border-radius: 2px;
+  border-radius: var(--radius-btn, 12px);
 }
 .qb-block .panel-channel.is-active{
   border-color: var(--accent-mint);
@@ -1564,7 +1578,7 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   text-decoration: none;
   padding: 12px 18px;
   border: 1px dashed var(--bg-line);
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   transition: all 0.22s ease;
 }
 .classifier-aux .aux-link:hover{
@@ -1599,7 +1613,7 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   position: relative;
   background: var(--bg-elevated);
   border: 1px solid var(--bg-line);
-  border-radius: 8px;
+  border-radius: var(--radius, 14px);
   max-width: 900px; width: 100%;
   max-height: 86vh;
   overflow-y: auto;
@@ -1629,7 +1643,7 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   width: 36px; height: 36px;
   background: transparent; border: 1px solid var(--bg-line);
   color: var(--text-secondary);
-  border-radius: 4px;
+  border-radius: var(--radius-input, 10px);
   font-size: 20px; line-height: 1;
   cursor: pointer;
   transition: all 0.18s ease;

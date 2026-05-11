@@ -93,7 +93,10 @@
 
   /* ─── HAIRLINES & RADII ───────────────────────────────────── */
   --hairline: 1px solid var(--bg-line);
-  /* Sin radius en VAULT salvo el cursor blob (border-radius 50% interno) */
+  --radius:        14px;   /* cards, paneles, contenedores grandes */
+  --radius-pill:   999px;  /* pills capsule · categorías, schedules, badges */
+  --radius-btn:    12px;   /* botones rectangulares · CTAs, nav */
+  --radius-input:  10px;   /* inputs y toggles compactos */
 
   /* ─── Z-INDEX ─────────────────────────────────────────────── */
   --z-base:       1;
