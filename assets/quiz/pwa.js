@@ -16,7 +16,14 @@
   var ua = (navigator.userAgent || '').toLowerCase();
   var isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var isAndroid = /android/.test(ua);
-  state.platform = isIOS ? 'ios' : (isAndroid ? 'android' : 'desktop');
+  // macOS desktop (no iPad disfrazado) · útil para mostrar icono Apple en lugar de plus
+  var isMacOS = !isIOS && (navigator.platform === 'MacIntel' || /mac os x|macintosh/.test(ua));
+  var isWindows = /windows nt|win64|win32/.test(ua);
+  if (isIOS) state.platform = 'ios';
+  else if (isAndroid) state.platform = 'android';
+  else if (isMacOS) state.platform = 'macos';
+  else if (isWindows) state.platform = 'windows';
+  else state.platform = 'desktop';
 
   // ── instalada? ───────────────────────────────────────────────
   function checkInstalled() {
@@ -171,7 +178,13 @@
     if (state.platform === 'android') {
       return { canInstall: !!state.deferredPrompt, platform: 'android', instructions: 'native' };
     }
-    return { canInstall: !!state.deferredPrompt, platform: 'desktop', instructions: state.deferredPrompt ? 'native' : 'manual' };
+    // macOS / Windows / desktop genérico · siempre mostrar como ofrecimiento;
+    // si hay deferredPrompt usamos prompt nativo · si no, modal informativo
+    return {
+      canInstall: true,
+      platform: state.platform,
+      instructions: state.deferredPrompt ? 'native' : 'manual'
+    };
   }
 
   function promptInstall() {
