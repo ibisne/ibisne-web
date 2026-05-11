@@ -81,11 +81,10 @@
   // ─── CARD RENDER ─────────────────────────────────────────────────────
   function renderCard(opts){
     // opts: { id, label, help?, description?, schedule?, meta?, marker?, icon?, category?, isSelected }
+    // Orden DOM: icono → título → schedule → help → description → meta → categoría (eyebrow al fondo).
+    // El CSS reordena visualmente vía flex/grid según contexto (hero vs lista horizontal).
     const ICONS = window.IBISNE_ICONS;
     let inner = '';
-    if (opts.category) {
-      inner += '<span class="option-category">' + opts.category + '</span>';
-    }
     if (opts.icon && ICONS) {
       inner += '<div class="icon">' + ICONS.card(opts.icon) + '</div>';
     }
@@ -97,6 +96,9 @@
     if (opts.help)        inner += '<div class="option-help">' + opts.help + '</div>';
     if (opts.description) inner += '<div class="option-description">' + opts.description + '</div>';
     if (opts.meta)        inner += '<div class="option-meta">' + opts.meta + '</div>';
+    if (opts.category) {
+      inner += '<span class="option-category">' + opts.category + '</span>';
+    }
     return '<button class="option ' + (opts.isSelected ? 'is-selected' : '') + '" data-id="' + opts.id + '" type="button">' + inner + '</button>';
   }
 
@@ -653,8 +655,8 @@
     const cards = q.opciones.map(o => {
       let meta = null;
       if (o.add !== undefined && o.add !== 0) meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
-      else if (o.mul !== undefined) meta = o.metaSuffix || '';
-      else meta = '—';
+      else if (o.mul !== undefined) meta = o.metaSuffix || formatMxn(0);
+      else meta = formatMxn(0); // antes era '—' · ahora "$0.00" para mantener formato consistente
       return renderCard({
         id: o.id,
         icon: o.icon,
@@ -840,7 +842,7 @@ Quiero hablar para precisar el alcance.`;
           <div class="result-col-main">
             <div class="cotizacion-preview">
               <h3>— DESGLOSE · CLICK EDITAR PARA AJUSTAR</h3>
-              <div class="item base"><span>${subtipoLabel} (base)</span><span class="amount">${formatMxn(subtipo?.base || 0)}</span></div>
+              <div class="item base"><span>${subtipoLabel}</span><span class="amount">${formatMxn(subtipo?.base || 0)}</span></div>
               ${calc.lineItems.map(li => `
                 <div class="item editable" data-q="${li.qid || ''}" data-opt="${li.id || ''}">
                   <span class="label">${li.label}</span>
@@ -1878,7 +1880,7 @@ Quiero hablar para precisar el alcance.`;
 
         <div class="cotizacion-preview">
           <h3>— DESGLOSE</h3>
-          <div class="item base"><span>${State.consultoria?.modalidad_tipo?.label || ''} (base)</span><span class="amount">${formatMxn(calc.base || 0)}</span></div>
+          <div class="item base"><span>${State.consultoria?.modalidad_tipo?.label || ''}</span><span class="amount">${formatMxn(calc.base || 0)}</span></div>
           ${calc.lineItems.map(li => `<div class="item"><span>${li.label}</span><span class="amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span></div>`).join('')}
           <div class="item subtotal"><span>Subtotal</span><span class="amount">${formatMxn(calc.total)}</span></div>
           <div class="item iva"><span>IVA · 16%</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>

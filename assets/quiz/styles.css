@@ -1265,14 +1265,18 @@ body.has-bottom-bar-expanded .quiz-main{
     gap: 8px;
   }
   .options.is-hero .option .option-category{
-    /* hereda estilo eyebrow del base, solo ajustes mobile */
-    margin: 0 0 4px 0;
+    /* Categoría al FONDO de la card (después del título). Eyebrow verde tenue. */
+    margin: 4px 0 0 0;
     font-size: 9px;
     letter-spacing: 0.14em;
+    order: 99; /* fuerza al fondo aunque el DOM cambie */
   }
   .options.is-hero .option .icon{ width: 34px; height: 34px; margin: 0; }
   .options.is-hero .option .icon svg{ width: 26px; height: 26px; }
-  .options.is-hero .option .option-title{ font-size: 15px; line-height: 1.22; margin: 0; }
+  .options.is-hero .option .option-title{
+    font-size: 15px; line-height: 1.22; margin: 0;
+    overflow-wrap: break-word; word-break: break-word; hyphens: auto;
+  }
   .options.is-hero .option .option-schedule{ font-size: 9px; padding: 3px 8px; margin: 0; }
   .options.is-hero .option .option-description{ display: none; }
   .options.is-hero .option .option-help{ display: none; }
@@ -1314,14 +1318,14 @@ body.has-bottom-bar-expanded .quiz-main{
     margin: 0; font-size: 10px;
     letter-spacing: 0.16em;
   }
-  /* Título: fila 2 columna 2 · 1 línea con ellipsis para altura uniforme */
+  /* Título: fila 2 columna 2 · permite hasta 2 líneas (no ellipsis · que todo quepa) */
   .options:not(.is-hero) .option > .option-title{
     grid-column: 2; grid-row: 2;
     font-size: 16px; line-height: 1.3;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
   }
   /* Cards sin categoría: título span ambas filas para mantener centrado vertical */
   .options:not(.is-hero) .option:not(:has(.option-category)) > .option-title{
