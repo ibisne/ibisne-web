@@ -2,6 +2,106 @@
    assets/quiz/styles.css — iBisne v3 Quizz · refactor con HUD + capas
    =================================================================== */
 
+/* ─── BOOT LOADER (scanner con logo central → migra al HUD) ─────────── */
+/* Visible en el primer load de cada página · oculta el resto hasta terminar */
+.boot-loader{
+  position: fixed; inset: 0;
+  z-index: 9999;
+  background: var(--bg-deep, #0A0E13);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: all;
+  transition: opacity 0.45s ease;
+}
+.boot-loader.is-done{ opacity: 0; pointer-events: none; }
+.boot-loader::before, .boot-loader::after{
+  content: ''; position: absolute; left: 0; right: 0;
+  height: 1px; background: var(--bg-line);
+  opacity: 0;
+}
+.boot-loader::before{ top: 32%; animation: scanFade 1.6s 0.1s ease-out forwards; }
+.boot-loader::after { bottom: 32%; animation: scanFade 1.6s 0.25s ease-out forwards; }
+@keyframes scanFade{
+  0%   { opacity: 0; transform: scaleX(0); transform-origin: center; }
+  40%  { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0.45; transform: scaleX(1); }
+}
+/* Línea de scanner que recorre la pantalla */
+.boot-scan{
+  position: absolute; left: -2px; right: -2px; top: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(174,255,200,0.0) 15%,
+    var(--accent-mint, #AEFFC8) 50%,
+    rgba(174,255,200,0.0) 85%,
+    transparent 100%);
+  filter: blur(0.4px);
+  animation: scanSweep 1.8s cubic-bezier(0.55, 0.05, 0.45, 1) forwards;
+}
+@keyframes scanSweep{
+  0%   { top: 0; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+/* Marco corner-brackets evocando un visor */
+.boot-corners span{
+  position: absolute; width: 32px; height: 32px;
+  border: 1px solid var(--accent, #3DFF7F);
+  opacity: 0; animation: cornerFade 1.6s 0.4s ease-out forwards;
+}
+.boot-corners span:nth-child(1){ top: calc(32% - 20px); left: calc(50% - 110px); border-right: none; border-bottom: none; }
+.boot-corners span:nth-child(2){ top: calc(32% - 20px); right: calc(50% - 110px); border-left: none; border-bottom: none; }
+.boot-corners span:nth-child(3){ bottom: calc(32% - 20px); left: calc(50% - 110px); border-right: none; border-top: none; }
+.boot-corners span:nth-child(4){ bottom: calc(32% - 20px); right: calc(50% - 110px); border-left: none; border-top: none; }
+@keyframes cornerFade{
+  0%   { opacity: 0; transform: scale(0.8); }
+  60%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.7; }
+}
+/* Logo central · se transforma para migrar al HUD al final */
+.boot-logo{
+  position: relative;
+  width: 160px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  opacity: 0;
+  transform: scale(0.92);
+  animation: bootLogoIn 0.65s 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+.boot-logo img{ width: 160px; height: auto; }
+.boot-logo .label{
+  font-family: var(--font-mono, 'JetBrains Mono'); font-size: 10px;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0; animation: bootLabelIn 0.5s 0.6s ease-out forwards;
+}
+.boot-logo .label .blink{ color: var(--accent-mint); animation: blink 0.8s steps(2) infinite; }
+@keyframes bootLogoIn{
+  0%   { opacity: 0; transform: scale(0.85); filter: blur(8px); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@keyframes bootLabelIn{ to { opacity: 1; } }
+@keyframes blink{ 50% { opacity: 0.2; } }
+
+/* Fase final: el logo migra al HUD via FLIP — JS asigna --tx --ty --scale */
+.boot-loader.is-migrating{
+  background: rgba(10,14,19,0);
+}
+.boot-loader.is-migrating .boot-scan,
+.boot-loader.is-migrating .boot-corners,
+.boot-loader.is-migrating .boot-loader::before,
+.boot-loader.is-migrating .boot-logo .label{ opacity: 0; transition: opacity 0.25s ease; }
+.boot-loader.is-migrating .boot-logo{
+  transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale, 0.18));
+  transition: transform 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+}
+/* HUD oculto hasta que el loader termina, para evitar dos logos */
+body.is-booting .hud{ opacity: 0; pointer-events: none; }
+body:not(.is-booting) .hud{ opacity: 1; transition: opacity 0.35s 0.15s ease; }
+
+
+
 *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
 html,body{
   background: var(--bg-deep, #0A0E13);
@@ -19,14 +119,25 @@ body{
   overflow-x: hidden;
 }
 
-/* Capas de fondo — anti-flat */
+/* Capas de fondo — anti-flat (theme-aware) */
 :root{
   --bg-deep-2:  #07090D;   /* aún más profundo para zonas hero */
   --bg-elevated:#181D24;   /* panel sticky */
   --bg-tint:    rgba(255,255,255,0.025);
   --hud-h:      72px;
 }
+:root[data-theme="light"]{
+  --bg-deep-2:  #ECEEF2;
+  --bg-elevated:#FFFFFF;
+  --bg-tint:    rgba(0,0,0,0.04);
+}
 @media (max-width: 768px){ :root{ --hud-h: 60px; } }
+/* El logo es blanco (PNG) — invertir en light mode para que se lea sobre fondo claro */
+:root[data-theme="light"] .hud-logo,
+:root[data-theme="light"] .boot-logo img{
+  filter: invert(1) brightness(0.6);
+}
+:root[data-theme="light"] .boot-loader{ background: var(--bg); }
 
 /* ─── GRAIN NOISE (global, fixed) ──────────────────────────────────── */
 body::before{
@@ -122,14 +233,24 @@ body::before{
 }
 .hud-spacer{ flex: 1; }
 
+/* Grupos con jerarquía consistente · cada grupo concentra controles afines */
 .hud-group{
   display: flex; align-items: center;
-  gap: 4px;
-  padding: 0 10px;
-  border-left: 1px solid var(--bg-line);
+  gap: 2px;             /* dentro del grupo: muy pegado (controles relacionados) */
   height: 32px;
+  padding: 0;
 }
-.hud-group:first-of-type{ border-left: none; padding-left: 0; }
+.hud-group-pref{ gap: 6px; }   /* toggles texto necesitan un pelo más de aire */
+.hud-group-ui{ gap: 2px; }
+
+/* Separador vertical hairline entre grupos */
+.hud-divider{
+  display: inline-block;
+  width: 1px; height: 22px;
+  background: var(--bg-line);
+  margin: 0 6px;        /* entre grupos: respiración intencional */
+  flex: 0 0 auto;
+}
 
 .hud-btn{
   width: 36px; height: 36px;
@@ -150,17 +271,30 @@ body::before{
 }
 .hud-btn.is-disabled:hover{ background: transparent; color: var(--text-muted); }
 .hud-btn.is-active{ color: var(--accent); }
+.hud-btn[hidden]{ display: none !important; }
 
-.hud-lang{
-  display: inline-flex; align-items: center;
+/* Toggles de texto compactos · idioma / moneda · mismo look */
+.hud-toggle{
+  display: inline-flex; align-items: center; gap: 4px;
   font-family: var(--font-mono); font-size: 11px;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--text-muted);
   background: transparent; border: 1px solid var(--bg-line);
-  padding: 6px 10px;
+  padding: 0 10px;
   cursor: pointer;
   border-radius: 4px;
-  height: 32px;
+  height: 30px;
+  transition: all 0.2s ease;
+}
+.hud-toggle .active{ color: var(--accent-mint); }
+.hud-toggle .slash{ opacity: 0.4; padding: 0 1px; }
+.hud-toggle:hover{ border-color: var(--text-secondary); }
+/* Legacy alias para no romper menú mobile que aún usa .hud-lang */
+.hud-lang{ display: inline-flex; align-items: center;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-muted);
+  background: transparent; border: 1px solid var(--bg-line);
+  padding: 6px 10px; cursor: pointer; border-radius: 4px; height: 32px;
   transition: all 0.2s ease;
 }
 .hud-lang .active{ color: var(--accent-mint); }
@@ -311,15 +445,21 @@ body.has-bottom-bar-expanded .quiz-main{
 .question-card{
   width: 100%;
   display: flex; flex-direction: column; gap: 20px;
-  animation: slideIn 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: questionEnter 520ms cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 70vh; /* mantiene los botones de acción en posición consistente */
 }
 .question-card .options{ flex: 1; align-content: flex-start; }
+/* Entrada más natural: leve fade + sutil rise (no slide horizontal que se siente como brinco) */
+@keyframes questionEnter{
+  from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
 .question-card .question-title,
 .question-card .question-help{ max-width: 1100px; }
+/* legacy alias suavizado · ya no desliza horizontalmente */
 @keyframes slideIn{
-  from { opacity: 0; transform: translateX(40px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 .eyebrow{
@@ -1371,24 +1511,44 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   border-top: 1px solid var(--bg-line);
 }
 
-/* ─── STAGGER ANIMATION cards (entrada secuencial · siempre clickables) ─ */
-@keyframes slideInCard {
-  from { opacity: 0.3; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ─── STAGGER ANIMATION cards · cross-fade suave + microrise sin brincos ── */
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 .options .option {
-  animation: slideInCard 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: cardEnter 380ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  transition: border-color 0.22s ease, background 0.22s ease,
+              transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 0.22s ease;
 }
-.option:active { transform: scale(0.98); transition: transform 80ms ease-out; }
+/* Hover/active de cards: micro-lift, no salto */
+.option:hover { transform: translateY(-1px); }
+.option:active { transform: translateY(0) scale(0.985); transition-duration: 60ms; }
+.option.is-selected { transform: translateY(-1px); }
+
+/* Stagger compacto: las 3 primeras casi simultáneas, después escalonado */
 .options .option:nth-child(1){ animation-delay: 0ms; }
-.options .option:nth-child(2){ animation-delay: 60ms; }
-.options .option:nth-child(3){ animation-delay: 120ms; }
-.options .option:nth-child(4){ animation-delay: 180ms; }
-.options .option:nth-child(5){ animation-delay: 240ms; }
-.options .option:nth-child(6){ animation-delay: 300ms; }
-.options .option:nth-child(7){ animation-delay: 360ms; }
-.options .option:nth-child(8){ animation-delay: 420ms; }
-.options .option:nth-child(9){ animation-delay: 480ms; }
+.options .option:nth-child(2){ animation-delay: 40ms; }
+.options .option:nth-child(3){ animation-delay: 80ms; }
+.options .option:nth-child(4){ animation-delay: 120ms; }
+.options .option:nth-child(5){ animation-delay: 160ms; }
+.options .option:nth-child(6){ animation-delay: 200ms; }
+.options .option:nth-child(7){ animation-delay: 240ms; }
+.options .option:nth-child(8){ animation-delay: 280ms; }
+.options .option:nth-child(9){ animation-delay: 320ms; }
+
+/* Respeto al usuario que pidió reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .options .option,
+  .question-card,
+  .boot-loader .boot-logo,
+  .boot-scan,
+  .boot-corners span {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
 /* Focus visible para teclado */
 .option:focus-visible{
