@@ -390,14 +390,15 @@ body::before{
     border-radius: var(--radius-input, 10px);
     border: none; cursor: pointer; width: 100%;
   }
-  /* Variante install · más sobria · borde verde sin fondo sólido */
+  /* Variante install · más sobria · borde verde sin fondo sólido · pegada al WhatsApp CTA */
   .hud-mobile-menu .menu-cta-install{
     background: transparent;
     color: var(--accent-mint);
     border: 1px solid var(--accent);
-    margin-top: 12px;
   }
   .hud-mobile-menu .menu-cta-install[hidden]{ display: none !important; }
+  /* Reduce el gap del nav (24px) cuando install sigue inmediatamente al WhatsApp */
+  .hud-mobile-menu .menu-cta + .menu-cta-install{ margin-top: -14px; }
   .hud-mobile-menu .menu-cta-install .install-icon{
     display: inline-flex; align-items: center;
   }
@@ -1704,6 +1705,11 @@ body.has-bottom-bar .question-card{ min-height: 0; }
 @media (max-width: 900px){
   .quiz-bottom{ max-height: 72px; overflow: hidden; }
   .quiz-bottom.is-expanded{ max-height: 72px; } /* no expandible en mobile */
+  /* Anti scroll fantasma mobile:
+     · question-card sin min-height vh (la nav vive en bottom bar, no necesita anclar)
+     · options sin flex:1 (que crece y empuja el card) */
+  .question-card{ min-height: 0 !important; }
+  .question-card .options{ flex: 0 0 auto; }
   .qb-summary{
     display: grid;
     grid-template-columns: 1fr 1fr;

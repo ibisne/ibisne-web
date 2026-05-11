@@ -54,8 +54,9 @@ window.IBISNE_ICONS = (function(){
     ios: variant('<path d="M17 14 c0 -2 1.4 -3 2.2 -3.4 c-1 -1.5 -2.6 -1.7 -3.2 -1.7 c-1.4 -0.1 -2.7 0.8 -3.4 0.8 c-0.7 0 -1.8 -0.8 -3 -0.8 c-1.5 0 -3 0.9 -3.7 2.3 c-1.6 2.7 -0.4 6.8 1.1 9 c0.8 1.1 1.7 2.3 2.9 2.3 c1.1 0 1.6 -0.7 3 -0.7 c1.4 0 1.8 0.7 3 0.7 c1.2 0 2 -1.1 2.8 -2.2 c0.9 -1.3 1.3 -2.5 1.3 -2.6 c-0.1 0 -2.5 -1 -2.5 -3.7 Z"/><path d="M14.5 6.5 c0.7 -0.8 1.1 -2 1 -3 c-1 0 -2.1 0.6 -2.7 1.4 c-0.6 0.7 -1.1 1.9 -1 2.9 c1.1 0.1 2.1 -0.5 2.7 -1.3 Z"/>',
       '<path d="M17 14 c0 -2 1.4 -3 2.2 -3.4 c-1 -1.5 -2.6 -1.7 -3.2 -1.7 c-1.4 -0.1 -2.7 0.8 -3.4 0.8 c-0.7 0 -1.8 -0.8 -3 -0.8 c-1.5 0 -3 0.9 -3.7 2.3 c-1.6 2.7 -0.4 6.8 1.1 9 c0.8 1.1 1.7 2.3 2.9 2.3 c1.1 0 1.6 -0.7 3 -0.7 c1.4 0 1.8 0.7 3 0.7 c1.2 0 2 -1.1 2.8 -2.2 c0.9 -1.3 1.3 -2.5 1.3 -2.6 c-0.1 0 -2.5 -1 -2.5 -3.7 Z" fill="currentColor"/>'),
 
-    // Android: bugdroid clásico (cabeza ovalada + antenas + ojos + cuerpo)
-    android: variant('<path d="M5 12 a7 7 0 0 1 14 0 Z"/><circle cx="9" cy="9.5" r="0.7" fill="currentColor"/><circle cx="15" cy="9.5" r="0.7" fill="currentColor"/><line x1="7" y1="5" x2="8.5" y2="7.5"/><line x1="17" y1="5" x2="15.5" y2="7.5"/><rect x="6" y="13" width="12" height="6" rx="0.5"/><rect x="3" y="13" width="2" height="5" rx="1"/><rect x="19" y="13" width="2" height="5" rx="1"/><rect x="8" y="19" width="2" height="3" rx="1"/><rect x="14" y="19" width="2" height="3" rx="1"/>'),
+    // Android: silueta limpia · cabeza redondeada con 2 ojos · igual peso visual que iOS
+    android: variant('<path d="M5 13 a7 7 0 0 1 14 0 V20 a1 1 0 0 1 -1 1 H6 a1 1 0 0 1 -1 -1 Z"/><circle cx="9" cy="10.5" r="0.9" fill="currentColor"/><circle cx="15" cy="10.5" r="0.9" fill="currentColor"/><line x1="7.5" y1="6.5" x2="8.8" y2="8.5"/><line x1="16.5" y1="6.5" x2="15.2" y2="8.5"/>',
+      '<path d="M5 13 a7 7 0 0 1 14 0 V20 a1 1 0 0 1 -1 1 H6 a1 1 0 0 1 -1 -1 Z" fill="currentColor"/>'),
 
     // Híbrida: dos teléfonos lado a lado con flecha de sincronización
     hybrid: variant('<rect x="2.5" y="4" width="8" height="16" rx="1.5"/><rect x="13.5" y="4" width="8" height="16" rx="1.5"/><line x1="4.5" y1="17.5" x2="8.5" y2="17.5"/><line x1="15.5" y1="17.5" x2="19.5" y2="17.5"/><polyline points="11 10 13 12 11 14"/><polyline points="13 10 11 12 13 14"/>'),
