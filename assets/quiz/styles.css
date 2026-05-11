@@ -1142,8 +1142,15 @@ body.has-bottom-bar-expanded .quiz-main{
 @media (max-width: 768px){
   body{ font-size: 16px; }
   .quiz-main{ padding: 28px 16px 110px; }
-  .question-card{ gap: 24px; min-height: 0; }
-  .question-title{ font-size: clamp(28px, 7vw, 42px); }
+  /* En mobile el card se aprieta verticalmente: gap chico entre eyebrow → title → help */
+  .question-card{ gap: 10px; min-height: 0; }
+  .question-card .options{ margin-top: 14px; } /* respiro antes de las opciones */
+  /* Ocultar la línea decorativa "Servicio ────────" para liberar espacio vertical en mobile */
+  .eyebrow{ display: none !important; }
+  /* Título y subtítulo más pegados entre sí */
+  .question-title{ font-size: clamp(26px, 6.5vw, 38px); margin-bottom: 0; line-height: 1.08; }
+  .question-help{ margin-top: -4px; font-size: 14px; min-height: 0; }
+  .question-help:empty{ display: none; }
   /* GRID 2×2 EN MOBILE · forzado con !important para ganar a cualquier regla
      más específica · cubre todas las variantes (cols-2/3/4, is-list, is-multi, is-2x2). */
   .options,
