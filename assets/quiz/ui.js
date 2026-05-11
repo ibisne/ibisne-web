@@ -230,15 +230,26 @@
     if (navPrev) navPrev.addEventListener('click', (e) => {
       e.stopPropagation();
       if (State.route !== 'servicio') return;
+      // En resultado: regresar al último step del cuestionario (editar)
+      if (State.step === 'resultado') {
+        const steps = getServicioSteps();
+        navigate('#/servicio/' + steps.length);
+        return;
+      }
       if (State.step <= 1) { window.location.href = 'index.html'; return; }
       navigate('#/servicio/' + (State.step - 1));
     });
     if (navNext) navNext.addEventListener('click', (e) => {
       e.stopPropagation();
       if (State.route !== 'servicio') return;
+      // En resultado: ir directo a PayPal · CTA de pago
+      if (State.step === 'resultado') {
+        window.open('https://paypal.me/iBisne', '_blank', 'noopener');
+        return;
+      }
       const steps = getServicioSteps();
       const isLast = State.step >= steps.length;
-      // En el último step: ir directo al resultado (no intentar siguiente step)
+      // En el último step: ir directo al resultado
       if (isLast) {
         if (State.answers.subtipo) navigate('#/servicio/resultado');
         return;
@@ -1767,22 +1778,30 @@ Quiero arrancar la membresía y el discovery.`;
     // Sincronizar nav del bottom bar con los botones inline ocultos
     const navPrev = $('#qb-nav-prev');
     const navNext = $('#qb-nav-next');
+    const isResult = State.step === 'resultado';
     if (navPrev) {
-      // Mostrar "← Volver al inicio" en step 1, "← Anterior" en los demás
-      navPrev.textContent = State.step <= 1 ? '← Inicio' : '← Anterior';
+      // Contexto:
+      // · resultado → "← Editar" (regresa al último step del quiz)
+      // · step 1    → "← Inicio"
+      // · otros     → "← Anterior"
+      navPrev.textContent = isResult ? '← Editar' : (State.step <= 1 ? '← Inicio' : '← Anterior');
     }
     if (navNext) {
-      const inlineNext = $('#main [data-next]');
-      // Si no hay botón inline (ej. step de datos eliminado), permitir avanzar si hay subtipo
-      if (inlineNext) {
-        navNext.disabled = !!inlineNext.disabled;
+      if (isResult) {
+        // En resultado: CTA de pago directo a PayPal
+        navNext.textContent = 'Pagar ahora · PayPal →';
+        navNext.disabled = false;
       } else {
-        navNext.disabled = !subtipo;
+        const inlineNext = $('#main [data-next]');
+        if (inlineNext) {
+          navNext.disabled = !!inlineNext.disabled;
+        } else {
+          navNext.disabled = !subtipo;
+        }
+        const steps = getServicioSteps();
+        const isLast = State.step >= steps.length;
+        navNext.textContent = isLast ? 'Ver cotización →' : 'Continuar →';
       }
-      // Texto contextual: último step muestra "Ver cotización"
-      const steps = getServicioSteps();
-      const isLast = State.step >= steps.length;
-      navNext.textContent = isLast ? 'Ver cotización →' : 'Continuar →';
     }
     const elTotal = $('#qb-total'); if (elTotal) countUp(elTotal, calc.total * 1.16); // ahora muestra el TOTAL con IVA
     const elCurr  = $('#qb-currency-code');
