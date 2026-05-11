@@ -30,9 +30,9 @@
     root.setAttribute('data-theme', state.theme);
     root.lang = state.lang === 'en' ? 'en' : 'es-MX';
 
-    // Sincroniza visual de los toggles del HUD (todos los pages comparten misma estructura)
-    syncToggle('#hud-lang', 'lang', state.lang);
-    syncToggle('#hud-currency', 'currency', state.currency);
+    // Sincroniza visual de los toggles del HUD (desktop + mobile menu)
+    syncToggle('#hud-lang, #hud-lang-m', 'lang', state.lang);
+    syncToggle('#hud-currency, #hud-currency-m', 'currency', state.currency);
     syncTheme(state.theme);
     // Traducir todos los nodos marcados con data-i18n
     translateDom();
@@ -71,14 +71,14 @@
     });
   }
   function syncTheme(theme){
-    var btn = document.getElementById('hud-theme');
-    if (btn) {
+    // Sincroniza ambos botones de tema (desktop + mobile menu)
+    document.querySelectorAll('#hud-theme, #hud-theme-m').forEach(function(btn){
       btn.setAttribute('data-icon', theme === 'light' ? 'sun' : 'moon');
       btn.setAttribute('aria-label', theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro');
       if (window.IBISNE_ICONS && btn.firstChild) {
         btn.innerHTML = window.IBISNE_ICONS.get(theme === 'light' ? 'sun' : 'moon', 'line') || '';
       }
-    }
+    });
     // Sincroniza el theme-color del navegador móvil (barra superior iOS/Android)
     var metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {

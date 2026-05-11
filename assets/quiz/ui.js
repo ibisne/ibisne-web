@@ -236,14 +236,17 @@
     if (navNext) navNext.addEventListener('click', (e) => {
       e.stopPropagation();
       if (State.route !== 'servicio') return;
-      // Proxy al botón inline (preserva la lógica específica de cada renderer:
-      // contact→resultado, último step→resultado, multi-select, etc.)
+      const steps = getServicioSteps();
+      const isLast = State.step >= steps.length;
+      // En el último step: ir directo al resultado (no intentar siguiente step)
+      if (isLast) {
+        if (State.answers.subtipo) navigate('#/servicio/resultado');
+        return;
+      }
+      // Pasos intermedios: proxy al inline [data-next] que respeta canAdvance
       const target = $('#main [data-next]');
       if (target && !target.disabled) { target.click(); return; }
-      // Fallback genérico
-      const steps = getServicioSteps();
-      if (State.step >= steps.length) navigate('#/servicio/resultado');
-      else navigate('#/servicio/' + (State.step + 1));
+      navigate('#/servicio/' + (State.step + 1));
     });
   }
   function showBottomA(){
@@ -1105,13 +1108,11 @@ Quiero hablar para precisar el alcance.`;
           <section class="pc-block">
             <div class="pc-block-title">Condiciones comerciales</div>
             <ul class="pc-list pc-conditions">
-              <li>50% anticipo al firmar propuesta · 50% contra entrega del lanzamiento.</li>
-              <li>3 rondas de ajustes gratuitas durante el primer año (UX/UI menores).</li>
-              <li>Cotización <strong>indicativa</strong> · sujeta a discovery firmable con alcance final.</li>
-              <li>Vigencia: 30 días desde la fecha de emisión.</li>
-              <li>Precios en pesos mexicanos. IVA 16% aplica adicional cuando se indica subtotal.</li>
-              <li>Forma de pago: PayPal · Mercado Pago · SPEI/Transferencia · Criptomonedas (USDC, BTC).</li>
-              <li>Una vez aprobada, el equipo de iBisne se asigna en un máximo de 5 días hábiles.</li>
+              <li><strong>50% anticipo</strong> al firmar · 50% contra entrega.</li>
+              <li>3 rondas de ajustes gratuitas durante el primer año.</li>
+              <li>Cifra <strong>indicativa</strong> · sujeta a discovery firmable.</li>
+              <li>Vigencia: 30 días desde emisión · precios en MXN + IVA 16%.</li>
+              <li>Pago: SPEI · Mercado Pago · PayPal · Cripto (USDC/BTC).</li>
             </ul>
           </section>
 
