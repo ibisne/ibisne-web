@@ -1139,6 +1139,29 @@ body.has-bottom-bar-expanded .quiz-main{
   background: var(--bg-tint);
   overflow: hidden;
 }
+/* Mobile: aplana los grupos · sin card-dentro-de-card · header como divider */
+@media (max-width: 768px){
+  .qb-group{
+    margin: 14px 0 4px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .qb-group-head{
+    padding: 8px 0;
+    background: transparent;
+    border-bottom: 1px solid var(--bg-line);
+  }
+  .qb-group-name{ font-size: 10px; letter-spacing: 0.14em; }
+  .qb-group-sub{ font-size: 11px; }
+  .qb-group-head .li-icon{ width: 18px; height: 18px; }
+  .qb-group-head .li-icon svg{ width: 14px; height: 14px; }
+  .qb-group-body{ padding: 0; }
+  .qb-group-body .item{ padding: 8px 0; }
+  /* Reducir padding del contenedor exterior para aprovechar ancho */
+  .cotizacion-preview{ padding: 18px 16px; }
+}
 .qb-group-head{
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px;
