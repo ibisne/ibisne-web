@@ -981,8 +981,49 @@ Quiero hablar para precisar el alcance.`;
           ? 'Para proyectos de este nivel preferimos discovery primero. El equipo de iBisne te contacta en menos de 24 horas.'
           : 'Cifra indicativa, sujeta a discovery. Un hunter te contacta para precisar el alcance y entregar propuesta firmable.'}</p>
 
+        ${!isEnterprise && recommended ? `
+        <!-- ─── 1º COTIZACIÓN + 2º MEMBRESÍA RECOMENDADA (side by side) ──────── -->
+        <div class="vs-block">
+          <div class="vs-card vs-card-onetime">
+            <div class="vs-eyebrow">Pago único</div>
+            <div class="vs-title">Tu cotización</div>
+            <div class="vs-amount">${formatMxn(totalConIva)} <small>MXN</small></div>
+            <div class="vs-note">Lo que pagarías con cualquier agencia.</div>
+            <ul class="vs-list">
+              <li>Proyecto entregado · sin sociedad continua</li>
+              <li>50% anticipo · 50% contra entrega</li>
+              <li>Iteraciones post-launch: cotización aparte</li>
+            </ul>
+            <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-line vs-cta">Pagar proyecto · PayPal</a>
+          </div>
+          <div class="vs-card vs-card-member is-recommended">
+            <div class="vs-badge">RECOMENDADA · AHORRAS ${formatMxn(ahorroPrimerAno)}</div>
+            <div class="vs-eyebrow">Membresía iBisne · ${recommended.label}</div>
+            <div class="vs-title">Sociedad anual</div>
+            <div class="vs-amount accent">${formatMxn(recommended.price * 1.16)} <small>MXN/año</small></div>
+            <div class="vs-note">Tu proyecto + KAM + consultoría + iteraciones todo el año.</div>
+            <ul class="vs-list">
+              ${recommended.includes.map(it => '<li>' + it + '</li>').join('')}
+            </ul>
+            <button class="btn btn-primary vs-cta" type="button" data-pick-membership="${recommended.id}">Contratar membresía →</button>
+            <div class="vs-savings">vs pago único · te ahorras <strong>${formatMxn(ahorroPrimerAno)}</strong> el primer año</div>
+          </div>
+        </div>
+
+        <!-- ─── 4 PLANES · expandible ──────────────────────────────────────── -->
+        <details class="memberships-all">
+          <summary>
+            <span>Ver los 4 planes de membresía</span>
+            <span class="memberships-toggle-icon">▼</span>
+          </summary>
+          <div class="memberships-grid">
+            ${memberships.map(m => membershipCardHtml(m, m.id === recommended.id)).join('')}
+          </div>
+        </details>
+        ` : ''}
+
         ${!isEnterprise ? `
-        <!-- ─── BRAND PROMISE · qué incluye siempre iBisne (independiente del pago) ─── -->
+        <!-- ─── 3º HIGHLIGHTS · qué incluye siempre iBisne ───────────────────── -->
         <section class="brand-promise">
           <div class="bp-eyebrow">— TU PROYECTO IBISNE INCLUYE SIEMPRE</div>
           <div class="bp-grid">
@@ -1004,7 +1045,7 @@ Quiero hablar para precisar el alcance.`;
               <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('shield','line') : '✓'}</span>
               <div>
                 <strong>Infra incluida</strong>
-                <p>Hosting + base de datos + dominio configurado. Primer año sin costo.</p>
+                <p>Hosting + base de datos + dominio. Primer año sin costo.</p>
               </div>
             </div>
             <div class="bp-item">
@@ -1016,48 +1057,6 @@ Quiero hablar para precisar el alcance.`;
             </div>
           </div>
         </section>
-        ` : ''}
-
-        ${!isEnterprise && recommended ? `
-        <!-- ─── COMPARATIVA · pago único vs membresía recomendada ─────────── -->
-        <div class="vs-block">
-          <div class="vs-card vs-card-onetime">
-            <div class="vs-eyebrow">Pago único</div>
-            <div class="vs-title">Cotización proyecto</div>
-            <div class="vs-amount">${formatMxn(totalConIva)} <small>MXN</small></div>
-            <div class="vs-note">Lo que pagarías con cualquier agencia.</div>
-            <ul class="vs-list">
-              <li>Proyecto entregado · sin soporte continuo</li>
-              <li>50% anticipo · 50% contra entrega</li>
-              <li>Iteraciones puntuales · cobradas aparte</li>
-              <li>Cambios post-launch: cotización adicional</li>
-            </ul>
-            <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-line vs-cta">Pagar proyecto</a>
-          </div>
-          <div class="vs-card vs-card-member is-recommended">
-            <div class="vs-badge">RECOMENDADA · AHORRAS ${formatMxn(ahorroPrimerAno)}</div>
-            <div class="vs-eyebrow">Membresía iBisne · ${recommended.label}</div>
-            <div class="vs-title">Sociedad anual</div>
-            <div class="vs-amount accent">${formatMxn(recommended.price * 1.16)} <small>MXN/año</small></div>
-            <div class="vs-note">Tu proyecto + KAM + consultoría + iteraciones todo el año.</div>
-            <ul class="vs-list">
-              ${recommended.includes.map(it => '<li>' + it + '</li>').join('')}
-            </ul>
-            <button class="btn btn-primary vs-cta" type="button" data-pick-membership="${recommended.id}">Contratar membresía →</button>
-            <div class="vs-savings">vs proyecto puntual · te ahorras <strong>${formatMxn(ahorroPrimerAno)}</strong> el primer año</div>
-          </div>
-        </div>
-
-        <!-- ─── 4 PLANES · expandible · usuario explora todos los tiers ───── -->
-        <details class="memberships-all">
-          <summary>
-            <span>Ver los 4 planes de membresía</span>
-            <span class="memberships-toggle-icon">▼</span>
-          </summary>
-          <div class="memberships-grid">
-            ${memberships.map(m => membershipCardHtml(m, m.id === recommended.id)).join('')}
-          </div>
-        </details>
         ` : ''}
 
         <div class="result-grid">
@@ -1076,13 +1075,13 @@ Quiero hablar para precisar el alcance.`;
               <div class="stamp">INDICATIVO · sujeto a discovery · folio #${folio}</div>
 
               <div class="payment-section">
-                <div class="payment-section-label">— FORMA DE PAGO · disponible al cerrar discovery</div>
+                <div class="payment-section-label">— FORMA DE PAGO · PayPal disponible · otros próximamente</div>
                 <div class="payment-grid">
-                  <button class="payment-method" type="button" disabled aria-label="PayPal">
+                  <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="payment-method is-active" aria-label="Pagar con PayPal">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">PayPal</span>
-                    <span class="pm-meta">${L("Disponible pronto")}</span>
-                  </button>
+                    <span class="pm-meta">Pagar ahora →</span>
+                  </a>
                   <button class="payment-method" type="button" disabled aria-label="Mercado Pago">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">Mercado Pago</span>
@@ -1124,7 +1123,8 @@ Quiero hablar para precisar el alcance.`;
             </div>
 
             <div class="result-cta result-cta-stack">
-              <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary">${L("Compartir por WhatsApp →")}</a>
+              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay">Continuar a pago · PayPal →</a>
+              <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-line">${L("Compartir por WhatsApp →")}</a>
               <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
               <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn">${L("Agendar discovery")}</a>
             </div>
