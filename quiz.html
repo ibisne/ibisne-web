@@ -98,9 +98,17 @@
   <div class="menu-section">
     <div class="menu-label">Preferencias</div>
     <div class="menu-row">
-      <button class="hud-lang" type="button"><span class="active">ES</span>&nbsp;/&nbsp;<span style="opacity:0.4;">EN</span></button>
-      <button class="hud-btn is-disabled" type="button" data-icon="moon"></button>
-      <button class="hud-btn" id="hud-music-m" type="button" data-icon="play"></button>
+      <button class="hud-toggle" id="hud-lang-m" type="button" aria-label="Cambiar idioma">
+        <span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span>
+      </button>
+      <button class="hud-toggle" id="hud-currency-m" type="button" aria-label="Cambiar moneda">
+        <span class="active" data-currency="mxn">MX$</span><span class="slash">/</span><span data-currency="usd">US$</span>
+      </button>
+    </div>
+    <div class="menu-row">
+      <button class="hud-btn" id="hud-theme-m" type="button" data-icon="moon" aria-label="Cambiar tema"></button>
+      <button class="hud-btn" id="hud-music-m" type="button" data-icon="play" aria-label="Música"></button>
+      <button class="hud-btn" id="hud-install-m" type="button" data-icon="plus" aria-label="Instalar app" hidden></button>
     </div>
   </div>
   <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quiz%20de%20iBisne" target="_blank" rel="noopener" class="menu-cta" data-i18n="hud.cta.hunter">Hablar con un hunter ahora</a>

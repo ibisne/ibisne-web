@@ -36,66 +36,68 @@
   }
 
   function bindThemeToggle(){
-    const btn = $('#hud-theme');
-    if (!btn || !window.IBISNE_PREFS) return;
-    btn.addEventListener('click', () => {
-      window.IBISNE_PREFS.toggleTheme();
+    if (!window.IBISNE_PREFS) return;
+    // Bindea desktop + mobile (ambos llaman al mismo toggle global)
+    $$('#hud-theme, #hud-theme-m').forEach(btn => {
+      btn.addEventListener('click', () => window.IBISNE_PREFS.toggleTheme());
     });
   }
 
   function bindLang(){
-    const btn = $('#hud-lang');
-    if (!btn || !window.IBISNE_PREFS) return;
-    btn.addEventListener('click', () => {
-      window.IBISNE_PREFS.toggleLang();
-      // Si la página tiene render dinámico (quiz), pedirle que se re-renderee
-      if (window.IBISNE_QUIZ && typeof window.IBISNE_QUIZ.rerender === 'function') {
-        window.IBISNE_QUIZ.rerender();
-      }
+    if (!window.IBISNE_PREFS) return;
+    $$('#hud-lang, #hud-lang-m').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.IBISNE_PREFS.toggleLang();
+        if (window.IBISNE_QUIZ && typeof window.IBISNE_QUIZ.rerender === 'function') {
+          window.IBISNE_QUIZ.rerender();
+        }
+      });
     });
   }
 
   function bindCurrency(){
-    const btn = $('#hud-currency');
-    if (!btn || !window.IBISNE_PREFS) return;
-    btn.addEventListener('click', () => {
-      window.IBISNE_PREFS.toggleCurrency();
-      if (window.IBISNE_QUIZ && typeof window.IBISNE_QUIZ.rerender === 'function') {
-        window.IBISNE_QUIZ.rerender();
-      }
+    if (!window.IBISNE_PREFS) return;
+    $$('#hud-currency, #hud-currency-m').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.IBISNE_PREFS.toggleCurrency();
+        if (window.IBISNE_QUIZ && typeof window.IBISNE_QUIZ.rerender === 'function') {
+          window.IBISNE_QUIZ.rerender();
+        }
+      });
     });
   }
 
   function bindInstallPWA(){
-    const btn = $('#hud-install');
-    if (!btn || !window.IBISNE_PWA) return;
+    if (!window.IBISNE_PWA) return;
+    const btns = $$('#hud-install, #hud-install-m');
+    if (!btns.length) return;
 
     function refreshVisibility(){
       const info = window.IBISNE_PWA.canInstall();
-      if (info && info.canInstall) {
-        btn.hidden = false;
-        // Icono según plataforma: ios → apple, android → android, otro → plus
-        const iconId = info.platform === 'ios' ? 'ios'
-                     : info.platform === 'android' ? 'android'
-                     : 'plus';
-        btn.dataset.icon = iconId;
-        btn.innerHTML = window.IBISNE_ICONS.get(iconId, 'line') || '+';
-        btn.setAttribute('aria-label',
-          info.platform === 'ios'    ? 'Instalar en iPhone' :
-          info.platform === 'android'? 'Instalar en Android' :
-                                       'Instalar app');
-        btn.setAttribute('title', btn.getAttribute('aria-label'));
-      } else {
-        btn.hidden = true;
-      }
+      btns.forEach(btn => {
+        if (info && info.canInstall) {
+          btn.hidden = false;
+          const iconId = info.platform === 'ios' ? 'ios'
+                       : info.platform === 'android' ? 'android'
+                       : 'plus';
+          btn.dataset.icon = iconId;
+          btn.innerHTML = window.IBISNE_ICONS.get(iconId, 'line') || '+';
+          const label = info.platform === 'ios'    ? 'Instalar en iPhone' :
+                        info.platform === 'android'? 'Instalar en Android' :
+                                                     'Instalar app';
+          btn.setAttribute('aria-label', label);
+          btn.setAttribute('title', label);
+        } else {
+          btn.hidden = true;
+        }
+      });
     }
     refreshVisibility();
-    // El SW + beforeinstallprompt llegan asincrónicamente — re-evaluar
     setTimeout(refreshVisibility, 600);
     setTimeout(refreshVisibility, 2000);
 
-    btn.addEventListener('click', () => {
-      window.IBISNE_PWA.promptInstall();
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => window.IBISNE_PWA.promptInstall());
     });
   }
 
