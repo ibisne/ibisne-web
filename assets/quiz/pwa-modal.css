@@ -61,6 +61,35 @@
   margin: 0;
 }
 
+/* Beneficios · 3 items con icono · convencen al usuario antes de las instrucciones */
+.pwa-modal__benefits{
+  list-style: none;
+  margin: 0;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  border: 1px solid var(--bg-line, rgba(230,237,243,0.08));
+  border-radius: 12px;
+  background: var(--bg-tint, rgba(255,255,255,0.025));
+}
+.pwa-modal__benefits li{
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; line-height: 1.4;
+  color: var(--text-secondary, rgba(230,237,243,0.75));
+}
+.pwa-modal__benefits li strong{
+  color: var(--text-primary, #F2F2F2);
+  font-weight: 600;
+}
+.pwa-modal__benefits .b-icon{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-mint, #AEFFC8) 12%, transparent);
+  color: var(--accent-mint, #AEFFC8);
+  font-size: 13px; font-weight: 700;
+  margin-top: 1px;
+}
+
 .pwa-modal__steps{
   display: flex;
   flex-direction: column;
