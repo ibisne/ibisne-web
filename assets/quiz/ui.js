@@ -1191,9 +1191,9 @@ Quiero hablar para precisar el alcance.`;
           </div>
         </div>
         <div class="qb-total-block">
-          <div class="qb-total-label">Inversión estimada · <span id="qb-modules-inline">—</span></div>
+          <div class="qb-total-label">Inversión estimada</div>
           <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency" id="qb-currency-code">MXN</span></div>
-          <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">Subtotal · IVA aparte</div>
+          <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">IVA incluido</div>
         </div>
         <div class="qb-nav-block">
           <button class="qb-nav-btn qb-nav-prev" id="qb-nav-prev" type="button" aria-label="Pregunta anterior">← Anterior</button>
@@ -1392,15 +1392,7 @@ Quiero hablar para precisar el alcance.`;
         elStack.innerHTML = '<li style="color:var(--text-muted);">Selecciona vertical y sub-tipo</li>';
       }
     }
-    const elModules = $('#qb-modules-inline');
-    if (elModules) {
-      if (subtipo && !subtipo.contact) {
-        const n = calc.modules || 0;
-        elModules.textContent = n + (n === 1 ? ' módulo' : ' módulos');
-      } else {
-        elModules.textContent = 'sin definir';
-      }
-    }
+    // (badge "X módulos" inline retirado — se mantiene en panel expandido si aplica)
 
     // Sincronizar nav del bottom bar con los botones inline ocultos
     const navPrev = $('#qb-nav-prev');
@@ -1422,7 +1414,7 @@ Quiero hablar para precisar el alcance.`;
       const isLast = State.step >= steps.length;
       navNext.textContent = isLast ? 'Ver cotización →' : 'Continuar →';
     }
-    const elTotal = $('#qb-total'); if (elTotal) countUp(elTotal, calc.total);
+    const elTotal = $('#qb-total'); if (elTotal) countUp(elTotal, calc.total * 1.16); // ahora muestra el TOTAL con IVA
     const elCurr  = $('#qb-currency-code');
     if (elCurr && window.IBISNE_PREFS) elCurr.textContent = window.IBISNE_PREFS.currencyCode();
 
