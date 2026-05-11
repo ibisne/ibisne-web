@@ -68,7 +68,11 @@
   }
 
   function bindInstallPWA(){
-    if (!window.IBISNE_PWA) return;
+    // Retry hasta que IBISNE_PWA esté disponible (race condition con script defer)
+    if (!window.IBISNE_PWA) {
+      setTimeout(bindInstallPWA, 200);
+      return;
+    }
     const btns = $$('#hud-install, #hud-install-m');
     if (!btns.length) return;
 
@@ -92,9 +96,19 @@
         }
       });
     }
+
+    // Evaluar inmediatamente · iOS muestra el botón desde el primer tick
     refreshVisibility();
-    setTimeout(refreshVisibility, 600);
-    setTimeout(refreshVisibility, 2000);
+    // Re-evaluar después del load completo (cuando el manifest puede haberse parseado)
+    if (document.readyState === 'complete') {
+      setTimeout(refreshVisibility, 100);
+    } else {
+      window.addEventListener('load', () => setTimeout(refreshVisibility, 100));
+    }
+    // Re-evaluar cuando Chrome decide que el sitio es installable mid-session
+    window.addEventListener('beforeinstallprompt', refreshVisibility);
+    // Re-evaluar cuando el usuario instala (oculta el botón)
+    window.addEventListener('appinstalled', refreshVisibility);
 
     btns.forEach(btn => {
       btn.addEventListener('click', () => window.IBISNE_PWA.promptInstall());
