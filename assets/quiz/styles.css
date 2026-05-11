@@ -2054,8 +2054,8 @@ iframe[src*="vercel.live"]{ display: none !important; }
 .vs-block{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 0;  /* spacing manejado por gap del .result-screen */
+  gap: 28px;  /* más aire entre Pago Único y Membresía · contraste visual */
+  margin: 0;
 }
 .vs-card{
   position: relative;
@@ -2262,7 +2262,7 @@ iframe[src*="vercel.live"]{ display: none !important; }
 @media (max-width: 900px){
   .vs-block{
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 24px;  /* stack vertical · más respiro entre cards · evita "pegado" */
   }
   .vs-card{ padding: 22px 20px 18px; }
   .vs-amount{ font-size: 32px; }
