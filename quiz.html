@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iBisne — Quizz</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system-v2/tokens.css">
+<link rel="stylesheet" href="assets/quiz/styles.css">
+</head>
+<body>
+
+<div class="ambient-dots" aria-hidden="true">
+  <span class="dot"></span><span class="dot mint"></span><span class="dot"></span>
+  <span class="dot mint"></span><span class="dot"></span><span class="dot mint"></span>
+  <span class="dot"></span>
+</div>
+<div class="ambient-scan" aria-hidden="true"></div>
+
+<header class="hud">
+  <a href="index.html" class="hud-brand" aria-label="iBisne — Inicio"><img class="hud-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
+  <div class="hud-spacer"></div>
+
+  <div class="hud-group">
+    <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram" aria-label="Instagram"></a>
+    <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin" aria-label="LinkedIn"></a>
+    <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x" aria-label="X"></a>
+  </div>
+  <div class="hud-group">
+    <button class="hud-lang" id="hud-lang" type="button"><span class="active">ES</span>&nbsp;/&nbsp;<span style="opacity:0.4;">EN</span></button>
+    <button class="hud-btn is-disabled" id="hud-theme" type="button" data-icon="moon" aria-label="Tema"></button>
+    <button class="hud-btn" id="hud-music" type="button" data-icon="play" aria-label="Música"></button>
+  </div>
+  <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quizz%20de%20iBisne" target="_blank" rel="noopener" class="hud-cta">
+    <span data-icon="whatsapp"></span>Hablar con un hunter
+  </a>
+  <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="menu" aria-label="Menú"></button>
+</header>
+
+<nav class="hud-mobile-menu" id="hud-menu">
+  <div class="menu-section">
+    <div class="menu-label">Redes</div>
+    <div class="menu-row">
+      <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram"></a>
+      <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin"></a>
+      <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x"></a>
+    </div>
+  </div>
+  <div class="menu-section">
+    <div class="menu-label">Preferencias</div>
+    <div class="menu-row">
+      <button class="hud-lang" type="button"><span class="active">ES</span>&nbsp;/&nbsp;<span style="opacity:0.4;">EN</span></button>
+      <button class="hud-btn is-disabled" type="button" data-icon="moon"></button>
+      <button class="hud-btn" id="hud-music-m" type="button" data-icon="play"></button>
+    </div>
+  </div>
+  <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quizz%20de%20iBisne" target="_blank" rel="noopener" class="menu-cta">Hablar con un hunter ahora</a>
+</nav>
+
+<div class="progress-rail"><div class="fill"></div></div>
+
+<div class="quiz-layout">
+  <main class="quiz-main" id="main"></main>
+</div>
+
+<div class="quiz-bottom hidden" id="bottom-bar"></div>
+
+<footer class="legal-strip">
+  <div class="left">iBisne S.A.S de C.V. · 2026</div>
+  <div class="right">
+    <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
+    <a href="#" onclick="alert('Aviso de privacidad — próximamente'); return false;">Aviso de privacidad</a>
+    <a href="#" onclick="alert('Términos — próximamente'); return false;">Términos</a>
+  </div>
+</footer>
+
+<script src="data/pricing.js"></script>
+<script src="data/scoring.js"></script>
+<script src="data/inference.js"></script>
+<script src="data/discovery.js"></script>
+<script src="data/inversor.js"></script>
+<script src="data/consultoria.js"></script>
+<script src="assets/quiz/icons.js"></script>
+<script src="assets/quiz/ambient.js"></script>
+<script src="assets/quiz/hud.js"></script>
+<script src="assets/quiz/ui.js"></script>
+</body>
+</html>
