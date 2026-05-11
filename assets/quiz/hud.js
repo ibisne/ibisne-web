@@ -76,21 +76,34 @@
     const btns = $$('#hud-install, #hud-install-m');
     if (!btns.length) return;
 
+    // Mapeo plataforma → ícono · label corto · label completo
+    function platformMeta(p){
+      if (p === 'ios')     return { icon: 'ios',     short: 'Apple',   full: 'Instalar en iPhone' };
+      if (p === 'android') return { icon: 'android', short: 'Android', full: 'Instalar en Android' };
+      if (p === 'macos')   return { icon: 'ios',     short: 'macOS',   full: 'Instalar en Mac' };
+      if (p === 'windows') return { icon: 'plus',    short: 'Windows', full: 'Instalar en Windows' };
+      return                     { icon: 'plus',    short: 'App',     full: 'Instalar app' };
+    }
+
     function refreshVisibility(){
       const info = window.IBISNE_PWA.canInstall();
       btns.forEach(btn => {
         if (info && info.canInstall) {
           btn.hidden = false;
-          const iconId = info.platform === 'ios' ? 'ios'
-                       : info.platform === 'android' ? 'android'
-                       : 'plus';
-          btn.dataset.icon = iconId;
-          btn.innerHTML = window.IBISNE_ICONS.get(iconId, 'line') || '+';
-          const label = info.platform === 'ios'    ? 'Instalar en iPhone' :
-                        info.platform === 'android'? 'Instalar en Android' :
-                                                     'Instalar app';
-          btn.setAttribute('aria-label', label);
-          btn.setAttribute('title', label);
+          const meta = platformMeta(info.platform);
+          btn.dataset.icon = meta.icon;
+          // El botón decide su contenido según data-style:
+          //   "icon"  → solo ícono (HUD desktop compacto)
+          //   "cta"   → icono + texto "Instalar app" (mobile menu CTA, desktop secondary)
+          const style = btn.dataset.style || 'icon';
+          const iconSvg = window.IBISNE_ICONS.get(meta.icon, 'line') || '+';
+          if (style === 'cta') {
+            btn.innerHTML = '<span class="install-icon">' + iconSvg + '</span><span class="install-label">' + meta.full + '</span>';
+          } else {
+            btn.innerHTML = iconSvg;
+          }
+          btn.setAttribute('aria-label', meta.full);
+          btn.setAttribute('title', meta.full);
         } else {
           btn.hidden = true;
         }

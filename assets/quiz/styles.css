@@ -377,7 +377,7 @@ body::before{
     display: flex; gap: 12px; align-items: center;
   }
   .hud-mobile-menu .menu-cta{
-    display: inline-flex; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     padding: 18px;
     background: var(--accent);
     color: var(--bg-deep);
@@ -388,7 +388,21 @@ body::before{
     letter-spacing: 0.12em;
     text-decoration: none;
     border-radius: var(--radius-input, 10px);
+    border: none; cursor: pointer; width: 100%;
   }
+  /* Variante install · más sobria · borde verde sin fondo sólido */
+  .hud-mobile-menu .menu-cta-install{
+    background: transparent;
+    color: var(--accent-mint);
+    border: 1px solid var(--accent);
+    margin-top: 12px;
+  }
+  .hud-mobile-menu .menu-cta-install[hidden]{ display: none !important; }
+  .hud-mobile-menu .menu-cta-install .install-icon{
+    display: inline-flex; align-items: center;
+  }
+  .hud-mobile-menu .menu-cta-install .install-icon svg{ width: 18px; height: 18px; }
+  .hud-mobile-menu .menu-cta-install .install-label{ display: inline-block; }
 
   /* ─── Panel mobile · resumen vivo de la cotización ─────────── */
   .menu-resumen{ gap: 14px !important; }
