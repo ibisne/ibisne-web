@@ -1128,13 +1128,14 @@ body.has-bottom-bar-expanded .quiz-main{
 }
 
 /* ─── TABLET (1024–900) ─────────────────────────────────────────────── */
-/* Selectores duplicados con .options.cols-N para ganar especificidad
-   contra las reglas desktop (`.options.cols-4` etc.) */
 @media (max-width: 1024px){
   .options,
   .options.cols-4,
   .options.cols-3,
-  .options.is-list{ grid-template-columns: repeat(2, 1fr); }
+  .options.cols-2,
+  .options.is-2x2,
+  .options.is-list,
+  .options.is-multi{ grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 /* ─── MOBILE LAYOUT ─────────────────────────────────────────────────── */
@@ -1143,14 +1144,21 @@ body.has-bottom-bar-expanded .quiz-main{
   .quiz-main{ padding: 28px 16px 110px; }
   .question-card{ gap: 24px; min-height: 0; }
   .question-title{ font-size: clamp(28px, 7vw, 42px); }
-  /* Grid 2×N en mobile · gana especificidad contra cols-4 desktop */
+  /* GRID 2×2 EN MOBILE · forzado con !important para ganar a cualquier regla
+     más específica · cubre todas las variantes (cols-2/3/4, is-list, is-multi, is-2x2). */
   .options,
   .options.cols-4,
   .options.cols-3,
   .options.cols-2,
-  .options.is-list{ grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .options.is-2x2,
+  .options.is-list,
+  .options.is-multi{
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
   /* Una sola opción se mantiene en columna única */
-  .options.cols-1{ grid-template-columns: 1fr; }
+  .options.cols-1{ grid-template-columns: 1fr !important; }
   .option{ min-height: 150px; padding: 18px 16px; }
   .option .option-title{ font-size: 16px; line-height: 1.22; }
   .option .option-help{ display: none; }
