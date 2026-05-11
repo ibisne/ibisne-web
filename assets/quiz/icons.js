@@ -18,11 +18,13 @@ window.IBISNE_ICONS = (function(){
     biolink:   variant('<circle cx="12" cy="6" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="18" r="2.4"/>',
                        '<circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/><circle cx="12" cy="18" r="2.4" fill="currentColor"/>'),
 
-    landing:   variant('<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><line x1="3.5" y1="8" x2="20.5" y2="8"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="16.5" x2="13" y2="16.5"/>'),
+    // Landing: página con CTA destacado (botón sólido abajo) — diferencia clave vs sitio/info_app
+    landing:   variant('<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><line x1="7" y1="7.5" x2="17" y2="7.5"/><line x1="7" y1="10.5" x2="14" y2="10.5"/><line x1="7" y1="13" x2="11" y2="13"/><rect x="7" y="15.5" width="10" height="3" rx="0.6" fill="currentColor"/>'),
 
     leads:     variant('<path d="M3.5 4 L20.5 4 L14 13 L14 19.5 L10 17.5 L10 13 Z"/>'),
 
-    sitio:     variant('<rect x="3.5" y="4" width="17" height="16" rx="1.5"/><line x1="3.5" y1="9" x2="20.5" y2="9"/><circle cx="6.5" cy="6.5" r="0.6" fill="currentColor"/><circle cx="9" cy="6.5" r="0.6" fill="currentColor"/><circle cx="11.5" cy="6.5" r="0.6" fill="currentColor"/>'),
+    // Sitio: ventana de navegador con cursor — diferencia clave vs landing (cursor en lugar de líneas)
+    sitio:     variant('<rect x="3" y="4" width="18" height="16" rx="1.5"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><circle cx="6" cy="6.25" r="0.6" fill="currentColor"/><circle cx="8.2" cy="6.25" r="0.6" fill="currentColor"/><circle cx="10.4" cy="6.25" r="0.6" fill="currentColor"/><path d="M11 13 L11 17.5 L13 16 L14.5 18.5 L15.5 17.5 L13.5 15.5 L16 14.5 Z"/>'),
 
     chatbot:   variant('<path d="M4 5 H20 a1 1 0 0 1 1 1 V15 a1 1 0 0 1 -1 1 H13 L9 20 V16 H4 a1 1 0 0 1 -1 -1 V6 a1 1 0 0 1 1 -1 Z"/><circle cx="9" cy="10.5" r="0.9" fill="currentColor"/><circle cx="15" cy="10.5" r="0.9" fill="currentColor"/>'),
 
@@ -30,7 +32,8 @@ window.IBISNE_ICONS = (function(){
 
     app:       variant('<rect x="6.5" y="2.5" width="11" height="19" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/>'),
 
-    saas:      variant('<rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/>'),
+    // SaaS: nube con líneas de datos (suscripción/cloud) — diferencia clara vs grids
+    saas:      variant('<path d="M6 17 a5 5 0 0 1 0 -9 a6 6 0 0 1 11 -1 a4.5 4.5 0 0 1 1 9 Z"/><line x1="8.5" y1="13" x2="16" y2="13"/><line x1="10" y1="15.5" x2="14.5" y2="15.5"/>'),
 
     otro:      variant('<line x1="12" y1="4.5" x2="12" y2="19.5"/><line x1="4.5" y1="12" x2="19.5" y2="12"/>'),
 
@@ -41,7 +44,8 @@ window.IBISNE_ICONS = (function(){
 
     servicio:  variant('<rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M9 8 V5.5 a1 1 0 0 1 1 -1 h4 a1 1 0 0 1 1 1 V8"/><line x1="3" y1="13" x2="21" y2="13"/>'),
 
-    marketplace: variant('<circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="12" cy="18" r="2.6"/><line x1="8" y1="8" x2="11" y2="16"/><line x1="16" y1="8" x2="13" y2="16"/><line x1="8.5" y1="6" x2="15.5" y2="6"/>'),
+    // Marketplace: 3 toldos/storefronts — distintivo vs partnership
+    marketplace: variant('<path d="M3 8 L5 4 L19 4 L21 8 Z"/><rect x="4" y="8" width="4.5" height="12"/><rect x="9.75" y="8" width="4.5" height="12"/><rect x="15.5" y="8" width="4.5" height="12"/><line x1="4" y1="13" x2="8.5" y2="13"/><line x1="9.75" y1="13" x2="14.25" y2="13"/><line x1="15.5" y1="13" x2="20" y2="13"/>'),
 
     educacion: variant('<path d="M3 7.5 L12 4 L21 7.5 L12 11 Z"/><path d="M6 9 V14 a6 2.5 0 0 0 12 0 V9"/><line x1="20.5" y1="7.5" x2="20.5" y2="12.5"/><circle cx="20.5" cy="13.5" r="1" fill="currentColor"/>'),
 
@@ -56,8 +60,8 @@ window.IBISNE_ICONS = (function(){
     // Híbrida: dos teléfonos lado a lado con flecha de sincronización
     hybrid: variant('<rect x="2.5" y="4" width="8" height="16" rx="1.5"/><rect x="13.5" y="4" width="8" height="16" rx="1.5"/><line x1="4.5" y1="17.5" x2="8.5" y2="17.5"/><line x1="15.5" y1="17.5" x2="19.5" y2="17.5"/><polyline points="11 10 13 12 11 14"/><polyline points="13 10 11 12 13 14"/>'),
 
-    // No-code: bloques con + central (Lego-style)
-    nocode: variant('<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="17" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="17" r="1" fill="currentColor"/><circle cx="17" cy="17" r="1" fill="currentColor"/>'),
+    // No-code: 2 piezas Lego encajándose horizontalmente — diferencia clara vs grid/saas
+    nocode: variant('<rect x="2.5" y="9" width="9" height="7" rx="1"/><circle cx="5.5" cy="7.8" r="1.3"/><circle cx="8.5" cy="7.8" r="1.3"/><rect x="12.5" y="9" width="9" height="7" rx="1"/><circle cx="15.5" cy="7.8" r="1.3"/><circle cx="18.5" cy="7.8" r="1.3"/>'),
 
     // Grid limpio · trigger del panel mobile (resumen + redes + prefs)
     grid: variant('<rect x="3" y="3" width="8" height="8" rx="1.2"/><rect x="13" y="3" width="8" height="8" rx="1.2"/><rect x="3" y="13" width="8" height="8" rx="1.2"/><rect x="13" y="13" width="8" height="8" rx="1.2"/>'),
@@ -74,7 +78,8 @@ window.IBISNE_ICONS = (function(){
     shield: variant('<path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 8 a8 8 0 0 1 -8 -8 V6 Z"/>'),
 
     // ─── TIPOS FUNCIONALES DE APP ───────────────────────────────────
-    info_app: variant('<rect x="4" y="4" width="16" height="16" rx="1.5"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="17" x2="13" y2="17"/>'),
+    // Info app: silueta de teléfono con bullets de lista — diferencia clave vs landing/sitio
+    info_app: variant('<rect x="6" y="2.5" width="12" height="19" rx="2"/><circle cx="9" cy="8.5" r="0.7" fill="currentColor"/><line x1="11" y1="8.5" x2="16" y2="8.5"/><circle cx="9" cy="12" r="0.7" fill="currentColor"/><line x1="11" y1="12" x2="16" y2="12"/><circle cx="9" cy="15.5" r="0.7" fill="currentColor"/><line x1="11" y1="15.5" x2="16" y2="15.5"/><line x1="10" y1="19.5" x2="14" y2="19.5"/>'),
 
     login: variant('<circle cx="12" cy="9" r="3.5"/><path d="M5 20 a7 7 0 0 1 14 0"/>'),
 
@@ -83,11 +88,28 @@ window.IBISNE_ICONS = (function(){
     fintech: variant('<rect x="3" y="6" width="18" height="13" rx="1.5"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="6" y="13" width="5" height="2.5" rx="0.5"/><circle cx="17" cy="15" r="1.5" fill="currentColor"/>'),
 
     // ─── CLASIFICADOR ───────────────────────────────────────────────
-    partnership: variant('<path d="M2 16 L7 8 L12 13 L17 8 L22 16"/><circle cx="7" cy="8" r="1.3"/><circle cx="17" cy="8" r="1.3"/><circle cx="12" cy="13" r="1.3"/>'),
+    // Partnership: 2 anillos enlazados (unión/sociedad) — distintivo vs marketplace
+    partnership: variant('<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>'),
 
-    service:   variant('<rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M9 8 V5.5 a1 1 0 0 1 1 -1 h4 a1 1 0 0 1 1 1 V8"/><line x1="3" y1="13" x2="21" y2="13"/>'),
+    // Service: headset / customer service — distinto de "servicio" (maletín)
+    service:   variant('<path d="M5 14 v-2 a7 7 0 0 1 14 0 v2"/><rect x="3.5" y="13.5" width="3" height="5" rx="1"/><rect x="17.5" y="13.5" width="3" height="5" rx="1"/><path d="M17.5 18.5 v1 a2 2 0 0 1 -2 2 h-2"/>'),
 
     explore:   variant('<circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="20.5" y2="20.5"/>'),
+
+    // ─── PAGOS · diferenciados para la columna de pasarelas ─────────
+    cash:      variant('<rect x="2.5" y="7" width="19" height="10" rx="1"/><circle cx="12" cy="12" r="2.2"/><circle cx="5.5" cy="12" r="0.8" fill="currentColor"/><circle cx="18.5" cy="12" r="0.8" fill="currentColor"/>'),
+
+    wallet:    variant('<path d="M3.5 7.5 a1.5 1.5 0 0 1 1.5 -1.5 H19 v3 H4.5 a1.5 1.5 0 0 1 -1 -1.5 Z"/><rect x="3.5" y="9" width="17" height="10" rx="1.5"/><circle cx="16.5" cy="14" r="1.2" fill="currentColor"/>'),
+
+    phonepay:  variant('<rect x="5" y="2.5" width="10" height="19" rx="1.8"/><line x1="8" y1="18.5" x2="12" y2="18.5"/><path d="M17 9 a3 3 0 0 1 0 6"/><path d="M19.5 7 a5.5 5.5 0 0 1 0 10"/>'),
+
+    coin:      variant('<circle cx="12" cy="12" r="8"/><line x1="12" y1="7" x2="12" y2="17"/><path d="M14.5 9.5 a2 2 0 0 0 -2 -1.5 h-1 a2 2 0 0 0 0 4 h1 a2 2 0 0 1 0 4 h-1 a2 2 0 0 1 -2 -1.5"/>'),
+
+    // API: brackets curly { } — para integraciones técnicas
+    api:       variant('<path d="M9 4 a3 3 0 0 0 -3 3 v3 a2 2 0 0 1 -2 2 a2 2 0 0 1 2 2 v3 a3 3 0 0 0 3 3"/><path d="M15 4 a3 3 0 0 1 3 3 v3 a2 2 0 0 0 2 2 a2 2 0 0 0 -2 2 v3 a3 3 0 0 1 -3 3"/>'),
+
+    // Camera: cuerpo de cámara con lente — para cámara/QR/OCR
+    camera:    variant('<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><circle cx="12" cy="13.5" r="1.5" fill="currentColor"/><rect x="8.5" y="5" width="5" height="2.5" rx="0.5"/>'),
 
     // ─── HUD UI ICONS ───────────────────────────────────────────────
     instagram: { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.7" fill="currentColor"/></svg>' },
