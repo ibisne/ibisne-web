@@ -671,7 +671,7 @@
       <div class="question-card">
         <div class="eyebrow">${eyebrowLabel}</div>
         <h2 class="question-title">${q.label}</h2>
-        <p class="question-help">${q.help || (isMulti ? 'Selecciona todas las que apliquen.' : '')}</p>
+        <p class="question-help">${q.help || (isMulti ? 'Selecciona todas las que apliquen.' : 'Elige la opción que mejor refleje tu proyecto.')}</p>
         <div class="options ${isMulti ? 'is-multi' : ''} ${gridCls}">${cards}</div>
         <div class="actions">
           <button class="btn-ghost btn" data-prev type="button">← Anterior</button>
@@ -1039,7 +1039,7 @@ Quiero hablar para precisar el alcance.`;
       <div class="question-card">
         <div class="eyebrow">Discovery</div>
         <h2 class="question-title">${q.label}</h2>
-        <p class="question-help">${q.help || ''}</p>
+        <p class="question-help">${q.help || 'Cuéntanos para precisar el alcance del proyecto.'}</p>
     `;
 
     if (q.form) {
@@ -1609,7 +1609,7 @@ Quiero hablar para precisar el alcance.`;
       <div class="question-card">
         <div class="eyebrow">Inversionista</div>
         <h2 class="question-title">${q.label}</h2>
-        <p class="question-help">${q.help || ''}</p>
+        <p class="question-help">${q.help || 'Ayúdanos a entender tu perfil de inversión.'}</p>
     `;
 
     if (q.form) {
@@ -1781,7 +1781,7 @@ Quiero hablar para precisar el alcance.`;
       <div class="question-card">
         <div class="eyebrow">Consultoría · ${State.consultoria.modalidad_tipo?.label || ''}</div>
         <h2 class="question-title">${q.label}</h2>
-        <p class="question-help">${q.help || ''}</p>
+        <p class="question-help">${q.help || 'Definamos juntos cómo te acompañamos.'}</p>
     `;
 
     if (q.form) {
