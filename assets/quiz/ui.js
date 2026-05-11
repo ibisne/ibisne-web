@@ -31,16 +31,24 @@
   const $$ = sel => document.querySelectorAll(sel);
 
   // ─── UTILS ───────────────────────────────────────────────────────────
-  // Formato de moneda: respeta prefs (MXN/USD). Mantiene el nombre legacy `formatMxn`
-  // por compatibilidad — todos los precios base se almacenan en MXN.
   function formatMxn(n){
-    if (window.IBISNE_PREFS) return window.IBISNE_PREFS.format(Number(n));
-    return '$ ' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const num = Number(n);
+    const isInt = num === Math.floor(num);
+    if (window.IBISNE_PREFS) return window.IBISNE_PREFS.format(num);
+    return '$ ' + num.toLocaleString('en-US', isInt
+      ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+      : { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-  // Traducción puntual: t('key', 'fallback en ES')
   function t(key, fallback){
     if (window.IBISNE_PREFS) return window.IBISNE_PREFS.t(key, fallback);
     return fallback || key;
+  }
+  // Traducción de DATA · L(esText) busca por valor en IBISNE_I18N_DATA si lang === 'en'
+  function L(esText){
+    if (!esText) return esText;
+    if (!window.IBISNE_PREFS || window.IBISNE_PREFS.lang() !== 'en') return esText;
+    var dict = window.IBISNE_I18N_DATA || {};
+    return dict[esText] || esText;
   }
   function ease(t){ return 1 - Math.pow(1 - t, 3); }
   function countUp(el, to, ms){
@@ -91,13 +99,13 @@
     if (opts.marker) {
       inner += '<div class="option-marker">' + opts.marker + '</div>';
     }
-    inner += '<div class="option-title">' + opts.label + '</div>';
-    if (opts.schedule)    inner += '<div class="option-schedule">' + opts.schedule + '</div>';
-    if (opts.help)        inner += '<div class="option-help">' + opts.help + '</div>';
-    if (opts.description) inner += '<div class="option-description">' + opts.description + '</div>';
+    inner += '<div class="option-title">' + L(opts.label) + '</div>';
+    if (opts.schedule)    inner += '<div class="option-schedule">' + L(opts.schedule) + '</div>';
+    if (opts.help)        inner += '<div class="option-help">' + L(opts.help) + '</div>';
+    if (opts.description) inner += '<div class="option-description">' + L(opts.description) + '</div>';
     if (opts.meta)        inner += '<div class="option-meta">' + opts.meta + '</div>';
     if (opts.category) {
-      inner += '<span class="option-category">' + opts.category + '</span>';
+      inner += '<span class="option-category">' + L(opts.category) + '</span>';
     }
     return '<button class="option ' + (opts.isSelected ? 'is-selected' : '') + '" data-id="' + opts.id + '" type="button">' + inner + '</button>';
   }
@@ -561,7 +569,7 @@
 
     $('#main').innerHTML = `
       <div class="question-card">
-        <div class="eyebrow">Servicio</div>
+        <div class="eyebrow">${L("Servicio")}</div>
         <h2 class="question-title">¿Qué deseas construir?</h2>
         <p class="question-help">Elige por dónde empezamos. Cada camino abre sus propias opciones.</p>
         <div class="options is-hero ${gridClassByCount(PRICING.verticales.length)}">${cards}</div>
@@ -946,9 +954,9 @@ Quiero hablar para precisar el alcance.`;
                 <span class="amount">${formatMxn(subtipo?.base || 0)}</span>
               </div>
               ${groupsHtml}
-              <div class="item subtotal"><span>Subtotal</span><span class="amount">${formatMxn(calc.total)}</span></div>
-              <div class="item iva"><span>IVA · 16%</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
-              <div class="item total"><span>Total MXN</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
+              <div class="item subtotal"><span>${L("Subtotal")}</span><span class="amount">${formatMxn(calc.total)}</span></div>
+              <div class="item iva"><span>${L("IVA · 16%")}</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
+              <div class="item total"><span>${L("Total MXN")}</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
               <div class="stamp">INDICATIVO · sujeto a discovery · folio #${folio}</div>
 
               <div class="payment-section">
@@ -957,22 +965,22 @@ Quiero hablar para precisar el alcance.`;
                   <button class="payment-method" type="button" disabled aria-label="PayPal">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">PayPal</span>
-                    <span class="pm-meta">Disponible pronto</span>
+                    <span class="pm-meta">${L("Disponible pronto")}</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="Mercado Pago">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
                     <span class="pm-name">Mercado Pago</span>
-                    <span class="pm-meta">Disponible pronto</span>
+                    <span class="pm-meta">${L("Disponible pronto")}</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="SPEI / Transferencia">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('cash','line') : ''}</span>
                     <span class="pm-name">SPEI · Transferencia</span>
-                    <span class="pm-meta">Disponible pronto</span>
+                    <span class="pm-meta">${L("Disponible pronto")}</span>
                   </button>
                   <button class="payment-method" type="button" disabled aria-label="Criptomonedas">
                     <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('coin','line') : ''}</span>
                     <span class="pm-name">Cripto · USDC / BTC</span>
-                    <span class="pm-meta">Disponible pronto</span>
+                    <span class="pm-meta">${L("Disponible pronto")}</span>
                   </button>
                 </div>
               </div>
@@ -982,27 +990,27 @@ Quiero hablar para precisar el alcance.`;
           <div class="result-col-side">
             <div class="result-summary">
               <div class="item">
-                <div class="label">Equipo asignado</div>
+                <div class="label">${L("Equipo asignado")}</div>
                 <div class="value">${calc.team.join(' · ')}</div>
               </div>
               <div class="item">
-                <div class="label">Módulos activos</div>
+                <div class="label">${L("Módulos activos")}</div>
                 <div class="value">${calc.modules} ${calc.modules === 1 ? 'módulo' : 'módulos'} configurados</div>
               </div>
               <div class="item">
-                <div class="label">Velocidad de salida</div>
+                <div class="label">${L("Velocidad de salida")}</div>
                 <div class="value">${calc.speedZone === 'mvp' ? 'MVP rápido' : (calc.speedZone === 'premium' ? 'Premium acabado' : 'Estándar')}</div>
               </div>
               <div class="item">
-                <div class="label">Folio</div>
+                <div class="label">${L("Folio")}</div>
                 <div class="value">#${folio}</div>
               </div>
             </div>
 
             <div class="result-cta result-cta-stack">
-              <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary">Compartir por WhatsApp →</a>
-              <button class="btn btn-line" id="btn-print" type="button">Descargar PDF</button>
-              <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn">Agendar discovery</a>
+              <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary">${L("Compartir por WhatsApp →")}</a>
+              <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
+              <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn">${L("Agendar discovery")}</a>
             </div>
           </div>
         </div>
@@ -1015,7 +1023,7 @@ Quiero hablar para precisar el alcance.`;
               <div class="pc-brand-tagline">Holding LATAM · Capital + ejecución</div>
             </div>
             <div class="pc-meta">
-              <div class="pc-meta-row"><span class="pc-k">Folio</span><span class="pc-v">#${folio}</span></div>
+              <div class="pc-meta-row"><span class="pc-k">${L("Folio")}</span><span class="pc-v">#${folio}</span></div>
               <div class="pc-meta-row"><span class="pc-k">Fecha</span><span class="pc-v">${fechaHoy}</span></div>
               <div class="pc-meta-row"><span class="pc-k">Vigencia</span><span class="pc-v">${fechaVigencia}</span></div>
             </div>
@@ -1071,14 +1079,14 @@ Quiero hablar para precisar el alcance.`;
           </section>
 
           <section class="pc-totals">
-            <div class="pc-total-row"><span>Subtotal</span><span>${formatMxn(calc.total)}</span></div>
-            <div class="pc-total-row"><span>IVA · 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
+            <div class="pc-total-row"><span>${L("Subtotal")}</span><span>${formatMxn(calc.total)}</span></div>
+            <div class="pc-total-row"><span>${L("IVA · 16%")}</span><span>${formatMxn(calc.total * 0.16)}</span></div>
             <div class="pc-total-row pc-total-final"><span>TOTAL MXN</span><span>${formatMxn(calc.total * 1.16)}</span></div>
           </section>
 
           <div class="pc-grid pc-grid-2">
             <section class="pc-block">
-              <div class="pc-block-title">Equipo asignado</div>
+              <div class="pc-block-title">${L("Equipo asignado")}</div>
               <div class="pc-chips">
                 ${(calc.team || []).map(t => `<span class="pc-chip">${t}</span>`).join('')}
               </div>
@@ -1248,7 +1256,7 @@ Quiero hablar para precisar el alcance.`;
 
     let body = `
       <div class="question-card">
-        <div class="eyebrow">Discovery</div>
+        <div class="eyebrow">${L("Discovery")}</div>
         <h2 class="question-title">${q.label}</h2>
         <p class="question-help">${q.help || 'Cuéntanos para precisar el alcance del proyecto.'}</p>
     `;
@@ -1389,11 +1397,11 @@ Quiero hablar para precisar el alcance.`;
     return `
       <div class="qb-summary" id="qb-summary-toggle">
         <div class="qb-tipo-block">
-          <div class="qb-tipo is-empty" id="qb-tipo">Aún sin definir</div>
-          <div class="qb-config" id="qb-config-mini">Selecciona tu producto para empezar</div>
+          <div class="qb-tipo is-empty" id="qb-tipo">${L("Aún sin definir")}</div>
+          <div class="qb-config" id="qb-config-mini">${L("Selecciona tu producto para empezar")}</div>
         </div>
         <div class="qb-meta-block qb-intent-block">
-          <div class="qb-meta-label">Velocidad de salida</div>
+          <div class="qb-meta-label">${L("Velocidad de salida")}</div>
           <div class="qb-intent-line">
             <div class="qb-intent-dot" id="qb-intent-dot" style="left: 50%;"></div>
           </div>
@@ -1402,9 +1410,9 @@ Quiero hablar para precisar el alcance.`;
           </div>
         </div>
         <div class="qb-total-block">
-          <div class="qb-total-label">Inversión estimada</div>
+          <div class="qb-total-label">${L("Inversión estimada")}</div>
           <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency" id="qb-currency-code">MXN</span></div>
-          <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">IVA incluido</div>
+          <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">${L("IVA incluido")}</div>
         </div>
         <div class="qb-nav-block">
           <button class="qb-nav-btn qb-nav-prev" id="qb-nav-prev" type="button" aria-label="Pregunta anterior">← Anterior</button>
@@ -1414,28 +1422,28 @@ Quiero hablar para precisar el alcance.`;
       <button class="qb-toggle" id="qb-toggle-btn" type="button" aria-label="Abrir resumen">${chevronUp}</button>
       <div class="qb-expanded-content">
         <div class="qb-block">
-          <div class="qb-block-label">— Configuración seleccionada</div>
-          <ul class="qb-config-list" id="qb-config-full"><li style="color:var(--text-muted);">Aún sin selecciones</li></ul>
+          <div class="qb-block-label">${L("— Configuración seleccionada")}</div>
+          <ul class="qb-config-list" id="qb-config-full"><li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li></ul>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">— Equipo que ejecuta</div>
+          <div class="qb-block-label">${L("— Equipo que ejecuta")}</div>
           <div class="team-chips" id="qb-team">
             ${['KAM','Frontend','Backend','UX/UI','PM','DevOps','QA'].map(t => `<span class="team-chip" data-team="${t}">${t}</span>`).join('')}
           </div>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">— Stack propuesto</div>
+          <div class="qb-block-label">${L("— Stack propuesto")}</div>
           <ul class="qb-config-list" id="qb-stack">
-            <li style="color:var(--text-muted);">Selecciona vertical y sub-tipo</li>
+            <li style="color:var(--text-muted);">${L("Selecciona vertical y sub-tipo")}</li>
           </ul>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">— Velocidad de salida</div>
+          <div class="qb-block-label">${L("— Velocidad de salida")}</div>
           <div class="qb-intent-text" id="qb-intent-text" style="font-family:var(--font-display); font-size:14px; line-height:1.5; color:var(--accent-mint);">Selecciona opciones para ver la velocidad de salida</div>
           <ul class="qb-config-list" style="margin-top:10px;">
-            <li>50% anticipo · 50% entrega</li>
-            <li>3 ajustes gratuitos primer año</li>
-            <li>Indicativo · sujeto a discovery</li>
+            <li>${L("50% anticipo · 50% entrega")}</li>
+            <li>${L("3 ajustes gratuitos primer año")}</li>
+            <li>${L("Indicativo · sujeto a discovery")}</li>
           </ul>
         </div>
       </div>
@@ -1591,7 +1599,7 @@ Quiero hablar para precisar el alcance.`;
     if (elConfigFull) {
       elConfigFull.innerHTML = calc.lineItems.length
         ? calc.lineItems.map(li => `<li>${li.label}</li>`).join('')
-        : '<li style="color:var(--text-muted);">Aún sin selecciones</li>';
+        : '<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>';
     }
     $$('#qb-team .team-chip').forEach(c => c.classList.toggle('is-active', calc.team.includes(c.dataset.team)));
 
@@ -1602,7 +1610,7 @@ Quiero hablar para precisar el alcance.`;
         const stack = window.IBISNE_PRICING.getStack(vertical.id, subtipo.id);
         elStack.innerHTML = stack.map(s => `<li>${s}</li>`).join('');
       } else {
-        elStack.innerHTML = '<li style="color:var(--text-muted);">Selecciona vertical y sub-tipo</li>';
+        elStack.innerHTML = '<li style="color:var(--text-muted);">${L("Selecciona vertical y sub-tipo")}</li>';
       }
     }
     // (badge "X módulos" inline retirado — se mantiene en panel expandido si aplica)
@@ -1696,7 +1704,7 @@ Quiero hablar para precisar el alcance.`;
     return `
       <div class="qb-summary" id="qb-summary-toggle">
         <div class="qb-tipo-block">
-          <div class="qb-tipo is-empty" id="qb-negocio">Aún sin definir</div>
+          <div class="qb-tipo is-empty" id="qb-negocio">${L("Aún sin definir")}</div>
           <div class="qb-config" id="qb-config-mini">Responde las preguntas para evaluar tu fit</div>
         </div>
         <div class="qb-meta-block">
@@ -1720,7 +1728,7 @@ Quiero hablar para precisar el alcance.`;
         </div>
         <div class="qb-block">
           <div class="qb-block-label">— Solución que iBisne ejecutaría</div>
-          <ul class="qb-config-list" id="qb-solucion"><li style="color:var(--text-muted);">Aún sin selecciones</li></ul>
+          <ul class="qb-config-list" id="qb-solucion"><li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li></ul>
         </div>
         <div class="qb-block">
           <div class="qb-block-label">— Veredicto preliminar</div>
@@ -1781,7 +1789,7 @@ Quiero hablar para precisar el alcance.`;
     if (elSolucion) {
       elSolucion.innerHTML = inferencia.items.length
         ? inferencia.items.map(i => `<li>${i.label}</li>`).join('')
-        : '<li style="color:var(--text-muted);">Aún sin selecciones</li>';
+        : '<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>';
     }
     const elCompromiso = $('#qb-compromiso'); if (elCompromiso) elCompromiso.textContent = inferencia.tier.label;
     const elComision = $('#qb-comision'); if (elComision) elComision.textContent = a.comision?.label || '—';
@@ -1820,7 +1828,7 @@ Quiero hablar para precisar el alcance.`;
 
     let body = `
       <div class="question-card">
-        <div class="eyebrow">Inversionista</div>
+        <div class="eyebrow">${L("Inversionista")}</div>
         <h2 class="question-title">${q.label}</h2>
         <p class="question-help">${q.help || 'Ayúdanos a entender tu perfil de inversión.'}</p>
     `;
@@ -2093,8 +2101,8 @@ Quiero hablar para precisar el alcance.`;
           <h3>— DESGLOSE</h3>
           <div class="item base"><span>${State.consultoria?.modalidad_tipo?.label || ''}</span><span class="amount">${formatMxn(calc.base || 0)}</span></div>
           ${calc.lineItems.map(li => `<div class="item"><span>${li.label}</span><span class="amount">${li.add >= 0 ? '+ ' : ''}${formatMxn(li.add)}</span></div>`).join('')}
-          <div class="item subtotal"><span>Subtotal</span><span class="amount">${formatMxn(calc.total)}</span></div>
-          <div class="item iva"><span>IVA · 16%</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
+          <div class="item subtotal"><span>${L("Subtotal")}</span><span class="amount">${formatMxn(calc.total)}</span></div>
+          <div class="item iva"><span>${L("IVA · 16%")}</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
           <div class="item total"><span>Total ${window.IBISNE_PREFS ? window.IBISNE_PREFS.currencyCode() : 'MXN'}</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
           <div class="stamp">INDICATIVO · sujeto a alcance · folio ${folio}</div>
         </div>
@@ -2120,7 +2128,7 @@ Quiero hablar para precisar el alcance.`;
 
         <div class="result-cta">
           <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20de%20la%20consultor%C3%ADa%20${folio}" target="_blank" rel="noopener" class="btn btn-primary">Agendar primera sesión →</a>
-          <button class="btn btn-line" id="btn-print" type="button">Descargar PDF</button>
+          <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
           <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
         </div>
       </div>
