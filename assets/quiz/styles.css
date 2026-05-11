@@ -84,21 +84,33 @@
 @keyframes bootLabelIn{ to { opacity: 1; } }
 @keyframes blink{ 50% { opacity: 0.2; } }
 
-/* Fase final: el logo migra al HUD via FLIP — JS asigna --tx --ty --scale */
-.boot-loader.is-migrating{
-  background: rgba(10,14,19,0);
+/* FASE 1: limpiar decorativos antes del viaje · scanner/corners/label se desvanecen */
+.boot-loader.is-clearing .boot-scan,
+.boot-loader.is-clearing .boot-corners span,
+.boot-loader.is-clearing .boot-logo .label{
+  opacity: 0;
+  transition: opacity 0.22s ease;
 }
-.boot-loader.is-migrating .boot-scan,
-.boot-loader.is-migrating .boot-corners,
-.boot-loader.is-migrating .boot-loader::before,
-.boot-loader.is-migrating .boot-logo .label{ opacity: 0; transition: opacity 0.25s ease; }
+.boot-loader.is-clearing::before,
+.boot-loader.is-clearing::after{ opacity: 0; transition: opacity 0.22s ease; }
+
+/* FASE 2: el logo VIAJA al HUD · cubic-bezier suave + transición larga (950ms) */
+.boot-loader.is-migrating{
+  background: rgba(10,14,19,0.92);
+  transition: background 0.4s ease, opacity 0.28s ease;
+}
 .boot-loader.is-migrating .boot-logo{
   transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale, 0.18));
-  transition: transform 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+  transition: transform 0.95s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
 }
-/* HUD oculto hasta que el loader termina, para evitar dos logos */
-body.is-booting .hud{ opacity: 0; pointer-events: none; }
-body:not(.is-booting) .hud{ opacity: 1; transition: opacity 0.35s 0.15s ease; }
+
+/* FASE 3: el HUD aparece instantáneo en el momento exacto que llega el boot logo */
+body.is-booting .hud{ opacity: 0; pointer-events: none; transition: none; }
+body:not(.is-booting) .hud{ opacity: 1; }
+
+/* FASE 4: boot loader se desvanece tras el handover */
+.boot-loader.is-done{ opacity: 0; pointer-events: none; }
 
 
 
