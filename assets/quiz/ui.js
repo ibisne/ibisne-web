@@ -109,12 +109,21 @@
     return ''; // default 3-col
   }
 
-  // Helper: auto-avance con timer cancelable
+  // Helper: auto-avance con timer cancelable + fade-out previo de #main
+  // Flujo: usuario selecciona → ver feedback ~200ms → fade-out 180ms → navigate → fade-in nueva
   let _advanceTimer = null;
   function scheduleAdvance(targetHash, delayMs){
     if (_advanceTimer) { clearTimeout(_advanceTimer); _advanceTimer = null; }
-    // Auto-advance corto pero suficiente para que el usuario vea el feedback de selección
-    _advanceTimer = setTimeout(() => { _advanceTimer = null; navigate(targetHash); }, delayMs || 380);
+    const FEEDBACK = 200;  // ver el check ✓ antes de empezar a salir
+    const EXIT     = 180;  // duración del fade-out
+    _advanceTimer = setTimeout(() => {
+      const main = document.getElementById('main');
+      if (main) main.classList.add('is-leaving');
+      setTimeout(() => {
+        _advanceTimer = null;
+        navigate(targetHash);
+      }, EXIT);
+    }, (delayMs != null ? delayMs : FEEDBACK));
   }
   function cancelAdvance(){
     if (_advanceTimer) { clearTimeout(_advanceTimer); _advanceTimer = null; }
@@ -141,6 +150,10 @@
 
   function render(){
     const { route, step } = parseHash();
+
+    // Limpia el fade-out de salida antes de pintar la nueva pantalla
+    const _main = document.getElementById('main');
+    if (_main) _main.classList.remove('is-leaving');
 
     if (route === 'classifier' || !route) {
       // Clasificador no es accesible públicamente — redirigir a servicio

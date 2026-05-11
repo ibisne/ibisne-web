@@ -535,21 +535,27 @@ body.has-bottom-bar-expanded .quiz-main{
 .question-card{
   width: 100%;
   display: flex; flex-direction: column; gap: 20px;
-  animation: questionEnter 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: questionEnter 320ms ease-out;
   min-height: 70vh; /* mantiene los botones de acción en posición consistente */
 }
 .question-card .options{ flex: 1; align-content: flex-start; }
-/* Entrada más natural: leve fade + sutil rise (no slide horizontal que se siente como brinco) */
+/* Cross-fade puro · solo opacidad · sin movimiento ni blur (cero mareo) */
 @keyframes questionEnter{
-  from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
-  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* Cuando main tiene .is-leaving, fade out limpio antes de navegar */
+#main.is-leaving{
+  opacity: 0;
+  transition: opacity 180ms ease-in;
+  pointer-events: none;
 }
 .question-card .question-title,
 .question-card .question-help{ max-width: 1100px; }
-/* legacy alias suavizado · ya no desliza horizontalmente */
+/* legacy alias · cross-fade puro · sin movimiento */
 @keyframes slideIn{
-  from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
-  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .eyebrow{
@@ -1710,32 +1716,32 @@ body.has-bottom-bar .question-card{ min-height: 0; }
   border-top: 1px solid var(--bg-line);
 }
 
-/* ─── STAGGER ANIMATION cards · cross-fade suave + microrise sin brincos ── */
+/* ─── CARDS · cross-fade puro · sin movimiento ni stagger agresivo ──── */
 @keyframes cardEnter {
-  from { opacity: 0; transform: translateY(6px) scale(0.985); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 .options .option {
-  animation: cardEnter 380ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: cardEnter 280ms ease-out both;
+  /* Solo hover y selección animan transform · entrada NO se mueve */
   transition: border-color 0.22s ease, background 0.22s ease,
-              transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1),
-              box-shadow 0.22s ease;
+              transform 0.18s ease, opacity 0.18s ease;
 }
-/* Hover/active de cards: micro-lift, no salto */
+/* Hover/active de cards: micro-lift sutil · señales de interactividad */
 .option:hover { transform: translateY(-1px); }
-.option:active { transform: translateY(0) scale(0.985); transition-duration: 60ms; }
+.option:active { transform: translateY(0); transition-duration: 60ms; }
 .option.is-selected { transform: translateY(-1px); }
 
-/* Stagger compacto: las 3 primeras casi simultáneas, después escalonado */
+/* Stagger ultra-corto: 25ms entre cards · da ritmo sin marear */
 .options .option:nth-child(1){ animation-delay: 0ms; }
-.options .option:nth-child(2){ animation-delay: 40ms; }
-.options .option:nth-child(3){ animation-delay: 80ms; }
-.options .option:nth-child(4){ animation-delay: 120ms; }
-.options .option:nth-child(5){ animation-delay: 160ms; }
-.options .option:nth-child(6){ animation-delay: 200ms; }
-.options .option:nth-child(7){ animation-delay: 240ms; }
-.options .option:nth-child(8){ animation-delay: 280ms; }
-.options .option:nth-child(9){ animation-delay: 320ms; }
+.options .option:nth-child(2){ animation-delay: 25ms; }
+.options .option:nth-child(3){ animation-delay: 50ms; }
+.options .option:nth-child(4){ animation-delay: 75ms; }
+.options .option:nth-child(5){ animation-delay: 100ms; }
+.options .option:nth-child(6){ animation-delay: 125ms; }
+.options .option:nth-child(7){ animation-delay: 150ms; }
+.options .option:nth-child(8){ animation-delay: 175ms; }
+.options .option:nth-child(9){ animation-delay: 200ms; }
 
 /* Respeto al usuario que pidió reducir movimiento */
 @media (prefers-reduced-motion: reduce) {
