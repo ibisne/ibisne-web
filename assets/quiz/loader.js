@@ -1,6 +1,9 @@
 /* ===================================================================
    assets/quiz/loader.js — Boot loader: scanner + logo central que
    FÍSICAMENTE viaja hasta su posición en el HUD y se queda ahí.
+
+   v3.3: animamos el <img> directamente con transform-origin: 0 0,
+   no el contenedor flex, para que la geometría sea exacta (sin salto).
    =================================================================== */
 (function(){
   'use strict';
@@ -26,7 +29,6 @@
   document.body.appendChild(loader);
 
   if (FAST_PATH) {
-    // Navegación interna: fade rápido sin animación cinematográfica
     requestAnimationFrame(function(){
       loader.style.transition = 'opacity 0.18s ease';
       loader.classList.add('is-done');
@@ -36,9 +38,9 @@
     return;
   }
 
-  // Primera visita en esta sesión: animación completa
-  var SCAN_DURATION = 1500;   // tiempo del scanner antes de iniciar migración
-  var TRAVEL = 950;           // duración del viaje del logo (más largo = más visible)
+  var SCAN_DURATION = 1400;
+  var CLEAR_DURATION = 240;
+  var TRAVEL = 900;
 
   function whenReady(cb){
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cb);
@@ -55,8 +57,7 @@
     var hudBrand = document.getElementById('hud-brand') || document.querySelector('.hud-brand');
     var hudImg   = hudBrand && hudBrand.querySelector('img.hud-logo');
 
-    if (!bootLogo || !hudBrand || !hudImg) {
-      // Sin destino: simple fade
+    if (!bootLogo || !hudBrand || !hudImg || !bootImg) {
       document.body.classList.remove('is-booting');
       loader.classList.add('is-done');
       sessionStorage.setItem('ibisne.booted', '1');
@@ -64,38 +65,42 @@
       return;
     }
 
-    // Fade out de los elementos decorativos del scanner (corners, label, líneas)
-    // ANTES de que arranque el viaje, para que el logo no compita visualmente.
+    // Fase 1: limpiar decorativos (scanner, corners, label) ANTES de la migración
     loader.classList.add('is-clearing');
 
-    // Pequeña pausa para que se desvanezcan los decorativos antes del viaje
     setTimeout(function(){
-      // FLIP: calcula delta exacto entre posición actual (centro) y posición destino (HUD)
+      // Pre-medición: el bootImg sigue en su posición original (la limpieza solo cambia opacidad)
       var fromRect = bootImg.getBoundingClientRect();
       var toRect   = hudImg.getBoundingClientRect();
 
-      var dx = (toRect.left + toRect.width/2) - (fromRect.left + fromRect.width/2);
-      var dy = (toRect.top  + toRect.height/2) - (fromRect.top + fromRect.height/2);
+      // FLIP con transform-origin: 0 0 · matemática exacta sin importar el contenedor
+      // El img empieza en (fromRect.left, fromRect.top) con dimensiones (fromRect.width, fromRect.height).
+      // Lo movemos al top-left de toRect y lo escalamos al ratio de tamaño.
+      var dx = toRect.left - fromRect.left;
+      var dy = toRect.top  - fromRect.top;
       var scale = toRect.width / fromRect.width;
 
-      bootLogo.style.setProperty('--tx', dx + 'px');
-      bootLogo.style.setProperty('--ty', dy + 'px');
-      bootLogo.style.setProperty('--scale', scale);
+      // Aplicar transform al IMG directamente (no al contenedor flex) — origin 0 0
+      bootImg.style.transformOrigin = '0 0';
+      bootImg.style.willChange = 'transform';
+      // Forzar reflow antes de aplicar la transición para que el browser entienda el "from"
+      bootImg.getBoundingClientRect();
+      bootImg.style.transition = 'transform ' + TRAVEL + 'ms cubic-bezier(0.65, 0, 0.35, 1)';
+      bootImg.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
 
-      // El boot loader se vuelve transparente para que se vea el HUD detrás
+      // El background del loader se desvanece progresivamente durante el viaje
       loader.classList.add('is-migrating');
 
-      // En cuanto el logo llega: mostramos el HUD logo en el mismo lugar (handover invisible)
-      // y removemos el boot loader.
+      // Handover: cuando el img llega a destino, mostramos el HUD y removemos el loader
       setTimeout(function(){
-        document.body.classList.remove('is-booting'); // HUD aparece (instantáneo en CSS)
-        // Tiny crossfade — boot logo desaparece, HUD logo ya está ahí
+        // El HUD logo aparece exactamente donde quedó el bootImg → handover invisible
+        document.body.classList.remove('is-booting');
         loader.classList.add('is-done');
         setTimeout(function(){
           loader.remove();
           sessionStorage.setItem('ibisne.booted', '1');
         }, 280);
       }, TRAVEL);
-    }, 220); // tiempo para que se aclaren los decorativos
+    }, CLEAR_DURATION);
   }
 })();
