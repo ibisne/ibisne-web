@@ -1290,33 +1290,34 @@ body.has-bottom-bar-expanded .quiz-main{
     gap: 8px !important;
   }
   .options:not(.is-hero) .option{
-    min-height: 0;
+    /* Cards más sustanciales · ~80px de alto · ~45% más altas que la versión compacta */
+    min-height: 80px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto;
     align-items: center;
-    column-gap: 12px;
-    row-gap: 2px;
+    column-gap: 16px;
+    row-gap: 4px;
     text-align: left;
-    padding: 12px 14px;
+    padding: 18px 18px;
     border-radius: var(--radius, 14px);
   }
-  /* Icono: columna 1, span 2 filas → centrado vertical entre cat + título */
+  /* Icono: columna 1, span 2 filas → centrado vertical · 40px para peso visual */
   .options:not(.is-hero) .option > .icon{
     grid-column: 1; grid-row: 1 / 3;
-    width: 32px; height: 32px; margin: 0;
+    width: 40px; height: 40px; margin: 0;
   }
-  .options:not(.is-hero) .option > .icon svg{ width: 24px; height: 24px; }
+  .options:not(.is-hero) .option > .icon svg{ width: 28px; height: 28px; }
   /* Categoría: fila 1 columna 2 · eyebrow verde tenue sobre el título */
   .options:not(.is-hero) .option > .option-category{
     grid-column: 2; grid-row: 1;
-    margin: 0; font-size: 9px;
-    letter-spacing: 0.14em;
+    margin: 0; font-size: 10px;
+    letter-spacing: 0.16em;
   }
   /* Título: fila 2 columna 2 · 1 línea con ellipsis para altura uniforme */
   .options:not(.is-hero) .option > .option-title{
     grid-column: 2; grid-row: 2;
-    font-size: 15px; line-height: 1.25;
+    font-size: 16px; line-height: 1.3;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1334,8 +1335,8 @@ body.has-bottom-bar-expanded .quiz-main{
   /* Meta (precio): columna 3, span 2 filas, centrado vertical */
   .options:not(.is-hero) .option > .option-meta{
     grid-column: 3; grid-row: 1 / 3;
-    margin: 0; padding: 0;
-    font-size: 12px;
+    margin: 0; padding: 0 6px 0 0;
+    font-size: 13px;
     white-space: nowrap;
     align-self: center;
   }
