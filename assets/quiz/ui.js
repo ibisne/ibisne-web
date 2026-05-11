@@ -549,7 +549,7 @@
         <div class="eyebrow">Servicio</div>
         <h2 class="question-title">¿Qué deseas construir?</h2>
         <p class="question-help">Elige por dónde empezamos. Cada camino abre sus propias opciones.</p>
-        <div class="options ${gridClassByCount(PRICING.verticales.length)}">${cards}</div>
+        <div class="options is-hero ${gridClassByCount(PRICING.verticales.length)}">${cards}</div>
         <div class="actions">
           <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
           <button class="btn btn-primary" data-next type="button" ${State.answers.vertical ? '' : 'disabled'}>Continuar →</button>
