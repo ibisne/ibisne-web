@@ -1,19 +1,16 @@
 /* ===================================================================
-   assets/quiz/loader.js — Boot loader con scanner + logo central
-   que migra (FLIP) al HUD al terminar.
+   assets/quiz/loader.js — Boot loader: scanner + logo central que
+   FÍSICAMENTE viaja hasta su posición en el HUD y se queda ahí.
    =================================================================== */
 (function(){
   'use strict';
 
-  // Si ya cargó al menos una vez en esta sesión, saltar el boot loader.
-  // Comporta: 1ra visita → animación completa. Siguientes navegaciones internas
-  // del mismo navegador → entrada sin loader.
+  // Skip en navegaciones siguientes (no quemar al usuario con la animación)
   var FAST_PATH = sessionStorage.getItem('ibisne.booted') === '1';
 
-  // Marcamos body para que el HUD se oculte hasta terminar el boot.
+  // Marcamos body: HUD oculto hasta que el boot logo llegue a su lugar
   document.body.classList.add('is-booting');
 
-  // Inyectar HTML del loader
   var loader = document.createElement('div');
   loader.className = 'boot-loader';
   loader.id = 'boot-loader';
@@ -29,33 +26,27 @@
   document.body.appendChild(loader);
 
   if (FAST_PATH) {
-    // Saltar animación en navegaciones siguientes — fade out rápido
+    // Navegación interna: fade rápido sin animación cinematográfica
     requestAnimationFrame(function(){
-      loader.style.transition = 'opacity 0.2s ease';
+      loader.style.transition = 'opacity 0.18s ease';
       loader.classList.add('is-done');
       document.body.classList.remove('is-booting');
-      setTimeout(function(){ loader.remove(); }, 250);
+      setTimeout(function(){ loader.remove(); }, 220);
     });
     return;
   }
 
-  // Primera visita: animación completa de scanner
-  var DURATION = 1800;     // tiempo total visible (matches CSS scanSweep)
-  var MIGRATION = 700;     // tiempo del FLIP
+  // Primera visita en esta sesión: animación completa
+  var SCAN_DURATION = 1500;   // tiempo del scanner antes de iniciar migración
+  var TRAVEL = 950;           // duración del viaje del logo (más largo = más visible)
 
-  // Espera a que el HUD esté en DOM (debería ya estar — el script carga al final)
   function whenReady(cb){
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', cb);
-    } else {
-      cb();
-    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cb);
+    else cb();
   }
 
   whenReady(function(){
-    setTimeout(function(){
-      migrateLogoToHud();
-    }, DURATION);
+    setTimeout(migrateLogoToHud, SCAN_DURATION);
   });
 
   function migrateLogoToHud(){
@@ -65,36 +56,46 @@
     var hudImg   = hudBrand && hudBrand.querySelector('img.hud-logo');
 
     if (!bootLogo || !hudBrand || !hudImg) {
-      // Fallback sin animación FLIP
-      loader.classList.add('is-done');
+      // Sin destino: simple fade
       document.body.classList.remove('is-booting');
+      loader.classList.add('is-done');
       sessionStorage.setItem('ibisne.booted', '1');
       setTimeout(function(){ loader.remove(); }, 500);
       return;
     }
 
-    // FLIP: calcula delta entre posición actual (centro) y posición destino (HUD)
-    var fromRect = bootImg.getBoundingClientRect();
-    var toRect   = hudImg.getBoundingClientRect();
+    // Fade out de los elementos decorativos del scanner (corners, label, líneas)
+    // ANTES de que arranque el viaje, para que el logo no compita visualmente.
+    loader.classList.add('is-clearing');
 
-    var dx = (toRect.left + toRect.width/2) - (fromRect.left + fromRect.width/2);
-    var dy = (toRect.top  + toRect.height/2) - (fromRect.top + fromRect.height/2);
-    var scale = toRect.width / fromRect.width;
-
-    bootLogo.style.setProperty('--tx', dx + 'px');
-    bootLogo.style.setProperty('--ty', dy + 'px');
-    bootLogo.style.setProperty('--scale', scale);
-
-    // Activar migración (CSS hace el resto via transición)
-    loader.classList.add('is-migrating');
-    document.body.classList.remove('is-booting');
-
+    // Pequeña pausa para que se desvanezcan los decorativos antes del viaje
     setTimeout(function(){
-      loader.classList.add('is-done');
+      // FLIP: calcula delta exacto entre posición actual (centro) y posición destino (HUD)
+      var fromRect = bootImg.getBoundingClientRect();
+      var toRect   = hudImg.getBoundingClientRect();
+
+      var dx = (toRect.left + toRect.width/2) - (fromRect.left + fromRect.width/2);
+      var dy = (toRect.top  + toRect.height/2) - (fromRect.top + fromRect.height/2);
+      var scale = toRect.width / fromRect.width;
+
+      bootLogo.style.setProperty('--tx', dx + 'px');
+      bootLogo.style.setProperty('--ty', dy + 'px');
+      bootLogo.style.setProperty('--scale', scale);
+
+      // El boot loader se vuelve transparente para que se vea el HUD detrás
+      loader.classList.add('is-migrating');
+
+      // En cuanto el logo llega: mostramos el HUD logo en el mismo lugar (handover invisible)
+      // y removemos el boot loader.
       setTimeout(function(){
-        loader.remove();
-        sessionStorage.setItem('ibisne.booted', '1');
-      }, 500);
-    }, MIGRATION - 50);
+        document.body.classList.remove('is-booting'); // HUD aparece (instantáneo en CSS)
+        // Tiny crossfade — boot logo desaparece, HUD logo ya está ahí
+        loader.classList.add('is-done');
+        setTimeout(function(){
+          loader.remove();
+          sessionStorage.setItem('ibisne.booted', '1');
+        }, 280);
+      }, TRAVEL);
+    }, 220); // tiempo para que se aclaren los decorativos
   }
 })();
