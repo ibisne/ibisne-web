@@ -1315,7 +1315,250 @@ Quiero arrancar la membresía y el discovery.`;
         window.open(url, '_blank', 'noopener');
       });
     });
+
+    // ─── v4.0 · Wire de los 3 CTAs equivalentes ────────────────────────
+    // CTA "Plan mensual" → modal con las 4 opciones de duración
+    $$('[data-cta="monthly-plan"]').forEach(btn => {
+      btn.addEventListener('click', () => openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText));
+    });
+    // CTA "Buscar inversor" → modal con form rápido
+    $$('[data-cta="find-investor"]').forEach(btn => {
+      btn.addEventListener('click', () => openFindInvestorModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel));
+    });
+    // CTA "Pagar ahora" ya funciona vía href PayPal · no necesita wire JS
+
+    // Cards individuales del cofin-block · click directo en una opción
+    $$('[data-cofin-months]').forEach(card => {
+      card.addEventListener('click', () => {
+        const months = parseInt(card.dataset.cofinMonths, 10);
+        const totalConIvaLocal = calc.total * 1.16;
+        if (months === 1) {
+          // Pago directo · ir a PayPal
+          window.open('https://paypal.me/iBisne', '_blank', 'noopener');
+        } else {
+          openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText, months);
+        }
+      });
+    });
+
     showAsideB();
+  }
+
+  // ─── v4.0 · Modal "Plan mensual" · 4 opciones de duración ──────────
+  function openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText, preselectMonths){
+    const totalConIva = calc.total * 1.16;
+    const options = window.IBISNE_PRICING?.getCofinancingOptions
+      ? window.IBISNE_PRICING.getCofinancingOptions(totalConIva)
+      : [];
+    const tier = window.IBISNE_PRICING?.getCofinancingTier
+      ? window.IBISNE_PRICING.getCofinancingTier(totalConIva)
+      : null;
+    const preselected = preselectMonths || 12;
+
+    let modal = document.getElementById('v4-monthly-modal');
+    if (modal) modal.remove();
+    modal = document.createElement('div');
+    modal.id = 'v4-monthly-modal';
+    modal.className = 'v4-modal-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.innerHTML = `
+      <div class="v4-modal" tabindex="-1">
+        <div class="v4-modal-head">
+          <div>
+            <div class="v4-modal-eyebrow">§ PLAN MENSUAL · ${tier ? tier.label.toUpperCase() : ''}</div>
+            <h3 class="v4-modal-title">Elige cuánto te comprometes</h3>
+            <p class="v4-modal-sub">Cuanto más tiempo, más co-financia iBisne. Tú pagas en mensualidades iguales · sin intereses.</p>
+          </div>
+          <button class="v4-modal-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="v4-modal-body">
+          <div class="v4-opts">
+            ${options.map(opt => {
+              const isPreselected = opt.months === preselected;
+              const monthsLabel = opt.months === 1 ? 'Pago directo' :
+                opt.months === 3 ? '3 meses' :
+                opt.months === 6 ? '6 meses' : '12 meses · anual';
+              const priceLabel = opt.months === 1
+                ? formatMxn(opt.finalPrice)
+                : formatMxn(opt.monthlyPayment) + '<small>/mes</small>';
+              return `
+                <button class="v4-opt${isPreselected ? ' is-selected' : ''}${opt.months === 12 ? ' is-best' : ''}" type="button" data-pick-months="${opt.months}">
+                  ${opt.months === 12 ? '<span class="v4-opt-badge">MEJOR PRECIO</span>' : ''}
+                  <div class="v4-opt-head">
+                    <span class="v4-opt-months">${monthsLabel}</span>
+                    ${opt.discount > 0 ? `<span class="v4-opt-disc">−${opt.discount}%</span>` : ''}
+                  </div>
+                  <div class="v4-opt-price">${priceLabel}</div>
+                  <div class="v4-opt-total">${opt.months === 1 ? 'Total único' : 'Total ' + formatMxn(opt.finalPrice)}</div>
+                  ${opt.saved > 0 ? `<div class="v4-opt-saved">Ahorras ${formatMxn(opt.saved)}</div>` : ''}
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        <div class="v4-modal-foot">
+          <button class="btn btn-line" type="button" data-v4-close>Cancelar</button>
+          <div class="v4-foot-spacer"></div>
+          <button class="btn btn-primary" type="button" id="v4-confirm-plan">Activar este plan →</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+
+    let selectedMonths = preselected;
+
+    // Bind selección de opción
+    modal.querySelectorAll('[data-pick-months]').forEach(b => {
+      b.addEventListener('click', () => {
+        modal.querySelectorAll('.v4-opt').forEach(o => o.classList.remove('is-selected'));
+        b.classList.add('is-selected');
+        selectedMonths = parseInt(b.dataset.pickMonths, 10);
+      });
+    });
+
+    // Cierre
+    function close(){
+      modal.remove();
+      document.body.style.overflow = '';
+    }
+    modal.querySelector('.v4-modal-close').addEventListener('click', close);
+    modal.querySelectorAll('[data-v4-close]').forEach(b => b.addEventListener('click', close));
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+    // Confirmar plan · arma mensaje WhatsApp + abre
+    $('#v4-confirm-plan').addEventListener('click', () => {
+      const opt = options.find(o => o.months === selectedMonths);
+      if (!opt) return;
+      const planMsg = `Hola, quiero activar PLAN MENSUAL iBisne · folio #${folio}.
+
+` + (opt.months === 1
+        ? `Pago directo · ${formatMxn(opt.finalPrice)} MXN total`
+        : `Compromiso: ${opt.months} meses
+iBisne co-financia: ${opt.discount}%
+Pago mensual: ${formatMxn(opt.monthlyPayment)} MXN
+Total al cierre: ${formatMxn(opt.finalPrice)} MXN
+Ahorro: ${formatMxn(opt.saved)} MXN`) + `
+
+Proyecto: ${verticalLabel} · ${subtipoLabel}
+${lineItemsText}
+
+Quiero arrancar el plan.`;
+      const url = `https://wa.me/523329575274?text=${encodeURIComponent(planMsg)}`;
+      persistLead({
+        route: 'monthly-plan-activated',
+        folio, vertical: vertical?.id, subtipo: subtipo?.id,
+        months: opt.months, discount: opt.discount, finalPrice: opt.finalPrice,
+        monthlyPayment: opt.monthlyPayment, total_mxn: calc.total,
+      });
+      window.open(url, '_blank', 'noopener');
+      close();
+    });
+
+    // Focus inicial
+    setTimeout(() => modal.querySelector('.v4-modal').focus(), 50);
+  }
+
+  // ─── v4.0 · Modal "Buscar inversor" · publicar en marketplace ──────
+  function openFindInvestorModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel){
+    const totalConIva = calc.total * 1.16;
+
+    let modal = document.getElementById('v4-investor-modal');
+    if (modal) modal.remove();
+    modal = document.createElement('div');
+    modal.id = 'v4-investor-modal';
+    modal.className = 'v4-modal-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.innerHTML = `
+      <div class="v4-modal" tabindex="-1">
+        <div class="v4-modal-head">
+          <div>
+            <div class="v4-modal-eyebrow">§ MARKETPLACE · BUSCAR INVERSOR</div>
+            <h3 class="v4-modal-title">Publica tu proyecto en el marketplace</h3>
+            <p class="v4-modal-sub">Tu proyecto entra a curaduría por hunters · si pasa, lo mostramos a inversores LATAM acreditados. Sin costo para ti hasta que cerremos match.</p>
+          </div>
+          <button class="v4-modal-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="v4-modal-body">
+          <div class="v4-fld">
+            <label>Resumen del proyecto</label>
+            <textarea id="v4-inv-summary" rows="4" placeholder="Describe en 3-5 líneas qué hace tu proyecto · por qué un inversor debería interesarse">${verticalLabel} · ${subtipoLabel}
+
+Total cotizado: ${formatMxn(totalConIva)} MXN
+Tracción / contexto: </textarea>
+          </div>
+          <div class="v4-fld-row">
+            <div class="v4-fld">
+              <label>Capital que buscas</label>
+              <input id="v4-inv-capital" type="text" placeholder="Ej. $50,000 MXN" value="${formatMxn(totalConIva)}">
+            </div>
+            <div class="v4-fld">
+              <label>Equity ofrecido (opcional)</label>
+              <input id="v4-inv-equity" type="text" placeholder="Ej. 10% por 3 años">
+            </div>
+          </div>
+          <div class="v4-fld">
+            <label>Email de contacto</label>
+            <input id="v4-inv-email" type="email" placeholder="tu@email.com" required>
+          </div>
+          <div class="v4-hint">
+            <strong>iBisne curaduría:</strong> revisamos tu proyecto en 48h. Si pasa, lo publicamos al marketplace de inversores. Si encuentra match, iBisne cobra <strong>placement fee 15-25%</strong> al inversor (no a ti).
+          </div>
+        </div>
+        <div class="v4-modal-foot">
+          <button class="btn btn-line" type="button" data-v4-close>Cancelar</button>
+          <div class="v4-foot-spacer"></div>
+          <button class="btn btn-primary" type="button" id="v4-confirm-investor">Publicar para curaduría →</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+
+    function close(){
+      modal.remove();
+      document.body.style.overflow = '';
+    }
+    modal.querySelector('.v4-modal-close').addEventListener('click', close);
+    modal.querySelectorAll('[data-v4-close]').forEach(b => b.addEventListener('click', close));
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+    $('#v4-confirm-investor').addEventListener('click', () => {
+      const summary = $('#v4-inv-summary').value.trim();
+      const capital = $('#v4-inv-capital').value.trim();
+      const equity = $('#v4-inv-equity').value.trim();
+      const email = $('#v4-inv-email').value.trim();
+      if (!email || !email.includes('@')) {
+        alert('Por favor agrega un email válido para que te avisemos cuando tu proyecto pase a curaduría.');
+        return;
+      }
+      persistLead({
+        route: 'marketplace-request',
+        seekInvestor: true,
+        folio, vertical: vertical?.id, subtipo: subtipo?.id,
+        total_mxn: calc.total,
+        summary, capital, equity, email,
+      });
+      // Reemplaza body con confirmación
+      modal.querySelector('.v4-modal-body').innerHTML = `
+        <div class="v4-confirm">
+          <div class="v4-confirm-icon">✓</div>
+          <h3>Tu proyecto entra a curaduría</h3>
+          <p>Te avisamos en <strong>48h</strong> si pasa al marketplace de inversores. Revisa tu correo (incluyendo SPAM) · responde a las preguntas del hunter para acelerar.</p>
+        </div>
+      `;
+      modal.querySelector('.v4-modal-foot').innerHTML = `
+        <div class="v4-foot-spacer"></div>
+        <button class="btn btn-primary" type="button" data-v4-close>Listo</button>
+      `;
+      modal.querySelector('[data-v4-close]').addEventListener('click', close);
+    });
+
+    setTimeout(() => modal.querySelector('#v4-inv-summary')?.focus(), 80);
   }
 
   // ─── Modal de edición de cotización ──────────────────────────────────

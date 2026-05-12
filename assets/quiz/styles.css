@@ -2649,3 +2649,254 @@ iframe[src*="vercel.live"]{ display: none !important; }
 @media (max-width: 540px){
   .cofin-options { grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v4.0 · Modales (Plan mensual + Buscar inversor)
+   ═══════════════════════════════════════════════════════════════════ */
+.v4-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,9,13,0.65);
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 6vh 16px 16px;
+  overflow-y: auto;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.v4-modal {
+  width: 640px;
+  max-width: 100%;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line-strong, rgba(230,237,243,0.16));
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 8vh - 16px);
+  outline: none;
+}
+.v4-modal-head {
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--bg-line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: flex-start;
+}
+.v4-modal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-mint);
+  margin-bottom: 6px;
+}
+.v4-modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.v4-modal-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 480px;
+}
+.v4-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--bg-line);
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+.v4-modal-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.v4-modal-body { padding: 22px 26px; overflow-y: auto; }
+.v4-modal-foot {
+  padding: 14px 26px;
+  border-top: 1px solid var(--bg-line);
+  background: var(--bg);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.v4-foot-spacer { flex: 1; }
+
+/* Opciones de plan · grid 4 cards */
+.v4-opts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.v4-opt {
+  position: relative;
+  padding: 16px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--bg-line);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.v4-opt:hover {
+  border-color: var(--accent-mint);
+  transform: translateY(-2px);
+}
+.v4-opt.is-selected {
+  border-color: var(--accent);
+  background: rgba(61,255,127,0.06);
+}
+.v4-opt.is-best { border-color: var(--accent-mint); }
+.v4-opt.is-best.is-selected { border-color: var(--accent); }
+.v4-opt-badge {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.v4-opt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.v4-opt-months { font-size: 12px; font-weight: 600; }
+.v4-opt-disc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-mint);
+  padding: 1px 5px;
+  background: rgba(174,255,200,0.1);
+  border-radius: 4px;
+}
+.v4-opt-price {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.v4-opt-price small {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.v4-opt-total {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.v4-opt-saved {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid var(--bg-line);
+}
+
+/* Form · campos del modal investor */
+.v4-fld { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.v4-fld label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.v4-fld input,
+.v4-fld textarea {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.v4-fld input:focus,
+.v4-fld textarea:focus { border-color: var(--accent); }
+.v4-fld input::placeholder,
+.v4-fld textarea::placeholder { color: var(--text-muted); }
+.v4-fld textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+.v4-fld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.v4-hint {
+  padding: 12px 14px;
+  background: var(--accent-soft, rgba(61,255,127,0.06));
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.v4-hint strong { color: var(--accent); }
+
+/* Confirmation state */
+.v4-confirm { text-align: center; padding: 18px 12px; }
+.v4-confirm-icon {
+  width: 56px; height: 56px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 800;
+  margin: 0 auto 16px;
+}
+.v4-confirm h3 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.v4-confirm p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+  .v4-opts { grid-template-columns: repeat(2, 1fr); }
+  .v4-fld-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .v4-opts { grid-template-columns: 1fr; }
+  .v4-modal-head { padding: 18px 20px 14px; }
+  .v4-modal-body { padding: 18px 20px; }
+  .v4-modal-foot { padding: 12px 20px; flex-direction: column-reverse; gap: 8px; align-items: stretch; }
+  .v4-modal-foot .btn { width: 100%; }
+}
