@@ -305,6 +305,35 @@ window.IBISNE_I18N_DATA = {
   'USDC, BTC · cobro on-chain': 'USDC, BTC · on-chain payment',
   'Cobro al momento de recibir': 'Charge upon delivery',
   'Contactar': 'Contact',
+
+  // ─── v3.15 · CTAs y microcopy faltantes detectados en auditoría UX/Copy ───
+  'Ver mi resultado': 'See my result',
+  'Enviar a un hunter': 'Send to a hunter',
+  'Pagar ahora · PayPal': 'Pay now · PayPal',
+  'Pagar ahora': 'Pay now',
+  'Editar selección': 'Edit selection',
+  'Editar': 'Edit',
+  '← Editar': '← Edit',
+  'Cerrar': 'Close',
+  'Cancelar': 'Cancel',
+  'Aplicar': 'Apply',
+  'Entendido': 'Got it',
+  'Instalar ahora': 'Install now',
+  'Instalar iBisne': 'Install iBisne',
+  'Más tarde': 'Later',
+  'Acceso 1-tap': '1-tap access',
+  'ícono en tu home screen, sin abrir navegador': 'icon on your home screen, no browser needed',
+  'Funciona offline': 'Works offline',
+  'tu cotización persiste sin internet': 'your quote persists without internet',
+  'Más rápido': 'Faster',
+  'arranca instantáneo · sin barras del browser': 'instant launch · no browser bars',
+  'Instala iBisne en tu pantalla de inicio. Funciona offline, abre como app.': 'Install iBisne on your home screen. Works offline, opens like an app.',
+  'Instala iBisne desde el menú del navegador (Instalar app / Agregar a la pantalla de inicio).': 'Install iBisne from the browser menu (Install app / Add to home screen).',
+  'iOS Safari no soporta instalación con un toque. Agrégala manualmente:': 'iOS Safari does not support one-tap install. Add it manually:',
+  // Mensajes de WhatsApp templates (claves canónicas para construir desde i18n)
+  'wa.template.hunter': 'Hi, I\'m coming from the iBisne quiz and want to talk to a hunter.',
+  'wa.template.quiz': 'Hi, I\'m coming from the iBisne quiz.',
+  'wa.template.quiz.no': 'Hi, I want to talk to an iBisne hunter.',
 };
 
 window.IBISNE_I18N_EN = {
@@ -372,4 +401,126 @@ window.IBISNE_I18N_EN = {
   // ── Footer ─────────────────────────────────────────────────
   'footer.privacy': 'Privacy policy',
   'footer.terms': 'Terms',
+
+  // ── v3.15 — CTAs y modal a11y ──────────────────────────────
+  'result.cta.paypal': 'Pay now · PayPal',
+  'result.cta.editPrev': '← Edit',
+  'result.cta.sendHunter': 'Send to a hunter',
+  'modal.edit.title': 'Edit selection',
+  'modal.edit.close': 'Close',
+  'modal.edit.cancel': 'Cancel',
+  'modal.edit.apply': 'Apply',
+  'modal.pwa.gotIt': 'Got it',
+  'modal.pwa.installNow': 'Install now',
+  'modal.pwa.later': 'Later',
+  // WhatsApp dynamic message templates (built via t())
+  'wa.msg.quiz': "Hi, I'm coming from the iBisne quiz.",
+  'wa.msg.hunter': "Hi, I want to talk to an iBisne hunter.",
+
+  // ── v4.0 · Mega-pivot · 3 puertas + jerga simple ──────────────
+  // 3 puertas (entry screen del quiz)
+  'doors.title': 'How can we help?',
+  'doors.subtitle': 'Choose where you fit best · we adapt the rest.',
+  'doors.builder.label': "I'm an entrepreneur",
+  'doors.builder.sub': 'I need technology for my project',
+  'doors.investor.label': "I'm an investor",
+  'doors.investor.sub': 'I look for LATAM projects to support',
+  'doors.seeker.label': "I'm looking for an investor",
+  'doors.seeker.sub': 'I have an idea and need someone to back it',
+
+  // Resumen carrito (Sprint 1D)
+  'cart.title': 'Your project',
+  'cart.subtitle': 'This is what we would build for you',
+  'cart.includes': 'What it includes',
+  'cart.deliveryIn': 'We deliver in',
+  'cart.builtBy': 'Who builds it',
+  'cart.with': 'Built with',
+  'cart.subtotal': 'Subtotal',
+  'cart.iva': 'VAT (16%)',
+  'cart.total': 'Total',
+  'cart.cta.payNow': 'Pay now',
+  'cart.cta.monthly': 'Monthly plan',
+  'cart.cta.investor': 'Find an investor',
+  'cart.cta.hunter': 'Have questions? Talk to a hunter',
+  'cart.cofinancing.title': 'iBisne co-finances {pct}% of your project',
+  'cart.cofinancing.subtitle': 'If you commit {months} months with us, we put {pct}%. You pay the rest in equal monthly installments · no interest.',
+  'cart.cofinancing.monthly': '{amount} MXN/month',
+  'cart.cofinancing.youSave': 'You save',
+
+  // Co-financiamiento (Sprint 1E) · narrativa empoderadora
+  'cofin.spark.copy': 'Your project enters our most accessible plan. iBisne supports you up to 30%.',
+  'cofin.build.copy': 'Your project is serious. iBisne supports you up to 40% if you trust us 12 months.',
+  'cofin.grow.copy': "Your project is worth financing. iBisne puts up to 50% if you go with us 12 months.",
+  'cofin.scale.copy': 'Your project enters our big league. 50% co-financed + option for iBisne equity co-investment.',
+  'cofin.noCommit.title': 'No commitment · direct payment',
+  'cofin.noCommit.sub': 'You pay the full public price. No discounts but no time lock. Ideal if you only want this project.',
+  'cofin.noCommit.cta': 'Pay direct price',
+
+  // Jerga simple · reemplazos data layer (también en data section arriba)
+  'simple.stack': 'Technology we use',
+  'simple.membership': 'iBisne Plan',
+  'simple.quote': 'Approximate price',
+  'simple.subtype': 'Type of project',
+  'simple.speed': 'How fast you launch',
+  'simple.discovery': 'Initial session with your team',
+  'simple.brief': 'Initial questionnaire',
+  'simple.headless': 'Advanced online store',
+  'simple.rag': 'Smart bot that knows your business',
+  'simple.kam': 'Dedicated person on your project',
 };
+
+// ── v4.0 · Agrega 10 reemplazos al DATA dictionary también ─────
+// (las strings ES quedan iguales, pero el EN se actualiza con jerga simple)
+if (window.IBISNE_I18N_DATA) {
+  Object.assign(window.IBISNE_I18N_DATA, {
+    // Jerga anti-tontos · reemplazos data-layer
+    'Stack tecnológico': 'Technology we use',
+    'Membresía': 'iBisne Plan',
+    'Cotización indicativa': 'Approximate price',
+    'Sub-tipo': 'Type of project',
+    'Velocidad de salida': 'How fast you launch',
+    'Discovery': 'Initial session',
+    'Brief': 'Initial questionnaire',
+    'Brief firmado': 'Signed questionnaire',
+    'Headless commerce': 'Advanced online store',
+    'KAM': 'Dedicated person',
+    'KAM asignado': 'Dedicated person on your project',
+
+    // 3 puertas (DATA layer · ES side)
+    '¿Cómo te podemos ayudar?': 'How can we help?',
+    'Elige dónde encajas · adaptamos el resto.': 'Choose where you fit · we adapt the rest.',
+    'Soy emprendedor': "I'm an entrepreneur",
+    'Necesito tecnología para mi proyecto': 'I need technology for my project',
+    'Soy inversionista': "I'm an investor",
+    'Busco proyectos LATAM que apoyar': 'I look for LATAM projects to support',
+    'Busco un inversionista': "I'm looking for an investor",
+    'Tengo idea y necesito quien la respalde': 'I have an idea and need someone to back it',
+
+    // Co-financiamiento (DATA layer · ES side)
+    'Para empezar': 'To start',
+    'Para construir': 'To build',
+    'Para crecer': 'To grow',
+    'Para escalar': 'To scale',
+    'iBisne co-financia': 'iBisne co-finances',
+    'Sin compromiso · pago directo': 'No commitment · direct payment',
+    'Pagar precio directo': 'Pay direct price',
+    'Activar plan anual': 'Activate annual plan',
+    'Plan mensual': 'Monthly plan',
+    'Buscar un inversionista': 'Find an investor',
+    'Pagar ahora': 'Pay now',
+    '¿Tienes preguntas? Habla con un hunter': 'Have questions? Talk to a hunter',
+
+    // Resumen carrito (DATA layer · ES side)
+    'Tu proyecto': 'Your project',
+    'Esto es lo que construiríamos para ti': 'This is what we would build for you',
+    'Lo que incluye': 'What it includes',
+    'Lo entregamos en': 'We deliver in',
+    'Quiénes lo hacen': 'Who builds it',
+    'Con qué': 'Built with',
+    'Ahorras': 'You save',
+
+    // v4.0 · subtítulo del resultado (sin gates hunter)
+    'Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional · no bloquea el pago ni la membresía.': 'Indicative figure. If you want to refine it, discovery with a hunter is optional · does not block payment or membership.',
+    'Proyectos custom · cotización indicativa que se afina en discovery.': 'Custom projects · indicative quote refined in discovery.',
+  });
+}

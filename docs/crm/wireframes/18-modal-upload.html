@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Modal upload versión</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.modal-backdrop {
+  position: fixed;
+  inset: 28px 0 0 0;
+  background: rgba(7,9,13,0.65);
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8vh;
+  overflow-y: auto;
+}
+
+.modal-card {
+  width: 580px;
+  max-width: 92vw;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line-strong);
+  border-radius: var(--radius-3);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+.modal-head {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-3);
+  align-items: center;
+}
+.modal-head .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-1);
+}
+.modal-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  background: transparent;
+  border: 1px solid var(--bg-line);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.modal-body { padding: var(--sp-5); }
+
+/* Context bar arriba */
+.ctx-bar {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  margin-bottom: var(--sp-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.ctx-bar .left {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+}
+.ctx-bar .pill-mini {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 99px;
+  letter-spacing: 0.08em;
+}
+.ctx-bar .next-v {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Type picker */
+.type-pick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+.type-card {
+  padding: var(--sp-3);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  text-align: center;
+}
+.type-card:hover { border-color: var(--bg-line-strong); }
+.type-card.is-selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.type-card .lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.type-card .ex {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Drop zone */
+.drop-zone {
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-8) var(--sp-5);
+  background: var(--bg);
+  border: 2px dashed var(--bg-line-strong);
+  border-radius: var(--radius-3);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.drop-zone:hover {
+  border-color: var(--accent);
+  background: rgba(61,255,127,0.03);
+}
+.drop-zone .ico {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+}
+.drop-zone .ttl {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.drop-zone .sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Alternativa · pegar link en vez de archivo */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-4) 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--bg-line);
+}
+
+.link-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: 10px var(--sp-3);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  outline: none;
+}
+.link-input:focus { border-color: var(--accent); }
+
+/* Notes & reviewer */
+.fld {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-4);
+}
+.fld label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.fld textarea {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: 10px var(--sp-3);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+.fld textarea:focus { border-color: var(--accent); }
+
+/* Reviewer card */
+.rev-card {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: var(--sp-3);
+  align-items: center;
+  margin-bottom: var(--sp-4);
+}
+.rev-card .av {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(61,255,127,0.1);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+}
+.rev-card .who { font-weight: 600; font-size: 13px; }
+.rev-card .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Toggles */
+.toggle-row {
+  padding: var(--sp-3) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  border-top: 1px solid var(--bg-line);
+}
+.toggle-row .info { flex: 1; }
+.toggle-row .desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.toggle-switch {
+  width: 40px;
+  height: 22px;
+  background: var(--bg-line);
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toggle-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+.toggle-switch.is-on { background: var(--accent); }
+.toggle-switch.is-on::after {
+  left: 21px;
+  background: var(--bg);
+}
+
+.modal-foot {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--bg-line);
+  background: var(--bg);
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+}
+.modal-foot .spacer { flex: 1; }
+.modal-foot .helper {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3.2</span>
+    <span>18 · Modal Upload nueva versión</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<!-- Pantalla atrás (Paso detalle) -->
+<div class="app" style="filter: blur(2.5px) saturate(0.5); opacity: 0.3; pointer-events: none;">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">iB</div><div class="text">iBisne CRM<span class="sub">v0.3</span></div></div>
+    <div class="sidebar-section">
+      <a class="nav-item" href="#"><span class="icon">◉</span>Mi día</a>
+      <a class="nav-item is-active" href="#"><span class="icon">▢</span>Mi proyecto<span class="badge">2</span></a>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar">MR</div>
+      <div class="info"><div class="name">Mateo R.</div><div class="role">JR CODER</div></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar-v2" style="background: var(--bg);">
+      <div class="crumbs"><a href="#">iBisne</a><span class="sep">/</span><span class="here">Sitio HoldingMX</span></div>
+      <div class="spacer"></div>
+    </div>
+    <div class="content" style="padding-top: 100px;">
+      <div style="height: 600px; background: var(--bg-paper); border-radius: 12px;"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop">
+  <div class="modal-card">
+
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">§ PASO 06 · WIREFRAMING</div>
+        <h2>Subir nueva versión</h2>
+      </div>
+      <button class="modal-close">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Contexto · de dónde subes -->
+      <div class="ctx-bar">
+        <div class="left">
+          <span class="pill-mini">v3</span>
+          <span>Sitio HoldingMX · folio #428 · paso 06/12</span>
+        </div>
+        <span class="next-v">VERSIÓN ANTERIOR: v2 (RECHAZADA)</span>
+      </div>
+
+      <!-- Tipo de output -->
+      <div style="margin-bottom: var(--sp-4);">
+        <label style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); display: block; margin-bottom: var(--sp-2);">¿Qué tipo de entregable?</label>
+        <div class="type-pick">
+          <div class="type-card is-selected">
+            <div class="lbl">Figma</div>
+            <div class="ex">LINK ↗</div>
+          </div>
+          <div class="type-card">
+            <div class="lbl">PDF</div>
+            <div class="ex">ARCHIVO</div>
+          </div>
+          <div class="type-card">
+            <div class="lbl">GitHub PR</div>
+            <div class="ex">LINK ↗</div>
+          </div>
+          <div class="type-card">
+            <div class="lbl">Loom</div>
+            <div class="ex">VIDEO LINK</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drop zone (cuando type = file) -->
+      <div class="drop-zone" style="display: none;">
+        <div class="ico">↑</div>
+        <div class="ttl">Arrastra archivo o haz click para elegir</div>
+        <div class="sub">PDF · MÁX 20MB · GUARDADO EN SUPABASE STORAGE</div>
+      </div>
+
+      <!-- Link input (cuando type = figma/github/loom) -->
+      <div class="fld">
+        <label>Link público</label>
+        <input class="link-input" type="url" placeholder="https://figma.com/file/..." value="https://figma.com/file/aBcDefGhIjK/wireframes-holding-v3?share=write">
+      </div>
+
+      <!-- Notas de versión -->
+      <div class="fld">
+        <label>¿Qué cambia en esta versión? (notas de release)</label>
+        <textarea placeholder="Ej: aumentado logo del Hero 1.5x · agregados iconos personalizados a los 3 features · ajustado spacing entre secciones según comentarios de Laura.">v3 atiende los 2 pins que José pidió:
+
+· Pin 1 · Logo Home aumentado 1.5x (de 80px a 120px)
+· Pin 3 · Iconos personalizados en los 3 features (basados en el moodboard aprobado)
+
+Además agregué la página de Blog faltante que pidió Laura en su comentario.</textarea>
+      </div>
+
+      <!-- Reviewer card -->
+      <label style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); display: block; margin-bottom: var(--sp-2);">Se enviará a revisión a:</label>
+      <div class="rev-card">
+        <div class="av">LT</div>
+        <div>
+          <div class="who">Laura T. · Sr Coder · revisora del paso</div>
+          <div class="meta">SLA: 4H · ACTUALMENTE 3 REVISIONES EN COLA</div>
+        </div>
+        <a href="#" style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-mint); letter-spacing: 0.08em;">Ver carga</a>
+      </div>
+
+      <!-- Notificaciones -->
+      <div class="toggle-row">
+        <div class="info">
+          <strong>Notificar al cliente también</strong>
+          <div class="desc">José Pérez recibirá email + WhatsApp cuando Laura apruebe esta versión.</div>
+        </div>
+        <div class="toggle-switch is-on"></div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="info">
+          <strong>Pausar timer activo</strong>
+          <div class="desc">Detiene el cronómetro del paso 06 mientras la versión está en revisión.</div>
+        </div>
+        <div class="toggle-switch is-on"></div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="info">
+          <strong>Marcar paso como completo si aprueban</strong>
+          <div class="desc">Si Laura aprueba sin pedir cambios, el paso 07 (Design system) se desbloquea automáticamente.</div>
+        </div>
+        <div class="toggle-switch is-on"></div>
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-line">Cancelar</button>
+      <div class="spacer"></div>
+      <span class="helper">SE GUARDA EN BD CON TIMESTAMP</span>
+      <button class="btn btn-primary">Subir v3 y enviar a Laura →</button>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

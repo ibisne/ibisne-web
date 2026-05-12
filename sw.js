@@ -2,13 +2,22 @@
 // § 00.PWA — stale-while-revalidate (HTML/CSS/JS) + cache-first (imágenes)
 
 // Bump esta versión cada vez que cambie un asset crítico para invalidar caché viejo
-const CACHE = 'ibisne-v3.14.3';
+const CACHE = 'ibisne-v4.2.0';
 
 const PRECACHE = [
   '/',
   '/index.html',
   '/quiz.html',
   '/no.html',
+  '/marketplace.html',
+  '/inversionistas.html',
+  '/portal/login.html',
+  '/portal/oportunidades.html',
+  '/portal/proyecto.html',
+  '/portal/mi-cuenta.html',
+  '/cliente/approval.html',
+  '/legal/privacidad.html',
+  '/legal/terminos.html',
   '/manifest.webmanifest',
   '/design-system-v2/tokens.css',
   '/assets/quiz/styles.css',
@@ -20,6 +29,7 @@ const PRECACHE = [
   '/assets/quiz/prefs.js',
   '/assets/quiz/i18n.js',
   '/assets/quiz/pwa.js',
+  '/assets/quiz/pwa-modal.css',
   '/data/pricing.js',
   '/data/scoring.js',
   '/data/inference.js',

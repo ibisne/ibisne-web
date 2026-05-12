@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne · Portal reseller</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+body { background: var(--bg-deep); }
+.portal-shell { max-width: 1200px; margin: 0 auto; padding-top: 28px; }
+
+.portal-top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--bg-line);
+  padding: var(--sp-4) var(--sp-6);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--sp-5);
+  align-items: center;
+  position: sticky;
+  top: 28px;
+  z-index: 10;
+}
+.portal-brand { display: flex; align-items: center; gap: var(--sp-2); font-weight: 700; }
+.portal-brand .logo {
+  width: 32px; height: 32px; border-radius: var(--radius-2);
+  background: var(--accent-mint); color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+}
+.portal-brand .name { font-size: 15px; }
+.portal-brand .name .sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  margin-top: 2px;
+}
+
+.portal-nav { display: flex; gap: var(--sp-4); justify-content: center; }
+.portal-nav a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  position: relative;
+}
+.portal-nav a:hover { color: var(--text-primary); }
+.portal-nav a.is-active { color: var(--accent-mint); }
+.portal-nav a.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -16px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-mint);
+}
+
+.portal-content { padding: var(--sp-8) var(--sp-6); }
+
+.portal-welcome { margin-bottom: var(--sp-6); }
+.portal-welcome .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.portal-welcome h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: var(--sp-2);
+}
+.portal-welcome h1 .accent { color: var(--accent-mint); }
+.portal-welcome .lede {
+  color: var(--text-secondary);
+  font-size: 15px;
+  max-width: 720px;
+}
+
+/* Top KPIs */
+.r-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+.r-kpi {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-5);
+}
+.r-kpi.is-highlight {
+  background: linear-gradient(180deg, rgba(174,255,200,0.06) 0%, var(--bg-paper) 100%);
+  border-color: rgba(174,255,200,0.3);
+}
+.r-kpi .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+.r-kpi .v {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.r-kpi .v .unit {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+.r-kpi .delta {
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  letter-spacing: 0.06em;
+}
+
+/* Referral link box */
+.ref-link-card {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-6);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-5);
+  align-items: center;
+}
+.ref-link-card .head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.ref-link-card .link-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent-mint);
+  letter-spacing: 0.02em;
+}
+.ref-link-card .actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Pipeline cards · leads del reseller */
+.r-section {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  margin-bottom: var(--sp-5);
+  overflow: hidden;
+}
+.r-section-head {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.r-section-head .h {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.r-section-head .h .badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Leads referidos table */
+.r-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.r-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  background: var(--bg);
+  font-weight: 400;
+}
+.r-table td {
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+}
+.r-table tr:last-child td { border-bottom: 0; }
+.r-table tr:hover td { background: var(--bg-tint); }
+.r-table td .name { font-weight: 600; }
+.r-table td .when {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.r-table td.num {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  text-align: right;
+}
+.r-table .commission {
+  color: var(--accent-mint);
+  font-weight: 600;
+}
+
+/* Pago histórico */
+.payout-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  align-items: center;
+  font-size: 13px;
+}
+.payout-row:last-child { border-bottom: 0; }
+.payout-row .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin: 0 auto;
+}
+.payout-row.is-pending .dot { background: var(--warn); }
+.payout-row .when {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.payout-row .amt {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent-mint);
+}
+.payout-row .status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  letter-spacing: 0.12em;
+}
+.payout-row.is-pending .status {
+  background: rgba(255,184,77,0.12);
+  color: var(--warn);
+}
+
+/* 2-col layout */
+.r-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--sp-5);
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3</span>
+    <span>13 · Portal reseller (agencia partner)</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="portal-shell">
+
+  <header class="portal-top">
+    <div class="portal-brand">
+      <div class="logo">iB</div>
+      <div class="name">iBisne<span class="sub">PORTAL PARTNERS</span></div>
+    </div>
+    <nav class="portal-nav">
+      <a href="#" class="is-active">Inicio</a>
+      <a href="#">Leads referidos</a>
+      <a href="#">Comisiones</a>
+      <a href="#">Materiales</a>
+      <a href="#">Mi cuenta</a>
+    </nav>
+    <div style="display: flex; gap: var(--sp-2); align-items: center;">
+      <button class="icon-btn"><span>✉</span></button>
+      <button class="user-chip">
+        <span class="avatar" style="background: rgba(174,255,200,0.2); color: var(--accent-mint);">PG</span>
+        <span class="name">Pixel Grup</span>
+        <span class="chev">▾</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="portal-content">
+
+    <div class="portal-welcome">
+      <div class="eyebrow">§ PIXEL GRUP — PARTNER iBISNE</div>
+      <h1>Buenos días, Karla.<br><span class="accent">$ 47k pendientes de cobrar.</span></h1>
+      <p class="lede">Llevas <strong style="color:var(--text-primary);">6 leads referidos</strong> este trimestre, 3 ya convirtieron en cliente. Tu comisión acumulada: $ 47,300 MXN. El próximo payout es el 28 de mayo.</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="r-kpis">
+      <div class="r-kpi is-highlight">
+        <div class="l">Comisión pendiente</div>
+        <div class="v" style="color: var(--accent-mint);">$ 47.3k <span class="unit">MXN</span></div>
+        <div class="delta">PAYOUT · 28 MAY</div>
+      </div>
+      <div class="r-kpi">
+        <div class="l">Pagado YTD 2026</div>
+        <div class="v">$ 28.5k <span class="unit">MXN</span></div>
+        <div class="delta">+ 142% VS 2025</div>
+      </div>
+      <div class="r-kpi">
+        <div class="l">Leads referidos · 90d</div>
+        <div class="v">6</div>
+        <div class="delta">3 CERRADOS · 50% CONVERSION</div>
+      </div>
+      <div class="r-kpi">
+        <div class="l">Tu rate</div>
+        <div class="v">15<span class="unit">%</span></div>
+        <div class="delta">DEL TOTAL FACTURADO IBISNE</div>
+      </div>
+    </div>
+
+    <!-- Link de referido -->
+    <div class="ref-link-card">
+      <div>
+        <div class="head">Tu link de referido · usa este en propuestas y bio</div>
+        <div class="link-row">
+          <span style="color: var(--text-muted);">https://</span>
+          <span>ibisne.com/r/<strong style="color:var(--text-primary);">pixel-grup</strong></span>
+          <span style="color: var(--text-muted); margin-left: auto;">?utm=ig-bio</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: var(--sp-2); line-height: 1.5;">
+          Cualquier lead que llegue por este link queda automáticamente atribuido a ti durante 90 días. Tu comisión: 15% del valor neto de cada proyecto cerrado.
+        </p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-line btn-sm">Copiar link</button>
+        <button class="btn btn-line btn-sm">QR code</button>
+        <button class="btn btn-primary btn-sm">Generar UTMs</button>
+      </div>
+    </div>
+
+    <!-- 2 col: leads + payouts -->
+    <div class="r-grid">
+
+      <!-- Leads referidos -->
+      <div class="r-section">
+        <div class="r-section-head">
+          <div class="h">Tus leads referidos <span class="badge">6 ACTIVOS</span></div>
+          <a href="#" style="font-family:var(--font-mono);font-size:10px;color:var(--accent-mint);letter-spacing:0.08em;text-transform:uppercase;">VER TODOS →</a>
+        </div>
+        <table class="r-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Stage</th>
+              <th style="text-align: right;">Cotización</th>
+              <th style="text-align: right;">Comisión</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="name">Patricia Solís</div>
+                <div class="when">VERDE MERCADO · LLEGÓ 02 MAY</div>
+              </td>
+              <td><span class="stage-chip stage-lead">Lead</span></td>
+              <td class="num">$92,800</td>
+              <td class="num commission">$13,920</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Marcela Ruiz</div>
+                <div class="when">FOODTRACK · LLEGÓ 11 MAY</div>
+              </td>
+              <td><span class="stage-chip stage-lead">Lead</span></td>
+              <td class="num">$240,000</td>
+              <td class="num commission">$36,000</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">José Pérez</div>
+                <div class="when">HOLDINGMX · CONVERTIDO 03 FEB</div>
+              </td>
+              <td><span class="stage-chip stage-activo">Cliente</span></td>
+              <td class="num">$195,000</td>
+              <td class="num commission">$29,250</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Andrea Quiroga</div>
+                <div class="when">ESTUDIO DERMA · CONVERTIDO 18 MAR</div>
+              </td>
+              <td><span class="stage-chip stage-activo">Cliente</span></td>
+              <td class="num">$48,500</td>
+              <td class="num commission">$7,275</td>
+            </tr>
+            <tr style="opacity: 0.7;">
+              <td>
+                <div class="name">Hugo Vargas</div>
+                <div class="when">RESTAURANTE NOMA · LOST 22 ABR</div>
+              </td>
+              <td><span class="stage-chip stage-lost">Lost</span></td>
+              <td class="num">—</td>
+              <td class="num" style="color: var(--text-muted);">$0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Payouts histórico -->
+      <div class="r-section">
+        <div class="r-section-head">
+          <div class="h">Historial de payouts</div>
+        </div>
+        <div>
+          <div class="payout-row is-pending">
+            <div class="dot"></div>
+            <div>
+              <div style="font-weight: 600;">Q2 2026</div>
+              <div class="when">PROGRAMADO · 28 MAY</div>
+            </div>
+            <div class="amt">$ 47,300</div>
+            <span class="status">PENDIENTE</span>
+          </div>
+          <div class="payout-row">
+            <div class="dot"></div>
+            <div>
+              <div style="font-weight: 600;">Q1 2026</div>
+              <div class="when">PAGADO · 28 FEB · CLABE TERMINADA EN 4827</div>
+            </div>
+            <div class="amt">$ 18,200</div>
+            <span class="status">PAGADO</span>
+          </div>
+          <div class="payout-row">
+            <div class="dot"></div>
+            <div>
+              <div style="font-weight: 600;">Q4 2025</div>
+              <div class="when">PAGADO · 30 NOV</div>
+            </div>
+            <div class="amt">$ 10,300</div>
+            <span class="status">PAGADO</span>
+          </div>
+        </div>
+        <div style="padding: var(--sp-3) var(--sp-5); border-top: 1px solid var(--bg-line); font-size: 11px; color: var(--text-muted); text-align: center;">
+          <a href="#" style="color: var(--accent-mint); font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase;">Descargar CFDI Q1 →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Materiales -->
+    <div style="margin-top: var(--sp-6);">
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--sp-3);">— Materiales para que cierres más leads</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4);">
+        <div style="background: var(--bg-paper); border: 1px solid var(--bg-line); border-radius: var(--radius-2); padding: var(--sp-4); cursor: pointer;">
+          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: var(--sp-1);">DECK · PDF</div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: var(--sp-1);">Pitch iBisne para clientes</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Presentación de 12 slides · estética dark · personalizable con tu logo.</div>
+        </div>
+        <div style="background: var(--bg-paper); border: 1px solid var(--bg-line); border-radius: var(--radius-2); padding: var(--sp-4); cursor: pointer;">
+          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: var(--sp-1);">CASOS · NOTION</div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: var(--sp-1);">3 casos de estudio reales</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">HoldingMX · Caleta · DataLatam · con métricas antes/después.</div>
+        </div>
+        <div style="background: var(--bg-paper); border: 1px solid var(--bg-line); border-radius: var(--radius-2); padding: var(--sp-4); cursor: pointer;">
+          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: var(--sp-1);">VIDEO · LOOM</div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: var(--sp-1);">Demo del cotizador iBisne</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">5 min · cómo navegar el quiz para que el lead llegue calificado.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Playbook library (Admin)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+/* Layout · 2 cols: lista de playbooks + preview */
+.pb-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--sp-5);
+  align-items: flex-start;
+}
+
+/* Lista de playbooks (left) */
+.pb-list {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  overflow: hidden;
+}
+.pb-list-head {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pb-list-head .h {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.pb-search {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+}
+.pb-search input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: 8px var(--sp-3);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 13px;
+  outline: none;
+}
+.pb-row {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: var(--sp-3);
+  align-items: center;
+}
+.pb-row:hover { background: var(--bg-tint); }
+.pb-row.is-selected {
+  background: var(--accent-soft);
+  border-left: 2px solid var(--accent);
+  padding-left: calc(var(--sp-4) - 2px);
+}
+.pb-row .ico {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+}
+.pb-row.is-selected .ico {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.pb-row .info .name { font-size: 13px; font-weight: 600; }
+.pb-row .info .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+.pb-row .count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+/* Preview de playbook (right) */
+.pb-preview {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-6);
+}
+.pb-preview-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+  margin-bottom: var(--sp-5);
+}
+.pb-preview-head h2 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-2);
+}
+.pb-preview-head .desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 540px;
+}
+
+/* Stats arriba del preview */
+.pb-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.pb-stat {
+  padding: var(--sp-3);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+}
+.pb-stat .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.pb-stat .v {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Default tech stack display */
+.tech-default {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+.tech-default .h {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-3);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Steps editor */
+.steps-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.editor-step {
+  display: grid;
+  grid-template-columns: 32px 32px 1fr auto auto;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  align-items: center;
+  margin-bottom: var(--sp-2);
+}
+.editor-step:hover { border-color: var(--bg-line-strong); }
+.editor-step .drag {
+  color: var(--text-muted);
+  cursor: grab;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.editor-step .ord {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 12px;
+  background: var(--accent-soft);
+  border-radius: var(--radius-2);
+  padding: 4px 0;
+}
+.editor-step .name { font-size: 13px; font-weight: 500; }
+.editor-step .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.editor-step .time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  white-space: nowrap;
+}
+.editor-step .roles {
+  display: flex;
+  gap: 4px;
+}
+
+.add-step-btn {
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--bg-line-strong);
+  border-radius: var(--radius-2);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.add-step-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3</span>
+    <span>11 · Playbook library (Admin)</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">iB</div><div class="text">iBisne CRM<span class="sub">v0.3 · FOUNDER</span></div></div>
+    <div class="sidebar-section">
+      <a class="nav-item" href="00-mi-dia.html"><span class="icon">◉</span>Mi día</a>
+      <a class="nav-item" href="03-pipeline-kanban.html"><span class="icon">⇄</span>Pipeline</a>
+      <a class="nav-item" href="07-leads.html"><span class="icon">◌</span>Leads<span class="badge">112</span></a>
+      <a class="nav-item" href="04-cliente-detalle.html"><span class="icon">◊</span>Clientes</a>
+      <a class="nav-item" href="05-proyecto-detalle.html"><span class="icon">▢</span>Proyectos</a>
+      <a class="nav-item" href="06-pagos-calendar.html"><span class="icon">$</span>Cobros</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Living Coding</div>
+      <a class="nav-item is-active" href="11-playbook-library.html"><span class="icon">◌</span>Playbooks<span class="badge">10</span></a>
+      <a class="nav-item" href="#"><span class="icon">★</span>Recursos</a>
+      <a class="nav-item" href="#"><span class="icon">▦</span>Equipo & roles</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sistema</div>
+      <a class="nav-item" href="02-dashboard.html"><span class="icon">▦</span>Métricas globales</a>
+      <a class="nav-item" href="#"><span class="icon">⚙</span>Configuración</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar">ER</div>
+      <div class="info"><div class="name">Eduardo R.</div><div class="role">FOUNDER</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="00-mi-dia.html">iBisne</a>
+        <span class="sep">/</span>
+        <a href="#">Living Coding</a>
+        <span class="sep">/</span>
+        <span class="here">Playbook library</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span><span>Buscar playbook…</span><span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones"><span>✉</span><span class="badge-num">3</span></button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip"><span class="avatar">ER</span><span class="name">Eduardo</span><span class="chev">▾</span></button>
+    </div>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">§ LIVING CODING — Templates de ejecución</div>
+          <h1>Playbook library <span style="font-family:var(--font-mono); font-size:14px; color:var(--text-muted); letter-spacing:0.08em; margin-left: 12px;">10 ACTIVOS</span></h1>
+        </div>
+        <div class="actions">
+          <button class="btn btn-line">Duplicar playbook</button>
+          <button class="btn btn-line">Importar JSON</button>
+          <button class="btn btn-primary">+ Nuevo playbook</button>
+        </div>
+      </div>
+
+      <div class="pb-layout">
+
+        <!-- Col izq: lista de playbooks -->
+        <div class="pb-list">
+          <div class="pb-list-head">
+            <span class="h">10 playbooks · usados en 47 proyectos</span>
+            <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:0.08em;">ORDEN: USO</span>
+          </div>
+          <div class="pb-search">
+            <input placeholder="Filtrar playbooks…">
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">BL</div>
+            <div class="info">
+              <div class="name">Bio-link simple</div>
+              <div class="meta">HTML+CSS · HOSTINGER · 6 PASOS</div>
+            </div>
+            <span class="count">18</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">LA</div>
+            <div class="info">
+              <div class="name">Landing animada</div>
+              <div class="meta">ASTRO · VERCEL · 10 PASOS</div>
+            </div>
+            <span class="count">14</span>
+          </div>
+
+          <div class="pb-row is-selected">
+            <div class="ico">SC</div>
+            <div class="info">
+              <div class="name">Sitio completo</div>
+              <div class="meta">NEXT 15 · SANITY · 12 PASOS</div>
+            </div>
+            <span class="count">9</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">SH</div>
+            <div class="info">
+              <div class="name">Ecommerce Shopify</div>
+              <div class="meta">LIQUID · SHOPIFY · 10 PASOS</div>
+            </div>
+            <span class="count">3</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">HC</div>
+            <div class="info">
+              <div class="name">Ecom headless</div>
+              <div class="meta">NEXT · MEDUSA · STRIPE · 15 PASOS</div>
+            </div>
+            <span class="count">1</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">iOS</div>
+            <div class="info">
+              <div class="name">App iOS nativa</div>
+              <div class="meta">SWIFT · XCODE · 16 PASOS</div>
+            </div>
+            <span class="count">1</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">HY</div>
+            <div class="info">
+              <div class="name">App híbrida</div>
+              <div class="meta">REACT NATIVE · EXPO · 15 PASOS</div>
+            </div>
+            <span class="count">0</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">SS</div>
+            <div class="info">
+              <div class="name">SaaS custom</div>
+              <div class="meta">NEXT · SUPABASE · 18 PASOS</div>
+            </div>
+            <span class="count">0</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">AI</div>
+            <div class="info">
+              <div class="name">AI chatbot</div>
+              <div class="meta">NEXT · OPENAI · PINECONE · 14 PASOS</div>
+            </div>
+            <span class="count">1</span>
+          </div>
+
+          <div class="pb-row">
+            <div class="ico">W3</div>
+            <div class="info">
+              <div class="name">Web3 DApp</div>
+              <div class="meta">NEXT · SOLIDITY · WAGMI · 17 PASOS</div>
+            </div>
+            <span class="count">0</span>
+          </div>
+
+        </div>
+
+        <!-- Col der: preview del playbook seleccionado -->
+        <div class="pb-preview">
+
+          <div class="pb-preview-head">
+            <div>
+              <h2>Sitio completo</h2>
+              <div class="desc">Hub de marca multi-página con CMS editable. Para clientes que necesitan actualizar contenido sin tocar código, SEO crítico, animaciones cinemáticas en hero, y forms de captura.</div>
+            </div>
+            <div style="display: flex; gap: var(--sp-2);">
+              <button class="btn btn-line btn-sm">Duplicar</button>
+              <button class="btn btn-line btn-sm">Editar</button>
+              <button class="btn btn-line btn-sm" style="color:var(--danger);border-color:rgba(255,107,107,0.3);">Archivar</button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="pb-stats">
+            <div class="pb-stat">
+              <div class="l">Usado</div>
+              <div class="v">9 proyectos</div>
+            </div>
+            <div class="pb-stat">
+              <div class="l">Pasos totales</div>
+              <div class="v">12</div>
+            </div>
+            <div class="pb-stat">
+              <div class="l">Tiempo estimado</div>
+              <div class="v">~85h</div>
+            </div>
+            <div class="pb-stat">
+              <div class="l">Cumplimiento</div>
+              <div class="v" style="color:var(--accent);">94%</div>
+            </div>
+          </div>
+
+          <!-- Tech stack default -->
+          <div class="tech-default">
+            <div class="h">
+              Tech stack default
+              <a href="10-tech-stack.html" style="color:var(--accent-mint);">Editar →</a>
+            </div>
+            <div class="stack-row">
+              <span class="stack-badge is-platform"><span class="dot"></span>VERCEL</span>
+              <span class="stack-badge is-framework"><span class="dot"></span>NEXT 15</span>
+              <span class="stack-badge is-cms"><span class="dot"></span>SANITY</span>
+              <span class="stack-badge"><span class="dot"></span>GSAP</span>
+              <span class="stack-badge"><span class="dot"></span>PLAUSIBLE</span>
+              <span class="stack-badge"><span class="dot"></span>RESEND</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--sp-3); line-height: 1.5;">
+              El arquitecto puede ajustar este stack por proyecto si el cliente lo requiere. Cambios quedan documentados en el step "Tech stack declarado".
+            </p>
+          </div>
+
+          <!-- Steps editor -->
+          <div style="margin-bottom: var(--sp-2); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase;">— Pasos del playbook · arrastra para reordenar</div>
+            <button class="btn btn-line btn-sm">Exportar</button>
+          </div>
+
+          <div class="steps-editor">
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">01</span>
+              <div>
+                <div class="name">Master doc del cliente</div>
+                <div class="meta">INPUT · APROBADO POR SENIOR · CHECKLIST 5 ITEMS</div>
+              </div>
+              <span class="time">2h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">02</span>
+              <div>
+                <div class="name">Brief aprobado</div>
+                <div class="meta">INPUT · APROBADO POR CLIENTE · 20 PREGUNTAS</div>
+              </div>
+              <span class="time">4h est.</span>
+              <span class="roles"><span class="role-badge is-kam">KAM</span><span class="role-badge" style="color: var(--text-secondary);">CLI</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">03</span>
+              <div>
+                <div class="name">Discovery call · resumen</div>
+                <div class="meta">INPUT · GRABACIÓN + RESUMEN ESCRITO</div>
+              </div>
+              <span class="time">1.5h est.</span>
+              <span class="roles"><span class="role-badge is-kam">KAM</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">04</span>
+              <div>
+                <div class="name">Tech stack declarado</div>
+                <div class="meta">REVIEW · DECLARA ARQUITECTO · FIRMA FOUNDER</div>
+              </div>
+              <span class="time">2h est.</span>
+              <span class="roles"><span class="role-badge is-arq">ARQ</span><span class="role-badge is-founder">F</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">05</span>
+              <div>
+                <div class="name">Sitemap aprobado</div>
+                <div class="meta">BUILD · APROBADO POR CLIENTE · DELIVERABLE: FIGMA</div>
+              </div>
+              <span class="time">4h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge" style="color: var(--text-secondary);">CLI</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">06</span>
+              <div>
+                <div class="name">Wireframing aprobado</div>
+                <div class="meta">BUILD · 9 CHECKLIST ITEMS · DELIVERABLE: FIGMA</div>
+              </div>
+              <span class="time">8h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">07</span>
+              <div>
+                <div class="name">Design system / moodboard</div>
+                <div class="meta">BUILD · TOKENS + COMPONENTES · FIGMA</div>
+              </div>
+              <span class="time">8h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">08</span>
+              <div>
+                <div class="name">MVP / prototipo navegable</div>
+                <div class="meta">BUILD · DEPLOY EN STAGING</div>
+              </div>
+              <span class="time">16h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">09</span>
+              <div>
+                <div class="name">Desarrollo final</div>
+                <div class="meta">BUILD · 32H · PR REVIEWS DIARIOS</div>
+              </div>
+              <span class="time">32h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">10</span>
+              <div>
+                <div class="name">QA cross-browser</div>
+                <div class="meta">REVIEW · CHECKLIST 18 ITEMS · LIGHTHOUSE > 90</div>
+              </div>
+              <span class="time">6h est.</span>
+              <span class="roles"><span class="role-badge is-jr">JR</span><span class="role-badge is-sr">SR</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">11</span>
+              <div>
+                <div class="name">Deploy producción</div>
+                <div class="meta">DEPLOY · DOMINIO + DNS + SSL + ANALYTICS</div>
+              </div>
+              <span class="time">3h est.</span>
+              <span class="roles"><span class="role-badge is-sr">SR</span><span class="role-badge is-arq">ARQ</span></span>
+            </div>
+
+            <div class="editor-step">
+              <span class="drag">⋮⋮</span>
+              <span class="ord">12</span>
+              <div>
+                <div class="name">Capacitación + handoff</div>
+                <div class="meta">HANDOFF · VIDEO LOOM + DOCS + CREDENCIALES</div>
+              </div>
+              <span class="time">4h est.</span>
+              <span class="roles"><span class="role-badge is-kam">KAM</span><span class="role-badge is-founder">F</span></span>
+            </div>
+
+          </div>
+
+          <button class="add-step-btn">+ Agregar paso</button>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Tech stack (Arquitecto)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.stack-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--sp-6);
+  align-items: flex-start;
+}
+
+/* Project meta arriba */
+.proj-meta {
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  margin-bottom: var(--sp-5);
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: var(--sp-5);
+  align-items: center;
+}
+.proj-meta .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.proj-meta .v { font-size: 14px; font-weight: 500; }
+
+/* Stack picker · cards comparativas */
+.stack-suggestion {
+  background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-3);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+.stack-suggestion .h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: var(--sp-3);
+}
+.stack-suggestion .h::before {
+  content: "★";
+  font-size: 14px;
+}
+.stack-suggestion .msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: var(--sp-3);
+}
+
+/* Field group */
+.field-group {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-4) var(--sp-5);
+  margin-bottom: var(--sp-3);
+}
+.field-group .label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+}
+.field-group .desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -4px;
+  margin-bottom: var(--sp-3);
+}
+
+/* Option chips for picking */
+.opt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.opt-chip {
+  padding: 8px 14px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.opt-chip:hover { border-color: var(--bg-line-strong); }
+.opt-chip.is-selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.opt-chip .ico {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--bg-line);
+}
+.opt-chip.is-selected .ico { background: var(--accent); }
+.opt-chip .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Multi-select services chips */
+.svc-chip {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px dashed var(--bg-line-strong);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.svc-chip.is-selected {
+  background: var(--accent);
+  color: var(--bg);
+  border-style: solid;
+  border-color: var(--accent);
+  font-weight: 500;
+}
+.svc-chip.is-selected::after { content: "✓"; font-weight: 700; }
+
+/* Cost estimate side */
+.cost-card {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.cost-card .h {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: var(--sp-3);
+  display: flex;
+  justify-content: space-between;
+}
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--bg-line);
+  font-size: 12px;
+}
+.cost-row:last-child { border-bottom: 0; }
+.cost-row .who { color: var(--text-secondary); }
+.cost-row .amt { font-family: var(--font-mono); color: var(--text-primary); font-weight: 500; }
+.cost-row.total { padding-top: var(--sp-3); margin-top: var(--sp-2); border-top: 1px solid var(--bg-line); border-bottom: 0; }
+.cost-row.total .who { font-weight: 600; color: var(--text-primary); }
+.cost-row.total .amt { color: var(--accent-mint); font-size: 16px; font-weight: 700; }
+
+/* Justification textarea */
+.justif {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: var(--sp-3);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 13px;
+  resize: vertical;
+  min-height: 120px;
+  outline: none;
+}
+.justif:focus { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3</span>
+    <span>10 · Tech stack declaration (Arquitecto)</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">iB</div><div class="text">iBisne CRM<span class="sub">v0.3 · ARQUITECTO</span></div></div>
+    <div class="sidebar-section">
+      <a class="nav-item" href="00-mi-dia.html"><span class="icon">◉</span>Mi día<span class="badge">4</span></a>
+      <a class="nav-item" href="03-pipeline-kanban.html"><span class="icon">⇄</span>Pipeline</a>
+      <a class="nav-item is-active" href="#"><span class="icon">▢</span>Proyectos<span class="badge">19</span></a>
+      <a class="nav-item" href="11-playbook-library.html"><span class="icon">◌</span>Playbooks</a>
+      <a class="nav-item" href="#"><span class="icon">✉</span>Bandeja<span class="badge">2</span></a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Auditoría</div>
+      <a class="nav-item" href="#"><span class="icon">▦</span>Tech stacks declarados</a>
+      <a class="nav-item" href="#"><span class="icon">◯</span>Approvals pendientes<span class="badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">★</span>Costos de infra</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar">AV</div>
+      <div class="info"><div class="name">Andrés V.</div><div class="role">ARQUITECTO</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="#">iBisne</a>
+        <span class="sep">/</span>
+        <a href="#">Proyectos</a>
+        <span class="sep">/</span>
+        <a href="05-proyecto-detalle.html">Sitio HoldingMX</a>
+        <span class="sep">/</span>
+        <span class="here">Tech stack · paso 04</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span><span>Buscar tech, alternativa…</span><span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones"><span>✉</span><span class="badge-num">2</span></button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip"><span class="avatar">AV</span><span class="name">Andrés</span><span class="chev">▾</span></button>
+    </div>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">§ 04.PASO — DECLARAR TECH STACK</div>
+          <h1>Tech stack del proyecto</h1>
+        </div>
+        <div class="actions">
+          <button class="btn btn-line">Cancelar</button>
+          <button class="btn btn-primary">Declarar y firmar →</button>
+        </div>
+      </div>
+
+      <!-- Project meta -->
+      <div class="proj-meta">
+        <div class="ring" style="--ring-size: 48px; --ring-stroke: 4px; --ring-pct: 25;">
+          <svg viewBox="0 0 36 36">
+            <circle class="track" cx="18" cy="18" r="15.915"/>
+            <circle class="fill"  cx="18" cy="18" r="15.915"/>
+          </svg>
+          <div class="num" style="font-size: 11px;">25<span class="pct">%</span></div>
+        </div>
+        <div>
+          <div class="label">Proyecto · folio #428</div>
+          <div class="v">Sitio HoldingMX · cliente directo · marca corporativa</div>
+        </div>
+        <div>
+          <div class="label">Tipo</div>
+          <div class="v">Sitio completo</div>
+        </div>
+        <div>
+          <div class="label">Total cotizado</div>
+          <div class="v" style="color:var(--accent-mint); font-family:var(--font-mono);">$ 110,200 MXN</div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="stack-form">
+
+        <!-- Col izquierda: opciones -->
+        <div>
+
+          <!-- Sugerencia automática -->
+          <div class="stack-suggestion">
+            <div class="h">Sugerencia del sistema · basada en playbook "Sitio completo"</div>
+            <div class="msg">
+              Para un sitio completo de marca con CMS editable, animaciones cinemáticas y SEO crítico, el stack recomendado es <strong style="color:var(--text-primary);">Next 15 + Sanity + Vercel + GSAP</strong>. Costo infra mensual ~$45 USD. Tiempo de despliegue ~3h.
+            </div>
+            <div style="display: flex; gap: var(--sp-2);">
+              <button class="btn btn-primary btn-sm">Aceptar sugerencia</button>
+              <button class="btn btn-line btn-sm">Ver 3 alternativas</button>
+              <button class="btn btn-line btn-sm">Comparar con Astro</button>
+            </div>
+          </div>
+
+          <!-- Plataforma -->
+          <div class="field-group">
+            <div class="label">Plataforma de hosting</div>
+            <div class="desc">Dónde vive el sitio en producción</div>
+            <div class="opt-chips">
+              <span class="opt-chip is-selected"><span class="ico"></span>Vercel<span class="meta">$20/mes</span></span>
+              <span class="opt-chip"><span class="ico"></span>Hostinger<span class="meta">$3/mes</span></span>
+              <span class="opt-chip"><span class="ico"></span>Netlify<span class="meta">$19/mes</span></span>
+              <span class="opt-chip"><span class="ico"></span>Cloudflare Pages<span class="meta">gratis</span></span>
+              <span class="opt-chip"><span class="ico"></span>AWS Amplify<span class="meta">$15-40/mes</span></span>
+              <span class="opt-chip"><span class="ico"></span>Servidor propio</span>
+            </div>
+          </div>
+
+          <!-- Framework -->
+          <div class="field-group">
+            <div class="label">Framework / Lenguaje</div>
+            <div class="desc">El stack de desarrollo principal</div>
+            <div class="opt-chips">
+              <span class="opt-chip is-selected"><span class="ico"></span>Next.js 15<span class="meta">React · SSR/ISR</span></span>
+              <span class="opt-chip"><span class="ico"></span>Astro<span class="meta">SSG · ligero</span></span>
+              <span class="opt-chip"><span class="ico"></span>HTML + CSS<span class="meta">estático</span></span>
+              <span class="opt-chip"><span class="ico"></span>WordPress<span class="meta">CMS clásico</span></span>
+              <span class="opt-chip"><span class="ico"></span>Webflow<span class="meta">no-code</span></span>
+              <span class="opt-chip"><span class="ico"></span>SvelteKit</span>
+            </div>
+          </div>
+
+          <!-- CMS -->
+          <div class="field-group">
+            <div class="label">CMS · gestión de contenido</div>
+            <div class="desc">¿Editable por el cliente o hard-coded?</div>
+            <div class="opt-chips">
+              <span class="opt-chip is-selected"><span class="ico"></span>Sanity<span class="meta">headless · gratis &lt;3 users</span></span>
+              <span class="opt-chip"><span class="ico"></span>Strapi<span class="meta">self-hosted</span></span>
+              <span class="opt-chip"><span class="ico"></span>Contentful<span class="meta">$300/mes prod</span></span>
+              <span class="opt-chip"><span class="ico"></span>Notion API<span class="meta">low cost</span></span>
+              <span class="opt-chip"><span class="ico"></span>Sin CMS<span class="meta">hard-coded</span></span>
+            </div>
+          </div>
+
+          <!-- Servicios complementarios -->
+          <div class="field-group">
+            <div class="label">Servicios complementarios</div>
+            <div class="desc">Marca todos los que aplican</div>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2);">
+              <span class="svc-chip is-selected">GSAP · animaciones</span>
+              <span class="svc-chip is-selected">Plausible · analytics</span>
+              <span class="svc-chip is-selected">Resend · emails</span>
+              <span class="svc-chip">Sentry · errors</span>
+              <span class="svc-chip">Stripe Checkout</span>
+              <span class="svc-chip">Mercado Pago</span>
+              <span class="svc-chip">Cloudinary · imágenes</span>
+              <span class="svc-chip">Algolia · search</span>
+              <span class="svc-chip">Mapbox · mapas</span>
+              <span class="svc-chip">+ Agregar custom</span>
+            </div>
+          </div>
+
+          <!-- Justificación -->
+          <div class="field-group">
+            <div class="label">Justificación técnica · requerida</div>
+            <div class="desc">¿Por qué este stack y no otro? Texto se guarda firmado y visible al cliente.</div>
+            <textarea class="justif" placeholder="Ej: Elijo Next 15 + Sanity porque el cliente necesita actualizar contenido sin tocar código. Las animaciones cinemáticas con GSAP justifican el bundle extra de React. Hostinger no sirve aquí porque no soporta SSR/ISR necesario para SEO de las páginas dinámicas de blog y servicios.">El cliente necesita editar contenido de servicios + blog sin nuestra intervención mensual. Sanity es la opción más económica y rápida para esto (gratis bajo 3 usuarios).
+
+Next 15 + Vercel da SEO óptimo con ISR para las 50+ páginas de servicios. Astro daría performance similar pero las animaciones GSAP del Hero requieren React (motion library mejor integrada).
+
+Resend + Plausible son nuestro stack default para contacto + métricas privacy-first.
+
+Hostinger lo descarté porque no maneja SSR/ISR ni edge functions. Cloudflare Pages sería alternativa válida pero el cliente ya tiene cuenta enterprise en Vercel.</textarea>
+          </div>
+
+        </div>
+
+        <!-- Col derecha: costo + impacto -->
+        <div>
+
+          <!-- Estimación de costo infra -->
+          <div class="cost-card">
+            <div class="h">Costo infra mensual</div>
+            <div class="cost-row">
+              <span class="who">Vercel Pro</span>
+              <span class="amt">$20</span>
+            </div>
+            <div class="cost-row">
+              <span class="who">Sanity (free tier)</span>
+              <span class="amt">$0</span>
+            </div>
+            <div class="cost-row">
+              <span class="who">Plausible Hobby</span>
+              <span class="amt">$9</span>
+            </div>
+            <div class="cost-row">
+              <span class="who">Resend Starter</span>
+              <span class="amt">$20</span>
+            </div>
+            <div class="cost-row">
+              <span class="who">Dominio (anual)</span>
+              <span class="amt">$1</span>
+            </div>
+            <div class="cost-row total">
+              <span class="who">Total · año 1</span>
+              <span class="amt">$50 USD/mes</span>
+            </div>
+          </div>
+
+          <!-- Impacto en pasos siguientes -->
+          <div class="cost-card">
+            <div class="h" style="display:block;">
+              Pasos que se activan al firmar
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:0.08em; font-weight:400; text-transform:uppercase; display:block; margin-top:4px;">PLAYBOOK · SITIO COMPLETO · 12 PASOS</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
+              Al declarar este stack, el sistema:
+              <ul style="margin: var(--sp-2) 0 0 var(--sp-4); list-style: disc; color: var(--text-muted);">
+                <li>Desbloquea <strong style="color:var(--accent);">paso 05 · Sitemap</strong></li>
+                <li>Configura repo GitHub con template Next 15</li>
+                <li>Crea proyecto en Sanity Studio</li>
+                <li>Reserva subdominio en Vercel</li>
+                <li>Notifica al KAM con costos infra</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Riesgos -->
+          <div class="cost-card" style="border-color: rgba(255,184,77,0.3);">
+            <div class="h" style="color: var(--warn);">⚠ Considera antes de firmar</div>
+            <ul style="margin: 0 0 0 var(--sp-4); list-style: disc; color: var(--text-secondary); font-size: 12px; line-height: 1.6;">
+              <li>Sanity free tier limita a 3 usuarios. Si el cliente agrega marketing team, sube a $99/mes</li>
+              <li>Vercel free tier corta a 100GB/mes · proyectos con tráfico alto requieren Pro</li>
+              <li>GSAP es comercial · necesitas licencia $99/año para sitios cliente</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

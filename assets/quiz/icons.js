@@ -128,6 +128,10 @@ window.IBISNE_ICONS = (function(){
     plus:      { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>' },
     edit:      { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4.5 L19.5 9.5 L8 21 L3 21 L3 16 Z"/><line x1="13" y1="6" x2="18" y2="11"/></svg>' },
     minus:     { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>' },
+    // Utility icons usados en modal PWA · estética stroke 1px currentColor · sin emojis
+    bolt:      { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 L5 13 L11 13 L9 21 L19 10 L13 10 Z"/></svg>' },
+    check:     { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>' },
+    'arrow-up-right': { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="18" x2="18" y2="6"/><polyline points="9 6 18 6 18 15"/></svg>' },
   };
 
   icons.get = function(id, v){

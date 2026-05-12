@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Revisiones pendientes (Sr Coder)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+/* Review row · una revisión pendiente */
+.rev-section {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  margin-bottom: var(--sp-4);
+  overflow: hidden;
+}
+.rev-section-head {
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+}
+.rev-section-head .title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.rev-section-head .count {
+  padding: 1px 8px;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.rev-section.is-overdue .rev-section-head {
+  background: rgba(255,107,107,0.04);
+  border-bottom-color: rgba(255,107,107,0.2);
+}
+.rev-section.is-overdue .rev-section-head .title { color: var(--danger); }
+.rev-section.is-overdue .rev-section-head .count {
+  background: rgba(255,107,107,0.1);
+  color: var(--danger);
+  border-color: rgba(255,107,107,0.3);
+}
+
+.rev-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 200px 120px auto;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  align-items: center;
+  border-bottom: 1px solid var(--bg-line);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.rev-row:last-child { border-bottom: 0; }
+.rev-row:hover { background: var(--bg-tint); }
+
+.rev-row .marker {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--bg-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.rev-row.is-urgent .marker {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.rev-row.is-overdue .marker {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(255,107,107,0.05);
+}
+
+.rev-info .name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.rev-info .name a { color: var(--text-primary); }
+.rev-info .name a:hover { color: var(--accent-mint); }
+.rev-info .meta {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.rev-info .meta .sep::before {
+  content: "·";
+  margin-right: var(--sp-1);
+  opacity: 0.5;
+}
+
+.rev-who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.rev-who .av {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+.rev-who .info { line-height: 1.2; }
+.rev-who .info .n { font-weight: 500; }
+.rev-who .info .r {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rev-age {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: right;
+}
+.rev-age .when {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.rev-age.is-urgent .when { color: var(--warn); }
+.rev-age.is-overdue .when { color: var(--danger); }
+.rev-age .meta {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.rev-actions {
+  display: flex;
+  gap: var(--sp-2);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.rev-row:hover .rev-actions { opacity: 1; }
+
+/* Stat strip arriba */
+.sr-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+.sr-stat {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-4);
+}
+.sr-stat .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+}
+.sr-stat .v {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.sr-stat .sub {
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+}
+.sr-stat.is-warn .v { color: var(--warn); }
+.sr-stat.is-good .v { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3.2</span>
+    <span>14 · Revisiones pendientes (Sr Coder)</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <!-- Sidebar Sr Coder · variante del Jr -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">iB</div>
+      <div class="text">iBisne CRM<span class="sub">v0.3 · LIVING CODER</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <a class="nav-item" href="00-mi-dia.html"><span class="icon">◉</span>Mi día<span class="badge">4</span></a>
+      <a class="nav-item is-active" href="14-revisiones-sr.html"><span class="icon">◯</span>Revisiones<span class="badge">5</span></a>
+      <a class="nav-item" href="08-mi-proyecto.html"><span class="icon">▢</span>Mis proyectos<span class="badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">✉</span>Bandeja<span class="badge">2</span></a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Mentoría</div>
+      <a class="nav-item" href="#"><span class="icon">⤴</span>Mentees<span class="badge">2</span></a>
+      <a class="nav-item" href="11-playbook-library.html"><span class="icon">◌</span>Playbooks</a>
+      <a class="nav-item" href="#"><span class="icon">★</span>Recursos</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Equipo</div>
+      <a class="nav-item" href="#"><span class="icon">◊</span>Compañeros</a>
+      <a class="nav-item" href="#"><span class="icon">▦</span>Capacidad equipo</a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar">LT</div>
+      <div class="info"><div class="name">Laura T.</div><div class="role">SR CODER</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="00-mi-dia.html">iBisne</a>
+        <span class="sep">/</span>
+        <span class="here">Revisiones pendientes</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span><span>Buscar revisión, proyecto, mentee…</span><span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones"><span>✉</span><span class="badge-num">2</span></button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip"><span class="avatar">LT</span><span class="name">Laura</span><span class="chev">▾</span></button>
+    </div>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">§ SR CODER — COLA DE APROBACIONES</div>
+          <h1>5 revisiones esperándote</h1>
+          <div class="muted" style="margin-top:8px;font-size:13px;">Tiempo estimado total: <span class="mint">~3h 30m</span> · 1 vencida desde hace 12h</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-line btn-sm">Ordenar por</button>
+          <button class="btn btn-line btn-sm">Filtros</button>
+        </div>
+      </div>
+
+      <!-- Stats del Sr Coder -->
+      <div class="sr-stats">
+        <div class="sr-stat is-warn">
+          <div class="l">Pendientes</div>
+          <div class="v">5</div>
+          <div class="sub">↑ 2 nuevas hoy</div>
+        </div>
+        <div class="sr-stat">
+          <div class="l">Tu SLA medio</div>
+          <div class="v">3h 20m</div>
+          <div class="sub">META: ≤ 4H · OK</div>
+        </div>
+        <div class="sr-stat is-good">
+          <div class="l">Aprobadas 30d</div>
+          <div class="v">42</div>
+          <div class="sub">94% AL PRIMER PASS</div>
+        </div>
+        <div class="sr-stat">
+          <div class="l">Tu capacidad</div>
+          <div class="v">28h<span style="font-size:13px;color:var(--text-muted);font-weight:400;">/40h</span></div>
+          <div class="sub">70% USADA ESTA SEMANA</div>
+        </div>
+      </div>
+
+      <!-- Filtros pills -->
+      <div style="display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-bottom:var(--sp-5);">
+        <span style="padding: 4px 10px; border: 1px solid var(--accent); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-soft);">Todas (5)</span>
+        <span style="padding: 4px 10px; border: 1px solid var(--bg-line-strong); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-secondary);">Mis mentees (3)</span>
+        <span style="padding: 4px 10px; border: 1px solid var(--bg-line-strong); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-secondary);">Web (2)</span>
+        <span style="padding: 4px 10px; border: 1px solid var(--bg-line-strong); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-secondary);">App (1)</span>
+        <span style="padding: 4px 10px; border: 1px solid var(--bg-line-strong); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-secondary);">Wireframing (2)</span>
+        <span style="padding: 4px 10px; border: 1px solid var(--bg-line-strong); border-radius: 99px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-secondary);">Deploy (1)</span>
+      </div>
+
+      <!-- Sección OVERDUE · vencidas -->
+      <div class="rev-section is-overdue">
+        <div class="rev-section-head">
+          <div class="title">⚠ Vencidas · responder ahora <span class="count">1</span></div>
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--danger); letter-spacing:0.1em;">SLA EXCEDIDO</span>
+        </div>
+
+        <div class="rev-row is-overdue" onclick="window.location.href='09-paso-detalle.html'">
+          <div class="marker">!</div>
+          <div class="rev-info">
+            <div class="name"><a href="09-paso-detalle.html">Wireframing aprobado · Sitio HoldingMX</a></div>
+            <div class="meta">
+              FOLIO #428 · PASO 06/12<span class="sep"></span>OUTPUT V2 · FIGMA<span class="sep"></span>ENVIADO AYER 18:20
+            </div>
+          </div>
+          <div class="rev-who">
+            <div class="av">MR</div>
+            <div class="info">
+              <div class="n">Mateo R.</div>
+              <div class="r">JR · TU MENTEE</div>
+            </div>
+          </div>
+          <div class="rev-age is-overdue">
+            <div class="when">+ 12h 14m</div>
+            <div class="meta">DEL SLA · 8H</div>
+          </div>
+          <div class="rev-actions">
+            <button class="btn btn-line btn-sm">Skip</button>
+            <button class="btn btn-primary btn-sm">Revisar →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección NORMAL · activas -->
+      <div class="rev-section">
+        <div class="rev-section-head">
+          <div class="title">En cola · responde en orden <span class="count">3</span></div>
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:0.1em;">ORDEN: SLA ASCENDENTE</span>
+        </div>
+
+        <div class="rev-row is-urgent">
+          <div class="marker">07</div>
+          <div class="rev-info">
+            <div class="name"><a href="#">Design system / moodboard · Sitio Verde Market</a></div>
+            <div class="meta">
+              FOLIO #432 · PASO 07/12<span class="sep"></span>OUTPUT V1 · FIGMA<span class="sep"></span>ENVIADO HOY 9:15
+            </div>
+          </div>
+          <div class="rev-who">
+            <div class="av">CA</div>
+            <div class="info">
+              <div class="n">Camila A.</div>
+              <div class="r">JR · MENTEE</div>
+            </div>
+          </div>
+          <div class="rev-age is-urgent">
+            <div class="when">2h 23m</div>
+            <div class="meta">DE 4H · EN VENCIMIENTO</div>
+          </div>
+          <div class="rev-actions">
+            <button class="btn btn-line btn-sm">Asignar a otro Sr</button>
+            <button class="btn btn-primary btn-sm">Revisar →</button>
+          </div>
+        </div>
+
+        <div class="rev-row">
+          <div class="marker">10</div>
+          <div class="rev-info">
+            <div class="name"><a href="#">QA cross-browser · Caleta App híbrida</a></div>
+            <div class="meta">
+              FOLIO #425 · PASO 10/15<span class="sep"></span>CHECKLIST 18 ITEMS · TESTFLIGHT<span class="sep"></span>HOY 10:42
+            </div>
+          </div>
+          <div class="rev-who">
+            <div class="av">RM</div>
+            <div class="info">
+              <div class="n">Ramón M.</div>
+              <div class="r">JR</div>
+            </div>
+          </div>
+          <div class="rev-age">
+            <div class="when">5h 18m</div>
+            <div class="meta">DE 6H</div>
+          </div>
+          <div class="rev-actions">
+            <button class="btn btn-line btn-sm">Skip</button>
+            <button class="btn btn-primary btn-sm">Revisar →</button>
+          </div>
+        </div>
+
+        <div class="rev-row">
+          <div class="marker">05</div>
+          <div class="rev-info">
+            <div class="name"><a href="#">Sitemap aprobado · DataLatam SaaS</a></div>
+            <div class="meta">
+              FOLIO #430 · PASO 06/15<span class="sep"></span>OUTPUT V1 · FIGMA + DOC<span class="sep"></span>HOY 11:08
+            </div>
+          </div>
+          <div class="rev-who">
+            <div class="av">SH</div>
+            <div class="info">
+              <div class="n">Sofía H.</div>
+              <div class="r">JR · MENTEE</div>
+            </div>
+          </div>
+          <div class="rev-age">
+            <div class="when">6h 52m</div>
+            <div class="meta">DE 8H</div>
+          </div>
+          <div class="rev-actions">
+            <button class="btn btn-line btn-sm">Skip</button>
+            <button class="btn btn-primary btn-sm">Revisar →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección DEPLOY · necesita más atención -->
+      <div class="rev-section">
+        <div class="rev-section-head">
+          <div class="title">Deploys · requiere co-aprobación con arquitecto <span class="count">1</span></div>
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:0.1em;">SR + ARQ APRUEBAN</span>
+        </div>
+
+        <div class="rev-row">
+          <div class="marker">11</div>
+          <div class="rev-info">
+            <div class="name"><a href="#">Deploy producción · Tacos del Centro web</a></div>
+            <div class="meta">
+              FOLIO #429 · PASO 11/12<span class="sep"></span>STAGING VALIDADO · ESPERA APROBACIÓN<span class="sep"></span>AYER 16:00
+            </div>
+          </div>
+          <div class="rev-who">
+            <div class="av">MR</div>
+            <div class="info">
+              <div class="n">Mateo R.</div>
+              <div class="r">JR · MENTEE</div>
+            </div>
+          </div>
+          <div class="rev-age">
+            <div class="when">22h</div>
+            <div class="meta">DEPLOY · SIN SLA</div>
+          </div>
+          <div class="rev-actions">
+            <button class="btn btn-line btn-sm">Pedir review Arq</button>
+            <button class="btn btn-primary btn-sm">Revisar →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer · tip de mentor -->
+      <div style="background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%); border: 1px solid var(--accent); border-radius: var(--radius-3); padding: var(--sp-4) var(--sp-5); margin-top: var(--sp-6); display: flex; gap: var(--sp-4); align-items: center;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">★</div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:600; color:var(--accent); margin-bottom:4px;">Tip de mentor</div>
+          <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+            Camila (mentee) lleva 3 revisiones aprobadas seguidas al primer pass. Considera <strong style="color:var(--text-primary);">promoverla a Sr Junior</strong> el próximo ciclo (1 mayo).
+          </div>
+        </div>
+        <a href="#" style="font-family:var(--font-mono);font-size:11px;color:var(--accent-mint);letter-spacing:0.08em;text-transform:uppercase;">Ver perfil Camila →</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

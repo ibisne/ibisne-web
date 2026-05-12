@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iBisne | Para inversionistas · proyectos LATAM curados</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0D1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iBisne">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta name="description" content="Inversionistas privados · accede a proyectos LATAM tech curados por iBisne. Sin spam · solo deals que pasaron filtros de hunters.">
+<meta property="og:title" content="iBisne | Inversionistas privados">
+<meta property="og:description" content="Proyectos tech LATAM curados · placement fee transparente · transacción privada off-platform.">
+<meta property="og:url" content="https://www.ibisne.com/inversionistas.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system-v2/tokens.css">
+<link rel="stylesheet" href="assets/quiz/styles.css">
+<style>
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  main { flex: 1; max-width: 1080px; margin: 0 auto; width: 100%; padding: 64px 32px 48px; position: relative; z-index: 3; }
+
+  /* Hero */
+  .inv-hero { text-align: center; margin-bottom: 72px; }
+  .inv-hero .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--accent-mint);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .inv-hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(40px, 6vw, 76px);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    margin-bottom: 22px;
+  }
+  .inv-hero h1 .accent { color: var(--accent); }
+  .inv-hero p {
+    font-size: clamp(16px, 1.5vw, 19px);
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+  .inv-hero-cta {
+    display: flex; gap: 14px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .btn-big {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 20px 44px;
+    border: 1px solid var(--bg-line);
+    background: transparent;
+    color: var(--text-primary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    border-radius: 12px;
+  }
+  .btn-big.primary { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
+  .btn-big.primary:hover { background: var(--accent-mint); border-color: var(--accent-mint); }
+  .btn-big:hover { border-color: var(--accent-mint); color: var(--accent-mint); }
+
+  /* Cómo funciona · 3 pasos */
+  .how-section {
+    margin-bottom: 80px;
+  }
+  .how-section-head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .how-section-head .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--accent-mint);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .how-section-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .how-step {
+    padding: 32px 28px;
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .how-step-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.22em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .how-step h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .how-step p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .how-step .time {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--bg-line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Stats sociales */
+  .inv-stats {
+    margin-bottom: 80px;
+    padding: 48px;
+    background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    text-align: center;
+  }
+  .inv-stats .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .inv-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .inv-stat .n {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    display: block;
+  }
+  .inv-stat .l {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* Modelo · placement fee transparente */
+  .model-section {
+    margin-bottom: 80px;
+    padding: 48px;
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: 16px;
+  }
+  .model-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .model-section > p {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 15px;
+    max-width: 600px;
+    margin: 0 auto 36px;
+    line-height: 1.55;
+  }
+  .model-fees {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .fee-card {
+    padding: 24px;
+    background: var(--bg);
+    border: 1px solid var(--bg-line);
+    border-radius: 12px;
+  }
+  .fee-card .pct {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .fee-card .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 8px 0 12px;
+  }
+  .fee-card .desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* FAQ */
+  .faq-section { margin-bottom: 80px; }
+  .faq-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  details.faq-item {
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  details.faq-item summary {
+    cursor: pointer;
+    padding: 20px 24px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  details.faq-item summary::-webkit-details-marker { display: none; }
+  details.faq-item summary::after {
+    content: "+";
+    font-family: var(--font-mono);
+    font-size: 20px;
+    color: var(--accent-mint);
+    transition: transform 0.2s ease;
+  }
+  details.faq-item[open] summary::after { content: "−"; }
+  details.faq-item .body {
+    padding: 0 24px 22px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  /* CTA final */
+  .inv-cta-final {
+    text-align: center;
+    padding: 48px;
+    background: linear-gradient(180deg, var(--bg-paper) 0%, var(--bg) 100%);
+    border: 1px solid var(--bg-line);
+    border-radius: 16px;
+  }
+  .inv-cta-final h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .inv-cta-final h2 .accent { color: var(--accent); }
+  .inv-cta-final p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    max-width: 540px;
+    margin: 0 auto 28px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 900px) {
+    main { padding: 32px 18px; }
+    .how-steps { grid-template-columns: 1fr; }
+    .model-fees { grid-template-columns: 1fr; }
+    .inv-stats { padding: 32px 24px; }
+    .inv-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .model-section { padding: 32px 24px; }
+    .inv-cta-final { padding: 32px 24px; }
+  }
+  @media (max-width: 540px) {
+    .inv-hero h1 { font-size: clamp(28px, 9vw, 44px); }
+    .inv-hero-cta { flex-direction: column; max-width: 320px; margin: 28px auto 0; }
+    .btn-big { width: 100%; padding: 16px 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient-dots" aria-hidden="true">
+  <span class="dot"></span><span class="dot mint"></span><span class="dot"></span>
+  <span class="dot mint"></span><span class="dot"></span><span class="dot mint"></span>
+</div>
+<div class="ambient-scan" aria-hidden="true"></div>
+
+<!-- HUD -->
+<header class="hud">
+  <a href="index.html" class="hud-brand" aria-label="iBisne — Inicio" id="hud-brand"><img class="hud-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
+  <div class="hud-spacer"></div>
+  <div class="hud-group hud-group-social">
+    <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram" aria-label="Instagram"></a>
+    <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin" aria-label="LinkedIn"></a>
+    <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x" aria-label="X"></a>
+  </div>
+  <span class="hud-divider" aria-hidden="true"></span>
+  <div class="hud-group hud-group-pref">
+    <button class="hud-toggle" id="hud-lang" type="button"><span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span></button>
+    <button class="hud-toggle" id="hud-currency" type="button"><span class="active" data-currency="mxn">MX$</span><span class="slash">/</span><span data-currency="usd">US$</span></button>
+  </div>
+  <span class="hud-divider" aria-hidden="true"></span>
+  <div class="hud-group hud-group-ui">
+    <button class="hud-btn" id="hud-theme" type="button" data-icon="moon"></button>
+    <button class="hud-btn" id="hud-music" type="button" data-icon="play"></button>
+  </div>
+  <button class="hud-install-cta" id="hud-install" type="button" data-style="cta" data-icon="plus" hidden>Instalar app</button>
+  <a href="marketplace.html" class="hud-cta">
+    <span data-icon="grid"></span><span>Ver marketplace</span>
+  </a>
+  <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="grid"></button>
+</header>
+
+<nav class="hud-mobile-menu" id="hud-menu">
+  <div class="menu-section">
+    <div class="menu-label">Navegación</div>
+    <a href="index.html" class="menu-cta">Inicio</a>
+    <a href="marketplace.html" class="menu-cta">Marketplace</a>
+    <a href="quiz.html#/inversor/1" class="menu-cta">Registro inversor</a>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="inv-hero">
+    <div class="eyebrow">§ INVERSIONISTAS PRIVADOS · LATAM TECH</div>
+    <h1>Capital propio.<br>Proyectos LATAM curados.<br><span class="accent">Tú decides cuáles respaldas.</span></h1>
+    <p>iBisne te muestra solo los proyectos tech LATAM que pasaron filtros estrictos de nuestros hunters. Sin spam. Sin VC bullshit. Decisión privada · transacción off-platform · placement fee transparente.</p>
+    <div class="inv-hero-cta">
+      <a href="quiz.html#/inversor/1" class="btn-big primary">Registrarme como inversor →</a>
+      <a href="marketplace.html" class="btn-big">Ver demo del marketplace</a>
+    </div>
+  </section>
+
+  <!-- ─── CÓMO FUNCIONA · 3 PASOS ──────────────────────────────────── -->
+  <section class="how-section">
+    <div class="how-section-head">
+      <div class="eyebrow">§ 01.CÓMO FUNCIONA</div>
+      <h2>3 pasos · cero fricción</h2>
+    </div>
+
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step-num">— PASO 01</div>
+        <h3>Te registras</h3>
+        <p>Llenas un quiz rápido (5 min) que valida tu acreditación, tu ticket de inversión, tus sectores de interés y tu horizonte. Sin papeleo legal todavía.</p>
+        <div class="time">5 MIN</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">— PASO 02</div>
+        <h3>Recibes leads curados</h3>
+        <p>Cada mes te llegan 3-7 proyectos por email. Solo los que pasaron filtros de hunters (modelo, founder track record, tracción, viabilidad técnica). Tú decides cuáles abres.</p>
+        <div class="time">CADA MES</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">— PASO 03</div>
+        <h3>Decides y cierras directo</h3>
+        <p>Si un proyecto te interesa, hunter coordina llamada con el founder. Si cierras deal, iBisne cobra placement fee al inversor (15-25% del monto). La transacción es privada y off-platform.</p>
+        <div class="time">A TU RITMO</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="inv-stats">
+    <div class="eyebrow">★ TRACK RECORD iBISNE</div>
+    <div class="inv-stats-grid">
+      <div class="inv-stat"><span class="n">$ 2.4M</span><div class="l">MXN matched 2026</div></div>
+      <div class="inv-stat"><span class="n">28</span><div class="l">inversores activos</div></div>
+      <div class="inv-stat"><span class="n">12</span><div class="l">proyectos en marketplace</div></div>
+      <div class="inv-stat"><span class="n">94%</span><div class="l">satisfacción inversor</div></div>
+    </div>
+  </section>
+
+  <!-- MODELO · placement fee transparente -->
+  <section class="model-section">
+    <h2>Modelo transparente · placement fee al cerrar</h2>
+    <p>iBisne no administra tu capital. Solo somos el intermediario que cura los leads y conecta. Tú firmas directo con el founder. Cobramos placement fee solo si cierras deal.</p>
+
+    <div class="model-fees">
+      <div class="fee-card">
+        <div class="pct">$ 0</div>
+        <div class="label">Para registrarte</div>
+        <div class="desc">Sin membresía. Sin fee de acceso. Tu registro y revisión de leads es 100% gratis. Decides cuándo escalar a deal.</div>
+      </div>
+      <div class="fee-card">
+        <div class="pct">15-25%</div>
+        <div class="label">Placement fee al cerrar</div>
+        <div class="desc">Cobramos solo si cierras deal con un founder presentado por iBisne. % varía según tamaño del deal y curaduría requerida. Pagas una vez · al firmar.</div>
+      </div>
+      <div class="fee-card">
+        <div class="pct">0%</div>
+        <div class="label">Equity de iBisne</div>
+        <div class="desc">No tomamos equity en los proyectos. No competimos con tu posición. iBisne ejecuta la tecnología que el founder contrate · es servicio · no inversión nuestra.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <h2>Preguntas comunes</h2>
+
+    <details class="faq-item">
+      <summary>¿Necesito ser inversionista acreditado?</summary>
+      <div class="body">Sí. Pedimos validación de patrimonio o experiencia (puede ser angel previo, family office, o documentación CNBV de inversor calificado). El registro inicial verifica con preguntas, después confirmamos antes de mostrarte proyectos sensibles.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿iBisne administra el capital o el equity?</summary>
+      <div class="body">No. iBisne es marketplace de leads · NO somos fintech, NO administramos dinero ajeno, NO operamos vehículos de inversión. La transacción (capital → emprendedor) ocurre por contrato privado directo entre ustedes 2. iBisne solo cobra placement fee al cerrar.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿Qué tipo de proyectos curan?</summary>
+      <div class="body">Proyectos tech LATAM B2B · web, ecommerce, apps, SaaS, AI, Web3. Tickets desde $50k MXN hasta $1M+ por deal. Filtros: founder con tracción demostrable, modelo de negocio claro, viabilidad técnica validada por nuestros arquitectos.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿Cuántos proyectos veo por mes?</summary>
+      <div class="body">Depende de tus preferencias. Default: 3-7 proyectos curados/mes filtrados por sector y ticket. Puedes pedir más volumen o menos. También avisamos puntualmente cuando llega un deal que matchea tu tesis específica.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿En cuánto tiempo cierras un deal típico?</summary>
+      <div class="body">Promedio 21-45 días desde primera vista del lead hasta firma. iBisne facilita primera llamada, comparte data room, conecta para due diligence. La velocidad final depende de ambos. Algunos deals cierran en 1 semana, otros 90 días.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿Qué hacer si un proyecto no me gusta?</summary>
+      <div class="body">Pasas. No hay obligación. iBisne registra tu preferencia para afinar mejor los próximos leads. Cada lead que rechazas mejora el algoritmo de matching.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿Hay garantía de retorno?</summary>
+      <div class="body">No. Inversiones en proyectos tech LATAM son de riesgo. iBisne cura calidad técnica y founder track record pero NO garantiza outcome. Diversifica tu portfolio según tu tesis y tolerancia al riesgo.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary>¿Está regulado por CNBV?</summary>
+      <div class="body">iBisne opera como marketplace de leads B2B · no como crowdfunding fintech (ITF). No captamos ni administramos capital. La transacción es privada entre las partes. Es el mismo modelo que tiene LinkedIn cuando te vende leads B2B · solo que con curaduría humana.</div>
+    </details>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="inv-cta-final">
+    <h2>¿Listo para ver<br><span class="accent">los próximos unicornios LATAM?</span></h2>
+    <p>Te registras en 5 minutos. Te llegan leads curados en 30 días. Decides tú mismo cuándo y cómo cierras. iBisne hace el matching · nunca te bloquea.</p>
+    <div class="inv-hero-cta" style="margin-top: 0;">
+      <a href="quiz.html#/inversor/1" class="btn-big primary">Empezar registro · 5 min →</a>
+      <a href="marketplace.html" class="btn-big">Explorar marketplace primero</a>
+    </div>
+  </section>
+</main>
+
+<footer class="legal-strip">
+  <div class="right">
+    <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
+    <a href="legal/privacidad.html">Aviso de privacidad</a>
+    <a href="legal/terminos.html">Términos</a>
+    <span class="muted" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;">iBisne · marketplace de leads · sin captación de capital</span>
+  </div>
+</footer>
+
+<script src="assets/quiz/loader.js"></script>
+<script src="assets/quiz/prefs.js"></script>
+<script src="assets/quiz/i18n.js"></script>
+<script src="assets/quiz/icons.js"></script>
+<script src="assets/quiz/ambient.js"></script>
+<script src="assets/quiz/hud.js"></script>
+<script src="/assets/quiz/pwa.js" defer></script>
+</body>
+</html>

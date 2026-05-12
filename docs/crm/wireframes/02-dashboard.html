@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Dashboard (wireframe)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: var(--sp-5); margin-bottom: var(--sp-5); }
+.chart-placeholder {
+  height: 200px;
+  border: 1px dashed var(--bg-line-strong);
+  border-radius: var(--radius-2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+.chart-bars {
+  position: absolute; inset: var(--sp-4);
+  display: flex; align-items: flex-end; gap: var(--sp-2);
+}
+.chart-bars span {
+  flex: 1;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-soft) 100%);
+  border-radius: 2px 2px 0 0;
+  opacity: 0.7;
+}
+.activity-list { display: flex; flex-direction: column; gap: var(--sp-3); }
+.activity-item {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  gap: var(--sp-3);
+  font-size: 13px;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--bg-line);
+}
+.activity-item:last-child { border-bottom: 0; }
+.activity-dot {
+  margin-top: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.activity-item .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.upcoming-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.upcoming-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  font-size: 12px;
+}
+.upcoming-item .date {
+  text-align: center;
+  font-family: var(--font-mono);
+  border-right: 1px solid var(--bg-line);
+  padding-right: var(--sp-2);
+}
+.upcoming-item .date .day { font-size: 20px; font-weight: 700; line-height: 1; }
+.upcoming-item .date .mon { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; }
+.upcoming-item .info .who { font-weight: 600; color: var(--text-primary); }
+.upcoming-item .info .what { color: var(--text-secondary); font-size: 11px; }
+.upcoming-item .amount {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent-mint);
+}
+.pill-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-3); }
+.pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--bg-line-strong);
+  border-radius: 99px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME</span>
+    <span>02 · Dashboard</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <!-- ── Sidebar ────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">iB</div>
+      <div class="text">iBisne CRM<span class="sub">v0.1 · INTERNO</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <a class="nav-item" href="00-mi-dia.html"><span class="icon">◉</span>Mi día<span class="badge">7</span></a>
+      <a class="nav-item" href="03-pipeline-kanban.html"><span class="icon">⇄</span>Pipeline<span class="badge">47</span></a>
+      <a class="nav-item" href="07-leads.html"><span class="icon">◌</span>Leads<span class="badge">112</span></a>
+      <a class="nav-item" href="04-cliente-detalle.html"><span class="icon">◊</span>Clientes<span class="badge">23</span></a>
+      <a class="nav-item" href="05-proyecto-detalle.html"><span class="icon">▢</span>Proyectos<span class="badge">19</span></a>
+      <a class="nav-item" href="06-pagos-calendar.html"><span class="icon">$</span>Cobros</a>
+      <a class="nav-item" href="#"><span class="icon">⚐</span>Suscripciones</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Partners</div>
+      <a class="nav-item" href="#"><span class="icon">⤳</span>Revendedores</a>
+      <a class="nav-item" href="#"><span class="icon">%</span>Comisiones</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Contactar</div>
+      <a class="nav-item" href="#"><span class="icon">✉</span>Bandeja<span class="badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">⤴</span>Campañas</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sistema</div>
+      <a class="nav-item is-active" href="02-dashboard.html"><span class="icon">▦</span>Métricas globales</a>
+      <a class="nav-item" href="#"><span class="icon">⚙</span>Configuración</a>
+      <a class="nav-item" href="#"><span class="icon">◯</span>Audit log</a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar">ER</div>
+      <div class="info">
+        <div class="name">Eduardo R.</div>
+        <div class="role">ADMIN</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────────────────── -->
+  <main class="main">
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="00-mi-dia.html">iBisne</a>
+        <span class="sep">/</span>
+        <a href="#">Sistema</a>
+        <span class="sep">/</span>
+        <span class="here">Métricas globales</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span><span>Buscar o acción…</span><span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones"><span>✉</span><span class="badge-num">3</span></button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip"><span class="avatar">ER</span><span class="name">Eduardo</span><span class="chev">▾</span></button>
+    </div>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">§ 00.OPERACIONES — Visión general</div>
+          <h1>Buenos días, Eduardo</h1>
+          <div class="muted" style="margin-top:8px;font-size:13px;">Tu pipeline tiene <span class="mint">$3,890,000 MXN</span> en oportunidades · 4 leads necesitan respuesta hoy.</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-line">Exportar CSV</button>
+          <button class="btn btn-line">Comparar mes anterior</button>
+        </div>
+      </div>
+
+      <!-- ── KPIs ────────────────────────────────────────── -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label">Leads MTD</div>
+          <div class="kpi-value">112</div>
+          <div class="kpi-delta is-up">↑ 18% vs mes anterior</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Conversion 90d</div>
+          <div class="kpi-value">14.8<span class="unit">%</span></div>
+          <div class="kpi-delta is-up">↑ 2.3 pts</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Pipeline value</div>
+          <div class="kpi-value">$3.89<span class="unit">M MXN</span></div>
+          <div class="kpi-delta is-down">↓ 4% por cierres de mayo</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">MRR membresías</div>
+          <div class="kpi-value">$185k<span class="unit">MXN</span></div>
+          <div class="kpi-delta is-up">↑ 3 altas · 0 churn</div>
+        </div>
+      </div>
+
+      <!-- ── Charts + actividad ─────────────────────────── -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            Leads por semana
+            <span class="meta">ÚLTIMAS 12 SEMANAS</span>
+          </div>
+          <div class="chart-placeholder">
+            <div class="chart-bars">
+              <span style="height:30%"></span>
+              <span style="height:45%"></span>
+              <span style="height:38%"></span>
+              <span style="height:55%"></span>
+              <span style="height:42%"></span>
+              <span style="height:60%"></span>
+              <span style="height:48%"></span>
+              <span style="height:72%"></span>
+              <span style="height:65%"></span>
+              <span style="height:80%"></span>
+              <span style="height:75%"></span>
+              <span style="height:88%"></span>
+            </div>
+          </div>
+          <div class="pill-row">
+            <span class="pill">Web · 48%</span>
+            <span class="pill">Ecommerce · 22%</span>
+            <span class="pill">App · 18%</span>
+            <span class="pill">Avanzado · 12%</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Actividad reciente
+            <a href="#" class="meta">VER TODO →</a>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div>
+                <strong>Lead nuevo</strong> · María González <span class="muted">(Tacos del Centro)</span> cotizó $48,400 web completa
+              </div>
+              <span class="meta">hace 4m</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-mint);"></div>
+              <div>
+                <strong>Contrato firmado</strong> · José Pérez (HoldingMX) · proyecto folio #428
+              </div>
+              <span class="meta">hace 1h</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--warn);"></div>
+              <div>
+                <strong>Brief pendiente</strong> · Tienda Verde · 0% · hace 3 días sin abrir
+              </div>
+              <span class="meta">hace 3d</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div>
+                <strong>Pago recibido</strong> · Caleta Studio · $25,200 (anticipo)
+              </div>
+              <span class="meta">ayer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Próximos pagos + tabla leads recientes ───── -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            Leads que necesitan respuesta hoy
+            <a href="03-pipeline-kanban.html" class="meta">PIPELINE →</a>
+          </div>
+          <table class="table" style="margin-top:8px;">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Vertical</th>
+                <th>Stage</th>
+                <th class="num">Cotización</th>
+                <th>Asignado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="row-link" href="#">María González</a><br><span class="muted" style="font-size:11px;">Tacos del Centro · MX</span></td>
+                <td>Web</td>
+                <td><span class="stage-chip stage-cotizacion">Cotización</span></td>
+                <td class="num">$48,400</td>
+                <td>Hunter A</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">Lucas Vega</a><br><span class="muted" style="font-size:11px;">Caleta Studio</span></td>
+                <td>App</td>
+                <td><span class="stage-chip stage-discovery">Discovery</span></td>
+                <td class="num">$285,000</td>
+                <td>Hunter B</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">Patricia Solís</a><br><span class="muted" style="font-size:11px;">Verde Mercado</span></td>
+                <td>Ecom</td>
+                <td><span class="stage-chip stage-lead">Lead</span></td>
+                <td class="num">$92,800</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">Sergio Ramos</a><br><span class="muted" style="font-size:11px;">Cripto Latam</span></td>
+                <td>Avanzado</td>
+                <td><span class="stage-chip stage-nego">Negociación</span></td>
+                <td class="num">$610,000</td>
+                <td>Eduardo</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Próximos cobros · 30 días
+            <span class="meta">$ 487,500 MXN</span>
+          </div>
+          <div class="upcoming-list">
+            <div class="upcoming-item">
+              <div class="date"><div class="day">14</div><div class="mon">MAY</div></div>
+              <div class="info"><div class="who">HoldingMX</div><div class="what">Anticipo 50% · folio #428</div></div>
+              <div class="amount">$95,000</div>
+            </div>
+            <div class="upcoming-item">
+              <div class="date"><div class="day">18</div><div class="mon">MAY</div></div>
+              <div class="info"><div class="who">Verde Mercado</div><div class="what">Membresía Growth · mensualidad</div></div>
+              <div class="amount">$15,000</div>
+            </div>
+            <div class="upcoming-item">
+              <div class="date"><div class="day">22</div><div class="mon">MAY</div></div>
+              <div class="info"><div class="who">Caleta Studio</div><div class="what">Entrega final · folio #425</div></div>
+              <div class="amount">$25,200</div>
+            </div>
+            <div class="upcoming-item">
+              <div class="date"><div class="day">28</div><div class="mon">MAY</div></div>
+              <div class="info"><div class="who">Tacos del Centro</div><div class="what">Anticipo 50% · folio #429</div></div>
+              <div class="amount">$24,200</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

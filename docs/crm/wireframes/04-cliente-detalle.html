@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Cliente detalle (wireframe)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.breadcrumbs {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: var(--sp-3);
+  text-transform: uppercase;
+}
+.breadcrumbs a { color: var(--text-secondary); }
+.breadcrumbs .sep { margin: 0 var(--sp-2); opacity: 0.4; }
+
+.cliente-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--sp-5);
+  align-items: center;
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--bg-line);
+  margin-bottom: var(--sp-6);
+}
+.cliente-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.cliente-head h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-1);
+}
+.cliente-head .sub { color: var(--text-secondary); font-size: 14px; }
+.cliente-head .pills { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); }
+.tag-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tag-pill.is-direct { background: var(--accent-soft); color: var(--accent); }
+.tag-pill.is-referido { background: rgba(174,255,200,0.1); color: var(--accent-mint); }
+.tag-pill.is-sub { background: rgba(255,184,77,0.1); color: var(--warn); }
+.cliente-head-actions { display: flex; gap: var(--sp-2); }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
+}
+.info-cell {
+  padding: var(--sp-4);
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+}
+.info-cell .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.info-cell .value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.info-cell .value.is-strong {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.marca-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+}
+.marca-card {
+  padding: var(--sp-4);
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.marca-card .name { font-size: 15px; font-weight: 600; }
+.marca-card .industry {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+}
+.marca-card .stats {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--bg-line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.marca-card .stats .n { color: var(--accent-mint); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME</span>
+    <span>04 · Cliente · detalle</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">iB</div><div class="text">iBisne CRM<span class="sub">v0.2 · INTERNO</span></div></div>
+    <div class="sidebar-section">
+      <a class="nav-item" href="00-mi-dia.html"><span class="icon">◉</span>Mi día<span class="badge">7</span></a>
+      <a class="nav-item" href="03-pipeline-kanban.html"><span class="icon">⇄</span>Pipeline<span class="badge">47</span></a>
+      <a class="nav-item" href="07-leads.html"><span class="icon">◌</span>Leads<span class="badge">112</span></a>
+      <a class="nav-item is-active" href="04-cliente-detalle.html"><span class="icon">◊</span>Clientes<span class="badge">23</span></a>
+      <a class="nav-item" href="05-proyecto-detalle.html"><span class="icon">▢</span>Proyectos<span class="badge">19</span></a>
+      <a class="nav-item" href="06-pagos-calendar.html"><span class="icon">$</span>Cobros</a>
+      <a class="nav-item" href="#"><span class="icon">⚐</span>Suscripciones</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Partners</div>
+      <a class="nav-item" href="#"><span class="icon">⤳</span>Revendedores</a>
+      <a class="nav-item" href="#"><span class="icon">%</span>Comisiones</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Contactar</div>
+      <a class="nav-item" href="#"><span class="icon">✉</span>Bandeja<span class="badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">⤴</span>Campañas</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sistema</div>
+      <a class="nav-item" href="02-dashboard.html"><span class="icon">▦</span>Métricas globales</a>
+      <a class="nav-item" href="#"><span class="icon">⚙</span>Configuración</a>
+      <a class="nav-item" href="#"><span class="icon">◯</span>Audit log</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar">ER</div>
+      <div class="info"><div class="name">Eduardo R.</div><div class="role">ADMIN</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="00-mi-dia.html">iBisne</a>
+        <span class="sep">/</span>
+        <a href="04-cliente-detalle.html">Clientes</a>
+        <span class="sep">/</span>
+        <span class="here">HoldingMX</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span><span>Buscar o acción…</span><span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones"><span>✉</span><span class="badge-num">3</span></button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip"><span class="avatar">ER</span><span class="name">Eduardo</span><span class="chev">▾</span></button>
+    </div>
+
+    <div class="content">
+
+      <div class="cliente-head">
+        <div class="cliente-avatar">HM</div>
+        <div>
+          <h1>HoldingMX</h1>
+          <div class="sub">José Pérez · josep@holdingmx.com · +52 33 1234 5678</div>
+          <div class="pills">
+            <span class="tag-pill is-direct">Cliente directo</span>
+            <span class="tag-pill is-sub">Membership · Growth</span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.1em;">DESDE 04-02-2026</span>
+          </div>
+        </div>
+        <div class="cliente-head-actions">
+          <button class="btn btn-line">Enviar mensaje</button>
+          <button class="btn btn-line">Ver portal cliente</button>
+        </div>
+      </div>
+
+      <!-- ── Información rápida ──────────────────────────── -->
+      <div class="info-grid">
+        <div class="info-cell">
+          <div class="label">Facturado total</div>
+          <div class="value is-strong">$ 195k <span class="muted" style="font-size:11px;">MXN</span></div>
+        </div>
+        <div class="info-cell">
+          <div class="label">Próximo pago</div>
+          <div class="value is-strong">$ 15k</div>
+          <div class="muted" style="font-size:11px;">18 May · Mensualidad Growth</div>
+        </div>
+        <div class="info-cell">
+          <div class="label">Proyectos activos</div>
+          <div class="value is-strong">3</div>
+          <div class="muted" style="font-size:11px;">1 web · 1 ecommerce · 1 brief pendiente</div>
+        </div>
+        <div class="info-cell">
+          <div class="label">RFC</div>
+          <div class="value">HMX020414-AB1</div>
+          <div class="muted" style="font-size:11px;">Holding MX, S.A. de C.V.</div>
+        </div>
+      </div>
+
+      <!-- ── Tabs ────────────────────────────────────────────── -->
+      <div class="tabs">
+        <div class="tab is-active">Marcas (2)</div>
+        <div class="tab">Proyectos (3)</div>
+        <div class="tab">Pagos (8)</div>
+        <div class="tab">Suscripción</div>
+        <div class="tab">Briefs (1 pendiente)</div>
+        <div class="tab">Contratos (3)</div>
+        <div class="tab">Actividad</div>
+        <div class="tab">Notas</div>
+      </div>
+
+      <!-- ── Marcas tab content ──────────────────────────────── -->
+      <div class="marca-grid">
+        <div class="marca-card">
+          <div class="row" style="justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="name">HoldingMX</div>
+              <div class="industry">Inversión / Real Estate</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:6px;background:var(--bg-line);font-family:var(--font-mono);font-size:11px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);">HM</div>
+          </div>
+          <div class="muted" style="font-size:12px;">Sitio corporativo + landing de inversores</div>
+          <div class="stats">
+            <div><span class="n">2</span> proyectos</div>
+            <div><span class="n">$ 165k</span> facturado</div>
+            <div><span class="n">▲</span> activo</div>
+          </div>
+        </div>
+
+        <div class="marca-card">
+          <div class="row" style="justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="name">Verde Market</div>
+              <div class="industry">Ecommerce orgánico</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:6px;background:rgba(174,255,200,0.15);font-family:var(--font-mono);font-size:11px;display:flex;align-items:center;justify-content:center;color:var(--accent-mint);">VM</div>
+          </div>
+          <div class="muted" style="font-size:12px;">Catálogo Shopify · marca secundaria del cliente</div>
+          <div class="stats">
+            <div><span class="n">1</span> proyecto</div>
+            <div><span class="n">$ 30k</span> facturado</div>
+            <div><span class="n">●</span> kickoff</div>
+          </div>
+        </div>
+
+        <div class="marca-card" style="border-style:dashed;align-items:center;justify-content:center;min-height:140px;color:var(--text-muted);">
+          <div style="font-size:24px;font-weight:300;">+</div>
+          <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.14em;">Agregar marca</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
