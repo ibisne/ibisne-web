@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iBisne | Detalle proyecto · Portal inversor</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-system-v2/tokens.css">
+<link rel="stylesheet" href="../assets/quiz/styles.css">
+<style>
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* TOP BAR · idéntico a oportunidades */
+  .pt-top {
+    background: var(--bg);
+    border-bottom: 1px solid var(--bg-line);
+    padding: 16px 32px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .pt-brand { display: flex; align-items: center; gap: 10px; }
+  .pt-brand .logo { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+  .pt-brand .text { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+  .pt-brand .text .sub { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 0.18em; margin-top: 2px; }
+  .pt-nav { display: flex; gap: 28px; justify-content: center; }
+  .pt-nav a { font-size: 13px; color: var(--text-secondary); padding: 6px 0; }
+  .pt-nav a:hover { color: var(--text-primary); }
+  .pt-nav a.is-active { color: var(--accent); }
+
+  main {
+    flex: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 32px 32px 48px;
+  }
+
+  .crumbs {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .crumbs a { color: var(--text-secondary); }
+  .crumbs .sep { margin: 0 8px; opacity: 0.4; }
+
+  /* Hero del proyecto */
+  .proj-hero {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--bg-line);
+    margin-bottom: 32px;
+  }
+  .proj-cover-lg {
+    width: 120px; height: 120px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-paper) 100%);
+    border: 1px solid var(--bg-line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-mint);
+    font-family: var(--font-mono);
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .proj-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .proj-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ptag {
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--bg-paper);
+    color: var(--text-secondary);
+    border: 1px solid var(--bg-line);
+  }
+  .ptag.is-accent { color: var(--accent); border-color: rgba(61,255,127,0.3); }
+  .ptag.is-mint { color: var(--accent-mint); border-color: rgba(174,255,200,0.3); }
+  .proj-hero .pmeta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+  .proj-action {
+    display: flex; flex-direction: column; gap: 8px;
+    align-items: stretch;
+  }
+  .btn-interest {
+    padding: 14px 24px;
+    background: var(--accent);
+    color: var(--bg);
+    border: 0;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+  .btn-interest:hover { background: var(--accent-mint); }
+  .btn-save {
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--bg-line);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-save:hover { border-color: var(--accent-mint); color: var(--accent-mint); }
+
+  /* Layout 2 cols · main + side */
+  .proj-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 32px;
+  }
+
+  /* Tabs */
+  .tabs-row {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--bg-line);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 18px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    background: transparent;
+    border-left: 0; border-right: 0; border-top: 0;
+  }
+  .tab:hover { color: var(--text-primary); }
+  .tab.is-active { color: var(--accent); border-color: var(--accent); }
+
+  .tab-content { display: none; }
+  .tab-content.is-active { display: block; }
+
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .section { margin-bottom: 32px; }
+  .section p { color: var(--text-secondary); line-height: 1.6; font-size: 14px; margin-bottom: 12px; }
+  .section ul { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+  .section ul li { margin-bottom: 4px; }
+  .section ul li strong { color: var(--text-primary); }
+
+  /* Founder card */
+  .founder {
+    padding: 20px;
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .founder .av {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(174,255,200,0.12);
+    color: var(--accent-mint);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .founder .name { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .founder .role { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* Stats grid */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat-cell {
+    padding: 14px;
+    background: var(--bg);
+    border: 1px solid var(--bg-line);
+    border-radius: 10px;
+  }
+  .stat-cell .l { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+  .stat-cell .v { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -0.015em; }
+
+  /* Side · funding card */
+  .side-card {
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: sticky;
+    top: calc(56px + 24px);
+  }
+  .side-card .l-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .side-card .amount {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .side-card .amount small {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .side-card .progress {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .side-card .progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-mint));
+  }
+  .side-card .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 20px;
+  }
+  .side-card .progress-meta .v { color: var(--accent-mint); font-weight: 600; }
+
+  .side-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid var(--bg-line);
+    font-size: 13px;
+  }
+  .side-stat:first-child { border-top: 0; }
+  .side-stat .k { color: var(--text-secondary); }
+  .side-stat .v { color: var(--text-primary); font-family: var(--font-mono); font-weight: 600; }
+
+  /* Modal de interés */
+  .v4-modal-overlay { display: none; }
+  .v4-modal-overlay.show { display: flex; }
+
+  @media (max-width: 900px) {
+    main { padding: 24px 18px 32px; }
+    .proj-hero { grid-template-columns: 72px 1fr; gap: 14px; }
+    .proj-cover-lg { width: 72px; height: 72px; font-size: 24px; }
+    .proj-action { grid-column: 1 / -1; flex-direction: row; }
+    .proj-action .btn-interest { flex: 1; }
+    .proj-layout { grid-template-columns: 1fr; }
+    .side-card { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="pt-top">
+  <a href="oportunidades.html" class="pt-brand">
+    <div class="logo">iB</div>
+    <div class="text">iBisne<span class="sub">PORTAL INVERSOR</span></div>
+  </a>
+  <nav class="pt-nav">
+    <a href="oportunidades.html" class="is-active">Oportunidades</a>
+    <a href="#">Mis intereses</a>
+    <a href="#">Deals cerrados</a>
+    <a href="mi-cuenta.html">Mi cuenta</a>
+  </nav>
+  <div></div>
+</header>
+
+<main>
+  <div class="crumbs">
+    <a href="oportunidades.html">Oportunidades</a>
+    <span class="sep">/</span>
+    <span id="crumb-name">Detalle proyecto</span>
+  </div>
+
+  <!-- Hero -->
+  <section class="proj-hero">
+    <div class="proj-cover-lg" id="proj-cover">DL</div>
+    <div>
+      <div class="tags" id="proj-tags">
+        <span class="ptag is-accent">SAAS</span>
+        <span class="ptag">MTY</span>
+        <span class="ptag is-mint">★ TU SECTOR</span>
+      </div>
+      <h1 id="proj-name">DataLatam</h1>
+      <div class="pmeta" id="proj-pmeta">FUNDADO 2024 · 4 PERSONAS · MTY MX · MRR $4K · 8 CLIENTES PILOTO</div>
+    </div>
+    <div class="proj-action">
+      <button class="btn-interest" id="btn-interest">Me interesa →</button>
+      <button class="btn-save">★ Guardar</button>
+    </div>
+  </section>
+
+  <!-- Tabs + side -->
+  <div class="proj-layout">
+    <div>
+      <!-- Tabs row -->
+      <div class="tabs-row" role="tablist">
+        <button class="tab is-active" data-tab="overview">Resumen</button>
+        <button class="tab" data-tab="financials">Financials</button>
+        <button class="tab" data-tab="founder">Founder</button>
+        <button class="tab" data-tab="tracción">Tracción</button>
+        <button class="tab" data-tab="tech">Stack tech</button>
+        <button class="tab" data-tab="brief">Brief completo</button>
+      </div>
+
+      <!-- Tab content · Overview -->
+      <div class="tab-content is-active" data-tab="overview">
+        <div class="section">
+          <h3>Resumen del proyecto</h3>
+          <p>DataLatam es una plataforma SaaS B2B que vende análisis de mercado para empresas medianas en LATAM. Sin necesidad de contratar un equipo de research interno, las empresas acceden a dashboards con datos macro, competencia, tendencia de búsquedas, sentimiento social y oportunidades de mercado.</p>
+          <p>El founder, Sofía Hernández (ex-McKinsey, ex-LATAM Data Co), validó el problema con <strong>32 entrevistas a directores de marketing</strong> en 2024. Actualmente tienen <strong>8 clientes piloto pagando $499 MXN/mes</strong> con NPS de 87.</p>
+        </div>
+
+        <div class="section">
+          <h3>Por qué iBisne lo curó</h3>
+          <ul>
+            <li><strong>Founder con tracción demostrable</strong> · McKinsey 5 años + 2 startups previas</li>
+            <li><strong>Modelo recurrente</strong> · MRR predecible · ticket promedio $499</li>
+            <li><strong>Diferenciación clara</strong> · datos curados LATAM-first (vs Statista que es global)</li>
+            <li><strong>Capital eficiente</strong> · 8 clientes con 0 inversión externa hasta ahora</li>
+            <li><strong>Fit con tu tesis</strong> · SaaS B2B + ticket entre $250k-$500k que pediste</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>Uso del capital</h3>
+          <div class="stat-grid">
+            <div class="stat-cell"><div class="l">Runway 6 meses</div><div class="v">$ 120,000</div></div>
+            <div class="stat-cell"><div class="l">Dev senior · 6 meses</div><div class="v">$ 180,000</div></div>
+            <div class="stat-cell"><div class="l">Marketing / sales</div><div class="v">$ 80,000</div></div>
+            <div class="stat-cell"><div class="l">Reserva operativa</div><div class="v">$ 40,000</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab · Financials -->
+      <div class="tab-content" data-tab="financials">
+        <div class="section">
+          <h3>Estado actual</h3>
+          <div class="stat-grid">
+            <div class="stat-cell"><div class="l">MRR actual</div><div class="v">$ 3,992</div></div>
+            <div class="stat-cell"><div class="l">ARR proyectado 2026</div><div class="v">$ 240,000</div></div>
+            <div class="stat-cell"><div class="l">Margen bruto</div><div class="v">82%</div></div>
+            <div class="stat-cell"><div class="l">Churn 3 meses</div><div class="v">0%</div></div>
+            <div class="stat-cell"><div class="l">CAC actual</div><div class="v">$ 1,200</div></div>
+            <div class="stat-cell"><div class="l">LTV estimado</div><div class="v">$ 14,000</div></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Proyecciones 12 meses (con esta inversión)</h3>
+          <ul>
+            <li>Mes 3: 25 clientes · MRR $12k</li>
+            <li>Mes 6: 60 clientes · MRR $30k · break-even</li>
+            <li>Mes 9: 110 clientes · MRR $55k</li>
+            <li>Mes 12: 180 clientes · MRR $90k · cashflow positive</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>Términos propuestos</h3>
+          <p><strong>Capital:</strong> $ 420,000 MXN · <strong>Equity:</strong> 10% por 3 años · <strong>Liq pref:</strong> 1x non-participating · <strong>Pro-rata:</strong> sí · <strong>Board observer:</strong> sí · <strong>Exit:</strong> 3-5 años · M&A o secundario</p>
+        </div>
+      </div>
+
+      <!-- Tab · Founder -->
+      <div class="tab-content" data-tab="founder">
+        <div class="founder">
+          <div class="av">SH</div>
+          <div>
+            <div class="name">Sofía Hernández</div>
+            <div class="role">FOUNDER · CEO · 7 AÑOS EXPERIENCIA</div>
+          </div>
+        </div>
+        <div class="section" style="margin-top: 20px;">
+          <h3>Background</h3>
+          <ul>
+            <li><strong>McKinsey & Co</strong> · 2019-2024 · Senior consultant · LATAM markets</li>
+            <li><strong>LATAM Data Co</strong> · 2017-2019 · Product Manager · vendida a Bain & Co</li>
+            <li><strong>Vidamax</strong> (su primera startup) · 2015-2017 · exit a inversionista local</li>
+            <li><strong>Educación</strong> · Wharton MBA · ITAM Lic Economía</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h3>Equipo (4 personas)</h3>
+          <ul>
+            <li><strong>Sofía Hernández</strong> · CEO · 100% commitment full-time</li>
+            <li><strong>Mateo R.</strong> · CTO · ex-LATAM Data Co · full-time</li>
+            <li><strong>Carla M.</strong> · Head of Data · part-time consultor</li>
+            <li><strong>Roberto F.</strong> · Sales Lead · contratado al cerrar esta ronda</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab · Tracción -->
+      <div class="tab-content" data-tab="tracción">
+        <div class="section">
+          <h3>Hitos alcanzados</h3>
+          <ul>
+            <li>✓ Jul 2024 · 32 entrevistas validation</li>
+            <li>✓ Sep 2024 · MVP construido (3 meses · 2 devs)</li>
+            <li>✓ Oct 2024 · 5 clientes piloto firmados</li>
+            <li>✓ Dec 2024 · Primer cliente pagando $499/mes</li>
+            <li>✓ Mar 2025 · 8 clientes activos · MRR $4k</li>
+            <li>✓ Apr 2025 · NPS 87 · primer cliente referido</li>
+            <li>→ <strong>Mayo 2025 (hoy)</strong> · ronda iBisne abierta</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab · Stack tech -->
+      <div class="tab-content" data-tab="tech">
+        <div class="section">
+          <h3>Stack actual</h3>
+          <ul>
+            <li><strong>Frontend</strong> · Next.js 14 + TypeScript + Tailwind</li>
+            <li><strong>Backend</strong> · Node.js + Postgres + Redis cache</li>
+            <li><strong>Data pipeline</strong> · Airflow + S3 + Snowflake</li>
+            <li><strong>Hosting</strong> · Vercel + Railway (DB)</li>
+            <li><strong>Auth</strong> · Clerk (cambio a Supabase Auth con esta ronda)</li>
+            <li><strong>Stripe Billing</strong> · ya integrado · $499/mes plan único</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h3>Validación técnica iBisne</h3>
+          <p>Nuestro arquitecto revisó el código (acceso a repo privado). Calidad: <strong>buena</strong>. Tests cubre 64%. Sin deudas técnicas críticas. Escalable a 10k usuarios sin rearquitectura.</p>
+        </div>
+      </div>
+
+      <!-- Tab · Brief -->
+      <div class="tab-content" data-tab="brief">
+        <div class="section">
+          <h3>Pitch deck completo</h3>
+          <p>El pitch deck (18 slides) y data room están disponibles bajo NDA. Si avanzas con "Me interesa", iBisne te envía el link en 2 horas con tu sesión privada de Notion.</p>
+          <p style="padding: 16px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px;">
+            🔒 <strong>Información sensible</strong>: financials detallados, customer list, modelo de unit economics, projections operativas · todo bajo NDA estándar iBisne (no exclusivo).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side -->
+    <aside>
+      <div class="side-card">
+        <div class="l-eyebrow">— BUSCA</div>
+        <div class="amount">$ 420,000<small> MXN</small></div>
+        <div class="progress"><span style="width:18%;"></span></div>
+        <div class="progress-meta">
+          <span>$ 75,600 comprometido</span>
+          <span class="v">18% fondeado</span>
+        </div>
+
+        <div class="side-stat"><span class="k">Equity ofrecido</span><span class="v">10%</span></div>
+        <div class="side-stat"><span class="k">Horizonte</span><span class="v">3-5 años</span></div>
+        <div class="side-stat"><span class="k">Tipo de deal</span><span class="v">SAFE / Equity</span></div>
+        <div class="side-stat"><span class="k">Ticket min</span><span class="v">$ 50,000</span></div>
+        <div class="side-stat"><span class="k">Cierre estimado</span><span class="v">30 días</span></div>
+        <div class="side-stat"><span class="k">Match score</span><span class="v" style="color:var(--accent);">★★★★★</span></div>
+
+        <button class="btn-interest" style="width: 100%; margin-top: 20px;" id="btn-interest-side">
+          Expresar interés →
+        </button>
+        <p style="margin-top: 12px; text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em;">
+          NO TE COMPROMETE · ABRE LLAMADA CON SOFÍA
+        </p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- Modal de interés -->
+<div class="v4-modal-overlay" id="interest-modal">
+  <div class="v4-modal">
+    <div class="v4-modal-head">
+      <div>
+        <div class="v4-modal-eyebrow">§ EXPRESAR INTERÉS · DATALATAM</div>
+        <h3 class="v4-modal-title">¿Quieres que coordinemos una llamada con Sofía?</h3>
+        <p class="v4-modal-sub">Esta acción NO te compromete. Solo nos dices "estoy interesado" y nosotros coordinamos la primera call. La decisión final de invertir queda 100% en ti.</p>
+      </div>
+      <button class="v4-modal-close" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <div class="v4-modal-body">
+      <div class="v4-fld">
+        <label>Ticket que estás considerando</label>
+        <input id="int-ticket" type="text" placeholder="$ 50,000 - $ 420,000 MXN">
+      </div>
+      <div class="v4-fld">
+        <label>Notas / dudas para Sofía (opcional)</label>
+        <textarea id="int-notes" rows="4" placeholder="Ej: ¿pueden mostrar churn por cohorte? · ¿cuánto del CAC viene de outbound vs inbound? · etc."></textarea>
+      </div>
+      <div class="v4-hint">
+        <strong>Próximos pasos:</strong> iBisne coordina call en 48h · te enviamos data room en privado · NDA estándar firmable con DocuSign · revisas a tu ritmo · decides cuándo cierras.
+      </div>
+    </div>
+    <div class="v4-modal-foot">
+      <button class="btn btn-line" type="button" id="int-cancel">Cancelar</button>
+      <div class="v4-foot-spacer"></div>
+      <button class="btn btn-primary" type="button" id="int-confirm">Confirmar interés →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sesión check
+  (function(){
+    let session;
+    try { session = JSON.parse(localStorage.getItem('ibisne.session') || 'null'); } catch(_){ session = null; }
+    if (!session || session.role !== 'inversor') {
+      window.location.replace('login.html');
+    }
+  })();
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      const id = t.dataset.tab;
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('is-active'));
+      document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('is-active'));
+      t.classList.add('is-active');
+      document.querySelector('.tab-content[data-tab="' + id + '"]').classList.add('is-active');
+    });
+  });
+
+  // Modal de interés
+  const modal = document.getElementById('interest-modal');
+  function openModal(){ modal.classList.add('show'); document.body.style.overflow = 'hidden'; }
+  function closeModal(){ modal.classList.remove('show'); document.body.style.overflow = ''; }
+
+  document.getElementById('btn-interest').addEventListener('click', openModal);
+  document.getElementById('btn-interest-side').addEventListener('click', openModal);
+  document.querySelector('.v4-modal-close').addEventListener('click', closeModal);
+  document.getElementById('int-cancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  document.getElementById('int-confirm').addEventListener('click', () => {
+    const ticket = document.getElementById('int-ticket').value;
+    const notes  = document.getElementById('int-notes').value;
+    // Mock · cuando se conecte: fetch a /api/match
+    try {
+      const interests = JSON.parse(localStorage.getItem('ibisne.interests') || '[]');
+      interests.push({
+        projectId: new URLSearchParams(location.search).get('id') || 'datalatam',
+        ticket, notes,
+        timestamp: Date.now()
+      });
+      localStorage.setItem('ibisne.interests', JSON.stringify(interests));
+    } catch(_){}
+    // Reemplaza body con confirmación
+    document.querySelector('.v4-modal-body').innerHTML = `
+      <div class="v4-confirm">
+        <div class="v4-confirm-icon">✓</div>
+        <h3>Tu interés está registrado</h3>
+        <p>Coordinaremos la llamada con Sofía en las próximas 48h. Te avisamos por correo · revisa tu inbox.</p>
+      </div>
+    `;
+    document.querySelector('.v4-modal-foot').innerHTML = `
+      <div class="v4-foot-spacer"></div>
+      <button class="btn btn-primary" type="button" id="int-done">Listo</button>
+    `;
+    document.getElementById('int-done').addEventListener('click', closeModal);
+  });
+
+  // Parse query · permite cargar proyectos diferentes (mock por ahora)
+  // En producción esto vendría de Supabase tabla `leads` con la flag `published: true`
+  const projectId = new URLSearchParams(location.search).get('id');
+  if (projectId) {
+    document.getElementById('crumb-name').textContent = projectId.replace(/-/g,' ').replace(/^\w/, c => c.toUpperCase());
+  }
+</script>
+
+</body>
+</html>
