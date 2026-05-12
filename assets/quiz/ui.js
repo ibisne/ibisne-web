@@ -155,7 +155,11 @@
   }
   function navigate(hash){ location.hash = hash; }
 
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => {
+    render();
+    // Re-traducir CTAs wa.me en el DOM nuevo según idioma activo
+    setTimeout(() => { try { window.dispatchEvent(new Event('ibisne:rerender')); } catch(_) {} }, 0);
+  });
 
   function render(){
     const { route, step } = parseHash();
@@ -165,9 +169,13 @@
     if (_main) _main.classList.remove('is-leaving');
 
     if (route === 'classifier' || !route) {
-      // Clasificador no es accesible públicamente — redirigir a servicio
-      navigate('#/servicio/1');
+      // v4.0 · Pivot: el clasificador ahora es la pantalla de 3 puertas
+      navigate('#/puertas');
       return;
+    }
+    if (route === 'puertas') {
+      State.route = 'puertas';
+      renderPuertas(); hideBottom(); return;
     }
     if (route === 'socio') {
       State.route = 'socio';
@@ -809,28 +817,11 @@
     const subtipo = State.answers.subtipo;
     const vertical = State.answers.vertical;
 
-    // ─── CASO 1: subtipo es "contact" (Avanzado) → sin cotización ─────
-    if (calc.isContact) {
-      persistLead({
-        route: 'servicio-contact', vertical: vertical?.id, subtipo: subtipo?.id,
-        respuestas: State.answers, contacto: State.answers.datos || {},
-      });
-      $('#main').innerHTML = `
-        <div class="result-screen">
-          <div class="result-veredicto">— ALCANCE AVANZADO</div>
-          <h2 class="result-headline">${subtipo.label}<br><span class="accent">amerita conversación directa.</span></h2>
-          <p class="result-body">Los proyectos de IA, Web3, SaaS y plataformas custom no se cotizan desde un quiz. Necesitamos entender tu modelo, equipo y objetivos antes de proponer alcance. El equipo de iBisne te responde personalmente en menos de 24 horas.</p>
-          <div class="result-cta">
-            <a href="https://wa.me/523329575274?text=Hola%2C%20quiero%20discovery%20para%20un%20proyecto%20${encodeURIComponent(subtipo.label)}" target="_blank" rel="noopener" class="btn btn-primary">Agendar discovery ahora →</a>
-            <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
-          </div>
-        </div>
-      `;
-      showAsideB();
-      return;
-    }
+    // v4.0 · Eliminamos el gate "isContact" · TODOS los proyectos cotizan
+    // (los avanzados ahora tienen base price orientativo · el discovery
+    // refina el alcance exacto si el cliente lo necesita).
 
-    // ─── CASO 2: cotización normal ────────────────────────────────────
+    // ─── COTIZACIÓN (siempre se muestra · sin gates) ──────────────────
     // Folio se cachea en State para que las ediciones del modal no consuman folios extra.
     if (!State.servicioFolio) {
       State.servicioFolio = nextFolio();
@@ -945,6 +936,15 @@
     const ahorroPrimerAno = recommended
       ? Math.max(0, totalConIva - (recommended.price * 1.16))
       : 0;
+
+    // ─── v4.0 · Co-financiamiento · 4 opciones de duración ────────────
+    // Sin compromiso (mes-a-mes) · 3m · 6m · 12m con descuentos crecientes
+    const cofinTier = window.IBISNE_PRICING?.getCofinancingTier
+      ? window.IBISNE_PRICING.getCofinancingTier(totalConIva)
+      : null;
+    const cofinOptions = window.IBISNE_PRICING?.getCofinancingOptions
+      ? window.IBISNE_PRICING.getCofinancingOptions(totalConIva)
+      : [];
     function membershipCardHtml(m, isRecommended){
       const priceIva = m.price * 1.16;
       return `
@@ -984,56 +984,55 @@ Quiero hablar para precisar el alcance.`;
 
     $('#main').innerHTML = `
       <div class="result-screen">
-        <div class="result-veredicto">— ${isEnterprise ? 'ALCANCE ENTERPRISE' : 'COTIZACIÓN INDICATIVA'}</div>
-        <h2 class="result-headline">${isEnterprise
-          ? 'Este alcance amerita<br><span class="accent">conversación con un hunter.</span>'
-          : 'Tu cotización está lista.<br><span class="accent">Folio #' + folio + '</span>'}</h2>
-        <p class="result-body">${isEnterprise
-          ? 'Para proyectos de este nivel preferimos discovery primero. El equipo de iBisne te contacta en menos de 24 horas.'
-          : 'Cifra indicativa, sujeta a discovery. Un hunter te contacta para precisar el alcance y entregar propuesta firmable.'}</p>
+        <div class="result-veredicto">— ${L("COTIZACIÓN INDICATIVA")}</div>
+        <h2 class="result-headline">${L("Tu cotización está lista.")}<br><span class="accent">${L("Folio")} #${folio}</span></h2>
+        <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional · no bloquea el pago ni la membresía.")}</p>
 
-        ${!isEnterprise && recommended ? `
-        <!-- ─── 1º COTIZACIÓN + 2º MEMBRESÍA RECOMENDADA (side by side) ──────── -->
-        <div class="vs-block">
-          <div class="vs-card vs-card-onetime">
-            <div class="vs-eyebrow">Pago único</div>
-            <div class="vs-title">Tu cotización</div>
-            <div class="vs-amount">${formatMxn(totalConIva)} <small>MXN</small></div>
-            <div class="vs-note">Lo que pagarías con cualquier agencia.</div>
-            <ul class="vs-list">
-              <li>Proyecto entregado · sin sociedad continua</li>
-              <li>50% anticipo · 50% contra entrega</li>
-              <li>Iteraciones post-launch: cotización aparte</li>
-            </ul>
-            <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-line vs-cta">Pagar proyecto · PayPal</a>
+        ${cofinTier ? `
+        <!-- ─── v4.0 · CO-FINANCIAMIENTO · 4 opciones de duración ─────────── -->
+        <section class="cofin-block">
+          <div class="cofin-header">
+            <span class="cofin-tier-badge">${cofinTier.label.toUpperCase()} · ${cofinTier.tagline}</span>
+            <h3 class="cofin-headline">${cofinTier.copy}</h3>
+            <p class="cofin-sub">Elige cuánto tiempo quieres comprometerte con iBisne. Más tiempo = iBisne pone más de tu proyecto.</p>
           </div>
-          <div class="vs-card vs-card-member is-recommended">
-            <div class="vs-badge">RECOMENDADA · AHORRAS ${formatMxn(ahorroPrimerAno)}</div>
-            <div class="vs-eyebrow">Membresía iBisne · ${recommended.label}</div>
-            <div class="vs-title">Sociedad anual</div>
-            <div class="vs-amount accent">${formatMxn(recommended.price * 1.16)} <small>MXN/año</small></div>
-            <div class="vs-note">Tu proyecto + KAM + consultoría + iteraciones todo el año.</div>
-            <ul class="vs-list">
-              ${recommended.includes.map(it => '<li>' + it + '</li>').join('')}
-            </ul>
-            <button class="btn btn-primary vs-cta" type="button" data-pick-membership="${recommended.id}">Contratar membresía →</button>
-            <div class="vs-savings">vs pago único · te ahorras <strong>${formatMxn(ahorroPrimerAno)}</strong> el primer año</div>
-          </div>
-        </div>
 
-        <!-- ─── 4 PLANES · expandible ──────────────────────────────────────── -->
-        <details class="memberships-all">
-          <summary>
-            <span>Ver los 4 planes de membresía</span>
-            <span class="memberships-toggle-icon">▼</span>
-          </summary>
-          <div class="memberships-grid">
-            ${memberships.map(m => membershipCardHtml(m, m.id === recommended.id)).join('')}
+          <div class="cofin-options">
+            ${cofinOptions.map((opt, idx) => {
+              const isAnnual = opt.months === 12;
+              const isFree = opt.months === 1;
+              const monthsLabel = isFree ? 'Pago directo' :
+                opt.months === 3 ? '3 meses' :
+                opt.months === 6 ? '6 meses' : '12 meses · anual';
+              const subtitle = isFree
+                ? 'Sin compromiso · paga el total ahora'
+                : `iBisne co-financia ${opt.discount}% · tú pones ${100-opt.discount}%`;
+              const priceLabel = isFree
+                ? formatMxn(opt.finalPrice)
+                : formatMxn(opt.monthlyPayment) + '<small>/mes</small>';
+              return `
+                <button class="cofin-card${isAnnual ? ' is-recommended' : ''}${isFree ? ' is-direct' : ''}" type="button" data-cofin-months="${opt.months}">
+                  ${isAnnual ? '<div class="cofin-badge">MEJOR PRECIO</div>' : ''}
+                  <div class="cofin-card-header">
+                    <div class="cofin-card-label">${monthsLabel}</div>
+                    ${opt.discount > 0 ? `<div class="cofin-card-discount">−${opt.discount}%</div>` : ''}
+                  </div>
+                  <div class="cofin-card-price">${priceLabel}</div>
+                  <div class="cofin-card-total">${isFree ? 'Total único' : 'Total ' + formatMxn(opt.finalPrice) + ' · ' + opt.months + ' pagos'}</div>
+                  <div class="cofin-card-sub">${subtitle}</div>
+                  ${opt.saved > 0 ? `<div class="cofin-card-saved">Ahorras ${formatMxn(opt.saved)}</div>` : ''}
+                </button>
+              `;
+            }).join('')}
           </div>
-        </details>
+          ${cofinTier.coInvestment ? `
+          <div class="cofin-coinv">
+            <strong>★ Bonus Scale:</strong> tu proyecto +$100k entra al programa de co-inversión equity opcional · iBisne pone hasta 20% del cash a cambio de 5-10% equity. Validación de fit en discovery.
+          </div>` : ''}
+        </section>
         ` : ''}
 
-        ${!isEnterprise ? `
+        ${true ? `
         <!-- ─── 3º HIGHLIGHTS · qué incluye siempre iBisne ───────────────────── -->
         <section class="brand-promise">
           <div class="bp-eyebrow">— TU PROYECTO IBISNE INCLUYE SIEMPRE</div>
@@ -1133,11 +1132,18 @@ Quiero hablar para precisar el alcance.`;
               </div>
             </div>
 
-            <div class="result-cta result-cta-stack">
-              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay">Continuar a pago · PayPal →</a>
-              <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-line">${L("Compartir por WhatsApp →")}</a>
+            <!-- v4.0 · 3 CTAs equivalentes · ninguno obligatorio "hunter" -->
+            <div class="result-cta result-cta-stack result-cta-v4">
+              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
+              <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
+              <button class="btn btn-line" type="button" data-cta="find-investor">${L("Buscar un inversionista")}</button>
               <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
-              <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn">${L("Agendar discovery")}</a>
+            </div>
+            <!-- Hunter sutil al final · NO obligatorio -->
+            <div class="result-hunter-aside">
+              <a href="${waUrl}" target="_blank" rel="noopener" class="result-hunter-link">
+                ${L("¿Tienes preguntas? Habla con un hunter")} →
+              </a>
             </div>
           </div>
         </div>
@@ -1265,17 +1271,17 @@ Quiero hablar para precisar el alcance.`;
           </footer>
         </section>
 
-        <div class="edit-modal" id="edit-modal" hidden>
+        <div class="edit-modal" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" hidden>
           <div class="edit-modal-backdrop" data-close></div>
-          <div class="edit-modal-content">
+          <div class="edit-modal-content" tabindex="-1">
             <div class="edit-modal-header">
-              <h3 id="edit-modal-title">Editar selección</h3>
-              <button class="edit-modal-close" data-close type="button" aria-label="Cerrar">×</button>
+              <h3 id="edit-modal-title">${L('Editar selección')}</h3>
+              <button class="edit-modal-close" data-close type="button" aria-label="${L('Cerrar')}">×</button>
             </div>
             <div class="edit-modal-body" id="edit-modal-body"></div>
             <div class="edit-modal-actions">
-              <button class="btn btn-ghost" data-close type="button">Cancelar</button>
-              <button class="btn btn-primary" id="edit-modal-apply" type="button">Aplicar</button>
+              <button class="btn btn-ghost" data-close type="button">${L('Cancelar')}</button>
+              <button class="btn btn-primary" id="edit-modal-apply" type="button">${L('Aplicar')}</button>
             </div>
           </div>
         </div>
@@ -1326,12 +1332,20 @@ Quiero arrancar la membresía y el discovery.`;
     if (!modal) return;
     let currentQid = null;
     let pendingSelection = null;
+    let lastTrigger = null;  // a11y: retornar focus al cerrar
 
-    function openModal(qid){
+    function getFocusable(){
+      return modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+    }
+
+    function openModal(qid, trigger){
       const q = findQuestionById(qid);
       if (!q) return;
       currentQid = qid;
       pendingSelection = State.answers[qid] || null;
+      lastTrigger = trigger || document.activeElement;
       $('#edit-modal-title').textContent = q.label;
       const isMulti = q.multi === true;
       const selIds = isMulti
@@ -1365,6 +1379,12 @@ Quiero arrancar la membresía y el discovery.`;
       }));
       modal.hidden = false;
       document.body.style.overflow = 'hidden';
+      // a11y: focus al primer botón accionable del modal
+      setTimeout(() => {
+        const focusable = getFocusable();
+        const first = focusable[0];
+        if (first) first.focus();
+      }, 30);
     }
 
     function closeModal(){
@@ -1372,17 +1392,35 @@ Quiero arrancar la membresía y el discovery.`;
       document.body.style.overflow = '';
       currentQid = null;
       pendingSelection = null;
+      // a11y: retornar focus al trigger original
+      if (lastTrigger && typeof lastTrigger.focus === 'function') {
+        try { lastTrigger.focus(); } catch(_) {}
+      }
+      lastTrigger = null;
     }
 
     // Bind edit buttons (delegation)
     $$('#main .edit-btn').forEach(b => b.addEventListener('click', e => {
       e.preventDefault();
       const qid = e.currentTarget.dataset.q;
-      if (qid) openModal(qid);
+      if (qid) openModal(qid, e.currentTarget);
     }));
 
     // Close handlers
     modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+
+    // a11y: ESC cierra · Tab cycle dentro del modal
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+      if (e.key === 'Tab') {
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
 
     // Apply
     $('#edit-modal-apply')?.addEventListener('click', () => {
@@ -1759,7 +1797,7 @@ Quiero arrancar la membresía y el discovery.`;
     if (elConfigFull) {
       elConfigFull.innerHTML = calc.lineItems.length
         ? calc.lineItems.map(li => `<li>${li.label}</li>`).join('')
-        : '<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>';
+        : `<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>`;
     }
     $$('#qb-team .team-chip').forEach(c => c.classList.toggle('is-active', calc.team.includes(c.dataset.team)));
 
@@ -1770,7 +1808,7 @@ Quiero arrancar la membresía y el discovery.`;
         const stack = window.IBISNE_PRICING.getStack(vertical.id, subtipo.id);
         elStack.innerHTML = stack.map(s => `<li>${s}</li>`).join('');
       } else {
-        elStack.innerHTML = '<li style="color:var(--text-muted);">${L("Selecciona vertical y sub-tipo")}</li>';
+        elStack.innerHTML = `<li style="color:var(--text-muted);">${L("Selecciona vertical y sub-tipo")}</li>`;
       }
     }
     // (badge "X módulos" inline retirado — se mantiene en panel expandido si aplica)
@@ -1915,7 +1953,7 @@ Quiero arrancar la membresía y el discovery.`;
     if (elSolucion) {
       elSolucion.innerHTML = inferencia.items.length
         ? inferencia.items.map(i => `<li>${i.label}</li>`).join('')
-        : '<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>';
+        : `<li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li>`;
     }
     const elCompromiso = $('#qb-compromiso'); if (elCompromiso) elCompromiso.textContent = inferencia.tier.label;
     const elComision = $('#qb-comision'); if (elComision) elComision.textContent = a.comision?.label || '—';
@@ -2264,19 +2302,63 @@ Quiero arrancar la membresía y el discovery.`;
   }
 
   // ─── PERSISTENCIA + ALERTAS ──────────────────────────────────────────
+  // § PERSIST · v3.15 — escribe local + dispara webhook serverless (/api/lead)
+  // Falla silenciosa: si la red falla, el lead queda en localStorage para reintentar.
   function persistLead(payload){
     try {
       const all = JSON.parse(localStorage.getItem('ibisne.leads') || '[]');
       payload.created_at = new Date().toISOString();
       payload.referrer = document.referrer;
       payload.ua = navigator.userAgent;
+      payload.locale = (window.IBISNE_PREFS && window.IBISNE_PREFS.lang) ? window.IBISNE_PREFS.lang() : 'es';
+      payload.currency = (window.IBISNE_PREFS && window.IBISNE_PREFS.currencyCode) ? window.IBISNE_PREFS.currencyCode() : 'MXN';
       all.push(payload);
       localStorage.setItem('ibisne.leads', JSON.stringify(all.slice(-200)));
     } catch(e){}
-    // (telemetría silenciada en producción)
+
+    // Dispara webhook serverless (Slack + Resend). Sin await — no bloquea UI.
+    // Solo si tenemos al menos email o teléfono para que sea procesable en el back.
+    try {
+      const tieneContacto = payload.email || payload.telefono;
+      if (!tieneContacto) return;
+      const body = JSON.stringify(payload);
+      // Usar sendBeacon si está disponible (más resiliente al unload)
+      if (navigator.sendBeacon && body.length < 60000) {
+        const blob = new Blob([body], { type: 'application/json' });
+        navigator.sendBeacon('/api/lead', blob);
+      } else {
+        fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: body,
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch(e){}
   }
   function triggerAlert(score, answers, inferencia, tags){
-    // (alerta de top-tier — handler externo si se configura)
+    // Top-tier alert · marca el lead con prioridad alta para que Slack/email lo destaquen
+    try {
+      const payload = {
+        alert: true,
+        priority: 'high',
+        score: score,
+        tags: Array.isArray(tags) ? tags.join(',') : (tags || ''),
+        tier: (inferencia && inferencia.tier && inferencia.tier.label) || '',
+        selecciones: JSON.stringify(answers || {})
+      };
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        navigator.sendBeacon('/api/lead', blob);
+      } else {
+        fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch(e){}
   }
   function nextFolio(){
     let n = parseInt(localStorage.getItem('ibisne.folio') || '424', 10);
@@ -2294,14 +2376,92 @@ Quiero arrancar la membresía y el discovery.`;
   };
   // Suscripción a cambios de preferencias: re-pinta para reflejar idioma/moneda
   window.addEventListener('ibisne:prefs', () => {
-    try { render(); } catch(e){}
+    try {
+      render();
+      // Re-traducir CTAs wa.me en el DOM nuevo (hud.js escucha este evento)
+      setTimeout(() => { window.dispatchEvent(new Event('ibisne:rerender')); }, 0);
+    } catch(e){}
   });
+
+  // ═════════════════════════════════════════════════════════════════════
+  // v4.0 · 3 PUERTAS · pantalla inicial de filtro por tipo de usuario
+  // ═════════════════════════════════════════════════════════════════════
+  function renderPuertas(){
+    const main = $('#main');
+    if (!main) return;
+    const title    = L('¿Cómo te podemos ayudar?');
+    const subtitle = L('Elige dónde encajas · adaptamos el resto.');
+
+    main.innerHTML = `
+      <section class="puertas-shell">
+        <div class="puertas-hero">
+          <div class="quiz-eyebrow">§ ${L('Servicio')}</div>
+          <h1 class="puertas-title">${title}</h1>
+          <p class="puertas-sub">${subtitle}</p>
+        </div>
+
+        <div class="puertas-grid">
+          <a class="puertas-card" href="#/servicio/1" data-door="builder">
+            <div class="puertas-card-icon" data-icon="sitio"></div>
+            <div class="puertas-card-text">
+              <div class="puertas-card-label">${L('Soy emprendedor')}</div>
+              <div class="puertas-card-sub">${L('Necesito tecnología para mi proyecto')}</div>
+            </div>
+            <div class="puertas-card-arrow">→</div>
+          </a>
+
+          <a class="puertas-card" href="#/inversor/1" data-door="investor">
+            <div class="puertas-card-icon" data-icon="partnership"></div>
+            <div class="puertas-card-text">
+              <div class="puertas-card-label">${L('Soy inversionista')}</div>
+              <div class="puertas-card-sub">${L('Busco proyectos LATAM que apoyar')}</div>
+            </div>
+            <div class="puertas-card-arrow">→</div>
+          </a>
+
+          <a class="puertas-card" href="#/servicio/1?seek=1" data-door="seeker">
+            <div class="puertas-card-icon" data-icon="leads"></div>
+            <div class="puertas-card-text">
+              <div class="puertas-card-label">${L('Busco un inversionista')}</div>
+              <div class="puertas-card-sub">${L('Tengo idea y necesito quien la respalde')}</div>
+            </div>
+            <div class="puertas-card-arrow">→</div>
+          </a>
+        </div>
+
+        <p class="puertas-foot">
+          <span class="muted">${L('Tu información queda guardada · puedes cambiar de puerta cuando quieras.')}</span>
+        </p>
+      </section>
+    `;
+
+    // Hidratar iconos
+    if (window.IBISNE_ICONS) {
+      main.querySelectorAll('[data-icon]').forEach(el => {
+        const id = el.dataset.icon;
+        el.innerHTML = window.IBISNE_ICONS.get(id, 'fill');
+      });
+    }
+
+    // Bind clicks · marca el path elegido para que el quiz se adapte
+    main.querySelectorAll('.puertas-card').forEach(c => {
+      c.addEventListener('click', (e) => {
+        const door = c.dataset.door;
+        State.userPath = door;
+        // Si elige "seeker" (busca inversor), prende flag para publicar en marketplace
+        if (door === 'seeker') {
+          State.seekInvestor = true;
+        }
+        // navegación natural via href
+      });
+    });
+  }
 
   // ─── INIT ────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
-    // Default: entrar directo a servicio (sin clasificador público)
+    // v4.0 · Default: entrar a las 3 puertas (filtro por tipo de usuario)
     if (!location.hash || location.hash === '#/' || location.hash === '#') {
-      location.hash = '#/servicio/1';
+      location.hash = '#/puertas';
     }
     render();
   });

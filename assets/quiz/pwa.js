@@ -79,9 +79,9 @@
       '  <span class="pwa-modal__eyebrow">§ INSTALAR — iBisne</span>',
       '  <h2 class="pwa-modal__title" id="pwa-modal-title">Instalar iBisne</h2>',
       '  <ul class="pwa-modal__benefits" data-pwa-benefits>',
-      '    <li><span class="b-icon">⚡</span><div><strong>Acceso 1-tap</strong> · ícono en tu home screen, sin abrir navegador</div></li>',
-      '    <li><span class="b-icon">✓</span><div><strong>Funciona offline</strong> · tu cotización persiste sin internet</div></li>',
-      '    <li><span class="b-icon">↗</span><div><strong>Más rápido</strong> · arranca instantáneo · sin barras del browser</div></li>',
+      '    <li><span class="b-icon" data-icon="bolt"></span><div><strong>Acceso 1-tap</strong> · ícono en tu home screen, sin abrir navegador</div></li>',
+      '    <li><span class="b-icon" data-icon="check"></span><div><strong>Funciona offline</strong> · tu cotización persiste sin internet</div></li>',
+      '    <li><span class="b-icon" data-icon="arrow-up-right"></span><div><strong>Más rápido</strong> · arranca instantáneo · sin barras del browser</div></li>',
       '  </ul>',
       '  <p class="pwa-modal__body" data-pwa-body></p>',
       '  <ol class="pwa-modal__steps" data-pwa-steps hidden></ol>',
@@ -90,10 +90,34 @@
     ].join('');
     document.body.appendChild(wrap);
 
+    // Hidratar iconos del set propio (bolt / check / arrow-up-right)
+    if (window.IBISNE_ICONS) {
+      var iconNodes = wrap.querySelectorAll('[data-icon]');
+      for (var i = 0; i < iconNodes.length; i++) {
+        var el = iconNodes[i];
+        var id = el.getAttribute('data-icon');
+        el.innerHTML = window.IBISNE_ICONS.get(id, 'line');
+      }
+    }
+
     wrap.addEventListener('click', function (e) {
       if (e.target === wrap) hideModal();
     });
     wrap.querySelector('[data-pwa-close]').addEventListener('click', hideModal);
+
+    // A11y: cerrar con ESC + focus trap básico
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { hideModal(); return; }
+      if (e.key === 'Tab') {
+        var focusable = wrap.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+
     return wrap;
   }
 
@@ -163,13 +187,25 @@
     ensureStylesheet();
     renderModalContent();
     var m = document.getElementById('pwa-modal');
+    // Guardar trigger para retornar focus al cerrar
+    state.lastFocus = document.activeElement;
     m.setAttribute('data-open', 'true');
+    // Focus el primer botón accionable (Instalar ahora / Entendido) o close
+    setTimeout(function () {
+      var firstBtn = m.querySelector('.pwa-modal__actions button') || m.querySelector('[data-pwa-close]');
+      if (firstBtn) firstBtn.focus();
+    }, 50);
     return true;
   }
 
   function hideModal() {
     var m = document.getElementById('pwa-modal');
     if (m) m.setAttribute('data-open', 'false');
+    // Retornar focus al trigger original
+    if (state.lastFocus && typeof state.lastFocus.focus === 'function') {
+      state.lastFocus.focus();
+      state.lastFocus = null;
+    }
   }
 
   // ── API ──────────────────────────────────────────────────────

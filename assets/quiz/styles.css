@@ -2335,3 +2335,317 @@ iframe[src*="vercel.live"]{ display: none !important; }
 @media (max-width: 540px){
   .bp-grid{ grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v4.0 · 3 PUERTAS · pantalla inicial de filtro por tipo de usuario
+   ═══════════════════════════════════════════════════════════════════ */
+.puertas-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 80px 32px 60px;
+  display: flex; flex-direction: column;
+  gap: 48px;
+  min-height: calc(100vh - var(--hud-h) - 60px);
+  justify-content: center;
+}
+.puertas-hero { text-align: center; }
+.puertas-hero .quiz-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.24em;
+  color: var(--accent-mint);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.puertas-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: 18px;
+  color: var(--text-primary);
+}
+.puertas-sub {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+.puertas-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+.puertas-card {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 22px 26px;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+.puertas-card:hover {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg-paper) 100%);
+  transform: translateX(4px);
+}
+.puertas-card-icon {
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: 12px;
+  color: var(--accent-mint);
+}
+.puertas-card-icon svg { width: 28px; height: 28px; }
+.puertas-card-text { display: flex; flex-direction: column; gap: 4px; }
+.puertas-card-label {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.puertas-card-sub {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.puertas-card-arrow {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--text-muted);
+  font-weight: 300;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.puertas-card:hover .puertas-card-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+.puertas-foot {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+@media (max-width: 768px){
+  .puertas-shell { padding: 40px 18px; gap: 36px; }
+  .puertas-card { grid-template-columns: 48px 1fr; padding: 18px 20px; gap: 14px; }
+  .puertas-card-icon { width: 48px; height: 48px; }
+  .puertas-card-icon svg { width: 24px; height: 24px; }
+  .puertas-card-label { font-size: 16px; }
+  .puertas-card-sub { font-size: 13px; }
+  .puertas-card-arrow { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v4.0 · CO-FINANCIAMIENTO · 4 opciones de duración en resultado
+   ═══════════════════════════════════════════════════════════════════ */
+.cofin-block {
+  background: linear-gradient(180deg, rgba(61,255,127,0.04) 0%, var(--bg-paper) 100%);
+  border: 1px solid var(--bg-line);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 32px 0;
+}
+.cofin-header { text-align: center; margin-bottom: 24px; }
+.cofin-tier-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.cofin-headline {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cofin-sub {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.cofin-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 24px;
+}
+.cofin-card {
+  position: relative;
+  background: var(--bg-deep);
+  border: 1px solid var(--bg-line);
+  border-radius: 12px;
+  padding: 18px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, transform 0.15s ease, background 0.2s ease;
+  font-family: var(--font-display);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-primary);
+}
+.cofin-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.cofin-card.is-recommended {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(61,255,127,0.08) 0%, var(--bg-deep) 100%);
+}
+.cofin-card.is-direct { opacity: 0.85; }
+.cofin-card.is-direct:hover { opacity: 1; }
+
+.cofin-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cofin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.cofin-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text-primary);
+}
+.cofin-card-discount {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-mint);
+  padding: 1px 6px;
+  background: rgba(174,255,200,0.1);
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+.cofin-card-price {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.cofin-card-price small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+.cofin-card-total {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.cofin-card-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: auto;
+}
+.cofin-card-saved {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding-top: 8px;
+  border-top: 1px solid var(--bg-line);
+}
+
+.cofin-coinv {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+.cofin-coinv strong { color: var(--accent); }
+
+/* CTA v4 · 3 equivalentes + hunter sutil */
+.result-cta-v4 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.result-cta-v4 .btn { width: 100%; justify-content: center; }
+.result-hunter-aside {
+  margin-top: 18px;
+  text-align: center;
+  padding-top: 18px;
+  border-top: 1px solid var(--bg-line);
+}
+.result-hunter-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.result-hunter-link:hover { color: var(--accent-mint); }
+
+@media (max-width: 900px){
+  .cofin-block { padding: 22px 18px; margin: 24px 0; }
+  .cofin-options { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cofin-card-price { font-size: 22px; }
+}
+@media (max-width: 540px){
+  .cofin-options { grid-template-columns: 1fr; }
+}

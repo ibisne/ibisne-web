@@ -140,6 +140,52 @@
     });
   }
 
+  // § WA — reescritura dinámica de los wa.me?text= según idioma activo
+  // Recorre todos los <a href*="wa.me"> y reemplaza el text con la versión
+  // traducida si lang === 'en'. Reentra al cambiar idioma.
+  function rewriteWaLinks(){
+    const isEN = window.IBISNE_PREFS && window.IBISNE_PREFS.lang && window.IBISNE_PREFS.lang() === 'en';
+    if (!isEN) return; // En ES, los hrefs originales ya están en español
+    // Map de patrones ES → key EN (busca el texto decoded en el href)
+    const tEN = (window.IBISNE_I18N_EN && window.IBISNE_I18N_EN) || {};
+    const dataEN = (window.IBISNE_I18N_DATA && window.IBISNE_I18N_DATA) || {};
+    const patterns = [
+      // [patrón ES decoded, traducción EN]
+      ['quiero hablar con un hunter de iBisne', tEN['wa.msg.hunter'] || dataEN['wa.template.hunter'] || "Hi, I want to talk to an iBisne hunter."],
+      ['vengo del quiz de iBisne', tEN['wa.msg.quiz'] || dataEN['wa.template.quiz'] || "Hi, I'm coming from the iBisne quiz."],
+      ['quiero asesoría 1-a-1 de iBisne', "Hi, I'd like 1-on-1 advice from iBisne."],
+      ['quiero discovery para un proyecto', "Hi, I want discovery for a"],
+      ['soy inversionista interesado en iBisne', "Hi, I'm an investor interested in iBisne."],
+      ['vengo de la consultoría', "Hi, I'm coming from the iBisne consulting"],
+    ];
+    $$('a[href*="wa.me"]').forEach(a => {
+      const href = a.getAttribute('href');
+      try {
+        const u = new URL(href);
+        const original = u.searchParams.get('text') || '';
+        let translated = original;
+        for (let i = 0; i < patterns.length; i++) {
+          if (original.indexOf(patterns[i][0]) !== -1) {
+            // Reemplaza la frase ES por la EN preservando el resto (folios, etc.)
+            translated = original.replace(patterns[i][0], patterns[i][1]);
+            // Adaptar prefijo "Hola, " → "Hi, "
+            translated = translated.replace(/^Hola,?\s*/, '');
+            if (!/^Hi[,!\s]/.test(translated)) translated = 'Hi, ' + translated;
+            break;
+          }
+        }
+        // Si arrancaba con "Hola, " y no encontró patrón, traducir al menos el saludo
+        if (translated === original && /^Hola/i.test(original)) {
+          translated = original.replace(/^Hola,?\s*/i, 'Hi, ');
+        }
+        if (translated !== original) {
+          u.searchParams.set('text', translated);
+          a.setAttribute('href', u.toString());
+        }
+      } catch (_) { /* href malformado, skip */ }
+    });
+  }
+
   function init(){
     injectIcons();
     bindMusic();
@@ -148,6 +194,11 @@
     bindCurrency();
     bindInstallPWA();
     bindHamburger();
+    // WhatsApp i18n: reescribe en init y en cada cambio de prefs
+    rewriteWaLinks();
+    window.addEventListener('ibisne:prefs', rewriteWaLinks);
+    // Re-correr cuando el quiz re-renderiza el resultado (CTAs nuevos dinámicos)
+    window.addEventListener('ibisne:rerender', rewriteWaLinks);
   }
 
   if (document.readyState === 'loading') {

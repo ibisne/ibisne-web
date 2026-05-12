@@ -86,8 +86,11 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--accent-mint, #AEFFC8) 12%, transparent);
   color: var(--accent-mint, #AEFFC8);
-  font-size: 13px; font-weight: 700;
   margin-top: 1px;
+}
+.pwa-modal__benefits .b-icon svg{
+  width: 14px; height: 14px;
+  display: block;
 }
 
 .pwa-modal__steps{

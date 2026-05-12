@@ -1,10 +1,25 @@
-// data/inversor.js — Módulo INVERSIONISTA
-// Lead VIP: persona que quiere PONER capital en iBisne / portfolio.
-// NO cotiza · solo brief interno + agendamiento con founder.
+// data/inversor.js — Módulo INVERSIONISTA · v4.0 marketplace
+// Path 2 de las 3 puertas: persona que quiere PONER capital en proyectos
+// de emprendedores LATAM curados por iBisne.
+//
+// Modelo: marketplace de leads + placement fee · iBisne NO administra capital.
+// La transacción real (inversor → emprendedor) ocurre off-platform.
+// iBisne cobra placement fee 15-25% del monto matched al cerrar el deal.
 
 window.IBISNE_INVERSOR = {
 
   preguntas: [
+
+    {
+      id: 'intencion', label: '¿Qué tipo de oportunidades buscas?',
+      help: 'Esto nos ayuda a filtrar los leads que te mostramos.',
+      opciones: [
+        { id: 'descubrir',   label: 'Descubrir proyectos LATAM nuevos',  description: 'Quiero ver oportunidades curadas mes a mes' },
+        { id: 'cofinanciar', label: 'Co-financiar proyectos específicos', description: 'Quiero respaldar proyectos concretos de iBisne' },
+        { id: 'sector',      label: 'Inversiones en un sector específico', description: 'Tengo tesis clara · solo me muestren ese sector' },
+        { id: 'ambos',       label: 'Descubrir + co-financiar',            description: 'Abierto a explorar y respaldar' },
+      ],
+    },
 
     {
       id: 'tipo', label: '¿Qué tipo de inversor eres?',

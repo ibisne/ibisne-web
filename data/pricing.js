@@ -33,7 +33,7 @@ window.IBISNE_PRICING = {
       id: 'avanzado', label: 'Tech especializado', icon: 'saas',
       category: 'Custom',
       subtitle: 'IA, Web3, SaaS o algo más',
-      help: 'Proyectos que ameritan conversación directa con un hunter.',
+      help: 'Proyectos custom · cotización indicativa que se afina en discovery.',
     },
   ],
 
@@ -74,13 +74,15 @@ window.IBISNE_PRICING = {
     ],
 
     avanzado: [
-      { id: 'ia',    label: 'Asistente IA',      base: 0, icon: 'chatbot', category: 'Chatbot, copiloto o agente', contact: true,
+      // v4.0 · Quitamos el gate "hablar con hunter" · todos cotizan
+      // Base prices orientativos · el discovery refina el alcance exacto
+      { id: 'ia',    label: 'Asistente IA',      base: 80000,  icon: 'chatbot', category: 'Chatbot, copiloto o agente', branch: 'avanzado-ia',
         subtitle: 'Modelos LLM + lógica custom' },
-      { id: 'web3',  label: 'Web3',              base: 0, icon: 'saas',    category: 'Blockchain · dApp · contracts', contact: true,
+      { id: 'web3',  label: 'Web3',              base: 180000, icon: 'saas',    category: 'Blockchain · dApp · contracts', branch: 'avanzado-web3',
         subtitle: 'Smart contracts + frontend Web3' },
-      { id: 'saas',  label: 'Plataforma SaaS',   base: 0, icon: 'saas',    category: 'Producto con suscripción mensual', contact: true,
+      { id: 'saas',  label: 'Plataforma SaaS',   base: 200000, icon: 'saas',    category: 'Producto con suscripción mensual', branch: 'avanzado-saas',
         subtitle: 'Producto recurrente con backend custom' },
-      { id: 'otro',  label: 'Algo más',          base: 0, icon: 'otro',    category: 'Custom',                        contact: true,
+      { id: 'otro',  label: 'Algo más',          base: 60000,  icon: 'otro',    category: 'Custom',                        branch: 'avanzado-custom',
         subtitle: 'Cuéntanos qué tienes en mente' },
     ],
   },
@@ -267,6 +269,13 @@ window.IBISNE_PRICING = {
         ],
       },
     ],
+    // Avanzados · sin sub-preguntas extras por ahora (cotización indicativa)
+    // En discovery se afina el alcance exacto
+    'avanzado-ia':     [],
+    'avanzado-web3':   [],
+    'avanzado-saas':   [],
+    'avanzado-custom': [],
+
     'app-nocode': [
       {
         id: 'plataforma', label: '¿Con qué herramienta lo armamos?',
@@ -460,6 +469,111 @@ window.IBISNE_PRICING = {
   getMembership(totalConIva){
     const list = this.memberships || [];
     return list.find(m => totalConIva <= m.maxProject) || list[list.length - 1];
+  },
+
+  // ═══ v4.0 · CO-FINANCIAMIENTO HÍBRIDO (rango × duración) ════════════
+  // Reframe: ya no es "descuento" · es "iBisne co-financia X% si te
+  // comprometes Y meses". Mismo dinero, narrativa empoderadora.
+
+  // 4 tiers según rango de cotización (con IVA)
+  cofinancingTiers: [
+    {
+      id: 'spark',  label: 'Spark',  tagline: 'Para empezar',
+      min: 0, max: 11600,           // $0 - $10k + IVA
+      icon: 'biolink',
+      maxDiscount: 30,
+      copy: 'Tu proyecto entra a nuestro plan más accesible. iBisne te apoya hasta con un 30%.',
+    },
+    {
+      id: 'build',  label: 'Build',  tagline: 'Para construir',
+      min: 11601, max: 46400,       // $10k - $40k + IVA
+      icon: 'partnership',
+      maxDiscount: 40,
+      copy: 'Tu proyecto es serio. iBisne te apoya hasta con un 40% si confías 12 meses.',
+    },
+    {
+      id: 'grow',   label: 'Grow',   tagline: 'Para crecer',
+      min: 46401, max: 116000,      // $40k - $100k + IVA
+      icon: 'shield',
+      maxDiscount: 50,
+      copy: 'Tu proyecto vale la pena financiarse. iBisne pone hasta 50% si vas con nosotros 12 meses.',
+    },
+    {
+      id: 'scale',  label: 'Scale',  tagline: 'Para escalar',
+      min: 116001, max: Infinity,   // +$100k
+      icon: 'marketplace',
+      maxDiscount: 50,
+      coInvestment: true,           // activa opción de co-inversión equity
+      copy: 'Tu proyecto entra a nuestra liga grande. 50% co-financiado + opción de co-inversión equity con iBisne.',
+    },
+  ],
+
+  // Devuelve el tier según total (con IVA)
+  getCofinancingTier(totalConIva){
+    const list = this.cofinancingTiers;
+    return list.find(t => totalConIva >= t.min && totalConIva <= t.max) || list[list.length - 1];
+  },
+
+  // Matriz de descuento · rango × duración
+  // Mes-a-mes: 0% (sin compromiso · paga precio público)
+  // 3 meses · 6 meses · 12 meses: % crece según tier
+  // ─────────────────────────────────────────────────
+  cofinancingMatrix: {
+    spark: { '1': 0,  '3': 10, '6': 20, '12': 30 },
+    build: { '1': 0,  '3': 15, '6': 25, '12': 40 },
+    grow:  { '1': 0,  '3': 20, '6': 35, '12': 50 },
+    scale: { '1': 0,  '3': 25, '6': 40, '12': 50 },
+  },
+
+  // Devuelve % de descuento según tier × meses comprometidos
+  getCofinancingDiscount(totalConIva, months){
+    const tier = this.getCofinancingTier(totalConIva);
+    const m = String(months);
+    const validKey = ['1','3','6','12'].includes(m) ? m : '1';
+    return this.cofinancingMatrix[tier.id][validKey] || 0;
+  },
+
+  // Calcula el precio FINAL después de co-financiamiento
+  // (lo que paga el cliente vs el precio público)
+  getCofinancingPrice(totalConIva, months){
+    const discount = this.getCofinancingDiscount(totalConIva, months);
+    const finalPrice = totalConIva * (1 - discount / 100);
+    return {
+      tier: this.getCofinancingTier(totalConIva),
+      discount,
+      monthlyPayment: months > 1 ? Math.round(finalPrice / months) : null,
+      finalPrice: Math.round(finalPrice),
+      saved: Math.round(totalConIva - finalPrice),
+      months,
+    };
+  },
+
+  // Devuelve el mensaje narrativo "iBisne co-financia X%..."
+  // según tier × duración. Se usa en el resumen final.
+  getCofinancingMessage(totalConIva, months){
+    const tier = this.getCofinancingTier(totalConIva);
+    const discount = this.getCofinancingDiscount(totalConIva, months);
+    if (discount === 0) {
+      return {
+        title: 'Sin compromiso · pago directo',
+        subtitle: 'Pagas el precio público completo. Sin descuentos pero sin amarrar tiempo. Ideal si solo quieres este proyecto.',
+        cta: 'Pagar precio directo',
+      };
+    }
+    const monthsLabel = months === 12 ? 'un año' : months + ' meses';
+    return {
+      title: `iBisne co-financia ${discount}% de tu proyecto`,
+      subtitle: `Si confías ${monthsLabel} con nosotros, ponemos ${discount}% del valor. Tú pagas el resto en mensualidades iguales · sin intereses.`,
+      cta: months === 12 ? 'Activar plan anual' : 'Activar plan ' + monthsLabel,
+      tier: tier,
+    };
+  },
+
+  // Devuelve las 4 opciones de duración disponibles para un proyecto dado
+  // (con el descuento y mensualidad de cada una pre-calculados)
+  getCofinancingOptions(totalConIva){
+    const months = [1, 3, 6, 12];
+    return months.map(m => this.getCofinancingPrice(totalConIva, m));
   },
 
   getStack(vertical, subtipo){
