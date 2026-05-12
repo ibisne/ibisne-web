@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne · Portal cliente</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+/* Portal cliente · UI simplificada, NO sidebar admin */
+body { background: var(--bg-deep); }
+
+.portal-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 28px;
+}
+
+/* Topbar simple del cliente */
+.portal-top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--bg-line);
+  padding: var(--sp-4) var(--sp-6);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--sp-5);
+  align-items: center;
+  position: sticky;
+  top: 28px;
+  z-index: 10;
+}
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+}
+.portal-brand .logo {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  background: var(--accent);
+  color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+}
+.portal-brand .name {
+  font-size: 15px;
+}
+.portal-brand .name .sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  margin-top: 2px;
+}
+
+.portal-nav {
+  display: flex;
+  gap: var(--sp-4);
+  justify-content: center;
+}
+.portal-nav a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  position: relative;
+}
+.portal-nav a:hover { color: var(--text-primary); }
+.portal-nav a.is-active {
+  color: var(--accent);
+}
+.portal-nav a.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -16px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.portal-content {
+  padding: var(--sp-8) var(--sp-6);
+}
+
+/* Welcome */
+.portal-welcome {
+  margin-bottom: var(--sp-8);
+}
+.portal-welcome .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.portal-welcome h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: var(--sp-2);
+}
+.portal-welcome h1 .accent { color: var(--accent); }
+.portal-welcome .lede {
+  color: var(--text-secondary);
+  font-size: 15px;
+  max-width: 720px;
+}
+
+/* Project card · vista cliente */
+.cl-project {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-5);
+}
+.cl-project-head {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: var(--sp-4);
+  align-items: center;
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+  margin-bottom: var(--sp-5);
+}
+.cl-project h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.cl-project .pmeta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.cl-project .deadline {
+  text-align: right;
+}
+.cl-project .deadline .d {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+.cl-project .deadline .v {
+  font-size: 20px;
+  font-weight: 700;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Action cards inside project */
+.cl-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+.cl-action {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: var(--sp-4);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  position: relative;
+}
+.cl-action:hover { border-color: var(--bg-line-strong); }
+.cl-action.is-urgent {
+  border-color: var(--warn);
+  background: linear-gradient(180deg, rgba(255,184,77,0.05) 0%, transparent 100%);
+}
+.cl-action.is-done {
+  opacity: 0.6;
+}
+.cl-action .ico {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  background: var(--bg-line);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+.cl-action.is-urgent .ico { background: var(--warn); color: var(--bg); }
+.cl-action.is-done .ico { background: var(--accent); color: var(--bg); }
+.cl-action .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-1);
+}
+.cl-action .name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+}
+.cl-action .desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--sp-3);
+}
+.cl-action .cta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cl-action.is-urgent .cta { color: var(--warn); }
+
+/* Progress slim */
+.cl-progress {
+  background: var(--bg);
+  border-radius: var(--radius-2);
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 13px;
+}
+.cl-progress .bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-line);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.cl-progress .bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mint) 100%);
+  width: 42%;
+}
+
+/* Side strip · KAM contact */
+.kam-strip {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-4) var(--sp-5);
+  display: grid;
+  grid-template-columns: 48px 1fr auto auto;
+  gap: var(--sp-4);
+  align-items: center;
+}
+.kam-strip .av {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+.kam-strip .who { font-size: 14px; font-weight: 600; }
+.kam-strip .role-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Payments mini */
+.pay-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+}
+.pay-block {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-5);
+}
+.pay-block .h {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.pay-block .v {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pay-block .next {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: var(--sp-3);
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3</span>
+    <span>12 · Portal cliente</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="portal-shell">
+
+  <!-- Topbar portal -->
+  <header class="portal-top">
+    <div class="portal-brand">
+      <div class="logo">iB</div>
+      <div class="name">iBisne<span class="sub">PORTAL DEL CLIENTE</span></div>
+    </div>
+    <nav class="portal-nav">
+      <a href="#" class="is-active">Inicio</a>
+      <a href="#">Mis proyectos</a>
+      <a href="#">Briefs</a>
+      <a href="#">Contratos</a>
+      <a href="#">Pagos</a>
+      <a href="#">Soporte</a>
+    </nav>
+    <div style="display: flex; gap: var(--sp-2); align-items: center;">
+      <button class="icon-btn"><span>✉</span><span class="badge-num">1</span></button>
+      <button class="user-chip">
+        <span class="avatar">JP</span>
+        <span class="name">José P.</span>
+        <span class="chev">▾</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="portal-content">
+
+    <!-- Welcome -->
+    <div class="portal-welcome">
+      <div class="eyebrow">§ HOLDINGMX — PORTAL</div>
+      <h1>Hola José.<br><span class="accent">Tienes 2 cosas pendientes.</span></h1>
+      <p class="lede">Tu proyecto Sitio HoldingMX avanza al <strong style="color:var(--text-primary);">42%</strong>. El equipo necesita tu aprobación de wireframes antes de seguir. Tu próximo pago es el 14 de mayo.</p>
+    </div>
+
+    <!-- KAM strip -->
+    <div class="kam-strip" style="margin-bottom: var(--sp-6);">
+      <div class="av">ER</div>
+      <div>
+        <div class="who">Eduardo Reyes</div>
+        <div class="role-meta">KAM ASIGNADO · RESPONDE EN ≤ 2H</div>
+      </div>
+      <button class="btn btn-line btn-sm">WhatsApp</button>
+      <button class="btn btn-primary btn-sm">Agendar call</button>
+    </div>
+
+    <!-- Project card -->
+    <div class="cl-project">
+      <div class="cl-project-head">
+        <div class="ring" style="--ring-pct: 42;">
+          <svg viewBox="0 0 36 36">
+            <circle class="track" cx="18" cy="18" r="15.915"/>
+            <circle class="fill"  cx="18" cy="18" r="15.915"/>
+          </svg>
+          <div class="num">42<span class="pct">%</span></div>
+        </div>
+        <div>
+          <h2>Sitio HoldingMX</h2>
+          <div class="pmeta">FOLIO #428 · SITIO COMPLETO · ARRANCÓ 06 MAY</div>
+          <div style="margin-top: var(--sp-2);">
+            <span class="stage-chip stage-discovery">En producción</span>
+          </div>
+        </div>
+        <div class="deadline">
+          <span class="d">ENTREGA</span>
+          <span class="v">28 JUN</span>
+        </div>
+      </div>
+
+      <!-- Acciones requeridas del cliente -->
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--sp-3);">— Lo que necesitamos de ti</div>
+
+      <div class="cl-actions">
+
+        <div class="cl-action is-urgent">
+          <div class="ico">▢</div>
+          <div class="label">REVISIÓN</div>
+          <div class="name">Aprobar wireframes</div>
+          <div class="desc">Mateo subió la v2 de los wireframes hoy a las 11:42. Necesitamos tu aprobación antes del 16 de mayo para seguir al diseño.</div>
+          <span class="cta">REVISAR EN FIGMA →</span>
+        </div>
+
+        <div class="cl-action is-urgent">
+          <div class="ico">$</div>
+          <div class="label">PAGO</div>
+          <div class="name">Anticipo 50%</div>
+          <div class="desc">$ 95,000 MXN · vence el 14 de mayo. Métodos disponibles: PayPal, Stripe (tarjeta + OXXO), transferencia.</div>
+          <span class="cta">PAGAR AHORA →</span>
+        </div>
+
+        <div class="cl-action is-done">
+          <div class="ico">✓</div>
+          <div class="label">BRIEF</div>
+          <div class="name">Brief inicial</div>
+          <div class="desc">Llenaste el brief el 03 de mayo. Tu equipo ya tiene toda la información de HoldingMX, branding y objetivos.</div>
+          <span class="cta">VER BRIEF →</span>
+        </div>
+
+      </div>
+
+      <!-- Progress visual -->
+      <div class="cl-progress">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-muted);">5/12 PASOS</div>
+        <div class="bar"><div class="bar-fill"></div></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;">Actual: <span class="mint">Wireframing</span></div>
+        <a href="#" style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-mint); letter-spacing: 0.08em; text-transform: uppercase;">Ver timeline →</a>
+      </div>
+    </div>
+
+    <!-- Otro proyecto (Verde Mercado) -->
+    <div class="cl-project" style="opacity: 0.85;">
+      <div class="cl-project-head">
+        <div class="ring" style="--ring-pct: 12;">
+          <svg viewBox="0 0 36 36">
+            <circle class="track" cx="18" cy="18" r="15.915"/>
+            <circle class="fill"  cx="18" cy="18" r="15.915"/>
+          </svg>
+          <div class="num">12<span class="pct">%</span></div>
+        </div>
+        <div>
+          <h2>Verde Mercado</h2>
+          <div class="pmeta">FOLIO #432 · CATÁLOGO SHOPIFY · ARRANCÓ 09 MAY</div>
+          <div style="margin-top: var(--sp-2);">
+            <span class="stage-chip stage-firmado">Kickoff</span>
+          </div>
+        </div>
+        <div class="deadline">
+          <span class="d">ENTREGA</span>
+          <span class="v">22 JUL</span>
+        </div>
+      </div>
+      <div style="font-size: 13px; color: var(--text-secondary);">
+        Estamos en Discovery. Iván (Sr Coder) te enviará el brief de Shopify mañana. Sin acciones pendientes hoy.
+      </div>
+    </div>
+
+    <!-- Pagos resumen -->
+    <div class="pay-summary">
+      <div class="pay-block">
+        <div class="h">— Próximo pago</div>
+        <div class="v" style="color: var(--warn);">$ 95,000 MXN</div>
+        <div class="next">VENCE 14 MAY · ANTICIPO SITIO HOLDINGMX</div>
+        <div style="margin-top: var(--sp-3);">
+          <button class="btn btn-primary">Pagar ahora →</button>
+        </div>
+      </div>
+      <div class="pay-block">
+        <div class="h">— Total con iBisne</div>
+        <div class="v">$ 195,000 MXN</div>
+        <div class="next">3 PROYECTOS · DESDE 04 FEB 2026</div>
+        <div style="margin-top: var(--sp-3);">
+          <a href="#" style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-mint); letter-spacing: 0.08em; text-transform: uppercase;">Ver historial completo →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

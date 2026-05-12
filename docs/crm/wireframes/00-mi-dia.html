@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Mi día (wireframe)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.hero-bar {
+  padding: var(--sp-6) 0 var(--sp-4);
+  border-bottom: 1px solid var(--bg-line);
+  margin-bottom: var(--sp-6);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-4);
+  align-items: end;
+}
+.hero-bar .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent-mint);
+  margin-bottom: var(--sp-2);
+}
+.hero-bar h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: var(--sp-2);
+}
+.hero-bar h1 .accent { color: var(--accent); }
+.hero-bar .lede {
+  color: var(--text-secondary);
+  font-size: 15px;
+  max-width: 640px;
+}
+.hero-bar .date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: right;
+}
+.hero-bar .date .day {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+}
+
+/* My day layout · 2 cols */
+.day-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--sp-6);
+}
+
+/* Section card */
+.s-card {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  overflow: hidden;
+  margin-bottom: var(--sp-4);
+}
+.s-card .s-head {
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--bg-line);
+}
+.s-card .s-head .title {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.s-card .s-head .title .badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.s-card .s-head .title .badge.warn { background: var(--warn); color: var(--bg); }
+.s-card .s-head .title .badge.danger { background: var(--danger); color: var(--bg); }
+.s-card .s-head .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.s-card .s-body { padding: var(--sp-3) 0; }
+
+/* Task row · for urgent items */
+.task-row {
+  display: grid;
+  grid-template-columns: 16px 1fr auto auto;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.task-row:hover { background: var(--bg-tint); }
+.task-row + .task-row { border-top: 1px solid var(--bg-line); }
+.task-row .name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.task-row .name a { color: var(--text-primary); }
+.task-row .name a:hover { color: var(--accent-mint); }
+.task-row .what {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+.task-row .when {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--warn);
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.task-row .when.is-danger { color: var(--danger); }
+.task-row .when.is-ok { color: var(--text-muted); }
+.task-row .quick-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.task-row:hover .quick-actions { opacity: 1; }
+.task-row .quick-actions button {
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-1);
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.task-row .quick-actions button:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Personal KPI strip · NOT global */
+.personal-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.p-kpi {
+  padding: var(--sp-4);
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+}
+.p-kpi .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.p-kpi .v {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.p-kpi .sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-mint);
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+/* Inbox / brief list */
+.inbox-item {
+  padding: var(--sp-3) var(--sp-5);
+  border-top: 1px solid var(--bg-line);
+  font-size: 13px;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: var(--sp-3);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.inbox-item:hover { background: var(--bg-tint); }
+.inbox-item .ic {
+  width: 24px; height: 24px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: 4px;
+  font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.inbox-item .ic.is-wa { color: var(--accent-mint); border-color: rgba(174,255,200,0.3); }
+.inbox-item .ic.is-mail { color: var(--accent); border-color: rgba(61,255,127,0.3); }
+.inbox-item .info .who { font-weight: 600; }
+.inbox-item .info .preview { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+.inbox-item .when {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-align: right;
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* Side: meeting + summary */
+.side-stack { display: flex; flex-direction: column; gap: var(--sp-4); }
+.meeting-card {
+  padding: var(--sp-4);
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+}
+.meeting-card .title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.meeting-card .time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-bottom: var(--sp-2);
+}
+.meeting-card .who { font-size: 12px; color: var(--text-secondary); }
+.meeting-card .actions { margin-top: var(--sp-3); display: flex; gap: var(--sp-2); }
+
+.empty-tiny {
+  padding: var(--sp-4) var(--sp-5);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.2</span>
+    <span>00 · Mi día (landing post-login)</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<div class="app">
+  <!-- Sidebar v0.2 -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">iB</div>
+      <div class="text">iBisne CRM<span class="sub">v0.2 · INTERNO</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <a class="nav-item is-active" href="00-mi-dia.html"><span class="icon">◉</span>Mi día<span class="badge">7</span></a>
+      <a class="nav-item" href="03-pipeline-kanban.html"><span class="icon">⇄</span>Pipeline<span class="badge">47</span></a>
+      <a class="nav-item" href="07-leads.html"><span class="icon">◌</span>Leads<span class="badge">112</span></a>
+      <a class="nav-item" href="04-cliente-detalle.html"><span class="icon">◊</span>Clientes<span class="badge">23</span></a>
+      <a class="nav-item" href="05-proyecto-detalle.html"><span class="icon">▢</span>Proyectos<span class="badge">19</span></a>
+      <a class="nav-item" href="06-pagos-calendar.html"><span class="icon">$</span>Cobros</a>
+      <a class="nav-item" href="#"><span class="icon">⚐</span>Suscripciones</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Partners</div>
+      <a class="nav-item" href="#"><span class="icon">⤳</span>Revendedores</a>
+      <a class="nav-item" href="#"><span class="icon">%</span>Comisiones</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Contactar</div>
+      <a class="nav-item" href="#"><span class="icon">✉</span>Bandeja<span class="badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">⤴</span>Campañas</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sistema</div>
+      <a class="nav-item" href="02-dashboard.html"><span class="icon">▦</span>Métricas globales</a>
+      <a class="nav-item" href="#"><span class="icon">⚙</span>Configuración</a>
+      <a class="nav-item" href="#"><span class="icon">◯</span>Audit log</a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar">ER</div>
+      <div class="info"><div class="name">Eduardo R.</div><div class="role">ADMIN</div></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar v0.2 con breadcrumbs + cmdK + notifs + user -->
+    <div class="topbar-v2">
+      <div class="crumbs">
+        <a href="#">iBisne</a>
+        <span class="sep">/</span>
+        <span class="here">Mi día</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cmdk-trigger">
+        <span class="mono muted">⌕</span>
+        <span>Buscar o ejecutar acción…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <button class="icon-btn" aria-label="Notificaciones">
+        <span>✉</span>
+        <span class="badge-num">3</span>
+      </button>
+      <button class="icon-btn" aria-label="Ayuda">?</button>
+      <button class="user-chip">
+        <span class="avatar">ER</span>
+        <span class="name">Eduardo</span>
+        <span class="chev">▾</span>
+      </button>
+    </div>
+
+    <div class="content">
+
+      <!-- Hero · saludo personal -->
+      <div class="hero-bar">
+        <div>
+          <div class="eyebrow">§ 00.MI DÍA — Lo accionable, primero</div>
+          <h1>Buenos días, Eduardo. <br><span class="accent">Tienes 7 acciones críticas hoy.</span></h1>
+          <p class="lede">3 leads vencen su SLA en menos de 4 horas. 1 pago vencido necesita seguimiento. 2 contratos esperando tu envío.</p>
+        </div>
+        <div class="date">
+          MARTES<span class="day">12</span>MAYO 2026
+        </div>
+      </div>
+
+      <!-- Alert banner ROJO crítico -->
+      <div class="alert-banner is-danger">
+        <span class="ico"></span>
+        <div class="msg"><strong>1 pago vencido · $25,000 MXN</strong> · Cripto Latam · venció hace 9 días — sin contacto</div>
+        <div class="actions"><a href="#">RESOLVER →</a></div>
+      </div>
+
+      <!-- Personal KPIs -->
+      <div class="personal-kpis">
+        <div class="p-kpi">
+          <div class="l">Mis leads asignados</div>
+          <div class="v">28</div>
+          <div class="sub">↑ 4 nuevos esta semana</div>
+        </div>
+        <div class="p-kpi">
+          <div class="l">Mi conversion 30d</div>
+          <div class="v">17.8<span style="font-size:13px;color:var(--text-muted);font-weight:400;">%</span></div>
+          <div class="sub">Mejor que promedio · 14.8%</div>
+        </div>
+        <div class="p-kpi">
+          <div class="l">Mi pipeline value</div>
+          <div class="v">$ 1.24M</div>
+          <div class="sub">3 deals en negociación</div>
+        </div>
+      </div>
+
+      <!-- 2 columnas: acciones / contexto -->
+      <div class="day-layout">
+
+        <!-- Col izq: acciones del día -->
+        <div>
+
+          <!-- Leads que vencen SLA -->
+          <div class="s-card">
+            <div class="s-head">
+              <div class="title">Leads que necesitan respuesta <span class="badge danger">3</span></div>
+              <span class="meta">SLA · 8H DESDE LLEGADA</span>
+            </div>
+            <div class="s-body">
+              <div class="task-row">
+                <span class="health-dot is-stalled"></span>
+                <div>
+                  <div class="name"><a href="#">María González</a> · Tacos del Centro</div>
+                  <div class="what">WEB SITIO COMPLETO · $48,400 · QUIZ · ASIGNADA A TI</div>
+                </div>
+                <div class="when is-danger">SLA vence en 1h 14m</div>
+                <div class="quick-actions">
+                  <button>WhatsApp</button>
+                  <button>Email</button>
+                </div>
+              </div>
+              <div class="task-row">
+                <span class="health-dot is-attention"></span>
+                <div>
+                  <div class="name"><a href="#">Lucas Vega</a> · Caleta Studio</div>
+                  <div class="what">APP iOS · $285,000 · DISCOVERY · ASIGNADA A TI</div>
+                </div>
+                <div class="when">SLA vence en 3h 42m</div>
+                <div class="quick-actions">
+                  <button>WhatsApp</button>
+                  <button>Email</button>
+                </div>
+              </div>
+              <div class="task-row">
+                <span class="health-dot is-attention"></span>
+                <div>
+                  <div class="name"><a href="#">Sofía Rivas</a> · DataLatam</div>
+                  <div class="what">AVANZADO · $420,000 · COTIZACIÓN · INBOUND</div>
+                </div>
+                <div class="when">SLA vence en 5h 22m</div>
+                <div class="quick-actions">
+                  <button>WhatsApp</button>
+                  <button>Email</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contratos por enviar -->
+          <div class="s-card">
+            <div class="s-head">
+              <div class="title">Contratos por enviar <span class="badge warn">2</span></div>
+              <span class="meta">FOLIO PENDIENTE FIRMA</span>
+            </div>
+            <div class="s-body">
+              <div class="task-row">
+                <span class="health-dot is-fresh"></span>
+                <div>
+                  <div class="name"><a href="#">Sergio Ramos</a> · Cripto Latam</div>
+                  <div class="what">FOLIO #430 · WEB3 · $610,000 · NEGOCIACIÓN APROBADA AYER</div>
+                </div>
+                <div class="when is-ok">Borrador listo</div>
+                <div class="quick-actions">
+                  <button>Revisar</button>
+                  <button>Enviar</button>
+                </div>
+              </div>
+              <div class="task-row">
+                <span class="health-dot is-fresh"></span>
+                <div>
+                  <div class="name"><a href="#">Carlos Beltrán</a> · Cacao Premium</div>
+                  <div class="what">FOLIO #431 · ECOM SHOPIFY · $140,000 · COTIZACIÓN ACEPTADA</div>
+                </div>
+                <div class="when is-ok">Borrador listo</div>
+                <div class="quick-actions">
+                  <button>Revisar</button>
+                  <button>Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Briefs sin completar -->
+          <div class="s-card">
+            <div class="s-head">
+              <div class="title">Briefs sin completar <span class="badge warn">2</span></div>
+              <span class="meta">CLIENTE BLOQUEANDO AVANCE</span>
+            </div>
+            <div class="s-body">
+              <div class="task-row">
+                <span class="health-dot is-attention"></span>
+                <div>
+                  <div class="name"><a href="05-proyecto-detalle.html">HoldingMX · Sitio Holding</a></div>
+                  <div class="what">FOLIO #428 · 65% LLENO · 3 DÍAS SIN AVANCE</div>
+                </div>
+                <div class="when">Recordatorio enviado · ayer</div>
+                <div class="quick-actions">
+                  <button>Reforzar</button>
+                </div>
+              </div>
+              <div class="task-row">
+                <span class="health-dot is-stalled"></span>
+                <div>
+                  <div class="name"><a href="#">Tienda Verde · Catálogo</a></div>
+                  <div class="what">FOLIO #426 · 0% · 7 DÍAS SIN ABRIR</div>
+                </div>
+                <div class="when is-danger">Crítico · escalar</div>
+                <div class="quick-actions">
+                  <button>WhatsApp</button>
+                  <button>Llamar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Col der: contexto del día -->
+        <div class="side-stack">
+
+          <div class="meeting-card">
+            <div class="title">Próxima reunión</div>
+            <div class="time">11:30 — 12:15 · DISCOVERY</div>
+            <div class="who">Lucas Vega · Caleta Studio<br><span class="mono muted" style="font-size:11px;">CALETA-STUDIO.ZOOM.US/J/4827</span></div>
+            <div class="actions">
+              <button class="btn btn-primary btn-sm" style="flex:1;">Unirme</button>
+              <button class="btn btn-line btn-sm">Notas</button>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-head">
+              <div class="title">Bandeja <span class="badge">3</span></div>
+              <a href="#" style="font-family:var(--font-mono);font-size:10px;color:var(--accent-mint);letter-spacing:0.08em;text-transform:uppercase;">ABRIR TODA</a>
+            </div>
+            <div>
+              <div class="inbox-item">
+                <span class="ic is-wa">WA</span>
+                <div class="info">
+                  <div class="who">María González</div>
+                  <div class="preview">"¿Tienen referencias de sitios para restaurantes?"</div>
+                </div>
+                <div class="when">12m</div>
+              </div>
+              <div class="inbox-item">
+                <span class="ic is-mail">@</span>
+                <div class="info">
+                  <div class="who">José Pérez (HoldingMX)</div>
+                  <div class="preview">"Recibí el contrato, lo reviso hoy y…"</div>
+                </div>
+                <div class="when">2h</div>
+              </div>
+              <div class="inbox-item">
+                <span class="ic">★</span>
+                <div class="info">
+                  <div class="who">Sistema</div>
+                  <div class="preview">Pago confirmado · Caleta Studio · $25,200</div>
+                </div>
+                <div class="when">ayer</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-head">
+              <div class="title">Próximos cobros</div>
+              <span class="meta">$ 110K · 7 DÍAS</span>
+            </div>
+            <div>
+              <div class="task-row" style="padding:var(--sp-3) var(--sp-5);">
+                <span class="health-dot is-fresh"></span>
+                <div>
+                  <div class="name" style="font-size:13px;">HoldingMX</div>
+                  <div class="what">ANTICIPO · 14 MAY</div>
+                </div>
+                <div class="when is-ok mint" style="font-family:var(--font-mono);">$95k</div>
+              </div>
+              <div class="task-row" style="padding:var(--sp-3) var(--sp-5);">
+                <span class="health-dot is-fresh"></span>
+                <div>
+                  <div class="name" style="font-size:13px;">Verde Mercado</div>
+                  <div class="what">MEMBRESÍA · 18 MAY</div>
+                </div>
+                <div class="when is-ok mint" style="font-family:var(--font-mono);">$15k</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- CmdK overlay (mockup · normalmente hidden) -->
+<div class="cmdk-overlay">
+  <div class="cmdk-modal">
+    <input class="cmdk-input" type="text" placeholder="Buscar leads, clientes, proyectos · o ejecutar acción…">
+    <div class="cmdk-results">
+      <div class="cmdk-group-label">Sugeridos</div>
+      <div class="cmdk-row is-active">
+        <span class="icon"></span>
+        <span class="label">María González · Tacos del Centro</span>
+        <span class="meta">LEAD · $48K</span>
+      </div>
+      <div class="cmdk-row">
+        <span class="icon"></span>
+        <span class="label">Crear nuevo lead</span>
+        <span class="meta">⌘ N</span>
+      </div>
+      <div class="cmdk-group-label">Navegación</div>
+      <div class="cmdk-row">
+        <span class="icon"></span>
+        <span class="label">Ir a Pipeline</span>
+        <span class="meta">G P</span>
+      </div>
+      <div class="cmdk-row">
+        <span class="icon"></span>
+        <span class="label">Ir a Cobros</span>
+        <span class="meta">G C</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

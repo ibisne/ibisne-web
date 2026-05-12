@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Wireframes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.shell { max-width: 1100px; margin: 0 auto; padding: 96px var(--sp-8) var(--sp-12); }
+.hero { margin-bottom: var(--sp-10); }
+.hero .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--accent-mint);
+  margin-bottom: var(--sp-3);
+}
+.hero h1 {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: var(--sp-4);
+}
+.hero h1 .accent { color: var(--accent); }
+.hero .lede {
+  font-size: 17px;
+  color: var(--text-secondary);
+  max-width: 720px;
+  line-height: 1.6;
+}
+.meta-row {
+  display: flex;
+  gap: var(--sp-6);
+  margin-top: var(--sp-6);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--bg-line);
+  border-bottom: 1px solid var(--bg-line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  flex-wrap: wrap;
+}
+.meta-row .item .v { color: var(--accent); font-size: 13px; }
+
+.wf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-5);
+}
+.wf-tile {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-3);
+  padding: var(--sp-6);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  color: var(--text-primary);
+}
+.wf-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+.wf-tile .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+.wf-tile h3 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.wf-tile .desc {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  flex: 1;
+}
+.wf-tile .feats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.wf-tile .feat {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--bg);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wf-tile .open {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-mint);
+  letter-spacing: 0.1em;
+  margin-top: var(--sp-2);
+}
+.wf-tile:hover .open { color: var(--accent); }
+
+.docs-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-4);
+  margin-top: var(--sp-10);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--bg-line);
+}
+.doc-link {
+  display: block;
+  padding: var(--sp-4);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  background: var(--bg-paper);
+  color: var(--text-primary);
+}
+.doc-link:hover { border-color: var(--accent); color: var(--accent); }
+.doc-link .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.doc-link .t { font-size: 16px; font-weight: 600; }
+.doc-link .d { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill">WIREFRAMES</span>
+    <span>iBisne CRM · MVP 1 + Living Coding</span>
+  </div>
+  <span class="mono" style="font-size:11px;color:var(--text-muted);">v0.3 · LIVING CODING</span>
+</div>
+
+<div class="shell">
+
+  <div class="hero">
+    <div class="eyebrow">§ 00.CRM + LIVING CODING — iBisne MVP 1 · v0.3</div>
+    <h1>Mi día.<br>Mi proyecto.<br><span class="accent">Paso a paso.</span></h1>
+    <p class="lede">v0.3 expande a la visión completa: el CRM ahora es también <strong style="color:var(--text-primary);">sistema operativo de ejecución</strong>. Cada proyecto vive como secuencia de pasos bloqueados según el playbook (Bio-link, Landing, Sitio completo, Ecom, App, SaaS, AI, Web3 · 10+ templates). Un Jr Coder ve "Mi proyecto" con el paso actual destacado, recursos inline, checklist, y siempre sabe el siguiente movimiento. KAM + Arquitecto declaran tech stack apropiado al inicio (HTML+CSS para bio-link, Next + Sanity para sitio completo, React Native + Expo para app híbrida).</p>
+
+    <div class="meta-row">
+      <div class="item">STACK · <span class="v">Supabase + Next.js + VAULT</span></div>
+      <div class="item">TIMELINE · <span class="v">10-14 semanas MVP1</span></div>
+      <div class="item">INFRA · <span class="v">$54-74 USD/mes</span></div>
+      <div class="item">PANTALLAS · <span class="v">17 (4 nuevas v0.3.2 · gaps cerrados)</span></div>
+      <div class="item">ROLES · <span class="v">7 (founder · kam · arquitecto · sr · jr · cliente · reseller)</span></div>
+      <div class="item">PLAYBOOKS · <span class="v">10 templates · 6-18 pasos c/u</span></div>
+    </div>
+  </div>
+
+  <div class="wf-grid">
+    <a class="wf-tile" href="08-mi-proyecto.html" style="border-color: var(--accent); background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg-paper) 80%);">
+      <div class="num" style="color:var(--accent);">— 08 · LIVING CODING</div>
+      <h3>Mi proyecto · workspace Jr Coder</h3>
+      <div class="desc">El core del sistema operativo. Jr Coder abre su proyecto activo y ve: progress ring del proyecto (42%), card del paso actual destacada con recursos inline, timeline vertical de los 12 pasos (5 done · 1 actual · 6 bloqueados), tech stack declarado por arquitecto, equipo asignado, atajos del proyecto (Figma, repo, Slack).</div>
+      <div class="feats">
+        <span class="feat" style="background:var(--accent);color:var(--bg);">CORE</span>
+        <span class="feat">Step timeline</span>
+        <span class="feat">Progress ring</span>
+        <span class="feat">Tech stack</span>
+        <span class="feat">Recursos inline</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="09-paso-detalle.html" style="border-color: var(--accent); background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg-paper) 80%);">
+      <div class="num" style="color:var(--accent);">— 09 · LIVING CODING</div>
+      <h3>Paso detalle · drawer rico</h3>
+      <div class="desc">Cuando el Jr Coder abre un paso: timer activo, time tracking, inputs requeridos clickeables (PDF, Figma, Loom), outputs versionados (v2 actual + v1 rechazado), checklist interactivo, recursos del paso, comentarios del equipo, botón "Pedir revisión" desbloqueable.</div>
+      <div class="feats">
+        <span class="feat" style="background:var(--accent);color:var(--bg);">CORE</span>
+        <span class="feat">Timer activo</span>
+        <span class="feat">Versionado</span>
+        <span class="feat">Inputs clickeables</span>
+        <span class="feat">Checklist</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="10-tech-stack.html" style="border-color: rgba(255,184,77,0.4);">
+      <div class="num" style="color: var(--warn);">— 10 · ARQUITECTO</div>
+      <h3>Tech stack declaration</h3>
+      <div class="desc">Form que llena el Arquitecto al paso 4 del playbook. Sugerencia automática del sistema según playbook elegido. Pickers para plataforma, framework, CMS, servicios complementarios. Costo infra mensual calculado en vivo. Justificación textual firmable visible al cliente.</div>
+      <div class="feats">
+        <span class="feat">Smart suggest</span>
+        <span class="feat">Cost calc</span>
+        <span class="feat">Riesgos</span>
+        <span class="feat">Justificación</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="11-playbook-library.html" style="border-color: rgba(255,184,77,0.4);">
+      <div class="num" style="color: var(--warn);">— 11 · ADMIN</div>
+      <h3>Playbook library</h3>
+      <div class="desc">Founder y Arquitecto crean/editan los 10 templates de playbooks (Bio-link, Landing, Sitio completo, Shopify, Headless, App iOS/Android/Híbrida, SaaS, AI, Web3). Stats de uso por playbook. Editor de pasos drag&drop. Tech stack default editable.</div>
+      <div class="feats">
+        <span class="feat">10 playbooks</span>
+        <span class="feat">Drag&drop</span>
+        <span class="feat">Stats por template</span>
+        <span class="feat">Editor</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="12-portal-cliente.html" style="border-color: rgba(174,255,200,0.3);">
+      <div class="num" style="color: var(--accent-mint);">— 12 · CLIENTE</div>
+      <h3>Portal cliente</h3>
+      <div class="desc">Lo que ve José Pérez (HoldingMX). Lista de sus proyectos con progress ring, acciones requeridas (aprobar wireframes urgente · pagar anticipo · brief listo), datos del KAM con WhatsApp directo, próximo pago, historial total iBisne.</div>
+      <div class="feats">
+        <span class="feat">Self-service</span>
+        <span class="feat">Actions req</span>
+        <span class="feat">KAM contact</span>
+        <span class="feat">Pay tracker</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="13-portal-reseller.html" style="border-color: rgba(174,255,200,0.3);">
+      <div class="num" style="color: var(--accent-mint);">— 13 · PARTNER</div>
+      <h3>Portal reseller</h3>
+      <div class="desc">Lo que ve una agencia partner (Pixel Grup). KPIs de comisiones (pendiente, YTD, leads, rate 15%). Link de referido personalizado con UTMs. Tabla de leads referidos con status y comisión por cada uno. Historial de payouts con CFDI descargable. Materiales para cierre.</div>
+      <div class="feats">
+        <span class="feat">UTM tracking</span>
+        <span class="feat">Comisiones</span>
+        <span class="feat">Payouts</span>
+        <span class="feat">CFDI</span>
+        <span class="feat">Materiales</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="14-revisiones-sr.html" style="border-color: rgba(255,184,77,0.3);">
+      <div class="num" style="color: var(--warn);">— 14 · SR CODER</div>
+      <h3>Revisiones pendientes</h3>
+      <div class="desc">Cola del Sr Coder con todos los pasos esperando su aprobación. Agrupado por urgencia: vencidas (rojo), en cola, deploys que requieren co-aprobación con arquitecto. KPIs personales (SLA medio, aprobadas 30d, capacidad). Tips de mentor para promover juniors.</div>
+      <div class="feats">
+        <span class="feat">SLA tracker</span>
+        <span class="feat">Cola priorizada</span>
+        <span class="feat">Mentor tips</span>
+        <span class="feat">Co-approval</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="15-approval-cliente.html" style="border-color: rgba(174,255,200,0.3);">
+      <div class="num" style="color: var(--accent-mint);">— 15 · CLIENTE</div>
+      <h3>Approval del cliente</h3>
+      <div class="desc">Lo que abre José Pérez cuando hace click en "Aprobar wireframes" desde el portal. Preview de páginas con annotation pins, comentarios threaded (cliente + Jr), versionado (v1 rechazado · v2 actual), decisión grande: Aprobar / Solicitar cambios. Ayuda inline con KAM.</div>
+      <div class="feats">
+        <span class="feat">Annotation pins</span>
+        <span class="feat">Threaded comments</span>
+        <span class="feat">Versioning</span>
+        <span class="feat">SLA visible</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="17-modal-nuevo-lead.html">
+      <div class="num">— 17 · MODAL</div>
+      <h3>Nuevo lead (modal)</h3>
+      <div class="desc">Lo que abre el botón "+ Nuevo lead" desde Pipeline / Leads / topbar. Modal centrado con source picker (quiz/manual/referido/inbound), form de contacto, vertical+subtipo, asignación al equipo, reseller picker contextual. "Crear y agregar otro" para captura masiva.</div>
+      <div class="feats">
+        <span class="feat">Source pick</span>
+        <span class="feat">Reseller picker</span>
+        <span class="feat">Batch entry</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="18-modal-upload.html">
+      <div class="num">— 18 · MODAL</div>
+      <h3>Upload nueva versión (modal)</h3>
+      <div class="desc">Lo que abre el botón "+ Subir nueva versión" desde Paso detalle. Type picker (Figma link / PDF / GitHub PR / Loom video), drop zone para archivos, notas de release, reviewer card con SLA + carga del Sr, toggles para notificar cliente + pausar timer + auto-complete.</div>
+      <div class="feats">
+        <span class="feat">Drag&drop</span>
+        <span class="feat">Type picker</span>
+        <span class="feat">Release notes</span>
+        <span class="feat">Smart toggles</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="00-mi-dia.html">
+      <div class="num">— 00</div>
+      <h3>Mi día</h3>
+      <div class="desc">Landing post-login. Lo accionable hoy: 3 leads con SLA por vencer, 2 contratos por enviar, 2 briefs bloqueando proyectos. KPIs personales (no globales). Bandeja unificada (WhatsApp + email). Próxima reunión.</div>
+      <div class="feats">
+        <span class="feat">Landing</span>
+        <span class="feat">SLA tracker</span>
+        <span class="feat">Health dots</span>
+        <span class="feat">Inbox</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="01-login.html">
+      <div class="num">— 01</div>
+      <h3>Login (magic link)</h3>
+      <div class="desc">Email → link mágico vía Resend. Sin contraseñas. Google OAuth como secundario.</div>
+      <div class="feats">
+        <span class="feat">Supabase Auth</span>
+        <span class="feat">Sin password</span>
+        <span class="feat">Confirmación inline</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="07-leads.html">
+      <div class="num">— 07</div>
+      <h3>Leads · tabla densa</h3>
+      <div class="desc">Lista exhaustiva con filtros laterales (stage, vertical, origen, asignado, antigüedad), bulk actions, score visual, sort por columnas, paginación, vistas guardadas.</div>
+      <div class="feats">
+        <span class="feat">Filtros multi</span>
+        <span class="feat">Bulk actions</span>
+        <span class="feat">Score bars</span>
+        <span class="feat">Stalled flag</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="02-dashboard.html">
+      <div class="num">— 02</div>
+      <h3>Métricas globales <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.1em;">(antes Dashboard)</span></h3>
+      <div class="desc">Analytics agregados de toda la org: leads MTD, conversion, pipeline value, MRR. Bajó a sección "Sistema" porque no es operación diaria · es reporting.</div>
+      <div class="feats">
+        <span class="feat">4 KPIs</span>
+        <span class="feat">Chart 12-sem</span>
+        <span class="feat">Activity feed</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="03-pipeline-kanban.html">
+      <div class="num">— 03</div>
+      <h3>Pipeline · Kanban</h3>
+      <div class="desc">6 columnas (Prospecto → Activo). Drag&drop. Cards con score, vertical, total, tags (referido/urgente). Filtros + toggle Kanban/Lista/Tabla.</div>
+      <div class="feats">
+        <span class="feat">Drag&drop</span>
+        <span class="feat">Filtros</span>
+        <span class="feat">Multi-view</span>
+        <span class="feat">@dnd-kit</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="04-cliente-detalle.html">
+      <div class="num">— 04</div>
+      <h3>Cliente · detalle</h3>
+      <div class="desc">Header con avatar, datos fiscales, badges (directo / referido / membership). Tabs: marcas (cards), proyectos, pagos, suscripción, briefs, contratos, actividad.</div>
+      <div class="feats">
+        <span class="feat">8 tabs</span>
+        <span class="feat">Multi-marca</span>
+        <span class="feat">Portal cliente</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="05-proyecto-detalle.html">
+      <div class="num">— 05</div>
+      <h3>Proyecto · detalle</h3>
+      <div class="desc">Status strip (7 etapas), stats financieras, brief progress bar, calendario de pagos del proyecto, equipo asignado, stack, entregables checklist.</div>
+      <div class="feats">
+        <span class="feat">Status strip</span>
+        <span class="feat">Brief tracker</span>
+        <span class="feat">Deliverables</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+
+    <a class="wf-tile" href="06-pagos-calendar.html">
+      <div class="num">— 06</div>
+      <h3>Pagos · calendario</h3>
+      <div class="desc">Vista mensual con pagos en cada celda (pagado / pendiente / vencido). Sidebar con vencidos, hoy, próximos 7 días. KPIs financieros del mes.</div>
+      <div class="feats">
+        <span class="feat">Vista mensual</span>
+        <span class="feat">Conciliación</span>
+        <span class="feat">Alertas vencidos</span>
+      </div>
+      <div class="open">ABRIR WIREFRAME →</div>
+    </a>
+  </div>
+
+  <!-- Docs adicionales -->
+  <div class="docs-row">
+    <a class="doc-link" href="../ARCHITECTURE.md">
+      <div class="l">DOC · TÉCNICO</div>
+      <div class="t">ARCHITECTURE.md</div>
+      <div class="d">Stack, infra, deployment, costos, roadmap MVP1 detallado · 14 secciones</div>
+    </a>
+    <a class="doc-link" href="../SCHEMA.md">
+      <div class="l">DOC · DATOS</div>
+      <div class="t">SCHEMA.md</div>
+      <div class="d">Postgres DDL · 15 tablas · RLS policies · triggers · queries del dashboard · Drizzle starter</div>
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html>

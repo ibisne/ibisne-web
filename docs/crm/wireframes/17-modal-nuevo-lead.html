@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<title>iBisne CRM · Modal nuevo lead</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+.modal-backdrop {
+  position: fixed;
+  inset: 28px 0 0 0;
+  background: rgba(7,9,13,0.65);
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6vh;
+  overflow-y: auto;
+}
+
+.modal-card {
+  width: 640px;
+  max-width: 92vw;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line-strong);
+  border-radius: var(--radius-3);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  overflow: hidden;
+  margin-bottom: var(--sp-6);
+}
+
+.modal-head {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--bg-line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-3);
+  align-items: center;
+}
+.modal-head .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-1);
+}
+.modal-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  background: transparent;
+  border: 1px solid var(--bg-line);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+}
+.modal-close:hover { border-color: var(--accent); color: var(--accent); }
+
+.modal-body {
+  padding: var(--sp-5);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+.form-row.is-full { grid-template-columns: 1fr; }
+
+.fld {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.fld label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+.fld label .req { color: var(--danger); }
+.fld input,
+.fld select,
+.fld textarea {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  padding: 10px var(--sp-3);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.fld input:focus,
+.fld select:focus,
+.fld textarea:focus { border-color: var(--accent); }
+.fld input::placeholder,
+.fld textarea::placeholder { color: var(--text-muted); }
+.fld textarea { resize: vertical; min-height: 60px; }
+
+/* Source picker · radio cards */
+.source-pick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-2);
+}
+.source-card {
+  padding: var(--sp-3);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  text-align: center;
+}
+.source-card:hover { border-color: var(--bg-line-strong); }
+.source-card.is-selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.source-card .ico {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-line);
+  margin: 0 auto var(--sp-2);
+}
+.source-card.is-selected .ico { background: var(--accent); }
+.source-card .l {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.source-card .h {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.reseller-row {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-2);
+  padding: var(--sp-3);
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: var(--sp-3);
+  align-items: center;
+  margin-top: var(--sp-3);
+}
+.reseller-row .ico {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(174,255,200,0.2);
+  color: var(--accent-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.modal-foot {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--bg-line);
+  background: var(--bg);
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+}
+.modal-foot .spacer { flex: 1; }
+.modal-foot .helper {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+</style>
+</head>
+<body>
+
+<div class="wf-banner">
+  <div class="left">
+    <span class="pill" style="margin-right:8px;">WIREFRAME v0.3.2</span>
+    <span>17 · Modal Nuevo lead</span>
+  </div>
+  <a href="index.html">← Volver al índice</a>
+</div>
+
+<!-- Pantalla atrás (Pipeline) borrosa para mostrar contexto -->
+<div class="app" style="filter: blur(2.5px) saturate(0.5); opacity: 0.35; pointer-events: none;">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">iB</div><div class="text">iBisne CRM<span class="sub">v0.3</span></div></div>
+    <div class="sidebar-section">
+      <a class="nav-item" href="#"><span class="icon">◉</span>Mi día</a>
+      <a class="nav-item is-active" href="#"><span class="icon">⇄</span>Pipeline<span class="badge">47</span></a>
+      <a class="nav-item" href="#"><span class="icon">◌</span>Leads</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar">ER</div>
+      <div class="info"><div class="name">Eduardo R.</div><div class="role">FOUNDER</div></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar-v2" style="background: var(--bg);">
+      <div class="crumbs"><a href="#">iBisne</a><span class="sep">/</span><span class="here">Pipeline</span></div>
+      <div class="spacer"></div>
+    </div>
+    <div class="content" style="padding-top: 100px;">
+      <div style="height: 600px; background: var(--bg-paper); border-radius: 12px;"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop">
+  <div class="modal-card">
+
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">§ PIPELINE — ALTA MANUAL</div>
+        <h2>Nuevo lead</h2>
+      </div>
+      <button class="modal-close" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Source -->
+      <div style="margin-bottom: var(--sp-4);">
+        <label style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin-bottom: var(--sp-2); display: block;">¿Cómo llegó este lead?</label>
+        <div class="source-pick">
+          <div class="source-card">
+            <div class="ico"></div>
+            <div class="l">Quiz</div>
+            <div class="h">SITIO WEB</div>
+          </div>
+          <div class="source-card is-selected">
+            <div class="ico"></div>
+            <div class="l">Manual</div>
+            <div class="h">YO LO CONOCÍ</div>
+          </div>
+          <div class="source-card">
+            <div class="ico"></div>
+            <div class="l">Referido</div>
+            <div class="h">DE UN PARTNER</div>
+          </div>
+          <div class="source-card">
+            <div class="ico"></div>
+            <div class="l">Inbound</div>
+            <div class="h">EMAIL / DM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos del lead -->
+      <div class="form-row">
+        <div class="fld">
+          <label>Nombre completo <span class="req">*</span></label>
+          <input placeholder="ej. Patricia Solís">
+        </div>
+        <div class="fld">
+          <label>Empresa</label>
+          <input placeholder="ej. Verde Mercado">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fld">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" placeholder="pat@empresa.com">
+        </div>
+        <div class="fld">
+          <label>Teléfono / WhatsApp</label>
+          <input type="tel" placeholder="+52 33 1234 5678">
+        </div>
+      </div>
+
+      <!-- Tipo de proyecto -->
+      <div class="form-row">
+        <div class="fld">
+          <label>Vertical <span class="req">*</span></label>
+          <select>
+            <option>Selecciona…</option>
+            <option>Web</option>
+            <option selected>Ecommerce</option>
+            <option>App</option>
+            <option>Avanzado</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Subtipo</label>
+          <select>
+            <option>Selecciona…</option>
+            <option>Single product</option>
+            <option selected>Catálogo Shopify</option>
+            <option>Headless commerce</option>
+            <option>Marketplace</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fld">
+          <label>Cotización estimada (MXN)</label>
+          <input placeholder="92,800">
+        </div>
+        <div class="fld">
+          <label>Asignar a</label>
+          <select>
+            <option>Yo (Eduardo R.)</option>
+            <option selected>Sin asignar (a la cola)</option>
+            <option>Hunter A</option>
+            <option>Hunter B</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notas -->
+      <div class="form-row is-full">
+        <div class="fld">
+          <label>Notas iniciales (opcional)</label>
+          <textarea placeholder="¿Qué contó? ¿Qué urgencia tiene? ¿Algún detalle del contexto?"></textarea>
+        </div>
+      </div>
+
+      <!-- Si source = referido, aparece selector de reseller -->
+      <!-- Aquí se muestra inline cuando se elige referido -->
+      <div class="reseller-row" style="display: none;">
+        <div class="ico">PG</div>
+        <div>
+          <div style="font-weight: 600;">Pixel Grup</div>
+          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; margin-top: 2px;">RESELLER · COMISIÓN 15%</div>
+        </div>
+        <a href="#" style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-mint); letter-spacing: 0.08em;">Cambiar</a>
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-line">Cancelar</button>
+      <div class="spacer"></div>
+      <span class="helper">REQUIERE: NOMBRE + EMAIL + VERTICAL</span>
+      <button class="btn btn-line">Crear y agregar otro</button>
+      <button class="btn btn-primary">Crear lead →</button>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
