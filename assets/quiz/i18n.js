@@ -522,5 +522,26 @@ if (window.IBISNE_I18N_DATA) {
     // v4.0 · subtítulo del resultado (sin gates hunter)
     'Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional · no bloquea el pago ni la membresía.': 'Indicative figure. If you want to refine it, discovery with a hunter is optional · does not block payment or membership.',
     'Proyectos custom · cotización indicativa que se afina en discovery.': 'Custom projects · indicative quote refined in discovery.',
+
+    // v4.2 · Bottom-bar jerga simple
+    'Cómo va a quedar tu proyecto': 'How your project will turn out',
+    'Precio aproximado': 'Approximate price',
+    'Rápido': 'Quick',
+    'Equilibrado': 'Balanced',
+    'Premium': 'Premium',
+    'Siguiente': 'Next',
+    'Atrás': 'Back',
+    'Lo que llevas elegido': 'What you have selected so far',
+    'Quiénes lo hacen': 'Who builds it',
+    'Tecnología que usamos': 'Technology we use',
+    'Elige opciones para ver el acabado': 'Pick options to see the finish',
+
+    // v4.2 · Empty state del resultado
+    'Falta completar tu proyecto': 'You need to complete your project',
+    'para ver tu cotización': 'to see your quote',
+    'Parece que llegaste aquí sin pasar por el quiz. Elige tu tipo de proyecto y en 3 minutos te damos precio aproximado, equipo asignado y opciones de pago.': 'Looks like you got here without taking the quiz. Pick your project type and in 3 min we give you approximate price, assigned team, and payment options.',
+    'Empezar quiz': 'Start quiz',
+    'Soy inversionista': "I'm an investor",
+    'Ver marketplace': 'See marketplace',
   });
 }
