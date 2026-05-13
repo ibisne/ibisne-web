@@ -149,9 +149,24 @@
 
   // ─── ROUTER ──────────────────────────────────────────────────────────
   function parseHash(){
-    const h = (location.hash || '#/').slice(2);
+    // Split off query string si existe · ej: '#/servicio/1?seek=1'
+    let h = (location.hash || '#/').slice(2);
+    let queryStr = '';
+    const qIdx = h.indexOf('?');
+    if (qIdx >= 0) {
+      queryStr = h.slice(qIdx + 1);
+      h = h.slice(0, qIdx);
+    }
     const parts = h.split('/').filter(Boolean);
-    return { route: parts[0] || 'classifier', step: parts[1] || null };
+    // Parse query string · ej: 'seek=1' → { seek: '1' }
+    const query = {};
+    if (queryStr) {
+      queryStr.split('&').forEach(pair => {
+        const [k, v] = pair.split('=');
+        if (k) query[decodeURIComponent(k)] = v ? decodeURIComponent(v) : '';
+      });
+    }
+    return { route: parts[0] || 'classifier', step: parts[1] || null, query };
   }
   function navigate(hash){ location.hash = hash; }
 
@@ -162,7 +177,13 @@
   });
 
   function render(){
-    const { route, step } = parseHash();
+    const { route, step, query } = parseHash();
+
+    // v4.0 · si viene ?seek=1, marcar como path "Busco inversor"
+    if (query && query.seek === '1') {
+      State.seekInvestor = true;
+      State.userPath = 'seeker';
+    }
 
     // Limpia el fade-out de salida antes de pintar la nueva pantalla
     const _main = document.getElementById('main');
@@ -817,6 +838,25 @@
     const subtipo = State.answers.subtipo;
     const vertical = State.answers.vertical;
 
+    // v4.2 · Empty state · si el usuario llegó al resultado SIN completar
+    // el quiz (acceso directo o sesión vacía), redirigir amablemente
+    if (!subtipo || !vertical) {
+      $('#main').innerHTML = `
+        <div class="result-screen" style="text-align: center; padding: 60px 24px;">
+          <div class="result-veredicto" style="margin-bottom: 14px;">— ${L("COTIZACIÓN INDICATIVA")}</div>
+          <h2 class="result-headline" style="font-size: clamp(28px,4vw,42px);">${L("Falta completar tu proyecto")}<br><span class="accent">${L("para ver tu cotización")}</span></h2>
+          <p class="result-body" style="max-width: 560px; margin: 18px auto 32px;">${L("Parece que llegaste aquí sin pasar por el quiz. Elige tu tipo de proyecto y en 3 minutos te damos precio aproximado, equipo asignado y opciones de pago.")}</p>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="#/puertas" class="btn btn-primary">${L("Empezar quiz")} →</a>
+            <a href="../inversionistas.html" class="btn btn-line">${L("Soy inversionista")}</a>
+            <a href="../marketplace.html" class="btn-ghost btn">${L("Ver marketplace")}</a>
+          </div>
+        </div>
+      `;
+      showAsideB();
+      return;
+    }
+
     // v4.0 · Eliminamos el gate "isContact" · TODOS los proyectos cotizan
     // (los avanzados ahora tienen base price orientativo · el discovery
     // refina el alcance exacto si el cliente lo necesita).
@@ -984,6 +1024,15 @@ Quiero hablar para precisar el alcance.`;
 
     $('#main').innerHTML = `
       <div class="result-screen">
+        ${State.seekInvestor ? `
+        <!-- v4.0 · Banner para usuarios que vienen del path "Busco inversor" -->
+        <div class="seek-banner">
+          <span class="seek-banner-ico">★</span>
+          <div class="seek-banner-text">
+            <strong>Listo para publicar en el marketplace</strong>
+            <span>Tu proyecto entra a curaduría tras click en "Buscar inversor" abajo · iBisne te confirma en 48h.</span>
+          </div>
+        </div>` : ''}
         <div class="result-veredicto">— ${L("COTIZACIÓN INDICATIVA")}</div>
         <h2 class="result-headline">${L("Tu cotización está lista.")}<br><span class="accent">${L("Folio")} #${folio}</span></h2>
         <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional · no bloquea el pago ni la membresía.")}</p>
@@ -1133,10 +1182,17 @@ Quiero hablar para precisar el alcance.`;
             </div>
 
             <!-- v4.0 · 3 CTAs equivalentes · ninguno obligatorio "hunter" -->
+            <!-- Si State.seekInvestor=true · "Buscar inversor" pasa a primary -->
             <div class="result-cta result-cta-stack result-cta-v4">
-              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
-              <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
-              <button class="btn btn-line" type="button" data-cta="find-investor">${L("Buscar un inversionista")}</button>
+              ${State.seekInvestor ? `
+                <button class="btn btn-primary" type="button" data-cta="find-investor">★ ${L("Buscar un inversionista")} →</button>
+                <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-line" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
+                <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
+              ` : `
+                <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
+                <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
+                <button class="btn btn-line" type="button" data-cta="find-investor">${L("Buscar un inversionista")}</button>
+              `}
               <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
             </div>
             <!-- Hunter sutil al final · NO obligatorio -->
@@ -1842,45 +1898,45 @@ Tracción / contexto: </textarea>
           <div class="qb-config" id="qb-config-mini">${L("Selecciona tu producto para empezar")}</div>
         </div>
         <div class="qb-meta-block qb-intent-block">
-          <div class="qb-meta-label">${L("Acabado del proyecto")}</div>
+          <div class="qb-meta-label">${L("Cómo va a quedar tu proyecto")}</div>
           <div class="qb-intent-line">
             <div class="qb-intent-dot" id="qb-intent-dot" style="left: 50%;"></div>
           </div>
           <div class="qb-intent-labels">
-            <span>MVP</span><span>Estándar</span><span>Premium</span>
+            <span>${L("Rápido")}</span><span>${L("Equilibrado")}</span><span>${L("Premium")}</span>
           </div>
         </div>
         <div class="qb-total-block">
-          <div class="qb-total-label">${L("Inversión estimada")}</div>
+          <div class="qb-total-label">${L("Precio aproximado")}</div>
           <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency" id="qb-currency-code">MXN</span></div>
           <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">${L("IVA incluido")}</div>
         </div>
         <div class="qb-nav-block">
-          <button class="qb-nav-btn qb-nav-prev" id="qb-nav-prev" type="button" aria-label="Pregunta anterior">← Anterior</button>
-          <button class="qb-nav-btn qb-nav-next" id="qb-nav-next" type="button" aria-label="Siguiente pregunta" disabled>Continuar →</button>
+          <button class="qb-nav-btn qb-nav-prev" id="qb-nav-prev" type="button" aria-label="Pregunta anterior">← Atrás</button>
+          <button class="qb-nav-btn qb-nav-next" id="qb-nav-next" type="button" aria-label="Siguiente pregunta" disabled>${L("Siguiente")} →</button>
         </div>
       </div>
       <button class="qb-toggle" id="qb-toggle-btn" type="button" aria-label="Abrir resumen">${chevronUp}</button>
       <div class="qb-expanded-content">
         <div class="qb-block">
-          <div class="qb-block-label">${L("— Configuración seleccionada")}</div>
+          <div class="qb-block-label">${L("— Lo que llevas elegido")}</div>
           <ul class="qb-config-list" id="qb-config-full"><li style="color:var(--text-muted);">${L("Aún sin selecciones")}</li></ul>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">${L("— Equipo que ejecuta")}</div>
+          <div class="qb-block-label">${L("— Quiénes lo hacen")}</div>
           <div class="team-chips" id="qb-team">
             ${['KAM','Frontend','Backend','UX/UI','PM','DevOps','QA'].map(t => `<span class="team-chip" data-team="${t}">${t}</span>`).join('')}
           </div>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">${L("— Stack propuesto")}</div>
+          <div class="qb-block-label">${L("— Tecnología que usamos")}</div>
           <ul class="qb-config-list" id="qb-stack">
             <li style="color:var(--text-muted);">${L("Selecciona vertical y sub-tipo")}</li>
           </ul>
         </div>
         <div class="qb-block">
-          <div class="qb-block-label">${L("— Acabado del proyecto")}</div>
-          <div class="qb-intent-text" id="qb-intent-text" style="font-family:var(--font-display); font-size:14px; line-height:1.5; color:var(--accent-mint);">Selecciona opciones para ver la velocidad de salida</div>
+          <div class="qb-block-label">${L("— Cómo va a quedar tu proyecto")}</div>
+          <div class="qb-intent-text" id="qb-intent-text" style="font-family:var(--font-display); font-size:14px; line-height:1.5; color:var(--accent-mint);">${L("Elige opciones para ver el acabado")}</div>
           <ul class="qb-config-list" style="margin-top:10px;">
             <li>${L("50% anticipo · 50% entrega")}</li>
             <li>${L("3 ajustes gratuitos primer año")}</li>
