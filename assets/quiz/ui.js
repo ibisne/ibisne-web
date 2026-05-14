@@ -179,9 +179,19 @@
   function render(){
     const { route, step } = parseHash();
 
-    // Limpia el fade-out de salida antes de pintar la nueva pantalla
+    // v5.0.2 · Quitamos is-leaving DESPUÉS del paint del nuevo contenido
+    // (no antes) · esto evita el flash que ocurría cuando main volvía a
+    // opacity:1 mientras el hijo aún no había arrancado su fade-in.
+    // El nuevo HTML se pinta mientras main aún tiene opacity:0 (la
+    // animation forwards lo mantiene) · luego dos RAFs después, quitamos
+    // la clase · el hijo (.result-screen / .question-card) hace su
+    // propio fade-in 320ms sobre un padre ya visible.
     const _main = document.getElementById('main');
-    if (_main) _main.classList.remove('is-leaving');
+    if (_main && _main.classList.contains('is-leaving')) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => _main.classList.remove('is-leaving'));
+      });
+    }
 
     if (route === 'classifier' || !route || route === 'puertas') {
       // v5.0 · Cotizador puro · sin 3 puertas · entrada directa
@@ -268,9 +278,9 @@
       }
       const steps = getServicioSteps();
       const isLast = State.step >= steps.length;
-      // En el último step: ir directo al resultado
+      // En el último step: ir directo al resultado · CON fade-out
       if (isLast) {
-        if (State.answers.subtipo) navigate('#/servicio/resultado');
+        if (State.answers.subtipo) scheduleAdvance('#/servicio/resultado', 80);
         return;
       }
       // Pasos intermedios: proxy al inline [data-next] que respeta canAdvance
@@ -817,7 +827,8 @@
       checkValid();
     }));
     checkValid();
-    $('[data-next]')?.addEventListener('click', () => navigate('#/servicio/resultado'));
+    // v5.0.2 · Usar scheduleAdvance para fade-out suave antes del resultado
+    $('[data-next]')?.addEventListener('click', () => scheduleAdvance('#/servicio/resultado', 80));
     $('[data-prev]')?.addEventListener('click', () => navigate('#/servicio/' + (State.step - 1)));
     refreshBottomB();
   }

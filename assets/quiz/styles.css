@@ -513,14 +513,19 @@ body.has-bottom-bar-expanded .quiz-main{
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-/* v5.0.1 · Aplicar el mismo fade-in al resultado y a empty states
-   para que la transición final sea continua (no salta/parpadea) */
-.result-screen,
-.result-screen.is-leaving { animation: questionEnter 320ms ease-out; }
-/* Cuando main tiene .is-leaving, fade out limpio antes de navegar */
+@keyframes questionExit{
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+/* v5.0.2 · Resultado y empty states comparten el mismo fade-in
+   que las preguntas · asegura transición uniforme al finalizar */
+.result-screen { animation: questionEnter 320ms ease-out; }
+
+/* v5.0.2 · Fade-out con ANIMATION (no transition) para que al
+   quitar la clase no haya reverse-animation encimada con el
+   fade-in del hijo. forwards mantiene opacity:0 hasta navigate. */
 #main.is-leaving{
-  opacity: 0;
-  transition: opacity 180ms ease-in;
+  animation: questionExit 180ms ease-in forwards;
   pointer-events: none;
 }
 .question-card .question-title,
