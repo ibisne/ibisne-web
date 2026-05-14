@@ -177,26 +177,16 @@
   });
 
   function render(){
-    const { route, step, query } = parseHash();
-
-    // v4.0 · si viene ?seek=1, marcar como path "Busco inversor"
-    if (query && query.seek === '1') {
-      State.seekInvestor = true;
-      State.userPath = 'seeker';
-    }
+    const { route, step } = parseHash();
 
     // Limpia el fade-out de salida antes de pintar la nueva pantalla
     const _main = document.getElementById('main');
     if (_main) _main.classList.remove('is-leaving');
 
-    if (route === 'classifier' || !route) {
-      // v4.0 · Pivot: el clasificador ahora es la pantalla de 3 puertas
-      navigate('#/puertas');
+    if (route === 'classifier' || !route || route === 'puertas') {
+      // v5.0 · Cotizador puro · sin 3 puertas · entrada directa
+      navigate('#/servicio/1');
       return;
-    }
-    if (route === 'puertas') {
-      State.route = 'puertas';
-      renderPuertas(); hideBottom(); return;
     }
     if (route === 'socio') {
       State.route = 'socio';
@@ -967,24 +957,8 @@
       ? window.IBISNE_PRICING.getStack(vertical?.id, subtipo?.id)
       : [];
 
-    // ─── MEMBRESÍA RECOMENDADA · cálculo y comparativa ───────────────
+    // v5.0 · Cotizador puro · sin membresías ni co-financiamiento
     const totalConIva = calc.total * 1.16;
-    const memberships = window.IBISNE_PRICING?.memberships || [];
-    const recommended = (window.IBISNE_PRICING?.getMembership)
-      ? window.IBISNE_PRICING.getMembership(totalConIva)
-      : null;
-    const ahorroPrimerAno = recommended
-      ? Math.max(0, totalConIva - (recommended.price * 1.16))
-      : 0;
-
-    // ─── v4.0 · Co-financiamiento · 4 opciones de duración ────────────
-    // Sin compromiso (mes-a-mes) · 3m · 6m · 12m con descuentos crecientes
-    const cofinTier = window.IBISNE_PRICING?.getCofinancingTier
-      ? window.IBISNE_PRICING.getCofinancingTier(totalConIva)
-      : null;
-    const cofinOptions = window.IBISNE_PRICING?.getCofinancingOptions
-      ? window.IBISNE_PRICING.getCofinancingOptions(totalConIva)
-      : [];
     function membershipCardHtml(m, isRecommended){
       const priceIva = m.price * 1.16;
       return `
@@ -1024,62 +998,10 @@ Quiero hablar para precisar el alcance.`;
 
     $('#main').innerHTML = `
       <div class="result-screen">
-        ${State.seekInvestor ? `
-        <!-- v4.0 · Banner para usuarios que vienen del path "Busco inversor" -->
-        <div class="seek-banner">
-          <span class="seek-banner-ico">★</span>
-          <div class="seek-banner-text">
-            <strong>Listo para publicar en el marketplace</strong>
-            <span>Tu proyecto entra a curaduría tras click en "Buscar inversor" abajo · iBisne te confirma en 48h.</span>
-          </div>
-        </div>` : ''}
         <div class="result-veredicto">— ${L("COTIZACIÓN INDICATIVA")}</div>
         <h2 class="result-headline">${L("Tu cotización está lista.")}<br><span class="accent">${L("Folio")} #${folio}</span></h2>
-        <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional · no bloquea el pago ni la membresía.")}</p>
+        <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional.")}</p>
 
-        ${cofinTier ? `
-        <!-- ─── v4.0 · CO-FINANCIAMIENTO · 4 opciones de duración ─────────── -->
-        <section class="cofin-block">
-          <div class="cofin-header">
-            <span class="cofin-tier-badge">${cofinTier.label.toUpperCase()} · ${cofinTier.tagline}</span>
-            <h3 class="cofin-headline">${cofinTier.copy}</h3>
-            <p class="cofin-sub">Elige cuánto tiempo quieres comprometerte con iBisne. Más tiempo = iBisne pone más de tu proyecto.</p>
-          </div>
-
-          <div class="cofin-options">
-            ${cofinOptions.map((opt, idx) => {
-              const isAnnual = opt.months === 12;
-              const isFree = opt.months === 1;
-              const monthsLabel = isFree ? 'Pago directo' :
-                opt.months === 3 ? '3 meses' :
-                opt.months === 6 ? '6 meses' : '12 meses · anual';
-              const subtitle = isFree
-                ? 'Sin compromiso · paga el total ahora'
-                : `iBisne co-financia ${opt.discount}% · tú pones ${100-opt.discount}%`;
-              const priceLabel = isFree
-                ? formatMxn(opt.finalPrice)
-                : formatMxn(opt.monthlyPayment) + '<small>/mes</small>';
-              return `
-                <button class="cofin-card${isAnnual ? ' is-recommended' : ''}${isFree ? ' is-direct' : ''}" type="button" data-cofin-months="${opt.months}">
-                  ${isAnnual ? '<div class="cofin-badge">MEJOR PRECIO</div>' : ''}
-                  <div class="cofin-card-header">
-                    <div class="cofin-card-label">${monthsLabel}</div>
-                    ${opt.discount > 0 ? `<div class="cofin-card-discount">−${opt.discount}%</div>` : ''}
-                  </div>
-                  <div class="cofin-card-price">${priceLabel}</div>
-                  <div class="cofin-card-total">${isFree ? 'Total único' : 'Total ' + formatMxn(opt.finalPrice) + ' · ' + opt.months + ' pagos'}</div>
-                  <div class="cofin-card-sub">${subtitle}</div>
-                  ${opt.saved > 0 ? `<div class="cofin-card-saved">Ahorras ${formatMxn(opt.saved)}</div>` : ''}
-                </button>
-              `;
-            }).join('')}
-          </div>
-          ${cofinTier.coInvestment ? `
-          <div class="cofin-coinv">
-            <strong>★ Bonus Scale:</strong> tu proyecto +$100k entra al programa de co-inversión equity opcional · iBisne pone hasta 20% del cash a cambio de 5-10% equity. Validación de fit en discovery.
-          </div>` : ''}
-        </section>
-        ` : ''}
 
         ${true ? `
         <!-- ─── 3º HIGHLIGHTS · qué incluye siempre iBisne ───────────────────── -->
@@ -1181,18 +1103,9 @@ Quiero hablar para precisar el alcance.`;
               </div>
             </div>
 
-            <!-- v4.0 · 3 CTAs equivalentes · ninguno obligatorio "hunter" -->
-            <!-- Si State.seekInvestor=true · "Buscar inversor" pasa a primary -->
+            <!-- v5.0 · Cotizador puro · 2 CTAs simples + hunter sutil al final -->
             <div class="result-cta result-cta-stack result-cta-v4">
-              ${State.seekInvestor ? `
-                <button class="btn btn-primary" type="button" data-cta="find-investor">★ ${L("Buscar un inversionista")} →</button>
-                <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-line" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
-                <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
-              ` : `
-                <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
-                <button class="btn btn-line" type="button" data-cta="monthly-plan">${L("Plan mensual")} · co-financiamos</button>
-                <button class="btn btn-line" type="button" data-cta="find-investor">${L("Buscar un inversionista")}</button>
-              `}
+              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
               <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
             </div>
             <!-- Hunter sutil al final · NO obligatorio -->
@@ -1372,249 +1285,9 @@ Quiero arrancar la membresía y el discovery.`;
       });
     });
 
-    // ─── v4.0 · Wire de los 3 CTAs equivalentes ────────────────────────
-    // CTA "Plan mensual" → modal con las 4 opciones de duración
-    $$('[data-cta="monthly-plan"]').forEach(btn => {
-      btn.addEventListener('click', () => openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText));
-    });
-    // CTA "Buscar inversor" → modal con form rápido
-    $$('[data-cta="find-investor"]').forEach(btn => {
-      btn.addEventListener('click', () => openFindInvestorModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel));
-    });
-    // CTA "Pagar ahora" ya funciona vía href PayPal · no necesita wire JS
-
-    // Cards individuales del cofin-block · click directo en una opción
-    $$('[data-cofin-months]').forEach(card => {
-      card.addEventListener('click', () => {
-        const months = parseInt(card.dataset.cofinMonths, 10);
-        const totalConIvaLocal = calc.total * 1.16;
-        if (months === 1) {
-          // Pago directo · ir a PayPal
-          window.open('https://paypal.me/iBisne', '_blank', 'noopener');
-        } else {
-          openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText, months);
-        }
-      });
-    });
+    // v5.0 · Cotizador puro · sin modales · pay-now usa href PayPal directo
 
     showAsideB();
-  }
-
-  // ─── v4.0 · Modal "Plan mensual" · 4 opciones de duración ──────────
-  function openMonthlyPlanModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel, lineItemsText, preselectMonths){
-    const totalConIva = calc.total * 1.16;
-    const options = window.IBISNE_PRICING?.getCofinancingOptions
-      ? window.IBISNE_PRICING.getCofinancingOptions(totalConIva)
-      : [];
-    const tier = window.IBISNE_PRICING?.getCofinancingTier
-      ? window.IBISNE_PRICING.getCofinancingTier(totalConIva)
-      : null;
-    const preselected = preselectMonths || 12;
-
-    let modal = document.getElementById('v4-monthly-modal');
-    if (modal) modal.remove();
-    modal = document.createElement('div');
-    modal.id = 'v4-monthly-modal';
-    modal.className = 'v4-modal-overlay';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.innerHTML = `
-      <div class="v4-modal" tabindex="-1">
-        <div class="v4-modal-head">
-          <div>
-            <div class="v4-modal-eyebrow">§ PLAN MENSUAL · ${tier ? tier.label.toUpperCase() : ''}</div>
-            <h3 class="v4-modal-title">Elige cuánto te comprometes</h3>
-            <p class="v4-modal-sub">Cuanto más tiempo, más co-financia iBisne. Tú pagas en mensualidades iguales · sin intereses.</p>
-          </div>
-          <button class="v4-modal-close" type="button" aria-label="Cerrar">×</button>
-        </div>
-        <div class="v4-modal-body">
-          <div class="v4-opts">
-            ${options.map(opt => {
-              const isPreselected = opt.months === preselected;
-              const monthsLabel = opt.months === 1 ? 'Pago directo' :
-                opt.months === 3 ? '3 meses' :
-                opt.months === 6 ? '6 meses' : '12 meses · anual';
-              const priceLabel = opt.months === 1
-                ? formatMxn(opt.finalPrice)
-                : formatMxn(opt.monthlyPayment) + '<small>/mes</small>';
-              return `
-                <button class="v4-opt${isPreselected ? ' is-selected' : ''}${opt.months === 12 ? ' is-best' : ''}" type="button" data-pick-months="${opt.months}">
-                  ${opt.months === 12 ? '<span class="v4-opt-badge">MEJOR PRECIO</span>' : ''}
-                  <div class="v4-opt-head">
-                    <span class="v4-opt-months">${monthsLabel}</span>
-                    ${opt.discount > 0 ? `<span class="v4-opt-disc">−${opt.discount}%</span>` : ''}
-                  </div>
-                  <div class="v4-opt-price">${priceLabel}</div>
-                  <div class="v4-opt-total">${opt.months === 1 ? 'Total único' : 'Total ' + formatMxn(opt.finalPrice)}</div>
-                  ${opt.saved > 0 ? `<div class="v4-opt-saved">Ahorras ${formatMxn(opt.saved)}</div>` : ''}
-                </button>
-              `;
-            }).join('')}
-          </div>
-        </div>
-        <div class="v4-modal-foot">
-          <button class="btn btn-line" type="button" data-v4-close>Cancelar</button>
-          <div class="v4-foot-spacer"></div>
-          <button class="btn btn-primary" type="button" id="v4-confirm-plan">Activar este plan →</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-
-    let selectedMonths = preselected;
-
-    // Bind selección de opción
-    modal.querySelectorAll('[data-pick-months]').forEach(b => {
-      b.addEventListener('click', () => {
-        modal.querySelectorAll('.v4-opt').forEach(o => o.classList.remove('is-selected'));
-        b.classList.add('is-selected');
-        selectedMonths = parseInt(b.dataset.pickMonths, 10);
-      });
-    });
-
-    // Cierre
-    function close(){
-      modal.remove();
-      document.body.style.overflow = '';
-    }
-    modal.querySelector('.v4-modal-close').addEventListener('click', close);
-    modal.querySelectorAll('[data-v4-close]').forEach(b => b.addEventListener('click', close));
-    modal.addEventListener('click', e => { if (e.target === modal) close(); });
-    modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-
-    // Confirmar plan · arma mensaje WhatsApp + abre
-    $('#v4-confirm-plan').addEventListener('click', () => {
-      const opt = options.find(o => o.months === selectedMonths);
-      if (!opt) return;
-      const planMsg = `Hola, quiero activar PLAN MENSUAL iBisne · folio #${folio}.
-
-` + (opt.months === 1
-        ? `Pago directo · ${formatMxn(opt.finalPrice)} MXN total`
-        : `Compromiso: ${opt.months} meses
-iBisne co-financia: ${opt.discount}%
-Pago mensual: ${formatMxn(opt.monthlyPayment)} MXN
-Total al cierre: ${formatMxn(opt.finalPrice)} MXN
-Ahorro: ${formatMxn(opt.saved)} MXN`) + `
-
-Proyecto: ${verticalLabel} · ${subtipoLabel}
-${lineItemsText}
-
-Quiero arrancar el plan.`;
-      const url = `https://wa.me/523329575274?text=${encodeURIComponent(planMsg)}`;
-      persistLead({
-        route: 'monthly-plan-activated',
-        folio, vertical: vertical?.id, subtipo: subtipo?.id,
-        months: opt.months, discount: opt.discount, finalPrice: opt.finalPrice,
-        monthlyPayment: opt.monthlyPayment, total_mxn: calc.total,
-      });
-      window.open(url, '_blank', 'noopener');
-      close();
-    });
-
-    // Focus inicial
-    setTimeout(() => modal.querySelector('.v4-modal').focus(), 50);
-  }
-
-  // ─── v4.0 · Modal "Buscar inversor" · publicar en marketplace ──────
-  function openFindInvestorModal(calc, folio, vertical, subtipo, verticalLabel, subtipoLabel){
-    const totalConIva = calc.total * 1.16;
-
-    let modal = document.getElementById('v4-investor-modal');
-    if (modal) modal.remove();
-    modal = document.createElement('div');
-    modal.id = 'v4-investor-modal';
-    modal.className = 'v4-modal-overlay';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.innerHTML = `
-      <div class="v4-modal" tabindex="-1">
-        <div class="v4-modal-head">
-          <div>
-            <div class="v4-modal-eyebrow">§ MARKETPLACE · BUSCAR INVERSOR</div>
-            <h3 class="v4-modal-title">Publica tu proyecto en el marketplace</h3>
-            <p class="v4-modal-sub">Tu proyecto entra a curaduría por hunters · si pasa, lo mostramos a inversores LATAM acreditados. Sin costo para ti hasta que cerremos match.</p>
-          </div>
-          <button class="v4-modal-close" type="button" aria-label="Cerrar">×</button>
-        </div>
-        <div class="v4-modal-body">
-          <div class="v4-fld">
-            <label>Resumen del proyecto</label>
-            <textarea id="v4-inv-summary" rows="4" placeholder="Describe en 3-5 líneas qué hace tu proyecto · por qué un inversor debería interesarse">${verticalLabel} · ${subtipoLabel}
-
-Total cotizado: ${formatMxn(totalConIva)} MXN
-Tracción / contexto: </textarea>
-          </div>
-          <div class="v4-fld-row">
-            <div class="v4-fld">
-              <label>Capital que buscas</label>
-              <input id="v4-inv-capital" type="text" placeholder="Ej. $50,000 MXN" value="${formatMxn(totalConIva)}">
-            </div>
-            <div class="v4-fld">
-              <label>Equity ofrecido (opcional)</label>
-              <input id="v4-inv-equity" type="text" placeholder="Ej. 10% por 3 años">
-            </div>
-          </div>
-          <div class="v4-fld">
-            <label>Email de contacto</label>
-            <input id="v4-inv-email" type="email" placeholder="tu@email.com" required>
-          </div>
-          <div class="v4-hint">
-            <strong>iBisne curaduría:</strong> revisamos tu proyecto en 48h. Si pasa, lo publicamos al marketplace de inversores. Si encuentra match, iBisne cobra <strong>placement fee 15-25%</strong> al inversor (no a ti).
-          </div>
-        </div>
-        <div class="v4-modal-foot">
-          <button class="btn btn-line" type="button" data-v4-close>Cancelar</button>
-          <div class="v4-foot-spacer"></div>
-          <button class="btn btn-primary" type="button" id="v4-confirm-investor">Publicar para curaduría →</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-
-    function close(){
-      modal.remove();
-      document.body.style.overflow = '';
-    }
-    modal.querySelector('.v4-modal-close').addEventListener('click', close);
-    modal.querySelectorAll('[data-v4-close]').forEach(b => b.addEventListener('click', close));
-    modal.addEventListener('click', e => { if (e.target === modal) close(); });
-    modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-
-    $('#v4-confirm-investor').addEventListener('click', () => {
-      const summary = $('#v4-inv-summary').value.trim();
-      const capital = $('#v4-inv-capital').value.trim();
-      const equity = $('#v4-inv-equity').value.trim();
-      const email = $('#v4-inv-email').value.trim();
-      if (!email || !email.includes('@')) {
-        alert('Por favor agrega un email válido para que te avisemos cuando tu proyecto pase a curaduría.');
-        return;
-      }
-      persistLead({
-        route: 'marketplace-request',
-        seekInvestor: true,
-        folio, vertical: vertical?.id, subtipo: subtipo?.id,
-        total_mxn: calc.total,
-        summary, capital, equity, email,
-      });
-      // Reemplaza body con confirmación
-      modal.querySelector('.v4-modal-body').innerHTML = `
-        <div class="v4-confirm">
-          <div class="v4-confirm-icon">✓</div>
-          <h3>Tu proyecto entra a curaduría</h3>
-          <p>Te avisamos en <strong>48h</strong> si pasa al marketplace de inversores. Revisa tu correo (incluyendo SPAM) · responde a las preguntas del hunter para acelerar.</p>
-        </div>
-      `;
-      modal.querySelector('.v4-modal-foot').innerHTML = `
-        <div class="v4-foot-spacer"></div>
-        <button class="btn btn-primary" type="button" data-v4-close>Listo</button>
-      `;
-      modal.querySelector('[data-v4-close]').addEventListener('click', close);
-    });
-
-    setTimeout(() => modal.querySelector('#v4-inv-summary')?.focus(), 80);
   }
 
   // ─── Modal de edición de cotización ──────────────────────────────────
@@ -2681,86 +2354,12 @@ Tracción / contexto: </textarea>
       setTimeout(() => { window.dispatchEvent(new Event('ibisne:rerender')); }, 0);
     } catch(e){}
   });
-
-  // ═════════════════════════════════════════════════════════════════════
-  // v4.0 · 3 PUERTAS · pantalla inicial de filtro por tipo de usuario
-  // ═════════════════════════════════════════════════════════════════════
-  function renderPuertas(){
-    const main = $('#main');
-    if (!main) return;
-    const title    = L('¿Cómo te podemos ayudar?');
-    const subtitle = L('Elige dónde encajas · adaptamos el resto.');
-
-    main.innerHTML = `
-      <section class="puertas-shell">
-        <div class="puertas-hero">
-          <div class="quiz-eyebrow">§ ${L('Servicio')}</div>
-          <h1 class="puertas-title">${title}</h1>
-          <p class="puertas-sub">${subtitle}</p>
-        </div>
-
-        <div class="puertas-grid">
-          <a class="puertas-card" href="#/servicio/1" data-door="builder">
-            <div class="puertas-card-icon" data-icon="sitio"></div>
-            <div class="puertas-card-text">
-              <div class="puertas-card-label">${L('Soy emprendedor')}</div>
-              <div class="puertas-card-sub">${L('Necesito tecnología para mi proyecto')}</div>
-            </div>
-            <div class="puertas-card-arrow">→</div>
-          </a>
-
-          <a class="puertas-card" href="#/inversor/1" data-door="investor">
-            <div class="puertas-card-icon" data-icon="partnership"></div>
-            <div class="puertas-card-text">
-              <div class="puertas-card-label">${L('Soy inversionista')}</div>
-              <div class="puertas-card-sub">${L('Busco proyectos LATAM que apoyar')}</div>
-            </div>
-            <div class="puertas-card-arrow">→</div>
-          </a>
-
-          <a class="puertas-card" href="#/servicio/1?seek=1" data-door="seeker">
-            <div class="puertas-card-icon" data-icon="leads"></div>
-            <div class="puertas-card-text">
-              <div class="puertas-card-label">${L('Busco un inversionista')}</div>
-              <div class="puertas-card-sub">${L('Tengo idea y necesito quien la respalde')}</div>
-            </div>
-            <div class="puertas-card-arrow">→</div>
-          </a>
-        </div>
-
-        <p class="puertas-foot">
-          <span class="muted">${L('Tu información queda guardada · puedes cambiar de puerta cuando quieras.')}</span>
-        </p>
-      </section>
-    `;
-
-    // Hidratar iconos
-    if (window.IBISNE_ICONS) {
-      main.querySelectorAll('[data-icon]').forEach(el => {
-        const id = el.dataset.icon;
-        el.innerHTML = window.IBISNE_ICONS.get(id, 'fill');
-      });
-    }
-
-    // Bind clicks · marca el path elegido para que el quiz se adapte
-    main.querySelectorAll('.puertas-card').forEach(c => {
-      c.addEventListener('click', (e) => {
-        const door = c.dataset.door;
-        State.userPath = door;
-        // Si elige "seeker" (busca inversor), prende flag para publicar en marketplace
-        if (door === 'seeker') {
-          State.seekInvestor = true;
-        }
-        // navegación natural via href
-      });
-    });
-  }
-
   // ─── INIT ────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
-    // v4.0 · Default: entrar a las 3 puertas (filtro por tipo de usuario)
-    if (!location.hash || location.hash === '#/' || location.hash === '#') {
-      location.hash = '#/puertas';
+    // v5.0 · Cotizador puro · entrar directo al quiz (sin 3 puertas)
+    if (!location.hash || location.hash === '#/' || location.hash === '#'
+        || location.hash === '#/puertas') {
+      location.hash = '#/servicio/1';
     }
     render();
   });

@@ -420,113 +420,19 @@
   <button class="menu-cta menu-cta-install" id="hud-install-m" type="button" data-style="cta" data-icon="plus" hidden>Instalar app</button>
 </nav>
 
+<!-- v5.0 · Hero clásico centrado · cotizador puro -->
 <main>
-  <!-- HERO · pregunta original (testeada) + CTA al quiz -->
-  <section class="question-block">
-    <div class="question-eyebrow">§ HOLDING LATAM · <span class="accent">capital + ejecución</span></div>
+  <div class="question-block">
     <h2 class="question">
       <span data-i18n="hero.question.tired">¿Estás cansado de las</span><br>
       <span class="highlight" data-i18n="hero.question.agencies">agencias patito</span>
       <span data-i18n="hero.question.suffix"> de LATAM?</span>
     </h2>
-    <p class="question-sub">Construimos tu tecnología. Te conseguimos quien la financie. El primer marketplace de proyectos tech B2B en LATAM.</p>
     <div class="hero-cta-row">
-      <a href="quiz.html#/puertas" class="cta-big primary">Empieza aquí →</a>
-      <a href="#marketplace" class="cta-big line">Ver marketplace</a>
+      <a href="quiz.html#/servicio/1" class="cta-big primary" data-i18n="hero.cta.yes">Sí — cuéntame</a>
+      <a href="no.html" class="cta-big line" data-i18n="hero.cta.no">No, ya tengo una</a>
     </div>
-  </section>
-
-  <!-- ─── SECCIÓN · 3 PUERTAS ──────────────────────────────────────────── -->
-  <section class="home-doors" id="puertas">
-    <div class="h-eyebrow">§ 01.PUERTAS — Elige por dónde entras</div>
-    <h2>¿Cómo te podemos<br><span class="accent">ayudar?</span></h2>
-    <p>Tres puertas distintas según quién eres. La que elijas adapta el resto de la experiencia.</p>
-
-    <div class="home-doors-grid">
-      <a class="door-tile" href="quiz.html#/servicio/1" data-door="builder">
-        <div class="door-tile-icon" data-icon="sitio"></div>
-        <div class="door-tile-label">Soy emprendedor</div>
-        <div class="door-tile-sub">Necesito tecnología para mi proyecto · cotiza en 3 min y elige cómo pagar (directo o plan mensual con co-financiamiento iBisne).</div>
-        <div class="door-tile-arrow">COTIZAR →</div>
-      </a>
-
-      <a class="door-tile" href="inversionistas.html" data-door="investor">
-        <div class="door-tile-icon" data-icon="partnership"></div>
-        <div class="door-tile-label">Soy inversionista</div>
-        <div class="door-tile-sub">Busco proyectos LATAM curados que valen la pena respaldar. Acceso a marketplace privado con leads filtrados por hunters.</div>
-        <div class="door-tile-arrow">CONOCER →</div>
-      </a>
-
-      <a class="door-tile" href="quiz.html#/servicio/1?seek=1" data-door="seeker">
-        <div class="door-tile-icon" data-icon="leads"></div>
-        <div class="door-tile-label">Busco un inversionista</div>
-        <div class="door-tile-sub">Tengo idea y necesito quien la respalde. Publicamos tu proyecto al marketplace tras curaduría de un hunter (48h).</div>
-        <div class="door-tile-arrow">PUBLICAR →</div>
-      </a>
-    </div>
-  </section>
-
-  <!-- ─── SECCIÓN · MARKETPLACE TEASER ─────────────────────────────────── -->
-  <section class="home-mp" id="marketplace">
-    <div class="home-mp-head">
-      <div class="h-eyebrow">§ 02.MARKETPLACE — Proyectos curados</div>
-      <h2>Los proyectos LATAM<br>que valen la pena. <span class="accent">Curados por iBisne.</span></h2>
-      <div class="stats">
-        <div class="stat"><span class="n">$ 2.4M MXN</span>invertido a través del marketplace</div>
-        <div class="stat"><span class="n">12 proyectos</span>activos buscando capital</div>
-        <div class="stat"><span class="n">28 inversores</span>privados acreditados</div>
-      </div>
-    </div>
-
-    <div class="home-mp-grid">
-      <article class="mp-card">
-        <div class="mp-card-tag">ECOMMERCE · CDMX</div>
-        <div class="mp-card-name">Verde Mercado</div>
-        <div class="mp-card-meta">Catálogo Shopify · $92k buscando</div>
-        <div class="mp-card-progress"><span style="width:64%;"></span></div>
-        <div class="mp-card-funded">64% financiado</div>
-      </article>
-      <article class="mp-card">
-        <div class="mp-card-tag">APP · GDL</div>
-        <div class="mp-card-name">Caleta Studio</div>
-        <div class="mp-card-meta">App iOS nativa · $285k buscando</div>
-        <div class="mp-card-progress"><span style="width:42%;"></span></div>
-        <div class="mp-card-funded">42% financiado</div>
-      </article>
-      <article class="mp-card">
-        <div class="mp-card-tag">SAAS · MTY</div>
-        <div class="mp-card-name">DataLatam</div>
-        <div class="mp-card-meta">Plataforma B2B · $420k buscando</div>
-        <div class="mp-card-progress"><span style="width:18%;"></span></div>
-        <div class="mp-card-funded">18% financiado</div>
-      </article>
-      <article class="mp-card">
-        <div class="mp-card-tag">WEB3 · MX</div>
-        <div class="mp-card-name">Cripto Latam</div>
-        <div class="mp-card-meta">DApp + frontend Web3 · $610k</div>
-        <div class="mp-card-progress"><span style="width:8%;"></span></div>
-        <div class="mp-card-funded">8% financiado</div>
-      </article>
-    </div>
-
-    <div class="home-mp-foot">
-      <a href="marketplace.html" class="cta-big primary">Ver todos los proyectos →</a>
-      <a href="quiz.html#/servicio/1?seek=1" class="cta-big line">Publicar mi proyecto</a>
-    </div>
-  </section>
-
-  <!-- ─── SECCIÓN · INVERSIONISTA BANNER ──────────────────────────────── -->
-  <section class="home-inv">
-    <div>
-      <div class="home-inv-eyebrow">§ 03.PARA INVERSIONISTAS — Capital LATAM acreditado</div>
-      <h3>¿Eres inversionista o angel?</h3>
-      <p>Accede al portal privado con leads curados mensuales. Sin spam · solo proyectos que pasaron curaduría de nuestros hunters. iBisne cobra placement fee 15-25% al cerrar match · cero costo para ti hasta que decidas invertir.</p>
-    </div>
-    <div class="home-inv-cta">
-      <a href="inversionistas.html" class="cta-big primary">Registrarme →</a>
-      <a href="marketplace.html" class="cta-big line">Ver demo</a>
-    </div>
-  </section>
+  </div>
 </main>
 
 <!-- Footer legales -->

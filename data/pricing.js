@@ -41,48 +41,48 @@ window.IBISNE_PRICING = {
   subtipos: {
 
     web: [
-      { id: 'biolink', label: 'Bio-link',        base: 4500,  icon: 'biolink', category: 'Presencia social',
+      { id: 'biolink', label: 'Bio-link',        base: 6000,  icon: 'biolink', category: 'Presencia social',
         subtitle: 'Una página con todos tus enlaces', branch: 'web-simple' },
-      { id: 'landing', label: 'Landing page',    base: 18000, icon: 'landing', category: 'Generación de leads',
+      { id: 'landing', label: 'Landing page',    base: 23500, icon: 'landing', category: 'Generación de leads',
         subtitle: 'Captura leads o lanza un producto', branch: 'web-standard' },
-      { id: 'leads',   label: 'Quiz de leads',   base: 28000, icon: 'leads',   category: 'Calificación previa',
+      { id: 'leads',   label: 'Quiz de leads',   base: 36500, icon: 'leads',   category: 'Calificación previa',
         subtitle: 'Quiz que califica antes de cerrar venta', branch: 'web-standard' },
-      { id: 'sitio',   label: 'Sitio completo',  base: 55000, icon: 'sitio',   category: 'Construcción de marca',
+      { id: 'sitio',   label: 'Sitio completo',  base: 71500, icon: 'sitio',   category: 'Construcción de marca',
         subtitle: 'Hub de marca multi-página', branch: 'web-full' },
     ],
 
     ecommerce: [
-      { id: 'single',      label: '1 solo producto',     base: 22000, icon: 'biolink',     category: 'Venta enfocada',       branch: 'eco-simple',
+      { id: 'single',      label: '1 solo producto',     base: 28500, icon: 'biolink',     category: 'Venta enfocada',       branch: 'eco-simple',
         subtitle: 'Foco total en convertir visita en venta' },
-      { id: 'shopify',     label: 'Catálogo Shopify',    base: 75000, icon: 'ecommerce',   category: 'Catálogo gestionado',  branch: 'eco-shopify',
+      { id: 'shopify',     label: 'Catálogo Shopify',    base: 97500, icon: 'ecommerce',   category: 'Catálogo gestionado',  branch: 'eco-shopify',
         subtitle: 'Tema custom sobre Shopify' },
-      { id: 'headless',    label: 'Tienda headless',     base: 180000, icon: 'saas',       category: 'Performance alto',     branch: 'eco-headless',
+      { id: 'headless',    label: 'Tienda headless',     base: 234000, icon: 'saas',       category: 'Performance alto',     branch: 'eco-headless',
         subtitle: 'Frontend separado · velocidad y SEO máximos' },
-      { id: 'marketplace', label: 'Marketplace',         base: 320000, icon: 'marketplace', category: 'Plataforma multi-vendor', branch: 'eco-marketplace',
+      { id: 'marketplace', label: 'Marketplace',         base: 416000, icon: 'marketplace', category: 'Plataforma multi-vendor', branch: 'eco-marketplace',
         subtitle: 'Varios vendedores · tú cobras comisión' },
     ],
 
     app: [
-      { id: 'ios',     label: 'App iOS',         base: 180000, icon: 'ios',     category: 'Nativa · solo iPhone',         branch: 'app-native',
+      { id: 'ios',     label: 'App iOS',         base: 234000, icon: 'ios',     category: 'Nativa · solo iPhone',         branch: 'app-native',
         subtitle: 'Construida en Swift · máximo rendimiento' },
-      { id: 'android', label: 'App Android',     base: 180000, icon: 'android', category: 'Nativa · solo Google Play',    branch: 'app-native',
+      { id: 'android', label: 'App Android',     base: 234000, icon: 'android', category: 'Nativa · solo Google Play',    branch: 'app-native',
         subtitle: 'Construida en Kotlin · máximo rendimiento' },
-      { id: 'hibrida', label: 'App híbrida',     base: 220000, icon: 'hybrid',  category: 'iOS + Android con una base',   branch: 'app-hybrid',
+      { id: 'hibrida', label: 'App híbrida',     base: 286000, icon: 'hybrid',  category: 'iOS + Android con una base',   branch: 'app-hybrid',
         subtitle: 'React Native o Flutter · más eficiente' },
-      { id: 'nocode',  label: 'App no-code',     base: 35000,  icon: 'nocode',  category: 'MVP rápido',                    branch: 'app-nocode',
+      { id: 'nocode',  label: 'App no-code',     base: 45500,  icon: 'nocode',  category: 'MVP rápido',                    branch: 'app-nocode',
         subtitle: 'Prototipo visual · lanzas rápido, escalas después' },
     ],
 
     avanzado: [
       // v4.0 · Quitamos el gate "hablar con hunter" · todos cotizan
       // Base prices orientativos · el discovery refina el alcance exacto
-      { id: 'ia',    label: 'Asistente IA',      base: 80000,  icon: 'chatbot', category: 'Chatbot, copiloto o agente', branch: 'avanzado-ia',
+      { id: 'ia',    label: 'Asistente IA',      base: 104000,  icon: 'chatbot', category: 'Chatbot, copiloto o agente', branch: 'avanzado-ia',
         subtitle: 'Modelos LLM + lógica custom' },
-      { id: 'web3',  label: 'Web3',              base: 180000, icon: 'saas',    category: 'Blockchain · dApp · contracts', branch: 'avanzado-web3',
+      { id: 'web3',  label: 'Web3',              base: 234000, icon: 'saas',    category: 'Blockchain · dApp · contracts', branch: 'avanzado-web3',
         subtitle: 'Smart contracts + frontend Web3' },
-      { id: 'saas',  label: 'Plataforma SaaS',   base: 200000, icon: 'saas',    category: 'Producto con suscripción mensual', branch: 'avanzado-saas',
+      { id: 'saas',  label: 'Plataforma SaaS',   base: 260000, icon: 'saas',    category: 'Producto con suscripción mensual', branch: 'avanzado-saas',
         subtitle: 'Producto recurrente con backend custom' },
-      { id: 'otro',  label: 'Algo más',          base: 60000,  icon: 'otro',    category: 'Custom',                        branch: 'avanzado-custom',
+      { id: 'otro',  label: 'Algo más',          base: 78000,  icon: 'otro',    category: 'Custom',                        branch: 'avanzado-custom',
         subtitle: 'Cuéntanos qué tienes en mente' },
     ],
   },
@@ -103,31 +103,31 @@ window.IBISNE_PRICING = {
         id: 'catalogo', label: '¿Cuántos productos manejas?',
         opciones: [
           { id: '<50',    label: 'Menos de 50',     add: 0,    icon: 'biolink' },
-          { id: '50-500', label: 'Entre 50 y 500',  add: 5000, icon: 'ecommerce' },
-          { id: '500+',   label: 'Más de 500',      add: 15000, icon: 'marketplace' },
+          { id: '50-500', label: 'Entre 50 y 500',  add: 6500, icon: 'ecommerce' },
+          { id: '500+',   label: 'Más de 500',      add: 19500, icon: 'marketplace' },
         ],
       },
       {
         id: 'pasarelas', label: '¿Cómo van a pagarte?', multi: true,
         help: 'Selecciona todas las que apliquen. Cada una se cobra como módulo de integración.',
         opciones: [
-          { id: 'stripe',       label: 'Stripe',                add: 6000, icon: 'fintech', intent: 'marketing',
+          { id: 'stripe',       label: 'Stripe',                add: 8000, icon: 'fintech', intent: 'marketing',
             subtitle: 'Tarjetas internacional' },
-          { id: 'mercadopago',  label: 'Mercado Pago',           add: 6000, icon: 'wallet', intent: 'engagement',
+          { id: 'mercadopago',  label: 'Mercado Pago',           add: 8000, icon: 'wallet', intent: 'engagement',
             subtitle: 'La pasarela mexicana #1' },
-          { id: 'mercadolibre', label: 'Mercado Libre',          add: 9000, icon: 'marketplace', intent: 'marketing',
+          { id: 'mercadolibre', label: 'Mercado Libre',          add: 11500, icon: 'marketplace', intent: 'marketing',
             subtitle: 'Sincronización con tu cuenta ML' },
-          { id: 'oxxo-spei',    label: 'OXXO / SPEI',            add: 7000, icon: 'cash', intent: 'engagement',
+          { id: 'oxxo-spei',    label: 'OXXO / SPEI',            add: 9000, icon: 'cash', intent: 'engagement',
             subtitle: 'Efectivo + transferencia bancaria' },
-          { id: 'paypal',       label: 'PayPal',                 add: 5000, icon: 'wallet',
+          { id: 'paypal',       label: 'PayPal',                 add: 6500, icon: 'wallet',
             subtitle: 'Pagos internacionales' },
-          { id: 'apple-google', label: 'Apple Pay · Google Pay', add: 6000, icon: 'phonepay',
+          { id: 'apple-google', label: 'Apple Pay · Google Pay', add: 8000, icon: 'phonepay',
             subtitle: 'Tap-to-pay desde teléfono' },
-          { id: 'pos-retail',   label: 'POS retail físico',      add: 14000, icon: 'shield', intent: 'engagement',
+          { id: 'pos-retail',   label: 'POS retail físico',      add: 18000, icon: 'shield', intent: 'engagement',
             subtitle: 'Shopify POS · cobro en tienda física' },
-          { id: 'cripto',       label: 'Criptomonedas',          add: 18000, icon: 'coin', intent: 'lanzamiento',
+          { id: 'cripto',       label: 'Criptomonedas',          add: 23500, icon: 'coin', intent: 'lanzamiento',
             subtitle: 'USDC, BTC · cobro on-chain' },
-          { id: 'contra-entrega', label: 'Pago contra entrega',  add: 6500, icon: 'ecommerce', intent: 'engagement',
+          { id: 'contra-entrega', label: 'Pago contra entrega',  add: 8500, icon: 'ecommerce', intent: 'engagement',
             subtitle: 'Cobro al momento de recibir' },
         ],
       },
@@ -137,32 +137,32 @@ window.IBISNE_PRICING = {
         id: 'catalogo', label: '¿Cuántos productos manejas?',
         opciones: [
           { id: '<500',  label: 'Menos de 500',     add: 0,    icon: 'biolink' },
-          { id: '500-5k',label: '500 a 5,000',      add: 12000, icon: 'ecommerce' },
-          { id: '5k+',   label: 'Más de 5,000',     add: 25000, icon: 'marketplace' },
+          { id: '500-5k',label: '500 a 5,000',      add: 15500, icon: 'ecommerce' },
+          { id: '5k+',   label: 'Más de 5,000',     add: 32500, icon: 'marketplace' },
         ],
       },
       {
         id: 'pasarelas', label: '¿Cómo van a pagarte?', multi: true,
         help: 'Selecciona todas las que apliquen.',
         opciones: [
-          { id: 'stripe',       label: 'Stripe',                add: 9000,  icon: 'fintech', intent: 'marketing', subtitle: 'Integración custom con webhooks · headless' },
-          { id: 'mercadopago',  label: 'Mercado Pago',           add: 9000,  icon: 'wallet', intent: 'engagement', subtitle: 'Pasarela mexicana #1' },
-          { id: 'mercadolibre', label: 'Mercado Libre',          add: 14000, icon: 'marketplace', intent: 'marketing', subtitle: 'Sincronización + listings' },
-          { id: 'oxxo-spei',    label: 'OXXO / SPEI',            add: 9000,  icon: 'cash', intent: 'engagement', subtitle: 'Efectivo + transferencia' },
-          { id: 'paypal',       label: 'PayPal',                 add: 7000,  icon: 'wallet', subtitle: 'Pagos internacionales' },
-          { id: 'apple-google', label: 'Apple Pay · Google Pay', add: 9000,  icon: 'phonepay', subtitle: 'Tap-to-pay desde teléfono' },
-          { id: 'pos-retail',   label: 'POS retail físico',      add: 18000, icon: 'shield', intent: 'engagement', subtitle: 'Cobro en tienda · integrado al inventario' },
-          { id: 'cripto',       label: 'Criptomonedas',          add: 22000, icon: 'coin', intent: 'lanzamiento', subtitle: 'USDC, BTC · cobro on-chain' },
-          { id: 'contra-entrega', label: 'Pago contra entrega',  add: 9000,  icon: 'ecommerce', intent: 'engagement', subtitle: 'Cobro al recibir' },
+          { id: 'stripe',       label: 'Stripe',                add: 11500,  icon: 'fintech', intent: 'marketing', subtitle: 'Integración custom con webhooks · headless' },
+          { id: 'mercadopago',  label: 'Mercado Pago',           add: 11500,  icon: 'wallet', intent: 'engagement', subtitle: 'Pasarela mexicana #1' },
+          { id: 'mercadolibre', label: 'Mercado Libre',          add: 18000, icon: 'marketplace', intent: 'marketing', subtitle: 'Sincronización + listings' },
+          { id: 'oxxo-spei',    label: 'OXXO / SPEI',            add: 11500,  icon: 'cash', intent: 'engagement', subtitle: 'Efectivo + transferencia' },
+          { id: 'paypal',       label: 'PayPal',                 add: 9000,  icon: 'wallet', subtitle: 'Pagos internacionales' },
+          { id: 'apple-google', label: 'Apple Pay · Google Pay', add: 11500,  icon: 'phonepay', subtitle: 'Tap-to-pay desde teléfono' },
+          { id: 'pos-retail',   label: 'POS retail físico',      add: 23500, icon: 'shield', intent: 'engagement', subtitle: 'Cobro en tienda · integrado al inventario' },
+          { id: 'cripto',       label: 'Criptomonedas',          add: 28500, icon: 'coin', intent: 'lanzamiento', subtitle: 'USDC, BTC · cobro on-chain' },
+          { id: 'contra-entrega', label: 'Pago contra entrega',  add: 11500,  icon: 'ecommerce', intent: 'engagement', subtitle: 'Cobro al recibir' },
         ],
       },
       {
         id: 'integraciones', label: '¿Con qué sistemas se va a conectar?', multi: true,
         opciones: [
-          { id: 'erp',  label: 'ERP (SAP / Odoo)',     add: 15000, icon: 'serverapp' },
-          { id: 'crm',  label: 'CRM (HubSpot)',        add: 8000,  icon: 'partnership' },
-          { id: '3pl',  label: 'Fulfillment 3PL',      add: 10000, icon: 'marketplace' },
-          { id: 'mkt',  label: 'Email mkt (Klaviyo)',  add: 3000,  icon: 'leads' },
+          { id: 'erp',  label: 'ERP (SAP / Odoo)',     add: 19500, icon: 'serverapp' },
+          { id: 'crm',  label: 'CRM (HubSpot)',        add: 10500,  icon: 'partnership' },
+          { id: '3pl',  label: 'Fulfillment 3PL',      add: 13000, icon: 'marketplace' },
+          { id: 'mkt',  label: 'Email mkt (Klaviyo)',  add: 4000,  icon: 'leads' },
         ],
       },
     ],
@@ -171,8 +171,8 @@ window.IBISNE_PRICING = {
         id: 'modelo', label: 'Modelo del marketplace',
         opciones: [
           { id: 'comision',    label: 'Comisión por venta',         add: 0,     icon: 'fintech' },
-          { id: 'suscripcion', label: 'Suscripción de vendedores',  add: 15000, icon: 'login' },
-          { id: 'mixto',       label: 'Mixto',                      add: 25000, icon: 'marketplace' },
+          { id: 'suscripcion', label: 'Suscripción de vendedores',  add: 19500, icon: 'login' },
+          { id: 'mixto',       label: 'Mixto',                      add: 32500, icon: 'marketplace' },
         ],
       },
     ],
@@ -184,11 +184,11 @@ window.IBISNE_PRICING = {
         opciones: [
           { id: 'info',    label: 'Informativa / catálogo', icon: 'info_app', add: 0, intent: 'lanzamiento',
             description: 'App que muestra contenido, productos o información. Sin login.' },
-          { id: 'login',   label: 'Con login y perfil de usuario', icon: 'login', add: 10000, intent: 'engagement',
+          { id: 'login',   label: 'Con login y perfil de usuario', icon: 'login', add: 13000, intent: 'engagement',
             description: 'App con cuentas, perfiles, preferencias guardadas.' },
-          { id: 'backend', label: 'Con backend custom (real-time, marketplace)', icon: 'serverapp', add: 30000, intent: 'engagement',
+          { id: 'backend', label: 'Con backend custom (real-time, marketplace)', icon: 'serverapp', add: 39000, intent: 'engagement',
             description: 'App tipo marketplace, chat, social, real-time.' },
-          { id: 'fintech', label: 'Fintech / wallet / pagos',     icon: 'fintech', add: 50000, intent: 'marketing',
+          { id: 'fintech', label: 'Fintech / wallet / pagos',     icon: 'fintech', add: 65000, intent: 'marketing',
             description: 'Maneja dinero, pagos, billetera. Más seguridad y compliance.' },
         ],
       },
@@ -196,34 +196,34 @@ window.IBISNE_PRICING = {
         id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         help: 'Selecciona todas las que apliquen. Cada una se cobra como módulo.',
         opciones: [
-          { id: 'push',       label: 'Notificaciones push',           add: 4000,  icon: 'info_app',  intent: 'engagement',
+          { id: 'push',       label: 'Notificaciones push',           add: 5000,  icon: 'info_app',  intent: 'engagement',
             description: 'Avisos al usuario aunque la app esté cerrada.' },
-          { id: 'chat',       label: 'Chat / mensajería en tiempo real', add: 18000, icon: 'chatbot', intent: 'engagement',
+          { id: 'chat',       label: 'Chat / mensajería en tiempo real', add: 23500, icon: 'chatbot', intent: 'engagement',
             description: 'Conversación entre usuarios o con soporte.' },
-          { id: 'geo',        label: 'Geolocalización / mapas',       add: 8000,  icon: 'explore',   intent: 'engagement',
+          { id: 'geo',        label: 'Geolocalización / mapas',       add: 10500,  icon: 'explore',   intent: 'engagement',
             description: 'Mapa, búsqueda por ubicación, tracking.' },
-          { id: 'camara',     label: 'Cámara / escaneo / OCR',        add: 10000, icon: 'camera',
+          { id: 'camara',     label: 'Cámara / escaneo / OCR',        add: 13000, icon: 'camera',
             description: 'Toma foto, escanea código QR, lee documentos.' },
-          { id: 'pagos-in',   label: 'Pagos in-app (suscripciones / compras)', add: 12000, icon: 'fintech', intent: 'marketing',
+          { id: 'pagos-in',   label: 'Pagos in-app (suscripciones / compras)', add: 15500, icon: 'fintech', intent: 'marketing',
             description: 'Suscripciones App Store / Google Play o checkout interno.' },
-          { id: 'offline',    label: 'Modo offline / sincronización',  add: 9000,  icon: 'wrench',
+          { id: 'offline',    label: 'Modo offline / sincronización',  add: 11500,  icon: 'wrench',
             description: 'App funciona sin internet, sincroniza al reconectar.' },
-          { id: 'social',     label: 'Login social (Google / Apple / Facebook)', add: 3500, icon: 'login', intent: 'engagement',
+          { id: 'social',     label: 'Login social (Google / Apple / Facebook)', add: 4500, icon: 'login', intent: 'engagement',
             description: 'Acceso rápido sin formulario.' },
-          { id: 'analytics',  label: 'Analytics + dashboards admin',   add: 6000,  icon: 'saas',      intent: 'marketing',
+          { id: 'analytics',  label: 'Analytics + dashboards admin',   add: 8000,  icon: 'saas',      intent: 'marketing',
             description: 'Panel para ver métricas de uso, ventas, retención.' },
-          { id: 'ia',         label: 'IA / recomendaciones',           add: 18000, icon: 'chatbot',   flag: 'ia', intent: 'marketing',
+          { id: 'ia',         label: 'IA / recomendaciones',           add: 23500, icon: 'chatbot',   flag: 'ia', intent: 'marketing',
             description: 'Sugerencias personalizadas, búsqueda semántica.' },
         ],
       },
       {
         id: 'backend', label: '¿Dónde vive la información?',
         opciones: [
-          { id: 'firebase', label: 'Firebase / Supabase',          add: 10000, icon: 'shield',
+          { id: 'firebase', label: 'Firebase / Supabase',          add: 13000, icon: 'shield',
             description: 'Backend como servicio: rápido de montar, plan free hasta cierto uso.' },
-          { id: 'node',     label: 'Custom Node.js / NestJS',      add: 30000, icon: 'serverapp', intent: 'engagement',
+          { id: 'node',     label: 'Custom Node.js / NestJS',      add: 39000, icon: 'serverapp', intent: 'engagement',
             description: 'Servidor propio: más control, más mantenimiento, escalable.' },
-          { id: 'existing', label: 'API existente del cliente',    add: 5000,  icon: 'api',
+          { id: 'existing', label: 'API existente del cliente',    add: 6500,  icon: 'api',
             description: 'Ya tienes el motor, nosotros sólo integramos al frontend.' },
         ],
       },
@@ -234,11 +234,11 @@ window.IBISNE_PRICING = {
         opciones: [
           { id: 'info',    label: 'Informativa / catálogo', icon: 'info_app', add: 0, intent: 'lanzamiento',
             description: 'App que muestra contenido, productos o información. Sin login.' },
-          { id: 'login',   label: 'Con login y perfil de usuario', icon: 'login', add: 10000, intent: 'engagement',
+          { id: 'login',   label: 'Con login y perfil de usuario', icon: 'login', add: 13000, intent: 'engagement',
             description: 'App con cuentas, perfiles, preferencias guardadas.' },
-          { id: 'backend', label: 'Con backend custom (real-time, marketplace)', icon: 'serverapp', add: 30000, intent: 'engagement',
+          { id: 'backend', label: 'Con backend custom (real-time, marketplace)', icon: 'serverapp', add: 39000, intent: 'engagement',
             description: 'App tipo marketplace, chat, social, real-time.' },
-          { id: 'fintech', label: 'Fintech / wallet / pagos',     icon: 'fintech', add: 50000, intent: 'marketing',
+          { id: 'fintech', label: 'Fintech / wallet / pagos',     icon: 'fintech', add: 65000, intent: 'marketing',
             description: 'Maneja dinero, pagos, billetera. Más seguridad y compliance.' },
         ],
       },
@@ -246,25 +246,25 @@ window.IBISNE_PRICING = {
         id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         help: 'Selecciona todas las que apliquen.',
         opciones: [
-          { id: 'push',       label: 'Notificaciones push',           add: 4000,  icon: 'info_app',    intent: 'engagement' },
-          { id: 'chat',       label: 'Chat / mensajería en tiempo real', add: 18000, icon: 'chatbot',  intent: 'engagement' },
-          { id: 'geo',        label: 'Geolocalización / mapas',       add: 8000,  icon: 'explore',     intent: 'engagement' },
-          { id: 'camara',     label: 'Cámara / escaneo / OCR',        add: 10000, icon: 'camera' },
-          { id: 'pagos-in',   label: 'Pagos in-app (suscripciones / compras)', add: 12000, icon: 'fintech', intent: 'marketing' },
-          { id: 'offline',    label: 'Modo offline / sincronización',  add: 9000, icon: 'wrench' },
-          { id: 'social',     label: 'Login social (Google / Apple / Facebook)', add: 3500, icon: 'login', intent: 'engagement' },
-          { id: 'analytics',  label: 'Analytics + dashboards admin',   add: 6000,  icon: 'saas',       intent: 'marketing' },
-          { id: 'ia',         label: 'IA / recomendaciones',           add: 18000, icon: 'chatbot',    flag: 'ia', intent: 'marketing' },
+          { id: 'push',       label: 'Notificaciones push',           add: 5000,  icon: 'info_app',    intent: 'engagement' },
+          { id: 'chat',       label: 'Chat / mensajería en tiempo real', add: 23500, icon: 'chatbot',  intent: 'engagement' },
+          { id: 'geo',        label: 'Geolocalización / mapas',       add: 10500,  icon: 'explore',     intent: 'engagement' },
+          { id: 'camara',     label: 'Cámara / escaneo / OCR',        add: 13000, icon: 'camera' },
+          { id: 'pagos-in',   label: 'Pagos in-app (suscripciones / compras)', add: 15500, icon: 'fintech', intent: 'marketing' },
+          { id: 'offline',    label: 'Modo offline / sincronización',  add: 11500, icon: 'wrench' },
+          { id: 'social',     label: 'Login social (Google / Apple / Facebook)', add: 4500, icon: 'login', intent: 'engagement' },
+          { id: 'analytics',  label: 'Analytics + dashboards admin',   add: 8000,  icon: 'saas',       intent: 'marketing' },
+          { id: 'ia',         label: 'IA / recomendaciones',           add: 23500, icon: 'chatbot',    flag: 'ia', intent: 'marketing' },
         ],
       },
       {
         id: 'backend', label: '¿Dónde vive la información?',
         opciones: [
-          { id: 'firebase', label: 'Firebase / Supabase',          add: 10000, icon: 'shield',
+          { id: 'firebase', label: 'Firebase / Supabase',          add: 13000, icon: 'shield',
             description: 'Backend como servicio: rápido de montar.' },
-          { id: 'node',     label: 'Custom Node.js / NestJS',      add: 30000, icon: 'serverapp', intent: 'engagement',
+          { id: 'node',     label: 'Custom Node.js / NestJS',      add: 39000, icon: 'serverapp', intent: 'engagement',
             description: 'Servidor propio: más control, escalable.' },
-          { id: 'existing', label: 'API existente del cliente',    add: 5000,  icon: 'api',
+          { id: 'existing', label: 'API existente del cliente',    add: 6500,  icon: 'api',
             description: 'Ya tienes el motor, sólo integramos.' },
         ],
       },
@@ -293,11 +293,11 @@ window.IBISNE_PRICING = {
       {
         id: 'funciones', label: '¿Qué necesita hacer?', multi: true,
         opciones: [
-          { id: 'push',       label: 'Notificaciones push',           add: 2500, icon: 'info_app', intent: 'engagement' },
-          { id: 'login',      label: 'Login social',                  add: 2000, icon: 'login',    intent: 'engagement' },
-          { id: 'pagos-in',   label: 'Pagos in-app',                  add: 6000, icon: 'fintech',  intent: 'marketing' },
-          { id: 'geo',        label: 'Geolocalización',               add: 4000, icon: 'explore',  intent: 'engagement' },
-          { id: 'camara',     label: 'Cámara / QR',                   add: 5000, icon: 'camera' },
+          { id: 'push',       label: 'Notificaciones push',           add: 3500, icon: 'info_app', intent: 'engagement' },
+          { id: 'login',      label: 'Login social',                  add: 2500, icon: 'login',    intent: 'engagement' },
+          { id: 'pagos-in',   label: 'Pagos in-app',                  add: 8000, icon: 'fintech',  intent: 'marketing' },
+          { id: 'geo',        label: 'Geolocalización',               add: 5000, icon: 'explore',  intent: 'engagement' },
+          { id: 'camara',     label: 'Cámara / QR',                   add: 6500, icon: 'camera' },
         ],
       },
     ],
@@ -310,9 +310,9 @@ window.IBISNE_PRICING = {
       opciones: [
         { id: 'template', label: 'Desde template',       add: 0,    icon: 'landing',
           subtitle: 'Partimos de una base y la ajustamos a tu marca' },
-        { id: 'custom',   label: 'Personalizada',        add: 40000, icon: 'sitio', intent: 'engagement',
+        { id: 'custom',   label: 'Personalizada',        add: 52000, icon: 'sitio', intent: 'engagement',
           subtitle: 'Diseñada desde cero · estándar' },
-        { id: 'premium',  label: 'Personalizada premium', add: 80000, icon: 'partnership', flag: 'animacion-pro', intent: 'lanzamiento',
+        { id: 'premium',  label: 'Personalizada premium', add: 104000, icon: 'partnership', flag: 'animacion-pro', intent: 'lanzamiento',
           subtitle: 'Con animaciones cinematográficas' },
       ],
     },
@@ -321,9 +321,9 @@ window.IBISNE_PRICING = {
       opciones: [
         { id: 'tengo',       label: 'Identidad lista',     add: 0, icon: 'partnership',
           subtitle: 'Logo, paleta y manual definidos' },
-        { id: 'modernizar',  label: 'Refresh visual',      add: 18000, icon: 'sitio', intent: 'engagement',
+        { id: 'modernizar',  label: 'Refresh visual',      add: 23500, icon: 'sitio', intent: 'engagement',
           subtitle: 'Tengo logo · quiero modernizarlo' },
-        { id: 'desde-cero',  label: 'Desde cero',          add: 60000, icon: 'dtc', intent: 'lanzamiento',
+        { id: 'desde-cero',  label: 'Desde cero',          add: 78000, icon: 'dtc', intent: 'lanzamiento',
           subtitle: 'Construimos toda la identidad' },
       ],
     },
@@ -392,190 +392,6 @@ window.IBISNE_PRICING = {
   // Regla: hosting económico (Hostinger) para sitios estáticos / livianos.
   // Vercel sólo cuando hay SSR/edge real (Next.js dinámico, headless, SaaS).
   // Shopify se hostea solo. Apps no se "deployan" en un host web.
-  // ═══ MEMBRESÍAS · modelo alternativo a pago único ═══════════════════
-  // 4 tiers que escalan con tamaño de proyecto. Cada membresía INCLUYE
-  // 1 proyecto base + soporte/KAM/consultoría/iteraciones del año.
-  // Proyectos adicionales: −50% sobre cotización pública.
-  memberships: [
-    {
-      id: 'foundation',
-      label: 'Foundation',
-      tagline: 'Para arrancar',
-      price: 3000,
-      maxProject: 25000,
-      icon: 'biolink',
-      includes: [
-        '1 proyecto base incluido (hasta $25,000)',
-        'Soporte por email · respuesta en 24h',
-        'Consultoría grupal mensual con un hunter',
-        'Iteraciones ilimitadas del proyecto durante el año',
-        'Proyectos adicionales: −50% sobre cotización pública',
-      ],
-    },
-    {
-      id: 'growth',
-      label: 'Growth',
-      tagline: 'El más elegido',
-      price: 15000,
-      maxProject: 100000,
-      icon: 'partnership',
-      includes: [
-        '1 proyecto base incluido (hasta $100,000)',
-        'KAM compartido · responde en 4 horas',
-        'Soporte por WhatsApp en horario de oficina',
-        'Consultoría 1:1 mensual · 60 min con tu KAM',
-        'Iteraciones ilimitadas del proyecto durante el año',
-        'Proyectos adicionales: −50% sobre cotización pública',
-        'Acceso a comunidad privada de socios iBisne',
-      ],
-    },
-    {
-      id: 'scale',
-      label: 'Scale',
-      tagline: 'Para crecer en serio',
-      price: 60000,
-      maxProject: 250000,
-      icon: 'shield',
-      includes: [
-        '1 proyecto base incluido (hasta $250,000)',
-        'KAM dedicado · responde en 1 hora · Lun-Sáb',
-        'Soporte 24/5 · email + WhatsApp + Slack',
-        'Consultoría 1:1 semanal · 60 min',
-        'Iteraciones premium ilimitadas + tareas express (<48h)',
-        'Proyectos adicionales: −50% sobre cotización pública',
-        'Acceso a verticales iBisne · smart capital · ventures',
-      ],
-    },
-    {
-      id: 'holding',
-      label: 'Holding',
-      tagline: 'Sociedad estratégica',
-      price: 150000,
-      maxProject: 1200000,
-      icon: 'marketplace',
-      includes: [
-        '1 proyecto base incluido (hasta $1,200,000)',
-        'Mesa de trabajo dedicada · KAM + diseñador + dev senior',
-        'Soporte 24/7 · email + WA + Slack + on-call',
-        'Consultoría ejecutiva semanal · 90 min con C-level iBisne',
-        'Iteraciones premium ilimitadas · sin tope',
-        'Co-inversión preferente en venture lab iBisne',
-        'Acceso completo a las 4 verticales operativas',
-      ],
-    },
-  ],
-
-  // Devuelve la membresía mínima que cubre el monto del proyecto cotizado
-  getMembership(totalConIva){
-    const list = this.memberships || [];
-    return list.find(m => totalConIva <= m.maxProject) || list[list.length - 1];
-  },
-
-  // ═══ v4.0 · CO-FINANCIAMIENTO HÍBRIDO (rango × duración) ════════════
-  // Reframe: ya no es "descuento" · es "iBisne co-financia X% si te
-  // comprometes Y meses". Mismo dinero, narrativa empoderadora.
-
-  // 4 tiers según rango de cotización (con IVA)
-  cofinancingTiers: [
-    {
-      id: 'spark',  label: 'Spark',  tagline: 'Para empezar',
-      min: 0, max: 11600,           // $0 - $10k + IVA
-      icon: 'biolink',
-      maxDiscount: 30,
-      copy: 'Tu proyecto entra a nuestro plan más accesible. iBisne te apoya hasta con un 30%.',
-    },
-    {
-      id: 'build',  label: 'Build',  tagline: 'Para construir',
-      min: 11601, max: 46400,       // $10k - $40k + IVA
-      icon: 'partnership',
-      maxDiscount: 40,
-      copy: 'Tu proyecto es serio. iBisne te apoya hasta con un 40% si confías 12 meses.',
-    },
-    {
-      id: 'grow',   label: 'Grow',   tagline: 'Para crecer',
-      min: 46401, max: 116000,      // $40k - $100k + IVA
-      icon: 'shield',
-      maxDiscount: 50,
-      copy: 'Tu proyecto vale la pena financiarse. iBisne pone hasta 50% si vas con nosotros 12 meses.',
-    },
-    {
-      id: 'scale',  label: 'Scale',  tagline: 'Para escalar',
-      min: 116001, max: Infinity,   // +$100k
-      icon: 'marketplace',
-      maxDiscount: 50,
-      coInvestment: true,           // activa opción de co-inversión equity
-      copy: 'Tu proyecto entra a nuestra liga grande. 50% co-financiado + opción de co-inversión equity con iBisne.',
-    },
-  ],
-
-  // Devuelve el tier según total (con IVA)
-  getCofinancingTier(totalConIva){
-    const list = this.cofinancingTiers;
-    return list.find(t => totalConIva >= t.min && totalConIva <= t.max) || list[list.length - 1];
-  },
-
-  // Matriz de descuento · rango × duración
-  // Mes-a-mes: 0% (sin compromiso · paga precio público)
-  // 3 meses · 6 meses · 12 meses: % crece según tier
-  // ─────────────────────────────────────────────────
-  cofinancingMatrix: {
-    spark: { '1': 0,  '3': 10, '6': 20, '12': 30 },
-    build: { '1': 0,  '3': 15, '6': 25, '12': 40 },
-    grow:  { '1': 0,  '3': 20, '6': 35, '12': 50 },
-    scale: { '1': 0,  '3': 25, '6': 40, '12': 50 },
-  },
-
-  // Devuelve % de descuento según tier × meses comprometidos
-  getCofinancingDiscount(totalConIva, months){
-    const tier = this.getCofinancingTier(totalConIva);
-    const m = String(months);
-    const validKey = ['1','3','6','12'].includes(m) ? m : '1';
-    return this.cofinancingMatrix[tier.id][validKey] || 0;
-  },
-
-  // Calcula el precio FINAL después de co-financiamiento
-  // (lo que paga el cliente vs el precio público)
-  getCofinancingPrice(totalConIva, months){
-    const discount = this.getCofinancingDiscount(totalConIva, months);
-    const finalPrice = totalConIva * (1 - discount / 100);
-    return {
-      tier: this.getCofinancingTier(totalConIva),
-      discount,
-      monthlyPayment: months > 1 ? Math.round(finalPrice / months) : null,
-      finalPrice: Math.round(finalPrice),
-      saved: Math.round(totalConIva - finalPrice),
-      months,
-    };
-  },
-
-  // Devuelve el mensaje narrativo "iBisne co-financia X%..."
-  // según tier × duración. Se usa en el resumen final.
-  getCofinancingMessage(totalConIva, months){
-    const tier = this.getCofinancingTier(totalConIva);
-    const discount = this.getCofinancingDiscount(totalConIva, months);
-    if (discount === 0) {
-      return {
-        title: 'Sin compromiso · pago directo',
-        subtitle: 'Pagas el precio público completo. Sin descuentos pero sin amarrar tiempo. Ideal si solo quieres este proyecto.',
-        cta: 'Pagar precio directo',
-      };
-    }
-    const monthsLabel = months === 12 ? 'un año' : months + ' meses';
-    return {
-      title: `iBisne co-financia ${discount}% de tu proyecto`,
-      subtitle: `Si confías ${monthsLabel} con nosotros, ponemos ${discount}% del valor. Tú pagas el resto en mensualidades iguales · sin intereses.`,
-      cta: months === 12 ? 'Activar plan anual' : 'Activar plan ' + monthsLabel,
-      tier: tier,
-    };
-  },
-
-  // Devuelve las 4 opciones de duración disponibles para un proyecto dado
-  // (con el descuento y mensualidad de cada una pre-calculados)
-  getCofinancingOptions(totalConIva){
-    const months = [1, 3, 6, 12];
-    return months.map(m => this.getCofinancingPrice(totalConIva, m));
-  },
-
   getStack(vertical, subtipo){
     const key = (vertical || '') + '/' + (subtipo || '');
     const map = {
