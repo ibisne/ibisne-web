@@ -805,10 +805,22 @@
     const selIds = isMulti ? new Set((sel || []).map(s => s.id)) : new Set(sel ? [sel.id] : []);
 
     const cards = q.opciones.map(o => {
+      // v5.3.2 · NUNCA mostrar "$ 0" · todo trabajo tiene valor.
+      // - add > 0  → "+ $X"
+      // - add < 0  → "- $X" (descuento)
+      // - mul ≠ 1  → metaSuffix ("+40%" / "−5%")
+      // - mul = 1  → "Sin recargo"
+      // - add = 0  → "Incluido" (ya viene en el paquete base · NO es gratis · es valor)
       let meta = null;
-      if (o.add !== undefined && o.add !== 0) meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
-      else if (o.mul !== undefined) meta = o.metaSuffix || formatMxn(0);
-      else meta = formatMxn(0); // antes era '—' · ahora "$0.00" para mantener formato consistente
+      if (o.add !== undefined && o.add !== 0) {
+        meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
+      } else if (o.mul !== undefined && o.mul !== 1.0) {
+        meta = o.metaSuffix || null;
+      } else if (o.mul === 1.0) {
+        meta = 'Sin recargo';
+      } else {
+        meta = 'Incluido';
+      }
       return renderCard({
         id: o.id,
         icon: o.icon,
@@ -1650,9 +1662,17 @@ Quiero arrancar la membresía y el discovery.`;
         : new Set(State.answers[qid] ? [State.answers[qid].id] : []);
       const body = $('#edit-modal-body');
       body.innerHTML = q.opciones.map(o => {
+        // v5.3.2 · Misma regla que renderQuestionGeneric · cero "$0"
         let meta = null;
-        if (o.add !== undefined && o.add !== 0) meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
-        else if (o.mul !== undefined) meta = o.metaSuffix || '';
+        if (o.add !== undefined && o.add !== 0) {
+          meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
+        } else if (o.mul !== undefined && o.mul !== 1.0) {
+          meta = o.metaSuffix || null;
+        } else if (o.mul === 1.0) {
+          meta = 'Sin recargo';
+        } else {
+          meta = 'Incluido';
+        }
         return renderCard({
           id: o.id, label: o.label, description: o.description, schedule: o.schedule,
           icon: o.icon, meta, isSelected: selIds.has(o.id),
