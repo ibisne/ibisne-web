@@ -1014,42 +1014,40 @@ Quiero hablar para precisar el alcance.`;
         <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional.")}</p>
 
 
-        ${true ? `
-        <!-- ─── 3º HIGHLIGHTS · qué incluye siempre iBisne ───────────────────── -->
+        <!-- v5.0.3 · Highlights humanos (mismos del index · cero jerga técnica) -->
         <section class="brand-promise">
-          <div class="bp-eyebrow">— TU PROYECTO IBISNE INCLUYE SIEMPRE</div>
+          <div class="bp-eyebrow">— LO QUE INCLUYE TU PROYECTO CON iBISNE</div>
           <div class="bp-grid">
             <div class="bp-item">
               <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('partnership','line') : '✓'}</span>
               <div>
-                <strong>Equipo asignado</strong>
-                <p>${(calc.team || []).join(' · ')} dedicados a tu proyecto.</p>
-              </div>
-            </div>
-            <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('serverapp','line') : '✓'}</span>
-              <div>
-                <strong>Stack moderno</strong>
-                <p>${(stackItems[0] || 'Stack adecuado al alcance')}. Sin dependencias frágiles.</p>
+                <strong>Soporte dedicado</strong>
+                <p>Una persona asignada a tu proyecto desde el día 1. Sin recepcionistas ni filtros.</p>
               </div>
             </div>
             <div class="bp-item">
               <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('shield','line') : '✓'}</span>
               <div>
-                <strong>Infra incluida</strong>
-                <p>Hosting + base de datos + dominio. Primer año sin costo.</p>
+                <strong>Acompañamiento 24/7</strong>
+                <p>Respuesta en horas, no en días. Por WhatsApp directo con tu equipo.</p>
               </div>
             </div>
             <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('edit','line') : '✓'}</span>
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('arrow','line') : '✓'}</span>
               <div>
-                <strong>Discovery firmable</strong>
-                <p>Antes de cobrar un peso: alcance definido y propuesta firmable.</p>
+                <strong>De 0 al lanzamiento</strong>
+                <p>Discovery, diseño, desarrollo y deploy. Todo lo hace iBisne · sin proveedores externos.</p>
+              </div>
+            </div>
+            <div class="bp-item">
+              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('clock','line') : '✓'}</span>
+              <div>
+                <strong>Un año de seguimiento</strong>
+                <p>Ajustes y mejoras incluidos. No vendemos y desaparecemos.</p>
               </div>
             </div>
           </div>
         </section>
-        ` : ''}
 
         <div class="result-grid">
           <div class="result-col-main">
