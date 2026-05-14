@@ -9,11 +9,27 @@
   var STORAGE_KEY = 'ibisne.prefs';
   var DEFAULTS = { lang: 'es', currency: 'mxn', theme: 'dark' };
 
+  // v5.3.1 · Detectar si el visitante está en LATAM por timezone.
+  // El default ya es MXN, pero si el usuario tiene preferencia USD residual
+  // de una sesión anterior (cuando experimentó con el toggle), forzamos MXN
+  // en cada carga inicial. El toggle manual durante la sesión sigue funcionando.
+  function isLatamTimezone(){
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      // Mexico + LATAM mayoritarios
+      return /^America\/(Mexico|Tijuana|Cancun|Mazatlan|Monterrey|Hermosillo|Merida|Chihuahua|Matamoros|Bogota|Lima|Caracas|Argentina|Buenos_Aires|Cordoba|Mendoza|Santiago|Sao_Paulo|Bahia|Manaus|Recife|Fortaleza|Guayaquil|La_Paz|Asuncion|Montevideo|Panama|Costa_Rica|El_Salvador|Guatemala|Tegucigalpa|Managua|Havana|Santo_Domingo|San_Juan|Port-au-Prince|Belize|Cayman|Jamaica)/.test(tz);
+    } catch(_) { return false; }
+  }
+
   function load(){
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       var saved = raw ? JSON.parse(raw) : {};
-      return Object.assign({}, DEFAULTS, saved);
+      var merged = Object.assign({}, DEFAULTS, saved);
+      // v5.3.1 · Override LATAM → MXN siempre en carga inicial
+      // (el toggle manual queda solo durante la sesión activa)
+      if (isLatamTimezone()) merged.currency = 'mxn';
+      return merged;
     } catch(e){ return Object.assign({}, DEFAULTS); }
   }
   function save(prefs){

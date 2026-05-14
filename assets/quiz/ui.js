@@ -909,7 +909,12 @@
     function checkValid(){
       const d = State.answers.datos || {};
       const ok = ['nombre','email','whatsapp'].every(k => d[k] && d[k].trim());
+      // v5.3.1 · SYNC: actualizar AMBOS botones simultáneamente.
+      // El inline data-next y el navNext del bottom-bar deben reflejar
+      // el mismo estado · si uno se queda atrás, el usuario ve "verde"
+      // visualmente pero el botón sigue disabled y no avanza.
       const next = $('[data-next]'); if (next) next.disabled = !ok;
+      const navNext = $('#qb-nav-next'); if (navNext) navNext.disabled = !ok;
     }
     $$('#main input').forEach(input => input.addEventListener('input', e => {
       State.answers.datos = State.answers.datos || {};
@@ -923,6 +928,10 @@
     $('[data-next]')?.addEventListener('click', () => scheduleAdvance('#/servicio/loading', 80));
     $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/servicio/' + (State.step - 1)); });
     refreshBottomB();
+    // v5.3.1 · Doble-check después del paint: el refreshBottomB inicial
+    // setea navNext según el [data-next] inline, pero como el form arranca
+    // disabled, navNext queda disabled · necesitamos re-sync tras checkValid.
+    checkValid();
   }
 
   // v5.3.0 · Loading screen con CROSSFADE REAL al resultado.
