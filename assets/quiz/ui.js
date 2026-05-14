@@ -206,6 +206,7 @@
     }
     if (route === 'servicio') {
       State.route = 'servicio';
+      if (step === 'loading')   return renderServicioLoading();
       if (step === 'resultado') return renderServicioResultado();
       State.step = parseInt(step || '1', 10);
       renderServicioStep(); showAsideB(); return;
@@ -828,10 +829,63 @@
       checkValid();
     }));
     checkValid();
-    // v5.0.2 · Usar scheduleAdvance para fade-out suave antes del resultado
-    $('[data-next]')?.addEventListener('click', () => scheduleAdvance('#/servicio/resultado', 80));
+    // v5.1.1 · Step datos → loading screen → resultado
+    // Pasa por /loading que da 900ms de buffer · evita que el paint
+    // pesado del resultado se vea como "salto"
+    $('[data-next]')?.addEventListener('click', () => scheduleAdvance('#/servicio/loading', 80));
     $('[data-prev]')?.addEventListener('click', () => navigate('#/servicio/' + (State.step - 1)));
     refreshBottomB();
+  }
+
+  // v5.1.1 · Loading screen intermedio entre captura de datos y resultado.
+  // Buffer de 900ms · da tiempo al browser para hacer compute + paint
+  // del resultado pesado (FAQ + sticky + métodos + trust signals) ANTES
+  // de mostrarlo · al resultado le toca aparecer ya listo · cero salto.
+  function renderServicioLoading(){
+    setProgress(100);
+    hideBottom();
+    const datos = State.answers.datos || {};
+    const nombre = datos.nombre ? datos.nombre.split(' ')[0] : '';
+
+    $('#main').innerHTML = `
+      <div class="result-screen rk-loading-wrap">
+        <div class="rk-loading">
+          <div class="rk-loading-spinner" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="rk-loading-stage" id="rk-load-stage">${L("Calculando tu cotización")}…</div>
+          <p class="rk-loading-hint">${nombre ? nombre + ', preparamos ' : 'Preparamos '}tu propuesta · folio · stack · equipo · tiempos.</p>
+          <ul class="rk-loading-steps">
+            <li data-i="1"><span class="rk-load-tick">○</span> Generamos folio único</li>
+            <li data-i="2"><span class="rk-load-tick">○</span> Asignamos equipo según alcance</li>
+            <li data-i="3"><span class="rk-load-tick">○</span> Calculamos tiempos y stack</li>
+            <li data-i="4"><span class="rk-load-tick">○</span> Listo · abriendo cotización</li>
+          </ul>
+        </div>
+      </div>
+    `;
+
+    // Pre-compute · arranca el cálculo pesado en paralelo mientras el
+    // usuario ve el loader · cuando navegue al resultado, todo ya está
+    // en cache (computeB es puro y getter de pricing es sync).
+    try { computeB(); } catch(_){}
+
+    // Animación de "stages" · cada step se marca después de 200ms
+    const items = $$('#main .rk-loading-steps li');
+    const total = 900;
+    const stepMs = Math.floor(total / (items.length + 1));
+    items.forEach((li, idx) => {
+      setTimeout(() => {
+        const tick = li.querySelector('.rk-load-tick');
+        if (tick) tick.textContent = '✓';
+        li.classList.add('is-done');
+      }, stepMs * (idx + 1));
+    });
+
+    // Cuando se acaba el loader, ir al resultado (con fade-out previo)
+    setTimeout(() => {
+      scheduleAdvance('#/servicio/resultado', 0);
+    }, total + 100);
   }
 
   function renderServicioResultado(){
