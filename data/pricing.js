@@ -126,11 +126,41 @@ window.IBISNE_PRICING = {
         id: 'integraciones', label: '¿A qué herramientas se conectará?', multi: true,
         help: 'Marca las que ya usas · los datos llegan automáticamente ahí.',
         opciones: [
-          { id: 'mailchimp', label: 'Email marketing (Mailchimp, Brevo)',    add: 3000, icon: 'leads' },
-          { id: 'crm',       label: 'Sistema de clientes / CRM (HubSpot)',   add: 5500, icon: 'partnership' },
-          { id: 'sheets',    label: 'Google Sheets',                          add: 2000, icon: 'serverapp' },
-          { id: 'whatsapp',  label: 'WhatsApp Business · auto-mensajes',     add: 4500, icon: 'whatsapp', intent: 'engagement' },
-          { id: 'analytics', label: 'Google Analytics y Meta Pixel',         add: 2500, icon: 'saas', intent: 'marketing' },
+          // ── Email · marketing ───────────────────────────────────────
+          { id: 'mailchimp', label: 'Email marketing (Mailchimp, Brevo)',    add: 3000, icon: 'leads',
+            subtitle: 'Suscriptor → lista automática · campañas programables' },
+          { id: 'crm',       label: 'CRM (HubSpot, Pipedrive, Salesforce)',  add: 5500, icon: 'partnership',
+            subtitle: 'Lead → ficha de cliente en tu CRM · tu equipo da seguimiento' },
+          { id: 'sheets',    label: 'Google Sheets · llenado automático',    add: 2000, icon: 'serverapp',
+            subtitle: 'Cada lead se agrega como fila · sin tocar nada' },
+          { id: 'airtable',  label: 'Airtable · base de datos visual',       add: 3500, icon: 'serverapp',
+            subtitle: 'Mejor que Sheets para volumen alto · vistas Kanban/calendario' },
+          { id: 'notion',    label: 'Notion · ficha de lead',                add: 3500, icon: 'edit',
+            subtitle: 'Cada lead aparece como página de Notion para tu equipo' },
+
+          // ── Mensajería ──────────────────────────────────────────────
+          { id: 'whatsapp',  label: 'WhatsApp Business · auto-mensajes',     add: 4500, icon: 'whatsapp', intent: 'engagement',
+            subtitle: 'Lead llega → mensaje WhatsApp automático con plantilla' },
+          { id: 'slack',     label: 'Slack · notificación a tu equipo',      add: 2500, icon: 'partnership',
+            subtitle: 'Lead nuevo → ping a canal de Slack en segundos' },
+          { id: 'discord',   label: 'Discord · alerta de lead',              add: 2500, icon: 'partnership',
+            subtitle: 'Lead nuevo → mensaje a tu servidor de Discord' },
+          { id: 'telegram',  label: 'Telegram · bot que avisa',              add: 3000, icon: 'whatsapp',
+            subtitle: 'Bot de Telegram te avisa cada vez que llega un lead' },
+
+          // ── Tracking · ads ──────────────────────────────────────────
+          { id: 'analytics', label: 'Google Analytics 4 + Meta Pixel',       add: 2500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Mide quién llega de dónde · base para optimizar' },
+          { id: 'tiktok',    label: 'TikTok Pixel · conversiones',           add: 2500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Si haces ads en TikTok · trackea conversiones reales' },
+          { id: 'gads-conv', label: 'Google Ads · seguimiento de conversiones', add: 3000, icon: 'saas', intent: 'marketing',
+            subtitle: 'Que Google Ads aprenda qué keywords convierten · clave para escalar' },
+
+          // ── Automatizaciones ────────────────────────────────────────
+          { id: 'zapier',    label: 'Zapier / Make · conecta con lo que sea', add: 4500, icon: 'serverapp', intent: 'engagement',
+            subtitle: 'Puente universal · conecta tu landing con 1000+ apps sin programar' },
+          { id: 'calendly',  label: 'Calendly · auto-agendar llamada',       add: 2500, icon: 'clock', intent: 'engagement',
+            subtitle: 'Lead califica → calendario embebido para que agende contigo' },
         ],
       },
     ],
@@ -170,15 +200,76 @@ window.IBISNE_PRICING = {
         ],
       },
       {
-        id: 'extras', label: '¿Qué más necesitas?', multi: true,
-        help: 'Funciones adicionales que puedes agregar.',
+        id: 'extras', label: '¿Qué módulos necesita tu sitio?', multi: true,
+        help: 'Funciones extra que activamos según necesidad · cada una se cotiza por separado.',
         opciones: [
-          { id: 'contacto',  label: 'Formulario de contacto con auto-respuesta', add: 3500, icon: 'leads' },
-          { id: 'cms',       label: 'Panel para editar contenido tú mismo',     add: 11500, icon: 'edit', intent: 'engagement' },
-          { id: 'analytics', label: 'Analytics avanzado y Meta Pixel',          add: 2500, icon: 'saas' },
-          { id: 'newsletter', label: 'Suscripción a newsletter',                 add: 4000, icon: 'leads', intent: 'engagement' },
-          { id: 'galeria',   label: 'Galería de fotos/portafolio',              add: 5500, icon: 'sitio' },
-          { id: 'mapa',      label: 'Mapa de ubicación interactivo',            add: 2000, icon: 'explore' },
+          // ── Captación · contacto · leads ────────────────────────────
+          { id: 'contacto',    label: 'Formulario de contacto con auto-respuesta', add: 3500, icon: 'leads',
+            subtitle: 'Captura datos · responde automático al cliente' },
+          { id: 'newsletter',  label: 'Suscripción a newsletter',                  add: 4000, icon: 'leads', intent: 'engagement',
+            subtitle: 'Captura emails para campañas posteriores' },
+          { id: 'popup',       label: 'Popup de captura · descuento o regalo',     add: 4500, icon: 'star', intent: 'marketing',
+            subtitle: 'Aparece al primer scroll o salida · convierte visita en lead' },
+          { id: 'whatsapp-btn', label: 'Botón flotante de WhatsApp',                add: 1500, icon: 'whatsapp', intent: 'engagement',
+            subtitle: 'Botón verde fijo · abre WhatsApp con tu número pre-llenado' },
+
+          // ── Citas · reservas · calendario ──────────────────────────
+          { id: 'agenda',      label: 'Sistema de citas y reservas',               add: 9500, icon: 'clock', intent: 'engagement',
+            subtitle: 'El cliente elige horario disponible · sincroniza con tu calendario (Google / Calendly)' },
+          { id: 'reservas',    label: 'Calendario de reservas con confirmación',   add: 13000, icon: 'clock', intent: 'engagement',
+            subtitle: 'Para restaurantes, hoteles, salones · email + recordatorios automáticos' },
+
+          // ── Conversación · atención ─────────────────────────────────
+          { id: 'chatbot',     label: 'Chatbot con IA · responde 24/7',            add: 11500, icon: 'chatbot', intent: 'engagement',
+            subtitle: 'Bot inteligente entrenado con info de tu negocio · atiende sin tu intervención' },
+          { id: 'chat-vivo',   label: 'Chat en vivo con tu equipo',                add: 6500, icon: 'chatbot', intent: 'engagement',
+            subtitle: 'Tu equipo responde en tiempo real · Crisp / Intercom embebido' },
+
+          // ── Contenido · administración ──────────────────────────────
+          { id: 'cms',         label: 'Panel para editar contenido tú mismo',     add: 11500, icon: 'edit', intent: 'engagement',
+            subtitle: 'Sin depender de nosotros · editas textos, imágenes, posts directo' },
+          { id: 'galeria',     label: 'Galería de fotos / portafolio',            add: 5500, icon: 'sitio',
+            subtitle: 'Cuadrícula o carrusel · filtros por categoría' },
+          { id: 'video-bg',    label: 'Video destacado o video de fondo',         add: 4500, icon: 'star',
+            subtitle: 'YouTube/Vimeo embed optimizado · hero impactante' },
+          { id: 'testimonios', label: 'Carrusel de testimonios / casos',          add: 4000, icon: 'partnership',
+            subtitle: 'Sección de pruebas sociales · rating + foto + comentario' },
+          { id: 'faq',         label: 'FAQ interactiva (acordeón)',               add: 3000, icon: 'leads',
+            subtitle: 'Preguntas frecuentes plegables · resuelve dudas antes de venta' },
+          { id: 'timeline',    label: 'Línea de tiempo / proceso paso a paso',    add: 4500, icon: 'arrow',
+            subtitle: 'Explica visualmente cómo trabajas · ideal para servicios' },
+          { id: 'pricing-tbl', label: 'Tabla comparativa de planes / precios',    add: 5500, icon: 'fintech', intent: 'marketing',
+            subtitle: 'Comparas hasta 4 planes con check/cross · CTA por columna' },
+
+          // ── Marketing · tracking ────────────────────────────────────
+          { id: 'analytics',   label: 'Analytics avanzado · Meta Pixel · TikTok', add: 2500, icon: 'saas',
+            subtitle: 'GA4 + Meta Pixel + TikTok Pixel · tracking de conversiones' },
+          { id: 'gads',        label: 'Tracking de Google Ads · conversiones',    add: 3500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Mide qué anuncio te trae cuántos clientes · optimiza presupuesto' },
+          { id: 'seo-pro',     label: 'SEO técnico avanzado · schema · sitemap',  add: 7500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Datos estructurados, rich snippets, sitemap XML · primera fila Google' },
+          { id: 'cookies',     label: 'Banner de cookies (GDPR)',                  add: 2500, icon: 'shield',
+            subtitle: 'Cumplimiento legal · necesario si vendes en Europa o Eduardo lo pide' },
+
+          // ── Funcional · usuarios ────────────────────────────────────
+          { id: 'login',       label: 'Área de usuarios con login',                add: 19500, icon: 'login', intent: 'engagement',
+            subtitle: 'Tus clientes crean cuenta · ven contenido privado · descargas exclusivas' },
+          { id: 'miembros',    label: 'Área de miembros premium · contenido pago', add: 32500, icon: 'login', intent: 'marketing',
+            subtitle: 'Suscripción mensual para acceso · ideal para cursos, comunidades' },
+          { id: 'search',      label: 'Búsqueda interna del sitio',                add: 4500, icon: 'explore',
+            subtitle: 'Barra de búsqueda con resultados instantáneos · útil con catálogos' },
+          { id: 'mapa',        label: 'Mapa de ubicación interactivo',             add: 2000, icon: 'explore',
+            subtitle: 'Google Maps embebido · con tus sucursales marcadas' },
+          { id: 'multilang',   label: 'Selector de idioma adicional',              add: 9500, icon: 'partnership',
+            subtitle: 'Si quieres otro idioma además de los que ya elegiste · agregable después' },
+
+          // ── Performance · UX ────────────────────────────────────────
+          { id: 'darkmode',    label: 'Modo oscuro / claro',                       add: 3000, icon: 'wrench',
+            subtitle: 'Toggle entre tema oscuro y claro · respeta preferencia del sistema' },
+          { id: 'pwa',         label: 'App instalable (PWA) · funciona offline',   add: 11500, icon: 'app', intent: 'engagement',
+            subtitle: 'El sitio se instala como app en celular y desktop · funciona sin internet' },
+          { id: 'animaciones', label: 'Animaciones avanzadas scroll-driven',       add: 9500, icon: 'star', intent: 'lanzamiento',
+            subtitle: 'Efectos cinematográficos al hacer scroll · destacar marca premium' },
         ],
       },
     ],
@@ -270,10 +361,45 @@ window.IBISNE_PRICING = {
         id: 'integraciones', label: '¿Con qué sistemas se conectará tu tienda?', multi: true,
         help: 'Marca los que ya usas o vas a usar · cada uno se cotiza como módulo de integración.',
         opciones: [
-          { id: 'erp',  label: 'Sistema administrativo / ERP',  add: 19500, icon: 'serverapp', subtitle: 'SAP, Odoo, Contpaq · sincronía con tu contabilidad' },
-          { id: 'crm',  label: 'Sistema de clientes / CRM',     add: 10500, icon: 'partnership', subtitle: 'HubSpot, Pipedrive · seguimiento de leads y ventas' },
-          { id: '3pl',  label: 'Servicio de envíos automáticos', add: 13000, icon: 'marketplace', subtitle: 'Estafeta, DHL, FedEx · auto-genera guías' },
-          { id: 'mkt',  label: 'Email marketing automático',     add: 4000,  icon: 'leads', subtitle: 'Mailchimp, Klaviyo · campañas y recordatorios' },
+          // ── Sistemas administrativos ────────────────────────────────
+          { id: 'erp',          label: 'Sistema administrativo / ERP',           add: 19500, icon: 'serverapp', intent: 'engagement',
+            subtitle: 'SAP, Odoo, Contpaq · sincronía con tu contabilidad e inventario' },
+          { id: 'crm',          label: 'Sistema de clientes / CRM',              add: 10500, icon: 'partnership',
+            subtitle: 'HubSpot, Pipedrive · seguimiento de leads y ventas' },
+          { id: 'pos',          label: 'Punto de venta físico (POS)',            add: 15500, icon: 'shield', intent: 'engagement',
+            subtitle: 'Inventario sincronizado entre tienda física y online' },
+
+          // ── Envíos · logística ──────────────────────────────────────
+          { id: '3pl',          label: 'Servicio de envíos automáticos',         add: 13000, icon: 'marketplace',
+            subtitle: 'Estafeta, DHL, FedEx, Mienvio · auto-genera guías' },
+          { id: 'tracking',     label: 'Rastreo de pedidos en tiempo real',      add: 7500, icon: 'arrow', intent: 'engagement',
+            subtitle: 'El cliente ve dónde va su pedido · reduce dudas y devoluciones' },
+
+          // ── Marketing · retención ───────────────────────────────────
+          { id: 'mkt',          label: 'Email marketing automático',             add: 4000,  icon: 'leads',
+            subtitle: 'Mailchimp, Klaviyo · campañas, segmentos, A/B testing' },
+          { id: 'abandoned',    label: 'Carrito abandonado · recordatorios',     add: 6500, icon: 'leads', intent: 'marketing',
+            subtitle: 'Email automático a quien dejó el carrito a medias · recupera 15-25% de ventas' },
+          { id: 'reviews',      label: 'Reseñas de productos · sociales',        add: 5500, icon: 'star', intent: 'engagement',
+            subtitle: 'Cliente compra → email pide reseña · publica en producto + Google' },
+          { id: 'afiliados',    label: 'Programa de afiliados / referidos',      add: 13000, icon: 'partnership', intent: 'marketing',
+            subtitle: 'Influencers o clientes refieren · cobran comisión por venta' },
+          { id: 'lealtad',      label: 'Programa de lealtad / puntos',           add: 11500, icon: 'star', intent: 'engagement',
+            subtitle: 'Cliente acumula puntos · canjea descuentos · vuelve a comprar' },
+          { id: 'cupones',      label: 'Cupones y descuentos automáticos',       add: 4500, icon: 'fintech', intent: 'marketing',
+            subtitle: 'Códigos por % o monto · primera compra, cumpleaños, campañas' },
+
+          // ── Atención al cliente ─────────────────────────────────────
+          { id: 'chatbot-vta', label: 'Chatbot de ventas con IA',                add: 13000, icon: 'chatbot', intent: 'engagement',
+            subtitle: 'Bot recomienda productos · resuelve dudas · agenda venta · 24/7' },
+          { id: 'wa-pedidos',  label: 'Pedidos por WhatsApp',                    add: 8500, icon: 'whatsapp', intent: 'engagement',
+            subtitle: 'Cliente toma fotos del catálogo y compra por WhatsApp · ideal LATAM' },
+
+          // ── Tracking · analytics ────────────────────────────────────
+          { id: 'analytics',   label: 'Google Analytics 4 + e-commerce events',  add: 3500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Mide cada paso del funnel · qué producto vende, dónde abandonan' },
+          { id: 'meta-tiktok', label: 'Meta Pixel + TikTok Pixel + Google Ads',  add: 4500, icon: 'saas', intent: 'marketing',
+            subtitle: 'Conversiones trackeadas en todas las plataformas de ads' },
         ],
       },
     ],
@@ -308,24 +434,69 @@ window.IBISNE_PRICING = {
         id: 'funciones', label: '¿Qué funciones necesita?', multi: true,
         help: 'Marca todas las que apliquen · cada una se cotiza por separado.',
         opciones: [
-          { id: 'push',       label: 'Avisos al celular',                       add: 5000,  icon: 'info_app',  intent: 'engagement',
+          // ── Comunicación ────────────────────────────────────────────
+          { id: 'push',       label: 'Avisos al celular (push)',                  add: 5000,  icon: 'info_app',  intent: 'engagement',
             description: 'Notificaciones que aparecen aunque la app esté cerrada · ideales para retomar al usuario.' },
-          { id: 'chat',       label: 'Chat o mensajes en vivo',                add: 23500, icon: 'chatbot', intent: 'engagement',
+          { id: 'chat',       label: 'Chat o mensajes en vivo',                   add: 23500, icon: 'chatbot', intent: 'engagement',
             description: 'Conversación entre usuarios o con tu equipo de soporte.' },
-          { id: 'geo',        label: 'Mapa y ubicación',                       add: 10500, icon: 'explore',   intent: 'engagement',
-            description: 'Mapa, búsqueda por ubicación, seguimiento en tiempo real.' },
-          { id: 'camara',     label: 'Cámara, escanear códigos QR o documentos', add: 13000, icon: 'camera',
-            description: 'Sacar foto, escanear código QR, leer documentos automáticamente.' },
-          { id: 'pagos-in',   label: 'Cobrar dentro de la app',                add: 15500, icon: 'fintech', intent: 'marketing',
-            description: 'Suscripciones App Store / Google Play o cobrar tarjeta directo.' },
-          { id: 'offline',    label: 'Funciona sin internet',                  add: 11500, icon: 'wrench',
+          { id: 'video-call', label: 'Videollamadas / audio en vivo',             add: 32500, icon: 'chatbot', intent: 'engagement',
+            description: 'Tipo Zoom / FaceTime dentro de la app · WebRTC.' },
+          { id: 'share',      label: 'Compartir en redes sociales',                add: 3000, icon: 'partnership',
+            description: 'Botón nativo para compartir contenido a IG, WA, X, etc.' },
+
+          // ── Ubicación · mapa ────────────────────────────────────────
+          { id: 'geo',        label: 'Mapa y ubicación',                          add: 10500, icon: 'explore',   intent: 'engagement',
+            description: 'Mapa, búsqueda por ubicación, seguimiento en tiempo real (Google Maps / Mapbox).' },
+          { id: 'rutas',      label: 'Rutas y navegación turn-by-turn',           add: 13000, icon: 'explore', intent: 'engagement',
+            description: 'Tipo Uber/Rappi · la app calcula y muestra ruta paso a paso.' },
+
+          // ── Captura · escaneo ───────────────────────────────────────
+          { id: 'camara',     label: 'Cámara · escanear QR o documentos',         add: 13000, icon: 'camera',
+            description: 'Sacar foto, escanear código QR, leer documentos automáticamente (OCR).' },
+          { id: 'biometria',  label: 'Face ID / Huella digital',                  add: 6500, icon: 'shield', intent: 'engagement',
+            description: 'Login con cara o dedo · seguridad alta · UX premium.' },
+          { id: 'ar',         label: 'Realidad aumentada (AR)',                   add: 39000, icon: 'star', intent: 'marketing',
+            description: 'Filtros tipo Snap, probarse cosas virtual, ver muebles en tu casa. ARKit / ARCore.' },
+
+          // ── Pagos · monetización ────────────────────────────────────
+          { id: 'pagos-in',   label: 'Cobrar dentro de la app',                   add: 15500, icon: 'fintech', intent: 'marketing',
+            description: 'Suscripciones App Store / Google Play o cobrar tarjeta directo (Stripe).' },
+          { id: 'wallet',     label: 'Billetera digital · saldo interno',         add: 26000, icon: 'wallet', intent: 'marketing',
+            description: 'Usuario carga saldo · paga con saldo · transfiere a otros usuarios.' },
+
+          // ── Tiempo · agenda ─────────────────────────────────────────
+          { id: 'agenda',     label: 'Calendario / agenda de citas',              add: 11500, icon: 'clock', intent: 'engagement',
+            description: 'Citas, reservas, recordatorios · sincroniza con calendario del celular.' },
+          { id: 'reminders',  label: 'Recordatorios programados',                  add: 4500, icon: 'clock',
+            description: 'Alarmas, notificaciones a horarios específicos, recordatorios diarios.' },
+
+          // ── Offline · sync ──────────────────────────────────────────
+          { id: 'offline',    label: 'Funciona sin internet',                     add: 11500, icon: 'wrench',
             description: 'La app sigue funcionando offline · sincroniza cuando vuelve la conexión.' },
-          { id: 'social',     label: 'Acceso rápido con Google / Apple / Facebook', add: 4500, icon: 'login', intent: 'engagement',
+
+          // ── Login · cuentas ─────────────────────────────────────────
+          { id: 'social',     label: 'Login con Google / Apple / Facebook',       add: 4500, icon: 'login', intent: 'engagement',
             description: 'Login con un toque · sin tener que llenar formularios.' },
-          { id: 'analytics',  label: 'Panel para ver métricas (admin)',        add: 8000,  icon: 'saas',      intent: 'marketing',
-            description: 'Dashboard donde tú ves cuántos usuarios, qué hacen, qué venden.' },
+
+          // ── Multimedia ──────────────────────────────────────────────
+          { id: 'streaming',  label: 'Video / audio streaming · player nativo',   add: 23500, icon: 'star', intent: 'engagement',
+            description: 'Reproductor optimizado para videos largos · controles, calidad, offline.' },
+          { id: 'voice',      label: 'Comandos de voz / dictado',                 add: 13000, icon: 'chatbot',
+            description: 'Usuario habla y la app entiende · ideal para accesibilidad o conducir.' },
+
+          // ── Conectividad ────────────────────────────────────────────
+          { id: 'bluetooth',  label: 'Bluetooth · conectar con dispositivos',     add: 19500, icon: 'wrench', intent: 'engagement',
+            description: 'BLE · conectar con wearables, beacons, sensores, dispositivos IoT.' },
+          { id: 'widgets',    label: 'Widgets para pantalla de inicio',            add: 9500, icon: 'sitio', intent: 'engagement',
+            description: 'Mini app en la home del celular · acceso rápido sin abrir la app.' },
+
+          // ── Inteligencia ────────────────────────────────────────────
           { id: 'ia',         label: 'Inteligencia artificial · recomendaciones', add: 23500, icon: 'chatbot',   flag: 'ia', intent: 'marketing',
             description: 'Sugerencias personalizadas según comportamiento del usuario.' },
+
+          // ── Métricas internas ───────────────────────────────────────
+          { id: 'analytics',  label: 'Panel admin · métricas para tu equipo',     add: 8000,  icon: 'saas',      intent: 'marketing',
+            description: 'Dashboard donde tú ves cuántos usuarios, qué hacen, qué venden.' },
         ],
       },
       {
@@ -359,15 +530,38 @@ window.IBISNE_PRICING = {
         id: 'funciones', label: '¿Qué funciones necesita?', multi: true,
         help: 'Marca todas las que apliquen.',
         opciones: [
-          { id: 'push',       label: 'Avisos al celular',                       add: 5000,  icon: 'info_app',    intent: 'engagement' },
-          { id: 'chat',       label: 'Chat o mensajes en vivo',                 add: 23500, icon: 'chatbot',  intent: 'engagement' },
-          { id: 'geo',        label: 'Mapa y ubicación',                        add: 10500,  icon: 'explore',     intent: 'engagement' },
-          { id: 'camara',     label: 'Cámara, QR y documentos',                add: 13000, icon: 'camera' },
-          { id: 'pagos-in',   label: 'Cobrar dentro de la app',                add: 15500, icon: 'fintech', intent: 'marketing' },
-          { id: 'offline',    label: 'Funciona sin internet',                  add: 11500, icon: 'wrench' },
-          { id: 'social',     label: 'Acceso rápido con Google / Apple / Facebook', add: 4500, icon: 'login', intent: 'engagement' },
-          { id: 'analytics',  label: 'Panel para ver métricas (admin)',        add: 8000,  icon: 'saas',       intent: 'marketing' },
+          // ── Comunicación ────────────────────────────────────────────
+          { id: 'push',       label: 'Avisos al celular (push)',                  add: 5000,  icon: 'info_app',    intent: 'engagement' },
+          { id: 'chat',       label: 'Chat o mensajes en vivo',                   add: 23500, icon: 'chatbot',  intent: 'engagement' },
+          { id: 'video-call', label: 'Videollamadas / audio en vivo',             add: 32500, icon: 'chatbot', intent: 'engagement' },
+          { id: 'share',      label: 'Compartir en redes sociales',                add: 3000, icon: 'partnership' },
+          // ── Ubicación · mapa ────────────────────────────────────────
+          { id: 'geo',        label: 'Mapa y ubicación',                          add: 10500, icon: 'explore',     intent: 'engagement' },
+          { id: 'rutas',      label: 'Rutas y navegación turn-by-turn',           add: 13000, icon: 'explore', intent: 'engagement' },
+          // ── Captura · escaneo ───────────────────────────────────────
+          { id: 'camara',     label: 'Cámara · escanear QR o documentos',         add: 13000, icon: 'camera' },
+          { id: 'biometria',  label: 'Face ID / Huella digital',                  add: 6500, icon: 'shield', intent: 'engagement' },
+          { id: 'ar',         label: 'Realidad aumentada (AR)',                   add: 39000, icon: 'star', intent: 'marketing' },
+          // ── Pagos · monetización ────────────────────────────────────
+          { id: 'pagos-in',   label: 'Cobrar dentro de la app',                   add: 15500, icon: 'fintech', intent: 'marketing' },
+          { id: 'wallet',     label: 'Billetera digital · saldo interno',         add: 26000, icon: 'wallet', intent: 'marketing' },
+          // ── Tiempo · agenda ─────────────────────────────────────────
+          { id: 'agenda',     label: 'Calendario / agenda de citas',              add: 11500, icon: 'clock', intent: 'engagement' },
+          { id: 'reminders',  label: 'Recordatorios programados',                  add: 4500, icon: 'clock' },
+          // ── Offline · sync ──────────────────────────────────────────
+          { id: 'offline',    label: 'Funciona sin internet',                     add: 11500, icon: 'wrench' },
+          // ── Login · cuentas ─────────────────────────────────────────
+          { id: 'social',     label: 'Login con Google / Apple / Facebook',       add: 4500, icon: 'login', intent: 'engagement' },
+          // ── Multimedia ──────────────────────────────────────────────
+          { id: 'streaming',  label: 'Video / audio streaming · player nativo',   add: 23500, icon: 'star', intent: 'engagement' },
+          { id: 'voice',      label: 'Comandos de voz / dictado',                 add: 13000, icon: 'chatbot' },
+          // ── Conectividad ────────────────────────────────────────────
+          { id: 'bluetooth',  label: 'Bluetooth · conectar con dispositivos',     add: 19500, icon: 'wrench', intent: 'engagement' },
+          { id: 'widgets',    label: 'Widgets para pantalla de inicio',            add: 9500, icon: 'sitio', intent: 'engagement' },
+          // ── Inteligencia ────────────────────────────────────────────
           { id: 'ia',         label: 'Inteligencia artificial · recomendaciones', add: 23500, icon: 'chatbot',    flag: 'ia', intent: 'marketing' },
+          // ── Métricas internas ───────────────────────────────────────
+          { id: 'analytics',  label: 'Panel admin · métricas para tu equipo',     add: 8000,  icon: 'saas',       intent: 'marketing' },
         ],
       },
       {
@@ -553,6 +747,34 @@ window.IBISNE_PRICING = {
       ],
     },
     {
+      id: 'lanzamiento', label: '¿Cómo quieres lanzar tu proyecto?',
+      help: 'Esto va más allá de entregarte el producto · es cómo lo dejamos vivo y captando clientes.',
+      opciones: [
+        { id: 'solo-entrega', label: 'Solo entrega · yo me encargo del lanzamiento', add: 0, icon: 'arrow',
+          subtitle: 'Te damos el producto listo · tú lo lanzas, promueves y haces marketing' },
+        { id: 'basico',       label: 'Paquete básico de lanzamiento',                add: 19500, icon: 'star', intent: 'engagement',
+          subtitle: 'Setup de tracking + 1 campaña de email anuncio + posts pre-armados para redes' },
+        { id: 'completo',     label: 'Paquete completo · campaña de lanzamiento',   add: 52000, icon: 'partnership', intent: 'marketing',
+          subtitle: 'Campaña pagada de 30 días (Meta/Google) · landing pre-venta · email marketing · prensa LATAM' },
+        { id: 'pro',          label: 'Lanzamiento pro · estrategia full-funnel',    add: 130000, icon: 'marketplace', intent: 'lanzamiento',
+          subtitle: 'Estrategia 90 días · ads multi-canal · contenidos · partnerships · prensa · medición' },
+      ],
+    },
+    {
+      id: 'soporte', label: '¿Qué soporte necesitas después de entregar?',
+      help: 'Cuánto tiempo nos quedamos contigo después del go-live · cambios, ajustes, mantenimiento.',
+      opciones: [
+        { id: 'incluido',  label: 'El año de seguimiento que ya incluimos',       add: 0,     icon: 'clock',
+          subtitle: 'Ajustes menores y consultas vía WhatsApp · sin costo extra el primer año' },
+        { id: 'extendido', label: 'Extender soporte a 2 años',                     add: 23500, icon: 'shield', intent: 'engagement',
+          subtitle: 'Año 2 incluido · ajustes menores, consultas, monitoreo activo' },
+        { id: 'mtto',      label: 'Mantenimiento técnico · actualizaciones',       add: 39000, icon: 'wrench', intent: 'engagement',
+          subtitle: 'Updates de seguridad, librerías, plugins · backups · uptime garantizado' },
+        { id: 'partner',   label: 'Partner tecnológico · iBisne contigo siempre', add: 78000, icon: 'partnership', intent: 'marketing',
+          subtitle: 'KAM dedicado · 10h/mes incluidas para nuevas features, ajustes, asesoría · escala con tu negocio' },
+      ],
+    },
+    {
       id: 'plazo', label: '¿Para cuándo lo necesitas listo?',
       help: 'Si tienes prisa cobramos más · si nos das tiempo te damos descuento.',
       opciones: [
@@ -564,9 +786,9 @@ window.IBISNE_PRICING = {
           subtitle: 'Optimizamos nuestra agenda · te damos 5% de descuento por la flexibilidad' },
       ],
     },
-    // Soporte / KAM / Mesa de trabajo / 24/7 fueron RETIRADOS de la cotización
-    // del proyecto · viven ahora como parte de las membresías (escalan con el tier).
-    // El proyecto cotiza solo lo que se construye · la sociedad iBisne envuelve el resto.
+    // v5.3.0 · Soporte / KAM / Mesa de trabajo / 24/7 ahora viven como
+    // opciones one-time dentro de "soporte" (no como suscripciones).
+    // Mantenemos el modelo de cotizador puro · sin recurring revenue.
   ],
 
   // ═══ TIERS, EQUIPO, TIEMPO ══════════════════════════════════════════
