@@ -114,6 +114,10 @@
   // ─── UTILS ───────────────────────────────────────────────────────────
   function formatMxn(n){
     const num = Number(n);
+    // v5.3.3 · Nunca decir "$ 0" · todo trabajo tiene valor.
+    // Si el número es 0 o no-numérico, retorna em-dash. Cualquier sitio
+    // que espera mostrar precio sin valor concreto ve "—" en lugar de "$ 0".
+    if (!num || num === 0 || isNaN(num)) return '—';
     const isInt = num === Math.floor(num);
     if (window.IBISNE_PREFS) return window.IBISNE_PREFS.format(num);
     return '$ ' + num.toLocaleString('en-US', isInt
@@ -1927,7 +1931,7 @@ Quiero arrancar la membresía y el discovery.`;
         </div>
         <div class="qb-total-block">
           <div class="qb-total-label">${L("Precio aproximado")}</div>
-          <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">$ 0</span><span class="currency" id="qb-currency-code">MXN</span></div>
+          <div class="qb-total-number"><span data-countup data-format="mxn" id="qb-total">—</span><span class="currency" id="qb-currency-code">MXN</span></div>
           <div class="qb-total-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); margin-top:2px;">${L("IVA incluido")}</div>
         </div>
         <div class="qb-nav-block">
@@ -2159,7 +2163,16 @@ Quiero arrancar la membresía y el discovery.`;
         navNext.textContent = isLast ? 'Ver cotización →' : 'Continuar →';
       }
     }
-    const elTotal = $('#qb-total'); if (elTotal) countUp(elTotal, calc.total * 1.16); // ahora muestra el TOTAL con IVA
+    // v5.3.3 · Si calc.total === 0 (sin selección todavía), mostrar "—"
+    // en lugar de "$ 0" · nunca decimos que algo cuesta cero.
+    const elTotal = $('#qb-total');
+    if (elTotal) {
+      if (!calc.total || calc.total === 0) {
+        elTotal.textContent = '—';
+      } else {
+        countUp(elTotal, calc.total * 1.16);
+      }
+    }
     const elCurr  = $('#qb-currency-code');
     if (elCurr && window.IBISNE_PREFS) elCurr.textContent = window.IBISNE_PREFS.currencyCode();
 
