@@ -12,7 +12,88 @@
     branch: null,
     answers: {},
     flags: new Set(),
+    // v5.2.0 · Heurística de leads · trackea comportamiento del usuario
+    // para que el CRM califique automáticamente al lead (complicado vs
+    // simple, decidido vs dudoso, etc.) según patrones de respuesta.
+    heuristics: {
+      sessionStart: Date.now(),
+      timings: [],        // [{stepKey, shownAt, answeredAt, dwellMs, changes}]
+      navBacks: 0,        // veces que dio "atrás"
+      editClicks: 0,      // veces que abrió modal de edición
+      currentStepShown: null,  // timestamp del step actual
+      currentStepKey: null,    // identificador del step actual
+      currentStepChanges: 0,   // veces que cambió selección en este step
+    },
   };
+
+  // v5.2.0 · Helpers de heurística
+  function trackStepShown(key){
+    if (!State.heuristics) return;
+    // Si había un step previo sin "answered", lo cierro como abandonado
+    if (State.heuristics.currentStepShown && State.heuristics.currentStepKey) {
+      flushCurrentStep('aborted');
+    }
+    State.heuristics.currentStepKey = key;
+    State.heuristics.currentStepShown = Date.now();
+    State.heuristics.currentStepChanges = 0;
+  }
+  function trackStepChange(){
+    if (State.heuristics) State.heuristics.currentStepChanges++;
+  }
+  function flushCurrentStep(reason){
+    if (!State.heuristics || !State.heuristics.currentStepShown) return;
+    const t = State.heuristics;
+    const now = Date.now();
+    t.timings.push({
+      stepKey: t.currentStepKey,
+      shownAt: t.currentStepShown,
+      answeredAt: now,
+      dwellMs: now - t.currentStepShown,
+      changes: t.currentStepChanges,
+      reason: reason || 'answered',
+    });
+    t.currentStepShown = null;
+    t.currentStepKey = null;
+    t.currentStepChanges = 0;
+  }
+  function trackNavBack(){ if (State.heuristics) State.heuristics.navBacks++; }
+  function trackEditClick(){ if (State.heuristics) State.heuristics.editClicks++; }
+
+  // Computa score heurístico al final · útil para CRM
+  function computeLeadScore(){
+    const h = State.heuristics || {};
+    const timings = h.timings || [];
+    const totalMs = Date.now() - (h.sessionStart || Date.now());
+    const avgDwellMs = timings.length ? timings.reduce((s, t) => s + t.dwellMs, 0) / timings.length : 0;
+    const totalChanges = timings.reduce((s, t) => s + (t.changes || 0), 0);
+
+    // Heurísticas para clasificación del lead (datos para el CRM)
+    const fastSteps = timings.filter(t => t.dwellMs < 2000).length;       // <2s = no leyó
+    const slowSteps = timings.filter(t => t.dwellMs > 30000).length;       // >30s = duda
+    const decisive  = totalChanges <= timings.length * 0.3;                // pocos cambios = decidido
+    const explorer  = totalChanges > timings.length * 0.8;                 // muchos cambios = explora
+    const rushed    = avgDwellMs < 4000 && fastSteps > 2;                  // pasa rápido = quiere terminar
+    const dudoso    = slowSteps >= 3 || h.navBacks >= 3;                   // duda mucho
+
+    let archetype = 'normal';
+    if (rushed && decisive)     archetype = 'simple-rapido';        // simple · enamora fácil
+    else if (explorer && slowSteps >= 2) archetype = 'detallista'; // complicado · mucha expectativa
+    else if (dudoso)            archetype = 'dudoso';
+    else if (decisive)          archetype = 'decidido';
+
+    return {
+      sessionMs: totalMs,
+      stepsCompleted: timings.length,
+      avgDwellMs: Math.round(avgDwellMs),
+      totalChanges,
+      navBacks: h.navBacks || 0,
+      editClicks: h.editClicks || 0,
+      fastSteps,
+      slowSteps,
+      archetype,        // 'simple-rapido' | 'detallista' | 'dudoso' | 'decidido' | 'normal'
+      timings,          // detalle paso por paso para CRM
+    };
+  }
 
   // ─── ICON MAPPINGS ───────────────────────────────────────────────────
   const ICON_CLASSIFIER = { socio: 'partnership', servicio: 'service', explorando: 'explore' };
@@ -123,6 +204,7 @@
   let _advanceTimer = null;
   function scheduleAdvance(targetHash, delayMs){
     if (_advanceTimer) { clearTimeout(_advanceTimer); _advanceTimer = null; }
+    flushCurrentStep('answered'); // v5.2.0 · cierra timing del step actual
     const FEEDBACK = 200;  // ver el check ✓ antes de empezar a salir
     const EXIT     = 180;  // duración del fade-out
     _advanceTimer = setTimeout(() => {
@@ -434,6 +516,7 @@
       });
     } else {
       $$('#main .option').forEach(btn => btn.addEventListener('click', e => {
+        trackStepChange();  // v5.2.0 · heurística de cambios por step
         const id = e.currentTarget.dataset.id;
         const o = q.opciones.find(x => x.id === id);
         if (q.multi) {
@@ -461,7 +544,7 @@
       if (State.step < total) navigate('#/socio/' + (State.step + 1));
       else navigate('#/socio/resultado');
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/socio/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/socio/' + (State.step - 1)); });
   }
 
   function renderSocioResultado(){
@@ -599,6 +682,7 @@
 
   // ─── Q1 — Vertical macro ─────────────────────────────────────────────
   function renderVertical(idx, total){
+    trackStepShown('vertical');
     const PRICING = window.IBISNE_PRICING;
     const sel = State.answers.vertical?.id;
     const cards = PRICING.verticales.map(v => renderCard({
@@ -645,6 +729,7 @@
 
   // ─── Q2 — Sub-tipo ───────────────────────────────────────────────────
   function renderSubtipo(idx, total){
+    trackStepShown('subtipo');
     const PRICING = window.IBISNE_PRICING;
     const vertical = State.answers.vertical;
     if (!vertical) { navigate('#/servicio/1'); return; }
@@ -693,12 +778,13 @@
       }
       navigate('#/servicio/' + (State.step + 1));
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/servicio/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/servicio/' + (State.step - 1)); });
     refreshBottomB();
   }
 
   // ─── Q3+ — Alcance técnico (sub-preguntas específicas) ───────────────
   function renderAlcance(stepDef, idx, total){
+    trackStepShown('alcance:' + stepDef.id);
     const q = getQuestionByStep(stepDef);
     if (!q) { navigate('#/servicio/' + (State.step + 1)); return; }
     renderQuestionGeneric(q, idx, total, State.answers.subtipo?.label || '');
@@ -706,6 +792,7 @@
 
   // ─── Q4+ — Universales (diseño, identidad, idiomas, plazo, mantto) ───
   function renderUniversal(stepDef, idx, total){
+    trackStepShown('universal:' + stepDef.id);
     const q = getQuestionByStep(stepDef);
     if (!q) { navigate('#/servicio/' + (State.step + 1)); return; }
     renderQuestionGeneric(q, idx, total, 'Preferencias del proyecto');
@@ -771,7 +858,7 @@
       if (!canAdvanceB(q)) return;
       navigate('#/servicio/' + (State.step + 1));
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/servicio/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/servicio/' + (State.step - 1)); });
     refreshBottomB();
   }
 
@@ -783,6 +870,7 @@
 
   // ─── Datos del cliente (último step de Etapa 1) ──────────────────────
   function renderServicioDatos(idx, total){
+    trackStepShown('datos');
     const datos = State.answers.datos || {};
     const ICONS = window.IBISNE_ICONS;
     const ico = id => ICONS ? ICONS.get(id, 'line') : '';
@@ -833,7 +921,7 @@
     // Pasa por /loading que da 900ms de buffer · evita que el paint
     // pesado del resultado se vea como "salto"
     $('[data-next]')?.addEventListener('click', () => scheduleAdvance('#/servicio/loading', 80));
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/servicio/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/servicio/' + (State.step - 1)); });
     refreshBottomB();
   }
 
@@ -1544,6 +1632,7 @@ Quiero arrancar la membresía y el discovery.`;
     // Bind edit buttons (delegation)
     $$('#main .edit-btn').forEach(b => b.addEventListener('click', e => {
       e.preventDefault();
+      trackEditClick();  // v5.2.0 · heurística · usuario revisa cotización
       const qid = e.currentTarget.dataset.q;
       if (qid) openModal(qid, e.currentTarget);
     }));
@@ -1674,7 +1763,7 @@ Quiero arrancar la membresía y el discovery.`;
       if (idx === total - 1) navigate('#/discovery/resultado');
       else navigate('#/discovery/' + (State.step + 1));
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/discovery/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/discovery/' + (State.step - 1)); });
     hideBottom();
   }
 
@@ -2203,7 +2292,7 @@ Quiero arrancar la membresía y el discovery.`;
       if (idx === total - 1) navigate('#/inversor/resultado');
       else navigate('#/inversor/' + (State.step + 1));
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/inversor/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/inversor/' + (State.step - 1)); });
   }
 
   function canAdvanceInversor(q){
@@ -2371,7 +2460,7 @@ Quiero arrancar la membresía y el discovery.`;
       if (idx === totalSteps - 1) navigate('#/consultoria/resultado');
       else navigate('#/consultoria/' + (State.step + 1));
     });
-    $('[data-prev]')?.addEventListener('click', () => navigate('#/consultoria/' + (State.step - 1)));
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/consultoria/' + (State.step - 1)); });
   }
 
   function canAdvanceConsultoria(q){
@@ -2454,6 +2543,8 @@ Quiero arrancar la membresía y el discovery.`;
       payload.ua = navigator.userAgent;
       payload.locale = (window.IBISNE_PREFS && window.IBISNE_PREFS.lang) ? window.IBISNE_PREFS.lang() : 'es';
       payload.currency = (window.IBISNE_PREFS && window.IBISNE_PREFS.currencyCode) ? window.IBISNE_PREFS.currencyCode() : 'MXN';
+      // v5.2.0 · Heurística para clasificación de leads en CRM
+      try { payload.heuristics = computeLeadScore(); } catch(_){}
       all.push(payload);
       localStorage.setItem('ibisne.leads', JSON.stringify(all.slice(-200)));
     } catch(e){}
