@@ -3523,3 +3523,37 @@ iframe[src*="vercel.live"]{ display: none !important; }
   color: var(--bg);
   border-color: var(--accent);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v5.3.0 · Overlay del loader para CROSSFADE al resultado.
+   El loader se clona como overlay fixed encima de #main · mientras el
+   resultado pinta debajo. CSS transition opacity 1→0 = crossfade real.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-loading-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 1;
+  transition: opacity 520ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  /* El clon trae .rk-loading-wrap dentro · le reseteamos min-height
+     porque el overlay ya cubre toda la pantalla via inset:0 */
+}
+.rk-loading-overlay .rk-loading-wrap{
+  min-height: 0;
+  width: 100%;
+  max-width: 520px;
+  /* Sin animation propia · es un snapshot estático del estado final */
+  animation: none !important;
+}
+.rk-loading-overlay.is-out{
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce){
+  .rk-loading-overlay{ transition: opacity 200ms linear; }
+}

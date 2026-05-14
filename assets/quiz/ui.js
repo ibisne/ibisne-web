@@ -148,7 +148,7 @@
   }
   // Totales fijos por flow (evita que la barra retroceda cuando steps dinámicos cambian)
   const FLOW_TOTAL = {
-    servicio:    8,    // 2 (vert+sub) + max 2 alcance + 4 universales (diseño · identidad · plazo · — soporte movido a membresía)
+    servicio:    10,   // 2 (vert+sub) + max 4 alcance + 5 universales (diseño · identidad · lanzamiento · soporte · plazo) + datos
     socio:       10,
     inversor:    6,
     consultoria: 6,    // 1 modalidad + 5 preguntas
@@ -925,10 +925,19 @@
     refreshBottomB();
   }
 
-  // v5.1.1 · Loading screen intermedio entre captura de datos y resultado.
-  // Buffer de 900ms · da tiempo al browser para hacer compute + paint
-  // del resultado pesado (FAQ + sticky + métodos + trust signals) ANTES
-  // de mostrarlo · al resultado le toca aparecer ya listo · cero salto.
+  // v5.3.0 · Loading screen con CROSSFADE REAL al resultado.
+  //
+  // Problema histórico (v5.1.1 → v5.2.0): el loader hacía scheduleAdvance,
+  // que añadía `is-leaving` (fade-out 180ms) y luego navigate. El #main se
+  // sobreescribía con el resultado pesado. Aunque .result-screen tiene su
+  // fade-in (questionEnter 320ms), había un gap visual entre el fade-out
+  // del loader y el fade-in del resultado → el usuario lo veía como salto.
+  //
+  // Fix: clonamos el loader como overlay `position:fixed` ENCIMA del #main.
+  // Hacemos navigate al resultado SIN scheduleAdvance (cero is-leaving).
+  // El resultado pinta debajo y arranca su fade-in nativo. Mientras tanto
+  // el overlay hace transition opacity 1→0 (500ms) y se remueve del DOM.
+  // Crossfade real · cero gap · cero salto.
   function renderServicioLoading(){
     setProgress(100);
     hideBottom();
@@ -953,12 +962,12 @@
       </div>
     `;
 
-    // Pre-compute · arranca el cálculo pesado en paralelo mientras el
-    // usuario ve el loader · cuando navegue al resultado, todo ya está
-    // en cache (computeB es puro y getter de pricing es sync).
+    // Pre-compute · arranca el cálculo pesado en paralelo (computeB
+    // es puro · cuando renderServicioResultado lo vuelva a llamar,
+    // ya quedó "caliente" en JIT y la mayoría de la data está pintada).
     try { computeB(); } catch(_){}
 
-    // Animación de "stages" · cada step se marca después de 200ms
+    // Animación de "stages" · cada step se marca secuencial
     const items = $$('#main .rk-loading-steps li');
     const total = 900;
     const stepMs = Math.floor(total / (items.length + 1));
@@ -970,10 +979,49 @@
       }, stepMs * (idx + 1));
     });
 
-    // Cuando se acaba el loader, ir al resultado (con fade-out previo)
+    // ── HANDOVER al resultado · crossfade real ───────────────────────
     setTimeout(() => {
-      scheduleAdvance('#/servicio/resultado', 0);
-    }, total + 100);
+      const main = $('#main');
+      const loaderEl = main && main.querySelector('.rk-loading-wrap');
+      if (!loaderEl) { navigate('#/servicio/resultado'); return; }
+
+      // Cambiar último step a "Listo · abriendo cotización" como checked
+      // para que visualmente NO se quede a medias antes del crossfade.
+      const lastTick = main.querySelector('.rk-loading-steps li:last-child');
+      if (lastTick) {
+        lastTick.classList.add('is-done');
+        const t = lastTick.querySelector('.rk-load-tick');
+        if (t) t.textContent = '✓';
+      }
+
+      // 1) Clonar el loader como overlay fixed encima de #main.
+      //    Mantiene el mismo aspecto visual mientras hacemos el handover.
+      const overlay = document.createElement('div');
+      overlay.className = 'rk-loading-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.innerHTML = loaderEl.outerHTML;
+      document.body.appendChild(overlay);
+
+      // 2) Asegurarnos que #main NO trae is-leaving · el resultado debe
+      //    pintar y hacer su fade-in nativo bajo el overlay.
+      main.classList.remove('is-leaving');
+
+      // 3) Navegar al resultado · navigate() dispara hashchange → render()
+      //    → renderServicioResultado() · que sobreescribe #main.innerHTML.
+      //    El nuevo .result-screen arranca su animation questionEnter 320ms.
+      navigate('#/servicio/resultado');
+
+      // 4) Tras 2 RAF (paint del resultado garantizado), arrancar fade-out
+      //    del overlay. CSS transition (.rk-loading-overlay → opacity:0).
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          overlay.classList.add('is-out');
+        });
+      });
+
+      // 5) Al terminar el fade-out, remover overlay del DOM.
+      setTimeout(() => { try { overlay.remove(); } catch(_) {} }, 700);
+    }, total + 200);
   }
 
   function renderServicioResultado(){
@@ -1047,24 +1095,34 @@
     const GROUP_MAP = {
       // Plataforma y alcance (subtipo + alcance específico)
       catalogo: 'plataforma', plataforma: 'plataforma', modelo: 'plataforma',
-      // Funcionalidad técnica
+      enlaces: 'plataforma', objetivo: 'plataforma', paginas: 'plataforma',
+      blog: 'plataforma', idiomas: 'plataforma',
+      uso_ia: 'plataforma', fuente_info: 'plataforma', canal: 'plataforma',
+      tipo_proyecto: 'plataforma', red: 'plataforma',
+      modelo_cobro: 'plataforma', usuarios_proyectados: 'plataforma',
+      descripcion: 'plataforma',
+      // Funcionalidad técnica · módulos
       pasarelas: 'funcionalidad', integraciones: 'funcionalidad',
       funciones: 'funcionalidad', tipo_app: 'funcionalidad', backend: 'funcionalidad',
+      caracteristicas: 'funcionalidad', extras: 'funcionalidad', envio: 'funcionalidad',
       // Diseño y marca
       diseno: 'diseno', identidad: 'diseno',
+      // Lanzamiento + soporte (v5.3.0)
+      lanzamiento: 'lanzamiento', soporte: 'lanzamiento',
       // Tiempo de entrega
       plazo: 'tiempo',
     };
     const GROUP_META = {
-      plataforma:    { label: 'Plataforma y alcance',  icon: 'sitio' },
-      funcionalidad: { label: 'Funcionalidad técnica', icon: 'serverapp' },
-      diseno:        { label: 'Diseño y marca',        icon: 'palette' },
-      tiempo:        { label: 'Tiempo de entrega',     icon: 'clock' },
-      otros:         { label: 'Otros',                 icon: 'star' },
+      plataforma:    { label: 'Plataforma y alcance',         icon: 'sitio' },
+      funcionalidad: { label: 'Funcionalidad técnica · módulos', icon: 'serverapp' },
+      diseno:        { label: 'Diseño y marca',               icon: 'palette' },
+      lanzamiento:   { label: 'Lanzamiento y soporte',        icon: 'star' },
+      tiempo:        { label: 'Tiempo de entrega',            icon: 'clock' },
+      otros:         { label: 'Otros',                        icon: 'star' },
     };
     function groupLineItems(items){
       const groups = {};
-      const order = ['plataforma','funcionalidad','diseno','tiempo','otros'];
+      const order = ['plataforma','funcionalidad','diseno','lanzamiento','tiempo','otros'];
       for (const li of items) {
         const g = GROUP_MAP[li.qid] || 'otros';
         if (!groups[g]) groups[g] = [];
