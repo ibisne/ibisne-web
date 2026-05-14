@@ -537,11 +537,9 @@
     const alcanceQs = (PRICING.alcance && PRICING.alcance[branch]) || [];
     alcanceQs.forEach(q => steps.push({ kind: 'alcance', id: q.id }));
     (PRICING.universales || []).forEach(q => steps.push({ kind: 'universal', id: q.id }));
-    // Nota: el step 'datos' se eliminó del flujo principal.
-    // El usuario va directo de las universales al resultado (ver el precio primero).
-    // La captura sucede de forma natural en los CTAs (WhatsApp ya pide su número,
-    // PDF/Discovery abren un modal de captura de bajo compromiso).
-    // Ruta directa /servicio/datos sigue accesible para hunters vía URL.
+    // v5.1.0 · Gate de datos · capturamos el lead ANTES de mostrar
+    // el precio · convierte ~3x más vs anónimo · cero spam.
+    steps.push({ kind: 'datos', id: 'datos' });
     return steps;
   }
 
@@ -789,36 +787,39 @@
     const ico = id => ICONS ? ICONS.get(id, 'line') : '';
     $('#main').innerHTML = `
       <div class="question-card">
-        <div class="eyebrow">Cierre · Servicio</div>
-        <h2 class="question-title">¿A nombre de quién va la cotización?</h2>
-        <p class="question-help">Estos datos llegan directo al equipo de iBisne. Te respondemos en menos de 24 horas.</p>
+        <div class="eyebrow">Último paso · Te quedan ~10 segundos</div>
+        <h2 class="question-title">Falta poco para ver tu cotización.</h2>
+        <p class="question-help">Queremos enviarte la propuesta firmable + folio. Te respondemos en menos de 24 horas. Cero spam · cero llamadas no solicitadas.</p>
         <div class="form-fields">
           <div class="form-field">
-            <label>${ico('login')} Nombre completo *</label>
-            <input type="text" name="nombre" required placeholder="Tu nombre" value="${(datos.nombre||'').replace(/"/g,'&quot;')}">
+            <label>${ico('login')} Nombre <span style="color:var(--text-muted); font-weight:400;">*</span></label>
+            <input type="text" name="nombre" required placeholder="Tu nombre" value="${(datos.nombre||'').replace(/"/g,'&quot;')}" autocomplete="name">
           </div>
           <div class="form-field">
-            <label>${ico('service')} Empresa / marca *</label>
-            <input type="text" name="empresa" required placeholder="Nombre de tu negocio" value="${(datos.empresa||'').replace(/"/g,'&quot;')}">
+            <label>${ico('whatsapp')} WhatsApp <span style="color:var(--text-muted); font-weight:400;">*</span></label>
+            <input type="tel" name="whatsapp" required placeholder="+52 55 0000 0000" value="${(datos.whatsapp||'').replace(/"/g,'&quot;')}" autocomplete="tel">
           </div>
           <div class="form-field">
-            <label>${ico('arrow')} Email *</label>
-            <input type="email" name="email" required placeholder="hola@tudominio.com" value="${(datos.email||'').replace(/"/g,'&quot;')}">
+            <label>${ico('arrow')} Email <span style="color:var(--text-muted); font-weight:400;">*</span></label>
+            <input type="email" name="email" required placeholder="hola@tudominio.com" value="${(datos.email||'').replace(/"/g,'&quot;')}" autocomplete="email">
           </div>
           <div class="form-field">
-            <label>${ico('whatsapp')} WhatsApp *</label>
-            <input type="text" name="whatsapp" required placeholder="+52 55 0000 0000" value="${(datos.whatsapp||'').replace(/"/g,'&quot;')}">
+            <label>${ico('service')} <span style="color:var(--text-secondary);">Empresa <span style="color:var(--text-muted); font-weight:400;">(opcional)</span></span></label>
+            <input type="text" name="empresa" placeholder="Nombre de tu negocio o proyecto" value="${(datos.empresa||'').replace(/"/g,'&quot;')}" autocomplete="organization">
           </div>
         </div>
+        <p style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; margin-top: 14px; text-align: center;">
+          🔒 Tus datos quedan privados · solo nosotros y tú · ver <a href="legal/privacidad.html" target="_blank" style="color: var(--accent-mint);">aviso de privacidad</a>
+        </p>
         <div class="actions">
-          <button class="btn-ghost btn" data-prev type="button">← Anterior</button>
-          <button class="btn btn-primary" data-next type="button" disabled>Generar mi cotización →</button>
+          <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
+          <button class="btn btn-primary" data-next type="button" disabled>Ver mi cotización →</button>
         </div>
       </div>
     `;
     function checkValid(){
       const d = State.answers.datos || {};
-      const ok = ['nombre','empresa','email','whatsapp'].every(k => d[k] && d[k].trim());
+      const ok = ['nombre','email','whatsapp'].every(k => d[k] && d[k].trim());
       const next = $('[data-next]'); if (next) next.disabled = !ok;
     }
     $$('#main input').forEach(input => input.addEventListener('input', e => {
@@ -848,14 +849,26 @@
           <h2 class="result-headline" style="font-size: clamp(28px,4vw,42px);">${L("Falta completar tu proyecto")}<br><span class="accent">${L("para ver tu cotización")}</span></h2>
           <p class="result-body" style="max-width: 560px; margin: 18px auto 32px;">${L("Parece que llegaste aquí sin pasar por el quiz. Elige tu tipo de proyecto y en 3 minutos te damos precio aproximado, equipo asignado y opciones de pago.")}</p>
           <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-            <a href="#/puertas" class="btn btn-primary">${L("Empezar quiz")} →</a>
-            <a href="../inversionistas.html" class="btn btn-line">${L("Soy inversionista")}</a>
-            <a href="../marketplace.html" class="btn-ghost btn">${L("Ver marketplace")}</a>
+            <a href="#/servicio/1" class="btn btn-primary">${L("Empezar quiz")} →</a>
           </div>
         </div>
       `;
       showAsideB();
       return;
+    }
+
+    // v5.1.0 · Gate de datos · si no completaron nombre/whatsapp/email,
+    // regresamos al step de datos antes de mostrar el precio
+    const _datos = State.answers.datos || {};
+    const _datosOk = ['nombre','whatsapp','email'].every(k => _datos[k] && String(_datos[k]).trim());
+    if (!_datosOk) {
+      const steps = getServicioSteps();
+      const datosIdx = steps.findIndex(s => s.kind === 'datos');
+      if (datosIdx >= 0) {
+        State.step = datosIdx + 1;
+        navigate('#/servicio/' + (datosIdx + 1));
+        return;
+      }
     }
 
     // v4.0 · Eliminamos el gate "isContact" · TODOS los proyectos cotizan
@@ -1007,124 +1020,218 @@ ${lineItemsText}
 Quiero hablar para precisar el alcance.`;
     const waUrl = `https://wa.me/523329575274?text=${encodeURIComponent(waMessage)}`;
 
+    // v5.1.0 · Tiempo y stack para mostrar en la izquierda
+    const tiempoEntrega = window.IBISNE_PRICING?.getTime
+      ? window.IBISNE_PRICING.getTime(vertical?.id, subtipo?.id, calc.total)
+      : '4-8 semanas';
+    const stackList = stackItems.length ? stackItems : ['Stack moderno', 'Tecnología adecuada al alcance', 'Hosting confiable'];
+    const datosCliente = State.answers.datos || {};
+
     $('#main').innerHTML = `
-      <div class="result-screen">
-        <div class="result-veredicto">— ${L("COTIZACIÓN INDICATIVA")}</div>
-        <h2 class="result-headline">${L("Tu cotización está lista.")}<br><span class="accent">${L("Folio")} #${folio}</span></h2>
-        <p class="result-body">${L("Cifra indicativa. Si quieres precisarla, el discovery con un hunter es opcional.")}</p>
+      <div class="result-screen result-checkout">
 
+        <!-- v5.1.0 · Header compacto · folio + greeting personal -->
+        <div class="rk-head">
+          <div class="rk-folio">— FOLIO #${folio} · INDICATIVO · SUJETO A DISCOVERY</div>
+          <h2 class="rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
+          <p class="rk-sub">Revisa el desglose, confirma con un pago de anticipo y arrancamos. Cero compromisos hasta que tú decidas.</p>
+        </div>
 
-        <!-- v5.0.3 · Highlights humanos (mismos del index · cero jerga técnica) -->
-        <section class="brand-promise">
-          <div class="bp-eyebrow">— LO QUE INCLUYE TU PROYECTO CON iBISNE</div>
-          <div class="bp-grid">
-            <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('partnership','line') : '✓'}</span>
-              <div>
-                <strong>Soporte dedicado</strong>
-                <p>Una persona asignada a tu proyecto desde el día 1. Sin recepcionistas ni filtros.</p>
+        <!-- ═══ CHECKOUT SPLIT · 62% izq + 38% der sticky ════════════════════════ -->
+        <div class="rk-grid">
+
+          <!-- ────── IZQUIERDA · resumen del proyecto + desglose ────── -->
+          <div class="rk-left">
+
+            <!-- Tu proyecto · header card -->
+            <article class="rk-card rk-project">
+              <div class="rk-card-eyebrow">— TU PROYECTO</div>
+              <div class="rk-project-head">
+                <div class="rk-project-icon">${iconHtml(subtipo?.icon)}</div>
+                <div>
+                  <div class="rk-project-name">${subtipoLabel}</div>
+                  <div class="rk-project-vertical">${verticalLabel} · ${calc.modules} ${calc.modules === 1 ? 'módulo configurado' : 'módulos configurados'}</div>
+                </div>
               </div>
-            </div>
-            <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('shield','line') : '✓'}</span>
-              <div>
-                <strong>Acompañamiento 24/7</strong>
-                <p>Respuesta en horas, no en días. Por WhatsApp directo con tu equipo.</p>
+
+              <div class="rk-project-meta">
+                <div class="rk-meta-item">
+                  <span class="rk-meta-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('clock','line') : '🕐'}</span>
+                  <div>
+                    <div class="rk-meta-label">Tiempo de entrega</div>
+                    <div class="rk-meta-value">${tiempoEntrega}</div>
+                  </div>
+                </div>
+                <div class="rk-meta-item">
+                  <span class="rk-meta-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('partnership','line') : '👥'}</span>
+                  <div>
+                    <div class="rk-meta-label">Equipo asignado</div>
+                    <div class="rk-meta-value">${(calc.team || []).slice(0,4).join(' · ')}${calc.team.length > 4 ? ` +${calc.team.length-4}` : ''}</div>
+                  </div>
+                </div>
+                <div class="rk-meta-item">
+                  <span class="rk-meta-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('star','line') : '★'}</span>
+                  <div>
+                    <div class="rk-meta-label">Acabado</div>
+                    <div class="rk-meta-value">${calc.speedZone === 'mvp' ? 'Rápido (MVP)' : (calc.speedZone === 'premium' ? 'Premium' : 'Equilibrado')}</div>
+                  </div>
+                </div>
+                <div class="rk-meta-item">
+                  <span class="rk-meta-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('serverapp','line') : '⚙'}</span>
+                  <div>
+                    <div class="rk-meta-label">Tecnología</div>
+                    <div class="rk-meta-value">${stackList[0] || 'Stack adecuado'}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('arrow','line') : '✓'}</span>
-              <div>
-                <strong>De 0 al lanzamiento</strong>
-                <p>Discovery, diseño, desarrollo y deploy. Todo lo hace iBisne · sin proveedores externos.</p>
+            </article>
+
+            <!-- Desglose detallado · editable -->
+            <article class="rk-card rk-breakdown">
+              <div class="rk-card-eyebrow">— DESGLOSE · CLICK PARA EDITAR</div>
+              <div class="cotizacion-preview rk-breakdown-inner">
+                <div class="item base">
+                  ${iconHtml(subtipo?.icon)}
+                  <span class="label">${subtipoLabel}</span>
+                  <span class="amount">${formatMxn(subtipo?.base || 0)}</span>
+                </div>
+                ${groupsHtml}
+                <div class="item subtotal"><span>${L("Subtotal")}</span><span class="amount">${formatMxn(calc.total)}</span></div>
+                <div class="item iva"><span>${L("IVA · 16%")}</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
+                <div class="item total"><span>${L("Total MXN")}</span><span class="amount">${formatMxn(totalConIva)}</span></div>
               </div>
-            </div>
-            <div class="bp-item">
-              <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('clock','line') : '✓'}</span>
-              <div>
-                <strong>Un año de seguimiento</strong>
-                <p>Ajustes y mejoras incluidos. No vendemos y desaparecemos.</p>
+            </article>
+
+            <!-- Highlights · qué incluye iBisne (humanos) -->
+            <article class="rk-card rk-highlights">
+              <div class="rk-card-eyebrow">— LO QUE INCLUYE TU PROYECTO CON iBISNE</div>
+              <div class="bp-grid">
+                <div class="bp-item">
+                  <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('partnership','line') : '✓'}</span>
+                  <div>
+                    <strong>Soporte dedicado</strong>
+                    <p>Una persona asignada desde el día 1.</p>
+                  </div>
+                </div>
+                <div class="bp-item">
+                  <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('shield','line') : '✓'}</span>
+                  <div>
+                    <strong>Acompañamiento 24/7</strong>
+                    <p>Por WhatsApp directo con tu equipo.</p>
+                  </div>
+                </div>
+                <div class="bp-item">
+                  <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('arrow','line') : '✓'}</span>
+                  <div>
+                    <strong>De 0 al lanzamiento</strong>
+                    <p>Sin proveedores externos · lo hace iBisne.</p>
+                  </div>
+                </div>
+                <div class="bp-item">
+                  <span class="bp-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('clock','line') : '✓'}</span>
+                  <div>
+                    <strong>Un año de seguimiento</strong>
+                    <p>Ajustes incluidos · no desaparecemos.</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </article>
+
+            <!-- Mini FAQ · objection handling -->
+            <article class="rk-card rk-faq">
+              <div class="rk-card-eyebrow">— PREGUNTAS COMUNES</div>
+              <details class="rk-faq-item">
+                <summary>¿Qué pasa después de pagar el anticipo?</summary>
+                <div>Te asignamos KAM en menos de 24h. Agendamos discovery call para firmar el alcance exacto. Si en discovery decidimos que el proyecto no es viable, devolvemos el 100% del anticipo.</div>
+              </details>
+              <details class="rk-faq-item">
+                <summary>¿Puedo modificar la cotización después?</summary>
+                <div>Sí. Hasta firmar discovery, ajustamos cualquier opción. Después de firmar, modificaciones grandes se cotizan aparte (siempre con tu aprobación).</div>
+              </details>
+              <details class="rk-faq-item">
+                <summary>¿En cuánto tiempo arrancamos?</summary>
+                <div>Discovery en menos de 7 días desde el pago del anticipo. Producción arranca tras firmar discovery (usualmente la misma semana).</div>
+              </details>
+              <details class="rk-faq-item">
+                <summary>¿Hay costos extras durante el proyecto?</summary>
+                <div>No. El precio es cerrado: incluye discovery, diseño, desarrollo, deploy, hosting primer año y un año de seguimiento. Si algo cambia el alcance, lo cotizamos aparte con tu aprobación previa.</div>
+              </details>
+            </article>
+
           </div>
-        </section>
 
-        <div class="result-grid">
-          <div class="result-col-main">
-            <div class="cotizacion-preview">
-              <h3>— DESGLOSE · CLICK EDITAR PARA AJUSTAR</h3>
-              <div class="item base">
-                ${iconHtml(subtipo?.icon)}
-                <span class="label">${subtipoLabel}</span>
-                <span class="amount">${formatMxn(subtipo?.base || 0)}</span>
-              </div>
-              ${groupsHtml}
-              <div class="item subtotal"><span>${L("Subtotal")}</span><span class="amount">${formatMxn(calc.total)}</span></div>
-              <div class="item iva"><span>${L("IVA · 16%")}</span><span class="amount">${formatMxn(calc.total * 0.16)}</span></div>
-              <div class="item total"><span>${L("Total MXN")}</span><span class="amount">${formatMxn(calc.total * 1.16)}</span></div>
-              <div class="stamp">INDICATIVO · sujeto a discovery · folio #${folio}</div>
+          <!-- ────── DERECHA · sticky checkout ────── -->
+          <aside class="rk-right">
+            <div class="rk-checkout">
 
-              <div class="payment-section">
-                <div class="payment-section-label">— FORMA DE PAGO · PayPal disponible · otros próximamente</div>
-                <div class="payment-grid">
-                  <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="payment-method is-active" aria-label="Pagar con PayPal">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
-                    <span class="pm-name">PayPal</span>
-                    <span class="pm-meta">Pagar ahora →</span>
-                  </a>
-                  <button class="payment-method" type="button" disabled aria-label="Mercado Pago">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
-                    <span class="pm-name">Mercado Pago</span>
-                    <span class="pm-meta">${L("Disponible pronto")}</span>
+              <div class="rk-total-label">— TOTAL CON IVA</div>
+              <div class="rk-total-amount">${formatMxn(totalConIva)}<span class="rk-total-currency">MXN</span></div>
+              <div class="rk-total-hint">Pago en 2 partes · 50% al firmar discovery · 50% al entregar</div>
+
+              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="rk-cta-pay" data-cta="pay-now">
+                <span class="rk-cta-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : '$'}</span>
+                <span class="rk-cta-text">
+                  <strong>Pagar anticipo · ${formatMxn(totalConIva * 0.5)}</strong>
+                  <span class="rk-cta-sub">PayPal · seguro y verificado</span>
+                </span>
+                <span class="rk-cta-arrow">→</span>
+              </a>
+
+              <div class="rk-methods">
+                <div class="rk-methods-label">Otros métodos · próximamente</div>
+                <div class="rk-methods-grid">
+                  <button class="rk-method" type="button" disabled aria-label="Mercado Pago">
+                    <span class="rk-method-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('wallet','line') : ''}</span>
+                    <span class="rk-method-name">Mercado Pago</span>
                   </button>
-                  <button class="payment-method" type="button" disabled aria-label="SPEI / Transferencia">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('cash','line') : ''}</span>
-                    <span class="pm-name">SPEI · Transferencia</span>
-                    <span class="pm-meta">${L("Disponible pronto")}</span>
+                  <button class="rk-method" type="button" disabled aria-label="SPEI">
+                    <span class="rk-method-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('cash','line') : ''}</span>
+                    <span class="rk-method-name">SPEI · OXXO</span>
                   </button>
-                  <button class="payment-method" type="button" disabled aria-label="Criptomonedas">
-                    <span class="pm-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('coin','line') : ''}</span>
-                    <span class="pm-name">Cripto · USDC / BTC</span>
-                    <span class="pm-meta">${L("Disponible pronto")}</span>
+                  <button class="rk-method" type="button" disabled aria-label="Cripto">
+                    <span class="rk-method-icon">${window.IBISNE_ICONS ? window.IBISNE_ICONS.get('coin','line') : ''}</span>
+                    <span class="rk-method-name">Cripto · USDC</span>
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div class="result-col-side">
-            <div class="result-summary">
-              <div class="item">
-                <div class="label">${L("Equipo asignado")}</div>
-                <div class="value">${calc.team.join(' · ')}</div>
-              </div>
-              <div class="item">
-                <div class="label">${L("Módulos activos")}</div>
-                <div class="value">${calc.modules} ${calc.modules === 1 ? 'módulo' : 'módulos'} configurados</div>
-              </div>
-              <div class="item">
-                <div class="label">${L("Acabado del proyecto")}</div>
-                <div class="value">${calc.speedZone === 'mvp' ? 'MVP' : (calc.speedZone === 'premium' ? 'Premium' : 'Estándar')}</div>
-              </div>
-              <div class="item">
-                <div class="label">${L("Folio")}</div>
-                <div class="value">#${folio}</div>
-              </div>
-            </div>
+              <ul class="rk-trust">
+                <li>
+                  <span class="rk-trust-ic">✓</span>
+                  <span><strong>50% al firmar discovery · 50% al entregar.</strong> Sin pagos sorpresa.</span>
+                </li>
+                <li>
+                  <span class="rk-trust-ic">✓</span>
+                  <span><strong>Garantía discovery firmable.</strong> Si no te firmamos discovery en 7 días, devolvemos el anticipo.</span>
+                </li>
+                <li>
+                  <span class="rk-trust-ic">✓</span>
+                  <span><strong>Folio reservado 30 días.</strong> Tu precio queda fijo hasta el ${fechaVigencia}.</span>
+                </li>
+                <li>
+                  <span class="rk-trust-ic">✓</span>
+                  <span><strong>Cero spam · cero llamadas no solicitadas.</strong> Te contacta solo tu KAM asignado.</span>
+                </li>
+              </ul>
 
-            <!-- v5.0 · Cotizador puro · 2 CTAs simples + hunter sutil al final -->
-            <div class="result-cta result-cta-stack result-cta-v4">
-              <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="btn btn-primary btn-pay" data-cta="pay-now">${L("Pagar ahora")} · ${formatMxn(totalConIva)}</a>
-              <button class="btn btn-line" id="btn-print" type="button">${L("Descargar PDF")}</button>
+              <div class="rk-actions">
+                <button class="btn btn-line rk-btn-secondary" id="btn-print" type="button">${L("Descargar PDF")}</button>
+                <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-line rk-btn-secondary">${L("Compartir por WhatsApp →")}</a>
+              </div>
+
+              <div class="rk-hunter">
+                <a href="${waUrl}" target="_blank" rel="noopener">${L("¿Tienes preguntas? Habla con un hunter")} →</a>
+              </div>
+
             </div>
-            <!-- Hunter sutil al final · NO obligatorio -->
-            <div class="result-hunter-aside">
-              <a href="${waUrl}" target="_blank" rel="noopener" class="result-hunter-link">
-                ${L("¿Tienes preguntas? Habla con un hunter")} →
-              </a>
-            </div>
-          </div>
+          </aside>
         </div>
+
+        <!-- Mobile sticky CTA · solo visible en pantallas chicas -->
+        <a href="https://paypal.me/iBisne" target="_blank" rel="noopener" class="rk-mobile-cta" data-cta="pay-now-mobile">
+          <span class="rk-mobile-cta-label">Pagar anticipo</span>
+          <span class="rk-mobile-cta-amount">${formatMxn(totalConIva * 0.5)} →</span>
+        </a>
 
         <!-- ─── COTIZACIÓN FORMAL · solo visible en print (PDF) ─────────────── -->
         <section class="print-cotizacion" aria-hidden="true">
