@@ -29,60 +29,64 @@
 <link rel="stylesheet" href="design-system-v2/tokens.css">
 <link rel="stylesheet" href="assets/quiz/styles.css">
 <style>
-  body{ display: flex; flex-direction: column; min-height: 100vh; }
+  /* v5.0.1 · Home sin scroll · hero + highlights en una sola vista */
+  html, body { height: 100%; }
+  body{ display: flex; flex-direction: column; }
   main{
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 64px 32px 32px;
-    gap: 96px;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 32px 24px;
+    gap: 28px;
+    text-align: center;
     position: relative; z-index: 3;
-    max-width: 1280px;
+    max-width: 1240px;
     margin: 0 auto;
     width: 100%;
   }
 
-  /* HERO · pregunta · igual que antes pero ahora con 3 CTAs */
-  .question-block{
+  .hero-block{
     display: flex; flex-direction: column;
-    align-items: center; gap: 48px;
-    text-align: center;
-    padding-top: 40px;
+    align-items: center; gap: 22px;
+    max-width: 980px;
   }
-  .question-eyebrow{
+  .hero-eyebrow{
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: var(--text-muted);
+    color: var(--accent-mint);
   }
-  .question-eyebrow .accent{ color: var(--accent-mint); }
-  .question{
+  .hero-q{
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(44px, 6.5vw, 84px);
-    letter-spacing: -0.045em;
+    font-size: clamp(36px, 5.5vw, 72px);
+    letter-spacing: -0.04em;
     line-height: 1.02;
     color: var(--text-primary);
   }
-  .question .highlight{ color: var(--accent-mint, #AEFFC8); }
-  .question-sub{
+  .hero-q .highlight{ color: var(--accent-mint, #AEFFC8); }
+  .hero-sub{
     font-family: var(--font-display);
-    font-size: clamp(15px, 1.4vw, 18px);
+    font-size: clamp(14px, 1.3vw, 17px);
     color: var(--text-secondary);
     max-width: 580px;
     line-height: 1.55;
   }
 
-  /* CTA primario que lleva a las 3 puertas */
-  .hero-cta-row{ display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .cta-row{
+    display: flex; gap: 16px;
+    margin-top: 4px;
+  }
   .cta-big{
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 15px;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    padding: 20px 44px;
+    padding: 18px 44px;
     border: 1px solid var(--bg-line);
     background: transparent;
     color: var(--text-primary);
@@ -99,240 +103,78 @@
   .cta-big.primary:hover{ background: var(--accent-mint); border-color: var(--accent-mint); }
   .cta-big.line:hover{ border-color: var(--accent-mint); color: var(--accent-mint); }
 
-  /* ─── SECCIÓN · 3 puertas ─── */
-  .home-doors {
-    text-align: center;
-  }
-  .home-doors .h-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    color: var(--accent-mint);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .home-doors h2 {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 3.4vw, 40px);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    margin-bottom: 16px;
-  }
-  .home-doors h2 .accent { color: var(--accent); }
-  .home-doors p {
-    font-size: 15px;
-    color: var(--text-secondary);
-    max-width: 540px;
-    margin: 0 auto 36px;
-  }
-  .home-doors-grid {
+  /* ─── Highlights · cards pequeñas en grid ─── */
+  .highlights{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    max-width: 980px;
-    margin: 0 auto;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 1120px;
+    margin-top: 8px;
   }
-  .door-tile {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 28px 24px;
+  .hl-card{
+    padding: 16px 14px;
     background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: 14px;
-    text-decoration: none;
-    text-align: left;
-    cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
-    color: var(--text-primary);
-  }
-  .door-tile:hover {
-    border-color: var(--accent);
-    background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg-paper) 100%);
-    transform: translateY(-4px);
-  }
-  .door-tile-icon {
-    width: 56px; height: 56px;
-    background: var(--bg);
     border: 1px solid var(--bg-line);
     border-radius: 12px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.22s ease, transform 0.18s ease;
+  }
+  .hl-card:hover{
+    border-color: rgba(174,255,200,0.3);
+    transform: translateY(-2px);
+  }
+  .hl-icon{
+    width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--accent-mint);
-  }
-  .door-tile-icon svg { width: 28px; height: 28px; }
-  .door-tile-label {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .door-tile-sub {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.45;
-    flex: 1;
-  }
-  .door-tile-arrow {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    transition: color 0.2s ease;
-  }
-  .door-tile:hover .door-tile-arrow { color: var(--accent); }
-
-  /* ─── SECCIÓN · Marketplace teaser ─── */
-  .home-mp {
-    background: linear-gradient(180deg, rgba(174,255,200,0.03) 0%, transparent 100%);
-    border: 1px solid var(--bg-line);
-    border-radius: 16px;
-    padding: 48px;
-  }
-  .home-mp-head {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-  .home-mp-head .h-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    color: var(--accent-mint);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .home-mp-head h2 {
-    font-family: var(--font-display);
-    font-size: clamp(24px, 3vw, 36px);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-  .home-mp-head h2 .accent { color: var(--accent); }
-  .home-mp-head .stats {
-    display: flex; gap: 32px;
-    justify-content: center; margin-top: 18px;
-    flex-wrap: wrap;
-  }
-  .home-mp-head .stat {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-  }
-  .home-mp-head .stat .n {
-    color: var(--accent);
-    font-size: 14px;
-    font-weight: 700;
-    display: block;
-  }
-  .home-mp-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-  .mp-card {
-    padding: 18px 16px;
     background: var(--bg);
     border: 1px solid var(--bg-line);
-    border-radius: 10px;
-    transition: border-color 0.2s ease;
+    border-radius: 8px;
+    color: var(--accent-mint);
+    margin-bottom: 2px;
   }
-  .mp-card:hover { border-color: var(--accent-mint); }
-  .mp-card-tag {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-  .mp-card-name {
+  .hl-icon svg{ width: 14px; height: 14px; }
+  .hl-title{
     font-family: var(--font-display);
+    font-size: 13px;
     font-weight: 600;
-    font-size: 14px;
-    margin: 6px 0 10px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
   }
-  .mp-card-meta {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-  }
-  .mp-card-progress {
-    height: 4px;
-    background: var(--bg-line);
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 6px;
-  }
-  .mp-card-progress span {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-mint));
-  }
-  .mp-card-funded {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--accent-mint);
-  }
-  .home-mp-foot {
-    text-align: center;
-    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-  }
-
-  /* ─── SECCIÓN · Inversionista CTA banner ─── */
-  .home-inv {
-    background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: 16px;
-    padding: 40px 48px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 32px;
-    align-items: center;
-  }
-  .home-inv-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--accent-mint);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .home-inv h3 {
+  .hl-desc{
     font-family: var(--font-display);
-    font-size: clamp(22px, 2.4vw, 30px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 6px;
-  }
-  .home-inv p {
+    font-size: 12px;
     color: var(--text-secondary);
-    font-size: 14px;
-    max-width: 540px;
-    line-height: 1.5;
-  }
-  .home-inv-cta {
-    display: flex; gap: 10px; flex-wrap: wrap;
+    line-height: 1.4;
   }
 
-  @media (max-width: 900px){
-    main{ padding: 32px 18px; gap: 56px; }
-    .home-doors-grid{ grid-template-columns: 1fr; }
-    .home-mp-grid{ grid-template-columns: repeat(2, 1fr); }
-    .home-mp{ padding: 32px 24px; }
-    .home-inv{ grid-template-columns: 1fr; padding: 28px; text-align: left; }
+  @media (max-width: 1100px){
+    .highlights{ grid-template-columns: repeat(3, 1fr); }
   }
-  @media (max-width: 540px){
-    .question-block{ gap: 28px; padding-top: 16px; }
-    .question{ font-size: clamp(28px, 9vw, 48px); }
-    .hero-cta-row{ flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
-    .cta-big{ width: 100%; text-align: center; padding: 18px 24px; font-size: 14px; }
-    .home-mp-grid{ grid-template-columns: 1fr; }
+  @media (max-width: 768px){
+    main{ padding: 20px 16px 16px; gap: 20px; }
+    .hero-block{ gap: 16px; }
+    .hero-q{ font-size: clamp(26px, 7vw, 44px); }
+    .hero-sub{ font-size: 14px; }
+    .cta-row{ flex-direction: row; gap: 10px; width: 100%; max-width: 420px; }
+    .cta-big{ flex: 1; padding: 14px 16px; font-size: 13px; letter-spacing: 0.1em; }
+    .highlights{ grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .hl-card{ padding: 12px 10px; }
+    .hl-title{ font-size: 12px; }
+    .hl-desc{ font-size: 11px; }
   }
+  @media (max-width: 420px){
+    .highlights{ grid-template-columns: 1fr 1fr; }
+    .hl-card{ padding: 10px 10px; gap: 4px; }
+    .hl-icon{ width: 22px; height: 22px; }
+  }
+
+  /* Footer simplificado para no robar altura */
+  footer.legal-strip{ padding: 8px 18px; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -352,7 +194,6 @@
   </a>
   <div class="hud-spacer"></div>
 
-  <!-- Grupo 1 · Redes sociales -->
   <div class="hud-group hud-group-social">
     <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram" aria-label="Instagram"></a>
     <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin" aria-label="LinkedIn"></a>
@@ -361,7 +202,6 @@
 
   <span class="hud-divider" aria-hidden="true"></span>
 
-  <!-- Grupo 2 · Preferencias regionales -->
   <div class="hud-group hud-group-pref">
     <button class="hud-toggle" id="hud-lang" type="button" aria-label="Cambiar idioma">
       <span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span>
@@ -373,7 +213,6 @@
 
   <span class="hud-divider" aria-hidden="true"></span>
 
-  <!-- Grupo 3 · Apariencia -->
   <div class="hud-group hud-group-ui">
     <button class="hud-btn" id="hud-theme" type="button" data-icon="moon" aria-label="Cambiar tema"></button>
     <button class="hud-btn" id="hud-music" type="button" data-icon="play" aria-label="Reproducir música ambient"></button>
@@ -386,7 +225,7 @@
     <span data-i18n="hud.cta.hunter">Hablar con un hunter</span>
   </a>
 
-  <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="grid" aria-label="Abrir panel de cotización" aria-expanded="false"></button>
+  <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="grid" aria-label="Abrir panel" aria-expanded="false"></button>
 </header>
 
 <!-- Mobile menu -->
@@ -420,19 +259,47 @@
   <button class="menu-cta menu-cta-install" id="hud-install-m" type="button" data-style="cta" data-icon="plus" hidden>Instalar app</button>
 </nav>
 
-<!-- v5.0 · Hero clásico centrado · cotizador puro -->
+<!-- HERO + HIGHLIGHTS · todo en una pantalla sin scroll -->
 <main>
-  <div class="question-block">
-    <h2 class="question">
-      <span data-i18n="hero.question.tired">¿Estás cansado de las</span><br>
-      <span class="highlight" data-i18n="hero.question.agencies">agencias patito</span>
-      <span data-i18n="hero.question.suffix"> de LATAM?</span>
-    </h2>
-    <div class="hero-cta-row">
-      <a href="quiz.html#/servicio/1" class="cta-big primary" data-i18n="hero.cta.yes">Sí — cuéntame</a>
-      <a href="no.html" class="cta-big line" data-i18n="hero.cta.no">No, ya tengo una</a>
+  <section class="hero-block">
+    <div class="hero-eyebrow">§ COTIZA TU SERVICIO · SIN COMPROMISO</div>
+    <h1 class="hero-q">
+      Construye lo que te <span class="highlight">tu negocio merece.</span>
+    </h1>
+    <p class="hero-sub">Cotiza tu proyecto en 3 minutos. Sin formularios eternos. Sin "déjanos tu correo y te contactamos". Precio claro al instante.</p>
+    <div class="cta-row">
+      <a href="quiz.html#/servicio/1" class="cta-big primary" data-i18n="hero.cta.yes">Cotizar ahora →</a>
+      <a href="no.html" class="cta-big line" data-i18n="hero.cta.no">Ya tengo agencia</a>
     </div>
-  </div>
+  </section>
+
+  <section class="highlights" aria-label="Lo que incluye trabajar con iBisne">
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="partnership"></span>
+      <h3 class="hl-title">Soporte dedicado</h3>
+      <p class="hl-desc">Una persona asignada a tu proyecto desde el día 1.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="shield"></span>
+      <h3 class="hl-title">Acompañamiento 24/7</h3>
+      <p class="hl-desc">Respuesta en horas, no en días. Por WhatsApp directo.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="arrow"></span>
+      <h3 class="hl-title">De 0 al lanzamiento</h3>
+      <p class="hl-desc">Discovery, diseño, código, deploy. Sin proveedores externos.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="clock"></span>
+      <h3 class="hl-title">Un año de seguimiento</h3>
+      <p class="hl-desc">Ajustes incluidos. No vendemos y desaparecemos.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="star"></span>
+      <h3 class="hl-title">Imperios, no proyectos</h3>
+      <p class="hl-desc">Pensamos en tu negocio a 5 años. No en cerrar la venta.</p>
+    </article>
+  </section>
 </main>
 
 <!-- Footer legales -->

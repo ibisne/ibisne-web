@@ -513,6 +513,10 @@ body.has-bottom-bar-expanded .quiz-main{
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+/* v5.0.1 · Aplicar el mismo fade-in al resultado y a empty states
+   para que la transición final sea continua (no salta/parpadea) */
+.result-screen,
+.result-screen.is-leaving { animation: questionEnter 320ms ease-out; }
 /* Cuando main tiene .is-leaving, fade out limpio antes de navegar */
 #main.is-leaving{
   opacity: 0;
