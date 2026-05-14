@@ -134,7 +134,10 @@
       return mxnAmount;
     },
     format: function(mxnAmount){
-      var amount = this.convert(mxnAmount);
+      // v5.3.3 · Nunca devolver "$ 0" · si el valor es 0/null/NaN, retornar em-dash
+      var n = Number(mxnAmount);
+      if (!n || n === 0 || isNaN(n)) return '—';
+      var amount = this.convert(n);
       var isInt = amount === Math.floor(amount);
       var opts = isInt
         ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
