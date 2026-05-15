@@ -3557,3 +3557,59 @@ iframe[src*="vercel.live"]{ display: none !important; }
 @media (prefers-reduced-motion: reduce){
   .rk-loading-overlay{ transition: opacity 200ms linear; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v5.3.4 · Badge "RECOMENDADA" para cards pre-seleccionadas por el
+   sistema de pre-fill inteligente (step pasarelas, basado en métodos
+   de pago elegidos).
+   ═══════════════════════════════════════════════════════════════════ */
+.option-badge-recomendada{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(61, 255, 127, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(61, 255, 127, 0.35);
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1;
+  z-index: 2;
+  pointer-events: none;
+  /* Aparece con un fade-in sutil para no distraer al cargar */
+  animation: badgeFadeIn 320ms 80ms ease-out both;
+}
+@keyframes badgeFadeIn{
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* La card recomendada también lleva un borde verde sutil cuando NO está
+   seleccionada · indica visualmente que es opción "destacada" */
+.option.is-recommended:not(.is-selected){
+  border-color: rgba(61, 255, 127, 0.22);
+}
+
+/* Cuando ambas (recomendada Y seleccionada por el cliente), el badge
+   sigue visible pero menos protagonista (la selección ya domina visual) */
+.option.is-selected .option-badge-recomendada{
+  background: rgba(61, 255, 127, 0.18);
+  border-color: rgba(61, 255, 127, 0.45);
+}
+
+@media (max-width: 768px){
+  .option-badge-recomendada{
+    top: 8px;
+    right: 8px;
+    font-size: 8px;
+    padding: 2px 6px;
+    letter-spacing: 0.1em;
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  .option-badge-recomendada{ animation: none; }
+}
