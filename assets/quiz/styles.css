@@ -4060,188 +4060,140 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   border-color: var(--accent);
 }
 
-/* ═══ MODAL · sub-flow del servicio ═══════════════════════════════════ */
-.sf-modal{
-  position: fixed;
-  inset: 0;
-  z-index: 100;
+/* ═══ SUB-FLOW · vista de cards integrada (v6.0.5 · NO modal) ═════════ */
+.sf-questions{
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: modalFade 200ms ease-out;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 4px;
 }
-.sf-backdrop{
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-}
-.sf-panel{
-  position: relative;
-  background: var(--bg-deep);
-  border: 1px solid var(--bg-line);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 640px;
-  max-height: 88vh;
-  display: flex; flex-direction: column;
-  animation: modalSlide 280ms cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-}
-.sf-head{
-  position: relative;
-  padding: 24px 28px 18px;
-  border-bottom: 1px solid var(--bg-line);
-}
-.sf-eyebrow{
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 8px;
-}
-.sf-title{
+.sf-question-label{
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-primary);
-  line-height: 1.2;
-}
-.sf-subtitle{
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 6px;
-}
-.sf-close{
-  position: absolute;
-  top: 20px; right: 20px;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--bg-line);
-  background: var(--bg);
-  color: var(--text-secondary);
-  font-size: 20px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.18s ease;
-}
-.sf-close:hover{ border-color: var(--accent); color: var(--accent); }
-
-.sf-body{
-  padding: 18px 28px 6px;
-  overflow-y: auto;
-  flex: 1;
-}
-.sf-question{ margin-bottom: 22px; }
-.sf-question-label{
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .sf-question-help{
   font-weight: 400;
   font-size: 13px;
   color: var(--text-secondary);
 }
-.sf-options{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
-}
-.sf-options.is-multi .sf-option::before{
-  content: '☐';
-  margin-right: 8px;
+.sf-question-multi{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
   color: var(--text-muted);
-  font-size: 16px;
+  font-weight: 400;
 }
-.sf-options.is-multi .sf-option.is-selected::before{
-  content: '☑';
-  color: var(--accent);
+.sf-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
-.sf-option{
+@media (max-width: 720px){ .sf-grid{ grid-template-columns: 1fr; } }
+
+.sf-card{
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 12px 14px;
+  gap: 6px;
+  padding: 16px 18px;
   border: 1px solid var(--bg-line);
-  background: var(--bg);
+  background: var(--bg-deep);
   color: var(--text-primary);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-family: var(--font-display);
   text-align: left;
-  transition: all 0.18s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.sf-option:hover{
+.sf-card:hover{
   border-color: var(--accent);
-  background: var(--bg-deep);
+  background: var(--bg);
+  transform: translateY(-2px);
 }
-.sf-option.is-selected{
+.sf-card.is-selected{
   border-color: var(--accent);
   background: rgba(61,255,127,0.08);
 }
-.sf-option-label{
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.sf-grid.is-multi .sf-card::after{
+  content: '＋ agregar';
+  position: absolute;
+  bottom: 14px; right: 16px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
-.sf-option-subtitle{
+.sf-grid.is-multi .sf-card.is-selected::after{
+  content: '✓ agregado';
+  color: var(--accent);
+}
+.sf-card-label{
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.sf-card-subtitle{
   font-size: 12px;
   color: var(--text-secondary);
-  margin-top: 4px;
+  line-height: 1.4;
 }
-.sf-option-meta{
+.sf-card-meta{
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--accent-mint);
-  margin-top: 6px;
+  margin-top: 4px;
+  font-weight: 600;
 }
+.sf-card.is-selected .sf-card-meta{ color: var(--accent); }
 
-.sf-foot{
-  padding: 18px 28px 22px;
-  border-top: 1px solid var(--bg-line);
-  display: flex; flex-direction: column; gap: 14px;
-}
-.sf-total{
+/* Barra de resumen al pie del sub-flow */
+.sf-summary-bar{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 18px 22px;
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-radius: 14px;
 }
-.sf-total-label{
+.sf-summary-total{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sf-summary-label{
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
-  color: var(--text-muted);
   text-transform: uppercase;
+  color: var(--text-muted);
 }
-.sf-total-amount{
+.sf-summary-amount{
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--accent);
 }
-.sf-foot-actions{
-  display: flex; gap: 10px; justify-content: flex-end;
+.sf-summary-actions{
+  display: flex;
+  gap: 10px;
 }
-
 @media (max-width: 640px){
-  .sf-modal{ padding: 0; align-items: flex-end; }
-  .sf-panel{ max-height: 92vh; border-radius: 16px 16px 0 0; }
-  .sf-head{ padding: 18px 22px 14px; }
-  .sf-body{ padding: 14px 22px 4px; }
-  .sf-foot{ padding: 14px 22px 18px; }
-  .sf-foot-actions{ flex-direction: column-reverse; }
-  .sf-foot-actions .btn{ width: 100%; }
+  .sf-summary-bar{ flex-direction: column; align-items: stretch; }
+  .sf-summary-actions{ flex-direction: column-reverse; }
+  .sf-summary-actions .btn{ width: 100%; justify-content: center; }
 }
 
 /* ═══ STEP DATOS ═════════════════════════════════════════════════════ */
