@@ -307,8 +307,8 @@ window.IBISNE_PRICING = {
 
     'ecommerce-1prod': [
       { id: 'pasarelas', label: '¿Cómo te van a pagar?', multi: true, opciones: [
-        { id: 'mercadopago', label: 'Mercado Pago (tarjetas + SPEI + OXXO)', add: 0 },
-        { id: 'stripe',      label: 'Stripe (tarjetas internacionales)',     add: 1500 },
+        { id: 'mercadopago', label: 'Mercado Pago (tarjetas + SPEI + OXXO)', add: 2500 },
+        { id: 'stripe',      label: 'Stripe (tarjetas internacionales)',     add: 2500 },
         { id: 'paypal',      label: 'PayPal',                                 add: 1500 },
       ]},
       { id: 'envio', label: '¿Tipo de envío?', opciones: [
@@ -325,7 +325,7 @@ window.IBISNE_PRICING = {
         { id: '500+',   label: 'Más de 500',     add: 19500 },
       ]},
       { id: 'pasarelas', label: '¿Pasarelas?', multi: true, opciones: [
-        { id: 'mercadopago', label: 'Mercado Pago',     add: 0 },
+        { id: 'mercadopago', label: 'Mercado Pago',     add: 3000 },
         { id: 'stripe',      label: 'Stripe',           add: 3500 },
         { id: 'paypal',      label: 'PayPal',           add: 2500 },
         { id: 'oxxo',        label: 'OXXO / SPEI',      add: 4500 },
@@ -407,10 +407,10 @@ window.IBISNE_PRICING = {
 
     'posts-10-redes': [
       { id: 'redes', label: '¿En qué redes?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 0 },
-        { id: 'facebook',  label: 'Facebook',  add: 0 },
-        { id: 'tiktok',    label: 'TikTok',    add: 199 },
-        { id: 'linkedin',  label: 'LinkedIn',  add: 199 },
+        { id: 'instagram', label: 'Instagram', add: 250 },
+        { id: 'facebook',  label: 'Facebook',  add: 250 },
+        { id: 'tiktok',    label: 'TikTok',    add: 400 },
+        { id: 'linkedin',  label: 'LinkedIn',  add: 400 },
       ]},
       { id: 'urgencia', label: '¿Lo quieres hoy mismo?', opciones: [
         { id: 'normal',  label: 'Normal · 48-72 hrs',     add: 0 },
@@ -424,10 +424,10 @@ window.IBISNE_PRICING = {
 
     'posts-30-redes': [
       { id: 'redes', label: '¿En qué redes?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 0 },
-        { id: 'facebook',  label: 'Facebook',  add: 0 },
-        { id: 'tiktok',    label: 'TikTok',    add: 599 },
-        { id: 'linkedin',  label: 'LinkedIn',  add: 599 },
+        { id: 'instagram', label: 'Instagram', add: 600 },
+        { id: 'facebook',  label: 'Facebook',  add: 600 },
+        { id: 'tiktok',    label: 'TikTok',    add: 999 },
+        { id: 'linkedin',  label: 'LinkedIn',  add: 999 },
       ]},
       { id: 'stories', label: '¿Incluir stories?', opciones: [
         { id: 'no',   label: 'No · solo posts en feed', add: 0 },
@@ -437,7 +437,7 @@ window.IBISNE_PRICING = {
 
     'campania-ads': [
       { id: 'plataforma', label: '¿Qué plataforma?', multi: true, opciones: [
-        { id: 'meta',    label: 'Meta (Facebook + Instagram)', add: 0 },
+        { id: 'meta',    label: 'Meta (Facebook + Instagram)', add: 2500 },
         { id: 'google',  label: 'Google Ads (búsqueda + display)', add: 3500 },
         { id: 'tiktok',  label: 'TikTok Ads',                   add: 3500 },
       ]},
@@ -450,8 +450,8 @@ window.IBISNE_PRICING = {
 
     'social-mensual': [
       { id: 'redes', label: '¿Qué redes manejamos?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 0 },
-        { id: 'facebook',  label: 'Facebook',  add: 0 },
+        { id: 'instagram', label: 'Instagram', add: 1500 },
+        { id: 'facebook',  label: 'Facebook',  add: 1500 },
         { id: 'tiktok',    label: 'TikTok',    add: 1999 },
         { id: 'linkedin',  label: 'LinkedIn',  add: 999 },
       ]},
@@ -463,9 +463,9 @@ window.IBISNE_PRICING = {
 
     'estrategia-90d': [
       { id: 'canales', label: '¿Qué canales priorizamos?', multi: true, opciones: [
-        { id: 'ads',     label: 'Ads pagados (Meta/Google/TikTok)', add: 0 },
-        { id: 'organico', label: 'Contenido orgánico',              add: 0 },
-        { id: 'email',   label: 'Email marketing',                  add: 0 },
+        { id: 'ads',     label: 'Ads pagados (Meta/Google/TikTok)', add: 12000 },
+        { id: 'organico', label: 'Contenido orgánico',              add: 9500 },
+        { id: 'email',   label: 'Email marketing',                  add: 6500 },
         { id: 'prensa',  label: 'Prensa / PR LATAM',                add: 19500 },
         { id: 'partnerships', label: 'Partnerships con marcas',     add: 9500 },
       ]},

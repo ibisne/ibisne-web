@@ -43,8 +43,8 @@
     },
 
     // UI state · navegación jerárquica del catálogo (v6.0.2)
-    catalogPath: { mega: null, sub: null }, // mega | sub | null = grid raíz
-    activeModal: null,            // { servicioId, current: {qid: ans} }
+    catalogPath: { mega: null, sub: null, service: null }, // navegación jerárquica
+    subflow: null,                // { servicioId, config, isEdit } · configuración activa
     folio: null,
 
     // Heurísticas (v5.2.0)
@@ -450,9 +450,15 @@
   // ═══════════════════════════════════════════════════════════════════
   function renderCatalog(){
     setProgress(50);
-    trackStepShown('catalog');
     const PRICING = window.IBISNE_PRICING;
-    const path = State.catalogPath || (State.catalogPath = { mega: null, sub: null });
+    const path = State.catalogPath || (State.catalogPath = { mega: null, sub: null, service: null });
+
+    // Nivel 4 · sub-flow de un servicio (configuración · vista de cards)
+    if (path.service && State.subflow) {
+      return renderSubflowView();
+    }
+
+    trackStepShown('catalog');
 
     // Nivel 3 · servicios (de una sub o de una mega sin subs)
     if (path.mega) {
@@ -919,30 +925,38 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // MODAL SUB-FLOW (preguntas de un servicio)
+  // SUB-FLOW · vista de cards integrada (NO modal · v6.0.5)
   // ═══════════════════════════════════════════════════════════════════
+  // Mantiene el ritmo de cards en TODA la experiencia. El sub-flow es un
+  // nivel más de navegación del wizard, no un overlay.
   function openSubflowModal(servicio, existingConfig){
     const PRICING = window.IBISNE_PRICING;
     const questions = PRICING.subflow[servicio.id] || [];
     if (questions.length === 0) {
-      // No tiene sub-flow → agregar/actualizar directo
       if (existingConfig) updateCart(servicio.id, {});
       else                addToCart(servicio, {});
       renderCatalog();
       return;
     }
-
-    State.activeModal = {
+    State.subflow = {
       servicioId: servicio.id,
       config: existingConfig ? JSON.parse(JSON.stringify(existingConfig)) : {},
       isEdit: !!existingConfig,
     };
-    renderSubflowModal(servicio, questions);
+    State.catalogPath = Object.assign({}, State.catalogPath, { service: servicio.id });
+    renderCatalog();
   }
 
-  function renderSubflowModal(servicio, questions){
-    const config = State.activeModal.config;
-    const isEdit = State.activeModal.isEdit;
+  // Render del sub-flow como vista de cards (dentro de #wizard)
+  function renderSubflowView(){
+    const PRICING = window.IBISNE_PRICING;
+    const sf = State.subflow;
+    if (!sf) { State.catalogPath.service = null; return renderCatalog(); }
+    const servicio = Object.assign({ id: sf.servicioId }, findServicio(sf.servicioId));
+    const questions = PRICING.subflow[sf.servicioId] || [];
+    const config = sf.config;
+    const isEdit = sf.isEdit;
+    trackStepShown('subflow:' + sf.servicioId);
 
     const questionsHtml = questions.map(q => {
       const isMulti = q.multi === true;
@@ -963,64 +977,72 @@
       }
 
       const opcionesHtml = q.opciones.map(o => {
-        let meta = null;
-        if (o.add !== undefined && o.add !== 0) {
-          meta = (o.add > 0 ? '+ ' : '') + formatMxn(o.add);
+        // v6.0.5 · NUNCA "$0"/"Incluido" · todo se cobra.
+        // - single-select: muestra el PRECIO TOTAL del servicio si eliges
+        //   esta opción (base + esta opción + otras respuestas actuales).
+        //   La opción base muestra el precio base · nunca $0.
+        // - multi-select: muestra "+ $X" (add garantizado > 0 en pricing)
+        let meta;
+        if (isMulti) {
+          meta = '+ ' + formatMxn(o.add || 0);
         } else {
-          meta = 'Incluido';
+          const hypothetical = Object.assign({}, config, { [q.id]: o });
+          meta = formatMxn(calcSubflowPrice(servicio, hypothetical));
         }
-        const isSel = (isMulti && selIds.has(o.id)) || (!isMulti && selIds.has(o.id));
+        const isSel = selIds.has(o.id);
         const isRec = recommendedIds.has(o.id);
         return `
-          <button class="sf-option ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-q="${q.id}" data-opt="${o.id}" data-multi="${isMulti}" type="button">
+          <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-q="${q.id}" data-opt="${o.id}" data-multi="${isMulti}" type="button">
             ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
-            <span class="sf-option-label">${L(o.label)}</span>
-            ${o.subtitle ? `<span class="sf-option-subtitle">${L(o.subtitle)}</span>` : ''}
-            <span class="sf-option-meta">${meta}</span>
+            <div class="sf-card-label">${L(o.label)}</div>
+            ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
+            <div class="sf-card-meta">${isMulti && !isSel ? '' : (isMulti ? meta : 'Total ' + meta)}</div>
           </button>
         `;
       }).join('');
 
       return `
-        <div class="sf-question" data-q="${q.id}">
-          <div class="sf-question-label">${L(q.label)}${q.help ? ` <span class="sf-question-help">· ${L(q.help)}</span>` : ''}</div>
-          <div class="sf-options ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
+        <div class="sf-question">
+          <div class="sf-question-label">${L(q.label)}${q.help ? ` <span class="sf-question-help">· ${L(q.help)}</span>` : ''}${isMulti ? ' <span class="sf-question-multi">· marca las que apliquen</span>' : ''}</div>
+          <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
         </div>
       `;
     }).join('');
 
     const liveTotal = calcSubflowPrice(servicio, config);
 
-    // Si ya hay un modal abierto, reemplazar contenido. Si no, crear.
-    let modal = $('#sf-modal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'sf-modal';
-      modal.className = 'sf-modal';
-      modal.setAttribute('role', 'dialog');
-      modal.setAttribute('aria-modal', 'true');
-      document.body.appendChild(modal);
-    }
+    // Breadcrumb · usa el path previo (mega/sub)
+    const path = State.catalogPath;
+    const mega = path.mega ? PRICING.megaCategorias.find(m => m.id === path.mega) : null;
+    const sub  = (mega && mega.subCategorias && path.sub) ? mega.subCategorias.find(s => s.id === path.sub) : null;
+    const backLabel = sub ? L(sub.label) : (mega ? L(mega.label) : 'categorías');
 
-    modal.innerHTML = `
-      <div class="sf-backdrop" data-sf-close></div>
-      <div class="sf-panel">
-        <div class="sf-head">
-          <div class="sf-eyebrow">— ${isEdit ? 'EDITAR' : 'CONFIGURAR'}</div>
-          <div class="sf-title">${L(servicio.label)}</div>
-          <div class="sf-subtitle">${L(servicio.subtitle || '')}</div>
-          <button class="sf-close" data-sf-close type="button" aria-label="Cerrar">×</button>
+    $('#wizard').innerHTML = `
+      <div class="cat-detail-screen">
+        <button class="cat-detail-back" id="sf-back" type="button">
+          <span class="cat-detail-back-arrow">←</span> Volver a ${backLabel}
+        </button>
+        <div class="cat-breadcrumb">
+          <a href="#" id="bc-root">Categorías</a>
+          ${mega ? ` › <a href="#" id="bc-mega">${L(mega.label)}</a>` : ''}
+          ${sub ? ` › <a href="#" id="bc-sub">${L(sub.label)}</a>` : ''}
+          › <span>${L(servicio.label)}</span>
         </div>
-        <div class="sf-body">
-          ${questionsHtml}
-        </div>
-        <div class="sf-foot">
-          <div class="sf-total">
-            <span class="sf-total-label">Total del servicio</span>
-            <span class="sf-total-amount" id="sf-total-amount">${formatMxn(liveTotal)}</span>
+        <div class="cat-detail-head">
+          <div class="cat-detail-icon">${iconHtml(servicio.icon, 'line')}</div>
+          <div>
+            <h2 class="cat-detail-title">${L(servicio.label)}</h2>
+            <p class="cat-detail-subtitle">${L(servicio.subtitle || '')} · configura tu proyecto</p>
           </div>
-          <div class="sf-foot-actions">
-            <button class="btn-ghost btn" data-sf-close type="button">Cancelar</button>
+        </div>
+        <div class="sf-questions">${questionsHtml}</div>
+        <div class="sf-summary-bar">
+          <div class="sf-summary-total">
+            <span class="sf-summary-label">Total de este servicio</span>
+            <span class="sf-summary-amount">${formatMxn(liveTotal)}</span>
+          </div>
+          <div class="sf-summary-actions">
+            <button class="btn-ghost btn" id="sf-cancel" type="button">Cancelar</button>
             <button class="btn btn-primary" id="sf-confirm" type="button">
               ${isEdit ? 'Actualizar en carrito' : 'Agregar al carrito'} →
             </button>
@@ -1029,67 +1051,54 @@
       </div>
     `;
 
-    // Esc cierra
-    function escHandler(e){ if (e.key === 'Escape') closeSubflowModal(); }
-    document.addEventListener('keydown', escHandler);
-    modal._escHandler = escHandler;
+    // Volver atrás · descarta config no confirmada
+    const goBack = () => {
+      State.subflow = null;
+      State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
+      trackStepChange();
+      renderCatalog();
+    };
+    $('#sf-back').addEventListener('click', goBack);
+    $('#sf-cancel').addEventListener('click', goBack);
+    $('#bc-root')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: null, sub: null, service: null }; renderCatalog(); });
+    $('#bc-mega')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: null, service: null }; renderCatalog(); });
+    $('#bc-sub')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: path.sub, service: null }; renderCatalog(); });
 
-    // Bind close
-    modal.querySelectorAll('[data-sf-close]').forEach(b => b.addEventListener('click', closeSubflowModal));
-
-    // Bind options
-    modal.querySelectorAll('.sf-option').forEach(btn => {
+    // Selección de opciones
+    $$('#wizard .sf-card').forEach(btn => {
       btn.addEventListener('click', () => {
         const qid = btn.dataset.q;
         const oid = btn.dataset.opt;
         const isMulti = btn.dataset.multi === 'true';
         const q = questions.find(x => x.id === qid);
         const o = q.opciones.find(x => x.id === oid);
-
         if (isMulti) {
           const list = config[qid] || [];
           const exists = list.find(x => x.id === oid);
           config[qid] = exists ? list.filter(x => x.id !== oid) : [...list, o];
-          // Si cambió metodos_pago, resetea pasarelas para que se recalcule
           if (qid === 'metodos_pago') config.pasarelas = null;
         } else {
           config[qid] = o;
         }
-        renderSubflowModal(servicio, questions);
+        trackStepChange();
+        renderSubflowView();
       });
     });
 
-    // Confirm
+    // Confirmar
     $('#sf-confirm').addEventListener('click', () => {
-      // Validación: todas las preguntas con respuesta (multi acepta vacío opcional)
       for (const q of questions) {
-        const ans = config[q.id];
-        if (q.multi) continue; // multi siempre OK
-        if (!ans) {
-          alert('Falta responder: ' + L(q.label));
-          return;
-        }
+        if (q.multi) continue;
+        if (!config[q.id]) { alert('Falta responder: ' + L(q.label)); return; }
       }
       if (isEdit) updateCart(servicio.id, config);
       else        addToCart(servicio, config);
-      closeSubflowModal();
+      State.subflow = null;
+      State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
       renderCatalog();
     });
 
-    // Focus el primer botón
-    setTimeout(() => {
-      const first = modal.querySelector('.sf-option');
-      if (first) first.focus();
-    }, 50);
-  }
-
-  function closeSubflowModal(){
-    const modal = $('#sf-modal');
-    if (modal) {
-      if (modal._escHandler) document.removeEventListener('keydown', modal._escHandler);
-      modal.remove();
-    }
-    State.activeModal = null;
+    refreshCart();
   }
 
   // ═══════════════════════════════════════════════════════════════════
