@@ -1,19 +1,19 @@
-// data/pricing.js — v6.0.0 · Cotizador modular tipo carrito
+// data/pricing.js — v6.0.2 · Catálogo jerárquico de 2 niveles
 //
-// Modelo nuevo (reemplaza el árbol vertical/subtipo de v5.x):
+// Cambio principal vs v6.0.1: en lugar de 7 categorías al mismo nivel,
+// agrupamos en 4 MEGA-categorías que contienen sub-categorías:
 //
-//   Step 1 · Contexto (sector + ya tengo)
-//   Step 2 · Catálogo modular · cliente arma carrito sumando servicios
-//   Step 3+ · Sub-flow corto (2-4 preguntas) por servicio cuando aplica
-//   Step Final · Datos del cliente
+//   1. Tecnología       (sitios · tiendas · apps · web3)
+//   2. Marketing y branding (redes · branding · contenido · impresos)
+//   3. Automatización e IA  (sin subs · va directo a servicios)
+//   4. Asesoría y capacitación (sin subs)
 //
-// El cliente puede agregar CUALQUIER combinación de servicios al carrito.
-// Categorías son intercambiables (Marketing + Tech + Branding en un mismo
-// cotizador). Granularidad cubre micro ($299) hasta enterprise ($300k+).
+// El cliente ve solo 4 cards al inicio. Tap → ve sub-categorías
+// (o directo servicios si no hay subs). Tap → ve servicios. Cada nivel
+// con back button. "Ir orientando de poco a poco" como pidió Eduardo.
 //
-// Toggles globales (modificadores) ajustan TODO el carrito:
-//   · Plazo:  urgente (+50%) / normal / flexible (-5%)
-//   · Modo:   estandar / premium (+40%)
+// servicios[] ahora es un objeto plano indexado por ID para lookup O(1):
+//   servicios['web-bio'] → { ... }
 
 window.IBISNE_PRICING = {
 
@@ -43,156 +43,200 @@ window.IBISNE_PRICING = {
     { id: 'marketing',   label: 'Marketing andando',        icon: 'saas' },
   ],
 
-  // ═══ CATEGORÍAS DEL CATÁLOGO (7) ══════════════════════════════════════
-  categorias: [
-    { id: 'tech',      label: 'Tecnología',           subtitle: 'Sitios · Apps · Tiendas',         icon: 'sitio' },
-    { id: 'marketing', label: 'Marketing',            subtitle: 'Redes · Ads · Email',              icon: 'leads' },
-    { id: 'branding',  label: 'Branding / Identidad', subtitle: 'Logo · Manual · Tarjetas',         icon: 'dtc' },
-    { id: 'auto',      label: 'Automatizaciones',     subtitle: 'Bots · IA · Workflows',            icon: 'chatbot' },
-    { id: 'content',   label: 'Contenido',            subtitle: 'Fotos · Video · Copy',             icon: 'camera' },
-    { id: 'impresos',  label: 'Impresos físicos',     subtitle: 'Papelería · Brochures · Flyers',   icon: 'edit' },
-    { id: 'training',  label: 'Capacitación',         subtitle: 'Talleres · Asesoría 1-a-1',        icon: 'partnership' },
+  // ═══ MEGA-CATEGORÍAS (4) · primer nivel del catálogo ═════════════════
+  // Cada una tiene subCategorias[] · si no tiene, va directo a servicios.
+  megaCategorias: [
+    {
+      id: 'tech',
+      label: 'Tecnología',
+      subtitle: 'Sitios · Apps · Tiendas · Web3',
+      summary: 'Construimos tu producto digital',
+      icon: 'sitio',
+      subCategorias: [
+        { id: 'sitios',  label: 'Sitios web',           icon: 'sitio',
+          subtitle: 'Bio-link, landing, sitio completo',
+          serviciosIds: ['web-bio', 'landing-simple', 'landing-pro', 'sitio-web'] },
+        { id: 'tiendas', label: 'Tiendas online',       icon: 'ecommerce',
+          subtitle: 'De 1 producto a marketplace',
+          serviciosIds: ['ecommerce-1prod', 'ecommerce-shopify', 'ecommerce-pro', 'marketplace'] },
+        { id: 'apps',    label: 'Apps móviles',         icon: 'app',
+          subtitle: 'iOS, Android o no-code rápido',
+          serviciosIds: ['app-nocode', 'app-ios-android'] },
+        { id: 'web3',    label: 'Web3 · Blockchain',    icon: 'coin',
+          subtitle: 'NFT, cripto, contratos inteligentes',
+          serviciosIds: ['blockchain'] },
+      ],
+    },
+    {
+      id: 'marketing',
+      label: 'Marketing y branding',
+      subtitle: 'Redes · Branding · Contenido · Impresos',
+      summary: 'Ponemos tu marca frente al cliente',
+      icon: 'leads',
+      subCategorias: [
+        { id: 'redes-ads',  label: 'Redes y campañas',  icon: 'leads',
+          subtitle: 'Posts, ads, email, SEO',
+          serviciosIds: ['posts-10-redes', 'posts-30-redes', 'qr-personalizado', 'email-setup', 'copy-landing', 'campania-ads', 'social-mensual', 'seo-basico', 'estrategia-90d'] },
+        { id: 'branding',   label: 'Branding e identidad', icon: 'dtc',
+          subtitle: 'Logo, manual, rebrand',
+          serviciosIds: ['logo-express', 'identidad-basica', 'identidad-pro', 'rebrand-full'] },
+        { id: 'contenido',  label: 'Fotos y video',     icon: 'camera',
+          subtitle: 'Sesiones foto, video, blog SEO',
+          serviciosIds: ['sesion-foto-1h', 'video-corto', 'sesion-foto-full', 'video-corporativo', 'blog-posts'] },
+        { id: 'impresos',   label: 'Impresos físicos',  icon: 'edit',
+          subtitle: 'Tarjetas, flyers, papelería',
+          serviciosIds: ['tarjetas-500', 'flyers-1000', 'brochure-tri', 'papeleria-full'] },
+      ],
+    },
+    {
+      id: 'auto',
+      label: 'Automatización e IA',
+      subtitle: 'Bots · Chatbots · Workflows · CRM',
+      summary: 'Que la tecnología trabaje por ti',
+      icon: 'chatbot',
+      // Sin subCategorias · va directo a servicios
+      serviciosIds: ['bot-wa-basico', 'zapier-basico', 'chatbot-ia', 'crm-setup', 'automatizacion-end-end'],
+    },
+    {
+      id: 'training',
+      label: 'Asesoría y capacitación',
+      subtitle: 'Talleres · 1-a-1 · Capacitación equipos',
+      summary: 'Te enseñamos lo que sabemos',
+      icon: 'partnership',
+      serviciosIds: ['asesoria-1h', 'taller-grupal', 'capacitacion-equipo'],
+    },
   ],
 
-  // ═══ SERVICIOS · catálogo plano agrupado por categoría ═══════════════
-  //
-  // Cada servicio tiene: id, label, base (MXN), tier (micro|medio|grande),
-  // tiempo (str), icon (del set propio), subtitle (corto), categoryId implícito.
-  // Si tiene subflow:true → al agregar abre modal con preguntas extra.
-  // tags[] · etiquetas para filtrar/sugerir según sector y yaTengo.
-
+  // ═══ SERVICIOS · catálogo plano indexado por ID ══════════════════════
   servicios: {
-    tech: [
-      // ── Micro ($299-$1,999) ───────────────────────────────────────
-      { id: 'web-bio',          label: 'Bio-link · 1 página',           base: 1499,  tier: 'micro',  tiempo: '24-48hrs',  icon: 'biolink',
-        subtitle: 'Una sola página con tus enlaces, contacto y productos destacados', subflow: true,
-        tags: ['influencer','coach','sin-web'] },
-      { id: 'landing-simple',   label: 'Landing simple',                base: 2999,  tier: 'micro',  tiempo: '48hrs',     icon: 'landing',
-        subtitle: 'Una página de captación · formulario + botón de venta',           subflow: true,
-        tags: ['coach','b2b','sin-web'] },
-      // ── Medio ($2k-$15k) ──────────────────────────────────────────
-      { id: 'landing-pro',      label: 'Landing de venta pro',          base: 19999, tier: 'medio',  tiempo: '1-2 sem',   icon: 'leads',
-        subtitle: 'Landing avanzada con copy, animaciones, integraciones y A/B',     subflow: true,
-        tags: ['coach','b2b','influencer'] },
-      { id: 'sitio-web',        label: 'Sitio web completo',            base: 71500, tier: 'medio',  tiempo: '4-8 sem',   icon: 'sitio',
-        subtitle: 'Sitio multi-página con secciones, blog, contacto',                 subflow: true,
-        tags: ['arquitecto','restaurante','b2b','abogado','inmobiliaria','sin-web'] },
-      { id: 'ecommerce-1prod',  label: 'Tienda · 1 producto',           base: 28500, tier: 'medio',  tiempo: '2-5 sem',   icon: 'ecommerce',
-        subtitle: 'Página dedicada a vender UN producto · pasarela integrada',       subflow: true,
-        tags: ['ecommerce','coach'] },
-      { id: 'ecommerce-shopify', label: 'Tienda Shopify',               base: 97500, tier: 'medio',  tiempo: '4-10 sem',  icon: 'ecommerce',
-        subtitle: 'Tienda con varios productos · panel para administrar todo',       subflow: true,
-        tags: ['ecommerce'] },
-      { id: 'app-nocode',       label: 'App rápida (no-code)',          base: 45500, tier: 'medio',  tiempo: '4-10 sem',  icon: 'nocode',
-        subtitle: 'App armada con herramientas visuales · validas idea en semanas',  subflow: true,
-        tags: ['b2b','coach','educacion'] },
-      // ── Grande ($15k+) ────────────────────────────────────────────
-      { id: 'ecommerce-pro',    label: 'Tienda online avanzada',        base: 234000, tier: 'grande', tiempo: '8-16 sem',  icon: 'saas',
-        subtitle: 'Tienda construida desde cero · velocidad y SEO máximos',          subflow: true,
-        tags: ['ecommerce'] },
-      { id: 'marketplace',      label: 'Marketplace multi-vendor',      base: 416000, tier: 'grande', tiempo: '12-24 sem', icon: 'marketplace',
-        subtitle: 'Plataforma donde varios vendedores publican y tú cobras comisión', subflow: true,
-        tags: ['ecommerce','b2b'] },
-      { id: 'app-ios-android',  label: 'App iPhone + Android',          base: 286000, tier: 'grande', tiempo: '12-22 sem', icon: 'hybrid',
-        subtitle: 'Una sola app para iOS y Android · backend incluido',              subflow: true,
-        tags: ['b2b','educacion'] },
-      { id: 'blockchain',       label: 'Proyecto Web3 / cripto',        base: 234000, tier: 'grande', tiempo: '10-20 sem', icon: 'coin',
-        subtitle: 'NFTs, contratos inteligentes, DeFi · proyectos en blockchain',    subflow: true,
-        tags: ['b2b'] },
-    ],
+    // ── Tecnología · Sitios web ────────────────────────────────────
+    'web-bio':           { label: 'Bio-link · 1 página',           base: 1499,   tier: 'micro',  tiempo: '24-48hrs',  icon: 'biolink',
+                           subtitle: 'Una sola página con tus enlaces, contacto y productos destacados', subflow: true,
+                           tags: ['influencer','coach','sin-web'] },
+    'landing-simple':    { label: 'Landing simple',                base: 2999,   tier: 'micro',  tiempo: '48hrs',     icon: 'landing',
+                           subtitle: 'Una página de captación · formulario + botón de venta', subflow: true,
+                           tags: ['coach','b2b','sin-web'] },
+    'landing-pro':       { label: 'Landing de venta pro',          base: 19999,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'leads',
+                           subtitle: 'Landing avanzada con copy, animaciones, integraciones y A/B', subflow: true,
+                           tags: ['coach','b2b','influencer'] },
+    'sitio-web':         { label: 'Sitio web completo',            base: 71500,  tier: 'medio',  tiempo: '4-8 sem',   icon: 'sitio',
+                           subtitle: 'Sitio multi-página con secciones, blog, contacto', subflow: true,
+                           tags: ['arquitecto','restaurante','b2b','abogado','inmobiliaria','sin-web'] },
 
-    marketing: [
-      // ── Micro · entregables rápidos · clave "Fiverr-killer" ──────
-      { id: 'posts-10-redes',   label: '10 posts redes con tu logo',    base: 499,   tier: 'micro',  tiempo: '8hrs express', icon: 'leads',
-        subtitle: 'Instagram + Facebook · diseño con tu logo · listos para postear', subflow: true,
-        tags: ['dentista','restaurante','arquitecto','influencer','coach','abogado','inmobiliaria','sin-marketing'] },
-      { id: 'posts-30-redes',   label: '30 posts redes mensuales',      base: 1999,  tier: 'micro',  tiempo: '48hrs',     icon: 'leads',
-        subtitle: '30 piezas/mes · texto + diseño · listos para programar',          subflow: true,
-        tags: ['dentista','restaurante','influencer','coach','sin-marketing'] },
-      { id: 'qr-personalizado', label: 'Código QR personalizado',       base: 299,   tier: 'micro',  tiempo: '8hrs',      icon: 'arrow',
-        subtitle: 'QR con tu logo y colores · imprimes o usas digital · 1 link' },
-      { id: 'email-setup',      label: 'Email marketing · setup',       base: 799,   tier: 'micro',  tiempo: '24hrs',     icon: 'leads',
-        subtitle: 'Mailchimp/Brevo setup · plantilla de bienvenida + lista importada' },
-      { id: 'copy-landing',     label: 'Copywriting de landing',        base: 1499,  tier: 'micro',  tiempo: '48hrs',     icon: 'edit',
-        subtitle: 'Textos persuasivos para tu landing · headline + 4 secciones + CTA' },
-      // ── Medio ────────────────────────────────────────────────────
-      { id: 'campania-ads',     label: 'Campaña Ads 30 días',           base: 9999,  tier: 'medio',  tiempo: 'setup 48hrs', icon: 'saas',
-        subtitle: 'Meta o Google Ads · 30 días · setup + creativos + optimización',   subflow: true,
-        tags: ['ecommerce','coach','b2b','dentista','restaurante'] },
-      { id: 'social-mensual',   label: 'Manejo de redes · 1 mes',       base: 7999,  tier: 'medio',  tiempo: '1 mes',     icon: 'star',
-        subtitle: '20 posts + 30 stories + 4 reels · publicación + reporte mensual',  subflow: true,
-        tags: ['dentista','restaurante','influencer','coach','arquitecto'] },
-      { id: 'seo-basico',       label: 'SEO técnico básico',            base: 4999,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'saas',
-        subtitle: 'Auditoría + on-page + sitemap + schema · primera página Google',   tags: ['sin-marketing'] },
-      // ── Grande ────────────────────────────────────────────────────
-      { id: 'estrategia-90d',   label: 'Estrategia marketing · 90 días', base: 52000, tier: 'grande', tiempo: '3 meses',  icon: 'partnership',
-        subtitle: 'Estrategia full-funnel · ads multi-canal · email · contenidos · prensa', subflow: true },
-    ],
+    // ── Tecnología · Tiendas online ───────────────────────────────
+    'ecommerce-1prod':   { label: 'Tienda · 1 producto',           base: 28500,  tier: 'medio',  tiempo: '2-5 sem',   icon: 'ecommerce',
+                           subtitle: 'Página dedicada a vender UN producto · pasarela integrada', subflow: true,
+                           tags: ['ecommerce','coach'] },
+    'ecommerce-shopify': { label: 'Tienda Shopify',                base: 97500,  tier: 'medio',  tiempo: '4-10 sem',  icon: 'ecommerce',
+                           subtitle: 'Tienda con varios productos · panel para administrar todo', subflow: true,
+                           tags: ['ecommerce'] },
+    'ecommerce-pro':     { label: 'Tienda online avanzada',        base: 234000, tier: 'grande', tiempo: '8-16 sem',  icon: 'saas',
+                           subtitle: 'Tienda construida desde cero · velocidad y SEO máximos', subflow: true,
+                           tags: ['ecommerce'] },
+    'marketplace':       { label: 'Marketplace multi-vendor',      base: 416000, tier: 'grande', tiempo: '12-24 sem', icon: 'marketplace',
+                           subtitle: 'Plataforma donde varios vendedores publican y tú cobras comisión', subflow: true,
+                           tags: ['ecommerce','b2b'] },
 
-    branding: [
-      { id: 'logo-express',     label: 'Logo express',                  base: 999,   tier: 'micro',  tiempo: '48hrs',     icon: 'dtc',
-        subtitle: 'Logo + 2 versiones (color/blanco) · PDF + PNG · 3 propuestas',     tags: ['sin-identidad'] },
-      { id: 'identidad-basica', label: 'Identidad básica',              base: 4999,  tier: 'medio',  tiempo: '3-5 días',  icon: 'dtc',
-        subtitle: 'Logo + paleta + tipografías + usos básicos · PDF entregable',      tags: ['sin-identidad'] },
-      { id: 'identidad-pro',    label: 'Identidad pro · manual',        base: 19999, tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
-        subtitle: 'Manual completo · isotipo + naming + storytelling + aplicaciones', tags: ['sin-identidad'] },
-      { id: 'rebrand-full',     label: 'Rebrand completo',              base: 78000, tier: 'grande', tiempo: '6-10 sem',  icon: 'star',
-        subtitle: 'Investigación + reposicionamiento + identidad nueva + aplicaciones' },
-    ],
+    // ── Tecnología · Apps móviles ─────────────────────────────────
+    'app-nocode':        { label: 'App rápida (no-code)',          base: 45500,  tier: 'medio',  tiempo: '4-10 sem',  icon: 'nocode',
+                           subtitle: 'App armada con herramientas visuales · validas idea en semanas', subflow: true,
+                           tags: ['b2b','coach','educacion'] },
+    'app-ios-android':   { label: 'App iPhone + Android',          base: 286000, tier: 'grande', tiempo: '12-22 sem', icon: 'hybrid',
+                           subtitle: 'Una sola app para iOS y Android · backend incluido', subflow: true,
+                           tags: ['b2b','educacion'] },
 
-    auto: [
-      { id: 'bot-wa-basico',    label: 'Bot WhatsApp básico',           base: 1999,  tier: 'micro',  tiempo: '48hrs',     icon: 'whatsapp',
-        subtitle: 'Bot con respuestas a preguntas frecuentes · menú interactivo' },
-      { id: 'zapier-basico',    label: 'Automatización Zapier/Make',    base: 1499,  tier: 'micro',  tiempo: '48hrs',     icon: 'serverapp',
-        subtitle: '3 flujos · ej: lead nuevo → CRM + email + Slack',                   tags: ['b2b','coach'] },
-      { id: 'chatbot-ia',       label: 'Chatbot con IA',                base: 11500, tier: 'medio',  tiempo: '1-2 sem',   icon: 'chatbot',
-        subtitle: 'Bot entrenado con info de tu negocio · responde 24/7',             subflow: true },
-      { id: 'crm-setup',        label: 'CRM setup',                     base: 7999,  tier: 'medio',  tiempo: '1 sem',     icon: 'partnership',
-        subtitle: 'HubSpot/Pipedrive · flujos de seguimiento + reportes',             tags: ['b2b'] },
-      { id: 'automatizacion-end-end', label: 'Automatización end-to-end', base: 65000, tier: 'grande', tiempo: '6-10 sem', icon: 'serverapp',
-        subtitle: 'ERP + CRM + Marketing automation integrados · workflows complejos' },
-    ],
+    // ── Tecnología · Web3 ─────────────────────────────────────────
+    'blockchain':        { label: 'Proyecto Web3 / cripto',        base: 234000, tier: 'grande', tiempo: '10-20 sem', icon: 'coin',
+                           subtitle: 'NFTs, contratos inteligentes, DeFi · proyectos en blockchain', subflow: true,
+                           tags: ['b2b'] },
 
-    content: [
-      { id: 'sesion-foto-1h',   label: 'Sesión fotográfica · 1 hora',   base: 1999,  tier: 'micro',  tiempo: '1 día',     icon: 'camera',
-        subtitle: 'Producto, lugar o retrato · 1 hora + 20 fotos editadas',           tags: ['arquitecto','restaurante','dentista'] },
-      { id: 'video-corto',      label: 'Video corto · 30 segundos',     base: 1499,  tier: 'micro',  tiempo: '3 días',    icon: 'star',
-        subtitle: 'Reel o post · animación + texto + música licenciada',              tags: ['influencer','coach'] },
-      { id: 'sesion-foto-full', label: 'Sesión fotográfica · medio día', base: 7999,  tier: 'medio',  tiempo: '1 día + edición', icon: 'camera',
-        subtitle: '4 horas · 50+ fotos editadas · catálogo o portfolio',              tags: ['arquitecto','restaurante'] },
-      { id: 'video-corporativo', label: 'Video corporativo 2-3 min',    base: 14999, tier: 'medio',  tiempo: '2-3 sem',   icon: 'star',
-        subtitle: 'Guion + grabación + edición · para web, redes y ventas' },
-      { id: 'blog-posts',       label: '10 blog posts con SEO',         base: 4999,  tier: 'medio',  tiempo: '2 sem',     icon: 'edit',
-        subtitle: '10 artículos optimizados SEO · 800-1200 palabras · publicables' },
-    ],
+    // ── Marketing · Redes y campañas ──────────────────────────────
+    'posts-10-redes':    { label: '10 posts redes con tu logo',    base: 499,    tier: 'micro',  tiempo: '8hrs express', icon: 'leads',
+                           subtitle: 'Instagram + Facebook · diseño con tu logo · listos para postear', subflow: true,
+                           tags: ['dentista','restaurante','arquitecto','influencer','coach','abogado','inmobiliaria','sin-marketing'] },
+    'posts-30-redes':    { label: '30 posts redes mensuales',      base: 1999,   tier: 'micro',  tiempo: '48hrs',     icon: 'leads',
+                           subtitle: '30 piezas/mes · texto + diseño · listos para programar', subflow: true,
+                           tags: ['dentista','restaurante','influencer','coach','sin-marketing'] },
+    'qr-personalizado':  { label: 'Código QR personalizado',       base: 299,    tier: 'micro',  tiempo: '8hrs',      icon: 'arrow',
+                           subtitle: 'QR con tu logo y colores · imprimes o usas digital · 1 link' },
+    'email-setup':       { label: 'Email marketing · setup',       base: 799,    tier: 'micro',  tiempo: '24hrs',     icon: 'leads',
+                           subtitle: 'Mailchimp/Brevo setup · plantilla de bienvenida + lista importada' },
+    'copy-landing':      { label: 'Copywriting de landing',        base: 1499,   tier: 'micro',  tiempo: '48hrs',     icon: 'edit',
+                           subtitle: 'Textos persuasivos para tu landing · headline + 4 secciones + CTA' },
+    'campania-ads':      { label: 'Campaña Ads 30 días',           base: 9999,   tier: 'medio',  tiempo: 'setup 48hrs', icon: 'saas',
+                           subtitle: 'Meta o Google Ads · 30 días · setup + creativos + optimización', subflow: true,
+                           tags: ['ecommerce','coach','b2b','dentista','restaurante'] },
+    'social-mensual':    { label: 'Manejo de redes · 1 mes',       base: 7999,   tier: 'medio',  tiempo: '1 mes',     icon: 'star',
+                           subtitle: '20 posts + 30 stories + 4 reels · publicación + reporte mensual', subflow: true,
+                           tags: ['dentista','restaurante','influencer','coach','arquitecto'] },
+    'seo-basico':        { label: 'SEO técnico básico',            base: 4999,   tier: 'medio',  tiempo: '1-2 sem',   icon: 'saas',
+                           subtitle: 'Auditoría + on-page + sitemap + schema · primera página Google',
+                           tags: ['sin-marketing'] },
+    'estrategia-90d':    { label: 'Estrategia marketing · 90 días', base: 52000, tier: 'grande', tiempo: '3 meses',   icon: 'partnership',
+                           subtitle: 'Estrategia full-funnel · ads multi-canal · email · contenidos · prensa', subflow: true },
 
-    impresos: [
-      { id: 'tarjetas-500',     label: '500 tarjetas de presentación',  base: 999,   tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
-        subtitle: 'Diseño + impresión en couché 350g · 2 caras a color' },
-      { id: 'flyers-1000',      label: '1,000 flyers a color',          base: 1499,  tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
-        subtitle: 'Tamaño media carta · couché 150g · 2 caras a color' },
-      { id: 'brochure-tri',     label: 'Brochure tríptico · 500 piezas', base: 2999, tier: 'medio',  tiempo: '1-2 sem',   icon: 'edit',
-        subtitle: 'Diseño + 500 piezas impresas en couché 200g · doblado tríptico' },
-      { id: 'papeleria-full',   label: 'Papelería corporativa',         base: 7999,  tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
-        subtitle: 'Tarjetas + hojas membretadas + sobres + carpetas · diseño + 500 piezas c/u' },
-    ],
+    // ── Marketing · Branding e identidad ──────────────────────────
+    'logo-express':      { label: 'Logo express',                  base: 999,    tier: 'micro',  tiempo: '48hrs',     icon: 'dtc',
+                           subtitle: 'Logo + 2 versiones (color/blanco) · PDF + PNG · 3 propuestas',
+                           tags: ['sin-identidad'] },
+    'identidad-basica':  { label: 'Identidad básica',              base: 4999,   tier: 'medio',  tiempo: '3-5 días',  icon: 'dtc',
+                           subtitle: 'Logo + paleta + tipografías + usos básicos · PDF entregable',
+                           tags: ['sin-identidad'] },
+    'identidad-pro':     { label: 'Identidad pro · manual',        base: 19999,  tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
+                           subtitle: 'Manual completo · isotipo + naming + storytelling + aplicaciones',
+                           tags: ['sin-identidad'] },
+    'rebrand-full':      { label: 'Rebrand completo',              base: 78000,  tier: 'grande', tiempo: '6-10 sem',  icon: 'star',
+                           subtitle: 'Investigación + reposicionamiento + identidad nueva + aplicaciones' },
 
-    training: [
-      { id: 'asesoria-1h',      label: 'Asesoría 1-a-1 · 1 hora',       base: 999,   tier: 'micro',  tiempo: 'agendable', icon: 'partnership',
-        subtitle: '1 hora con un experto · estrategia, tech, marketing o el tema que necesites' },
-      { id: 'taller-grupal',    label: 'Taller grupal · 4 horas',       base: 4999,  tier: 'medio',  tiempo: 'agendable', icon: 'partnership',
-        subtitle: '4 horas con tu equipo · capacitación práctica + material' },
-      { id: 'capacitacion-equipo', label: 'Capacitación equipo · 2 días', base: 19999, tier: 'medio', tiempo: 'agendable', icon: 'partnership',
-        subtitle: '2 días de capacitación intensiva · hasta 12 personas · material + certificado' },
-    ],
+    // ── Marketing · Contenido ─────────────────────────────────────
+    'sesion-foto-1h':    { label: 'Sesión fotográfica · 1 hora',   base: 1999,   tier: 'micro',  tiempo: '1 día',     icon: 'camera',
+                           subtitle: 'Producto, lugar o retrato · 1 hora + 20 fotos editadas',
+                           tags: ['arquitecto','restaurante','dentista'] },
+    'video-corto':       { label: 'Video corto · 30 segundos',     base: 1499,   tier: 'micro',  tiempo: '3 días',    icon: 'star',
+                           subtitle: 'Reel o post · animación + texto + música licenciada',
+                           tags: ['influencer','coach'] },
+    'sesion-foto-full':  { label: 'Sesión fotográfica · medio día', base: 7999,  tier: 'medio',  tiempo: '1 día + edición', icon: 'camera',
+                           subtitle: '4 horas · 50+ fotos editadas · catálogo o portfolio',
+                           tags: ['arquitecto','restaurante'] },
+    'video-corporativo': { label: 'Video corporativo 2-3 min',     base: 14999,  tier: 'medio',  tiempo: '2-3 sem',   icon: 'star',
+                           subtitle: 'Guion + grabación + edición · para web, redes y ventas' },
+    'blog-posts':        { label: '10 blog posts con SEO',         base: 4999,   tier: 'medio',  tiempo: '2 sem',     icon: 'edit',
+                           subtitle: '10 artículos optimizados SEO · 800-1200 palabras · publicables' },
+
+    // ── Marketing · Impresos ──────────────────────────────────────
+    'tarjetas-500':      { label: '500 tarjetas de presentación',  base: 999,    tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
+                           subtitle: 'Diseño + impresión en couché 350g · 2 caras a color' },
+    'flyers-1000':       { label: '1,000 flyers a color',          base: 1499,   tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
+                           subtitle: 'Tamaño media carta · couché 150g · 2 caras a color' },
+    'brochure-tri':      { label: 'Brochure tríptico · 500 piezas', base: 2999,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'edit',
+                           subtitle: 'Diseño + 500 piezas impresas en couché 200g · doblado tríptico' },
+    'papeleria-full':    { label: 'Papelería corporativa',         base: 7999,   tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
+                           subtitle: 'Tarjetas + hojas membretadas + sobres + carpetas · diseño + 500 piezas c/u' },
+
+    // ── Automatización ─────────────────────────────────────────────
+    'bot-wa-basico':     { label: 'Bot WhatsApp básico',           base: 1999,   tier: 'micro',  tiempo: '48hrs',     icon: 'whatsapp',
+                           subtitle: 'Bot con respuestas a preguntas frecuentes · menú interactivo' },
+    'zapier-basico':     { label: 'Automatización Zapier/Make',    base: 1499,   tier: 'micro',  tiempo: '48hrs',     icon: 'serverapp',
+                           subtitle: '3 flujos · ej: lead nuevo → CRM + email + Slack',
+                           tags: ['b2b','coach'] },
+    'chatbot-ia':        { label: 'Chatbot con IA',                base: 11500,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'chatbot',
+                           subtitle: 'Bot entrenado con info de tu negocio · responde 24/7', subflow: true },
+    'crm-setup':         { label: 'CRM setup',                     base: 7999,   tier: 'medio',  tiempo: '1 sem',     icon: 'partnership',
+                           subtitle: 'HubSpot/Pipedrive · flujos de seguimiento + reportes',
+                           tags: ['b2b'] },
+    'automatizacion-end-end': { label: 'Automatización end-to-end', base: 65000, tier: 'grande', tiempo: '6-10 sem',  icon: 'serverapp',
+                           subtitle: 'ERP + CRM + Marketing automation integrados · workflows complejos' },
+
+    // ── Capacitación ──────────────────────────────────────────────
+    'asesoria-1h':       { label: 'Asesoría 1-a-1 · 1 hora',       base: 999,    tier: 'micro',  tiempo: 'agendable', icon: 'partnership',
+                           subtitle: '1 hora con un experto · estrategia, tech, marketing o el tema que necesites' },
+    'taller-grupal':     { label: 'Taller grupal · 4 horas',       base: 4999,   tier: 'medio',  tiempo: 'agendable', icon: 'partnership',
+                           subtitle: '4 horas con tu equipo · capacitación práctica + material' },
+    'capacitacion-equipo': { label: 'Capacitación equipo · 2 días', base: 19999, tier: 'medio',  tiempo: 'agendable', icon: 'partnership',
+                           subtitle: '2 días de capacitación intensiva · hasta 12 personas · material + certificado' },
   },
 
   // ═══ SUB-FLOW · 2-4 preguntas por servicio (modal al agregar) ════════
-  //
-  // Solo los servicios con subflow:true tienen entrada aquí. El resto va
-  // directo al carrito con base price. Las preguntas multi-select suman
-  // add por opción seleccionada. Single-select suma el add de la opción.
-
   subflow: {
     'web-bio': [
       { id: 'enlaces', label: '¿Cuántos enlaces?', opciones: [
@@ -213,7 +257,7 @@ window.IBISNE_PRICING = {
 
     'landing-pro': [
       { id: 'paginas', label: '¿Cuántas secciones?', opciones: [
-        { id: 'std',    label: 'Estándar · 6 secciones',  add: 0 },
+        { id: 'std',    label: 'Estándar · 6 secciones',   add: 0 },
         { id: 'plus',   label: 'Extendida · 10 secciones', add: 6500 },
       ]},
       { id: 'integraciones', label: '¿Integraciones?', multi: true, opciones: [
@@ -441,9 +485,7 @@ window.IBISNE_PRICING = {
     },
   },
 
-  // ═══ HELPERS (adaptados al modelo carrito) ════════════════════════════
-
-  // Tier global según el total final (con modificadores aplicados)
+  // ═══ HELPERS ══════════════════════════════════════════════════════════
   getTier(total){
     if (total <= 0)        return { id: 'empty',      label: '—'         };
     if (total < 5000)      return { id: 'express',    label: 'EXPRESS'    };
@@ -452,20 +494,16 @@ window.IBISNE_PRICING = {
     if (total < 200000)    return { id: 'pro',        label: 'PRO'        };
     return                       { id: 'enterprise', label: 'ENTERPRISE' };
   },
-
-  // Equipo asignado · escala con el total + flags del carrito
   getTeam(total, flags){
     const team = ['KAM'];
-    if (total >= 1500)                                                    team.push('Frontend');
+    if (total >= 1500)                                                       team.push('Frontend');
     if (total >= 15000 || flags.has('auth-or-api') || flags.has('headless')) team.push('Backend');
-    if (flags.has('animacion-pro'))                                       team.push('UX/UI');
-    if (total >= 40000)                                                   team.push('PM');
-    if (flags.has('ia') || flags.has('blockchain'))                       team.push('DevOps');
-    if (total >= 80000)                                                   team.push('QA');
+    if (flags.has('animacion-pro'))                                          team.push('UX/UI');
+    if (total >= 40000)                                                      team.push('PM');
+    if (flags.has('ia') || flags.has('blockchain'))                          team.push('DevOps');
+    if (total >= 80000)                                                      team.push('QA');
     return team;
   },
-
-  // Velocidad de salida (0 = MVP rápido · 100 = premium acabado)
   getSpeed(total, flags, plazoMul, modoMul){
     let score = 50;
     if (total < 10000)        score = 25;
@@ -474,26 +512,21 @@ window.IBISNE_PRICING = {
     else                       score = 85;
     if (flags && flags.has('animacion-pro')) score += 8;
     if (flags && (flags.has('ia') || flags.has('blockchain'))) score += 10;
-    if (modoMul && modoMul === 1.4) score += 12; // premium
-    if (plazoMul === 1.5) score -= 6;            // express empuja a MVP
-    else if (plazoMul === 0.95) score += 4;      // flexible permite acabado
+    if (modoMul && modoMul === 1.4) score += 12;
+    if (plazoMul === 1.5) score -= 6;
+    else if (plazoMul === 0.95) score += 4;
     return Math.max(0, Math.min(100, score));
   },
-
   getSpeedText(speed){
     if (speed < 35) return 'Tu carrito apunta a entregables rápidos. Cero burocracia · iteramos en el camino.';
     if (speed < 70) return 'Tu carrito balancea alcance y pulido. Calidad de producción estándar.';
     return 'Tu carrito apunta a un producto premium · acabado de alta gama.';
   },
-
   getSpeedZone(speed){
     if (speed < 35) return 'mvp';
     if (speed < 70) return 'estandar';
     return 'premium';
   },
-
-  // Stack tecnológico · agregado · si hay tech en el carrito devuelve un blend
-  // de stacks únicos. Si no hay tech, retorna stack genérico.
   getStack(servicios){
     if (!Array.isArray(servicios) || servicios.length === 0) {
       return ['Stack a definir según alcance', 'Tecnología adecuada', 'Hosting confiable'];
@@ -520,9 +553,6 @@ window.IBISNE_PRICING = {
     if (unique.size === 0) return ['Stack adecuado al alcance', 'Sin componente tecnológico complejo'];
     return Array.from(unique).slice(0, 4);
   },
-
-  // Tiempo · devuelve el tiempo del servicio MÁS LARGO del carrito.
-  // Si hay varios entregables, ese es el tiempo total (van en paralelo).
   getTime(servicios){
     if (!Array.isArray(servicios) || servicios.length === 0) return '—';
     const TIME_ORDER = {
