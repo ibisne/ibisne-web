@@ -5080,3 +5080,154 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   border-color: var(--accent);
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   v6.0.6 · SISTEMA UNIFICADO DE CARDS
+   Todas las cards de los 4 niveles (mega · sub · service · sub-flow)
+   comparten el MISMO shell visual: tamaño, padding, radio, hover,
+   tipografía. Las diferencias son solo de contenido interno.
+   Este bloque va al final → gana especificidad sobre las definiciones
+   individuales sin tener que reescribirlas.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Grids · todos 2-cols desktop · 1-col mobile · mismo gap */
+.mega-grid,
+.sub-grid,
+.service-grid,
+.sf-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+@media (max-width: 760px){
+  .mega-grid,
+  .sub-grid,
+  .service-grid,
+  .sf-grid{ grid-template-columns: 1fr; }
+}
+
+/* Shell común · misma caja para las 4 */
+.mega-card,
+.sub-card,
+.service-card,
+.sf-card{
+  box-sizing: border-box;
+  min-height: 158px;
+  padding: 20px 22px;
+  gap: 8px;
+  background: var(--bg-deep);
+  border: 1px solid var(--bg-line);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mega-card:hover,
+.sub-card:hover,
+.service-card:hover,
+.sf-card:hover{
+  border-color: var(--accent);
+  background: var(--bg);
+  transform: translateY(-2px);
+}
+
+/* Estado seleccionado / en-carrito · idéntico en todas */
+.service-card.is-incart,
+.sf-card.is-selected,
+.mega-card.has-items,
+.sub-card.has-items{
+  border-color: var(--accent);
+  background: rgba(61,255,127,0.06);
+}
+
+/* Estado "relevante al sector" · gradiente sutil idéntico */
+.mega-card.is-relevant,
+.sub-card.is-relevant,
+.service-card.is-relevant{
+  background: linear-gradient(135deg, rgba(61,255,127,0.055), var(--bg-deep) 70%);
+  border-color: rgba(61,255,127,0.20);
+}
+
+/* Título · mismo tamaño en los 4 niveles */
+.mega-card-label,
+.sub-card-label,
+.service-card-label,
+.sf-card-label{
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+  color: var(--text-primary);
+}
+
+/* Subtítulo · mismo tamaño y color */
+.mega-card-summary,
+.sub-card-subtitle,
+.service-card-subtitle,
+.sf-card-subtitle{
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+/* Icono · mismo tamaño de caja (40x40 con fondo sutil) en niveles
+   que lo tienen. sf-card no tiene icono (opciones de config). */
+.mega-card-icon,
+.sub-card-icon,
+.service-card-icon{
+  display: inline-flex;
+  width: 42px; height: 42px;
+  align-items: center; justify-content: center;
+  color: var(--accent);
+  background: rgba(61,255,127,0.07);
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+.mega-card-icon svg,
+.sub-card-icon svg,
+.service-card-icon svg{ width: 22px; height: 22px; }
+
+/* Footer · misma línea divisoria + tipografía mono pequeña */
+.mega-card-foot,
+.sub-card-foot,
+.service-card-foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--bg-line);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Empuja el footer al fondo · cards de igual altura aunque el texto
+   varíe. El contenido (label/subtitle) ocupa la parte superior. */
+.mega-card-body,
+.service-card-subtitle,
+.sub-card-subtitle{ flex: 1 0 auto; }
+
+/* sf-card · sin footer-borde · el meta de precio se alinea abajo */
+.sf-card{ justify-content: flex-start; }
+.sf-card-meta{ margin-top: auto; padding-top: 8px; }
+
+/* Botón "+ Agregar" de service-card · mantiene su pill pero alineado */
+.service-card-foot .service-add{
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
