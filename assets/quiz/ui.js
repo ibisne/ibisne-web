@@ -746,24 +746,25 @@
     const servsHtml = servs.map(s => {
       const inCart = serviciosInCart.has(s.id);
       const isRel = sector && (s.tags || []).indexOf(sector) >= 0;
+      const tierLabel = s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo');
       return `
-        <div class="service-row ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}">
-          <div class="service-icon">${iconHtml(s.icon, 'line')}</div>
-          <div class="service-info">
-            <div class="service-label">
-              ${L(s.label)}
-              ${isRel ? '<span class="service-relevant">para ti</span>' : ''}
-              <span class="service-tier service-tier-${s.tier}">${s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo')}</span>
-            </div>
-            ${s.subtitle ? `<div class="service-subtitle">${L(s.subtitle)}</div>` : ''}
-            <div class="service-meta">
-              <span class="service-price">desde ${formatMxn(s.base)}</span>
-              <span class="service-time">· ${L(s.tiempo)}</span>
-            </div>
+        <div class="service-card ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}">
+          <div class="service-card-top">
+            <div class="service-card-icon">${iconHtml(s.icon, 'line')}</div>
+            <span class="service-tier service-tier-${s.tier}">${tierLabel}</span>
+            ${isRel ? '<span class="service-relevant">para ti</span>' : ''}
           </div>
-          <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" type="button" aria-label="${inCart ? 'Editar' : 'Agregar al carrito'}">
-            ${inCart ? '✓' : '+'}
-          </button>
+          <div class="service-card-label">${L(s.label)}</div>
+          ${s.subtitle ? `<div class="service-card-subtitle">${L(s.subtitle)}</div>` : ''}
+          <div class="service-card-foot">
+            <div class="service-card-meta">
+              <span class="service-price">desde ${formatMxn(s.base)}</span>
+              <span class="service-time">${L(s.tiempo)}</span>
+            </div>
+            <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" type="button" aria-label="${inCart ? 'Editar selección' : 'Agregar al carrito'}">
+              ${inCart ? '✓ Agregado' : '+ Agregar'}
+            </button>
+          </div>
         </div>
       `;
     }).join('');
@@ -786,7 +787,7 @@
             <p class="cat-detail-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
           </div>
         </div>
-        <div class="cat-detail-services">${servsHtml}</div>
+        <div class="service-grid">${servsHtml}</div>
         <div class="cat-actions">
           <button class="btn-ghost btn" id="cat-back-2" type="button">← ${sub ? 'Volver a ' + L(mega.label) : 'Volver a categorías'}</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
@@ -846,9 +847,11 @@
         }
       });
     });
-    $$('#wizard .service-row').forEach(row => {
-      row.addEventListener('click', () => {
-        const btn = row.querySelector('.service-add');
+    // Click en el cuerpo de la card (no el botón) también agrega/edita
+    $$('#wizard .service-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.service-add')) return; // el botón maneja su click
+        const btn = card.querySelector('.service-add');
         if (btn) btn.click();
       });
     });
