@@ -88,10 +88,13 @@
 <div class="progress-rail"><div class="fill"></div></div>
 
 <div class="quiz-layout">
-  <main class="quiz-main" id="main"></main>
+  <main class="quiz-main" id="main">
+    <!-- v6.0.0 · ui.js inyecta .rk-grid con #wizard (izq) + #cart (der) -->
+  </main>
 </div>
 
-<div class="quiz-bottom hidden" id="bottom-bar"></div>
+<!-- v6.0.0 · bottom-bar eliminado · el carrito sticky vive dentro de #main -->
+<div class="quiz-bottom hidden" id="bottom-bar" aria-hidden="true"></div>
 
 <footer class="legal-strip">
   <div class="right">
