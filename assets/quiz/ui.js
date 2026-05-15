@@ -173,11 +173,16 @@
 
   // ─── CARD RENDER ─────────────────────────────────────────────────────
   function renderCard(opts){
-    // opts: { id, label, help?, description?, schedule?, meta?, marker?, icon?, category?, isSelected }
+    // opts: { id, label, help?, description?, schedule?, meta?, marker?, icon?, category?, isSelected, isRecommended? }
     // Orden DOM: icono → título → schedule → help → description → meta → categoría (eyebrow al fondo).
     // El CSS reordena visualmente vía flex/grid según contexto (hero vs lista horizontal).
     const ICONS = window.IBISNE_ICONS;
     let inner = '';
+    // v5.3.4 · Badge "RECOMENDADA" top-right · usado por el sistema de pre-fill
+    // del step de pasarelas (después de elegir métodos de pago).
+    if (opts.isRecommended) {
+      inner += '<span class="option-badge-recomendada">RECOMENDADA</span>';
+    }
     if (opts.icon && ICONS) {
       inner += '<div class="icon">' + ICONS.card(opts.icon) + '</div>';
     }
@@ -193,7 +198,41 @@
     if (opts.category) {
       inner += '<span class="option-category">' + L(opts.category) + '</span>';
     }
-    return '<button class="option ' + (opts.isSelected ? 'is-selected' : '') + '" data-id="' + opts.id + '" type="button">' + inner + '</button>';
+    const classes = ['option'];
+    if (opts.isSelected) classes.push('is-selected');
+    if (opts.isRecommended) classes.push('is-recommended');
+    return '<button class="' + classes.join(' ') + '" data-id="' + opts.id + '" type="button">' + inner + '</button>';
+  }
+
+  // ─── v5.3.4 · Recomendación de pasarelas · greedy set cover ──────────
+  // Dado un array de métodos de pago seleccionados (ids) y las opciones
+  // de pasarelas disponibles (cada una con un campo `covers` array),
+  // devuelve los IDs de las pasarelas mínimas que cubren TODOS los métodos.
+  //
+  // Algoritmo: en cada iteración, escoge la pasarela que cubra MÁS de los
+  // métodos aún sin cubrir. Se detiene cuando todos están cubiertos o
+  // cuando ninguna pasarela aporta cobertura nueva.
+  function recommendGateways(selectedMethodIds, gatewayOpciones){
+    if (!selectedMethodIds || selectedMethodIds.length === 0) return [];
+    if (!gatewayOpciones || gatewayOpciones.length === 0) return [];
+    const uncovered = new Set(selectedMethodIds);
+    const recommended = [];
+    while (uncovered.size > 0) {
+      let bestGateway = null;
+      let bestCoverage = 0;
+      for (const gw of gatewayOpciones) {
+        if (recommended.indexOf(gw.id) >= 0) continue; // ya elegida
+        const covers = (gw.covers || []).filter(m => uncovered.has(m)).length;
+        if (covers > bestCoverage) {
+          bestGateway = gw;
+          bestCoverage = covers;
+        }
+      }
+      if (!bestGateway || bestCoverage === 0) break;
+      recommended.push(bestGateway.id);
+      (bestGateway.covers || []).forEach(m => uncovered.delete(m));
+    }
+    return recommended;
   }
 
   // Helper: clase de grilla según cantidad de opciones (regla UX coherente)
@@ -805,6 +844,32 @@
   // ─── Render genérico para preguntas con opciones ─────────────────────
   function renderQuestionGeneric(q, idx, total, eyebrowLabel){
     const isMulti = q.multi === true;
+
+    // v5.3.4 · Pre-fill inteligente para "pasarelas" según "metodos_pago".
+    // Si el cliente acaba de elegir métodos de pago y aún no ha tocado
+    // las pasarelas, calculamos la recomendación greedy y la pre-popular.
+    // Cliente normal: ve las cards verdes con badge RECOMENDADA y avanza.
+    // Cliente avanzado: puede deselect/select libremente.
+    let recommendedIds = new Set();
+    if (q.id === 'pasarelas' && isMulti) {
+      const metodos = State.answers.metodos_pago;
+      if (Array.isArray(metodos) && metodos.length > 0) {
+        const methodIds = metodos.map(m => m.id);
+        const recArr = recommendGateways(methodIds, q.opciones);
+        recommendedIds = new Set(recArr);
+        // Solo pre-poblar si NO hay selección previa (primera visita al step).
+        // Si el cliente ya tocó pasarelas, respetamos su selección.
+        if (!State.answers.pasarelas || State.answers.pasarelas.length === 0) {
+          State.answers.pasarelas = recArr
+            .map(id => q.opciones.find(o => o.id === id))
+            .filter(Boolean);
+        }
+      }
+    }
+    // v5.3.4 · Si el cliente edita metodos_pago, invalidar pasarelas
+    // para que el siguiente paso recalcule la recomendación.
+    // Esta lógica vive en el handler de click (más abajo).
+
     const sel = State.answers[q.id];
     const selIds = isMulti ? new Set((sel || []).map(s => s.id)) : new Set(sel ? [sel.id] : []);
 
@@ -834,6 +899,7 @@
         description: o.description,
         meta,
         isSelected: selIds.has(o.id),
+        isRecommended: recommendedIds.has(o.id),
       });
     }).join('');
 
@@ -857,6 +923,12 @@
         const list = State.answers[q.id] || [];
         const exists = list.find(x => x.id === id);
         State.answers[q.id] = exists ? list.filter(x => x.id !== id) : [...list, o];
+        // v5.3.4 · Si el cliente edita los métodos de pago, invalidar la
+        // selección de pasarelas para que el siguiente step recalcule la
+        // recomendación basada en los métodos actualizados.
+        if (q.id === 'metodos_pago') {
+          State.answers.pasarelas = null;
+        }
         e.currentTarget.classList.toggle('is-selected');
         refreshBottomB();
         const nxt = $('[data-next]'); if (nxt) nxt.disabled = !canAdvanceB(q);
@@ -1130,6 +1202,9 @@
       pasarelas: 'funcionalidad', integraciones: 'funcionalidad',
       funciones: 'funcionalidad', tipo_app: 'funcionalidad', backend: 'funcionalidad',
       caracteristicas: 'funcionalidad', extras: 'funcionalidad', envio: 'funcionalidad',
+      // v5.3.4 · metodos_pago es señal (add: 0 · no entra al desglose por
+      // filtro de computeB · pero por defensa lo mapeamos a funcionalidad)
+      metodos_pago: 'funcionalidad',
       // Diseño y marca
       diseno: 'diseno', identidad: 'diseno',
       // Lanzamiento + soporte (v5.3.0)
@@ -1276,6 +1351,14 @@ Quiero hablar para precisar el alcance.`;
                 <div>
                   <div class="rk-project-name">${subtipoLabel}</div>
                   <div class="rk-project-vertical">${verticalLabel} · ${calc.modules} ${calc.modules === 1 ? 'módulo configurado' : 'módulos configurados'}</div>
+                  ${(() => {
+                    // v5.3.4 · Mostrar métodos de pago elegidos · valor visible
+                    const mp = State.answers.metodos_pago;
+                    if (!Array.isArray(mp) || mp.length === 0) return '';
+                    const labels = mp.slice(0, 5).map(m => m.label).join(' · ');
+                    const extra = mp.length > 5 ? ` +${mp.length - 5} más` : '';
+                    return `<div class="rk-project-payments" style="margin-top:6px; font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; color:var(--accent-mint); opacity:0.85;">Acepta: ${labels}${extra}</div>`;
+                  })()}
                 </div>
               </div>
 
