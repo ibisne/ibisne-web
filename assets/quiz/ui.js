@@ -434,73 +434,60 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // STEP 2 · renderCatalog (categorías expandibles + servicios)
+  // STEP 2 · renderCatalog (vista catálogo o vista detalle de categoría)
   // ═══════════════════════════════════════════════════════════════════
   function renderCatalog(){
     setProgress(50);
     trackStepShown('catalog');
     const PRICING = window.IBISNE_PRICING;
-
-    // Re-orden: las categorías más relevantes para el sector primero.
-    // Heurística simple: si algún servicio de la categoría tiene un tag
-    // que coincide con el sector del cliente, esa categoría va arriba.
     const sector = State.sector;
-    const yaTengo = State.yaTengo;
+
+    // Si hay categoría activa → vista detalle de servicios
+    if (State.expandedCategory) {
+      return renderCategoryDetail(State.expandedCategory);
+    }
+
+    // Vista catálogo · grid de cards 3-cols con las 7 categorías
+    // Re-orden: las categorías más relevantes para el sector primero.
     const ordered = [...PRICING.categorias];
     if (sector) {
       ordered.sort((a, b) => {
-        const aRel = (PRICING.servicios[a.id] || []).some(s => (s.tags || []).indexOf(sector) >= 0);
-        const bRel = (PRICING.servicios[b.id] || []).some(s => (s.tags || []).indexOf(sector) >= 0);
-        return (bRel ? 1 : 0) - (aRel ? 1 : 0);
+        const aRel = (PRICING.servicios[a.id] || []).filter(s => (s.tags || []).indexOf(sector) >= 0).length;
+        const bRel = (PRICING.servicios[b.id] || []).filter(s => (s.tags || []).indexOf(sector) >= 0).length;
+        return bRel - aRel;
       });
     }
 
-    const categoriasHtml = ordered.map(cat => {
+    const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
+
+    const cardsHtml = ordered.map(cat => {
       const servs = PRICING.servicios[cat.id] || [];
-      const expanded = State.expandedCategory === cat.id;
-      const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
       const count = servs.filter(s => serviciosInCart.has(s.id)).length;
+      const relevantCount = sector ? servs.filter(s => (s.tags || []).indexOf(sector) >= 0).length : 0;
+      const isRel = relevantCount > 0;
+
+      // Preview de 2-3 servicios populares de la categoría (para dar contexto)
+      const preview = servs
+        .filter(s => !sector || (s.tags || []).indexOf(sector) >= 0)
+        .slice(0, 3);
+      const previewFinal = preview.length > 0 ? preview : servs.slice(0, 3);
+      const previewHtml = previewFinal.map(s => `<li>${L(s.label)} <span class="cat-card-preview-price">${formatMxn(s.base)}</span></li>`).join('');
 
       return `
-        <div class="cat-block ${expanded ? 'is-expanded' : ''}" data-cat="${cat.id}">
-          <button class="cat-header" data-cat-toggle="${cat.id}" type="button">
-            <span class="cat-icon">${iconHtml(cat.icon, 'line')}</span>
-            <span class="cat-info">
-              <span class="cat-label">${L(cat.label)}</span>
-              <span class="cat-subtitle">${L(cat.subtitle)} · ${servs.length} servicios</span>
-            </span>
-            ${count > 0 ? `<span class="cat-count">${count} en carrito</span>` : ''}
-            <span class="cat-chevron">${expanded ? '▴' : '▾'}</span>
-          </button>
-          ${expanded ? `
-            <div class="cat-services">
-              ${servs.map(s => {
-                const inCart = serviciosInCart.has(s.id);
-                const isRel = sector && (s.tags || []).indexOf(sector) >= 0;
-                return `
-                  <div class="service-row ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}" data-cat-id="${cat.id}">
-                    <div class="service-icon">${iconHtml(s.icon, 'line')}</div>
-                    <div class="service-info">
-                      <div class="service-label">
-                        ${L(s.label)}
-                        ${isRel ? '<span class="service-relevant">para ti</span>' : ''}
-                        <span class="service-tier service-tier-${s.tier}">${s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo')}</span>
-                      </div>
-                      ${s.subtitle ? `<div class="service-subtitle">${L(s.subtitle)}</div>` : ''}
-                      <div class="service-meta">
-                        <span class="service-price">desde ${formatMxn(s.base)}</span>
-                        <span class="service-time">· ${L(s.tiempo)}</span>
-                      </div>
-                    </div>
-                    <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" data-cat-id="${cat.id}" type="button" aria-label="${inCart ? 'Editar' : 'Agregar al carrito'}">
-                      ${inCart ? '✓' : '+'}
-                    </button>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          ` : ''}
-        </div>
+        <button class="cat-card ${isRel ? 'is-relevant' : ''} ${count > 0 ? 'has-items' : ''}" data-cat-open="${cat.id}" type="button">
+          <div class="cat-card-head">
+            <div class="cat-card-icon">${iconHtml(cat.icon, 'line')}</div>
+            ${count > 0 ? `<span class="cat-card-count">${count} en carrito</span>` : ''}
+            ${isRel && count === 0 ? '<span class="cat-card-relevant">para ti</span>' : ''}
+          </div>
+          <div class="cat-card-label">${L(cat.label)}</div>
+          <div class="cat-card-subtitle">${L(cat.subtitle)}</div>
+          <ul class="cat-card-preview">${previewHtml}</ul>
+          <div class="cat-card-foot">
+            <span class="cat-card-count-total">${servs.length} servicios</span>
+            <span class="cat-card-arrow">→</span>
+          </div>
+        </button>
       `;
     }).join('');
 
@@ -509,9 +496,9 @@
         <div class="eyebrow">— PASO 2 DE 3 · ARMA TU PROYECTO</div>
         <h2 class="cat-title">¿Qué necesitas armar?</h2>
         <p class="cat-help">
-          Suma todos los servicios que necesites. ${sector ? 'Los más relevantes para ' + sectorLabel(sector) + ' aparecen primero.' : 'Mezcla categorías sin problema.'}
+          Elige una categoría para explorar. ${sector ? 'Los servicios más relevantes para ' + sectorLabel(sector) + ' aparecen marcados <span class="cat-help-tag">para ti</span>.' : 'Combina varias categorías en tu carrito.'}
         </p>
-        <div class="cat-list">${categoriasHtml}</div>
+        <div class="cat-grid">${cardsHtml}</div>
         <div class="cat-actions">
           <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
@@ -521,17 +508,111 @@
       </div>
     `;
 
-    // Toggle categoría
-    $$('#wizard [data-cat-toggle]').forEach(btn => {
+    // Abrir categoría → vista detalle
+    $$('#wizard [data-cat-open]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const cid = btn.dataset.catToggle;
-        State.expandedCategory = (State.expandedCategory === cid) ? null : cid;
+        const cid = btn.dataset.catOpen;
+        State.expandedCategory = cid;
         trackStepChange();
         renderCatalog();
       });
     });
 
-    // Click "+/✓" en un servicio (agrega o edita)
+    // Nav
+    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
+    $('#cat-continue').addEventListener('click', () => {
+      if (State.cart.servicios.length === 0) return;
+      scheduleAdvance('#/datos', 80);
+    });
+
+    refreshCart();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // STEP 2b · renderCategoryDetail (lista de servicios de una categoría)
+  // ═══════════════════════════════════════════════════════════════════
+  function renderCategoryDetail(catId){
+    trackStepShown('cat-detail:' + catId);
+    const PRICING = window.IBISNE_PRICING;
+    const cat = PRICING.categorias.find(c => c.id === catId);
+    if (!cat) {
+      State.expandedCategory = null;
+      renderCatalog();
+      return;
+    }
+    const sector = State.sector;
+    const servs = PRICING.servicios[catId] || [];
+    const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
+
+    // Orden: servicios "para ti" primero, luego por tier (micro→medio→grande), luego precio
+    const TIER_ORDER = { micro: 1, medio: 2, grande: 3 };
+    const ordered = [...servs].sort((a, b) => {
+      const aRel = sector && (a.tags || []).indexOf(sector) >= 0 ? 0 : 1;
+      const bRel = sector && (b.tags || []).indexOf(sector) >= 0 ? 0 : 1;
+      if (aRel !== bRel) return aRel - bRel;
+      const aT = TIER_ORDER[a.tier] || 99;
+      const bT = TIER_ORDER[b.tier] || 99;
+      if (aT !== bT) return aT - bT;
+      return (a.base || 0) - (b.base || 0);
+    });
+
+    const servsHtml = ordered.map(s => {
+      const inCart = serviciosInCart.has(s.id);
+      const isRel = sector && (s.tags || []).indexOf(sector) >= 0;
+      return `
+        <div class="service-row ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}" data-cat-id="${catId}">
+          <div class="service-icon">${iconHtml(s.icon, 'line')}</div>
+          <div class="service-info">
+            <div class="service-label">
+              ${L(s.label)}
+              ${isRel ? '<span class="service-relevant">para ti</span>' : ''}
+              <span class="service-tier service-tier-${s.tier}">${s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo')}</span>
+            </div>
+            ${s.subtitle ? `<div class="service-subtitle">${L(s.subtitle)}</div>` : ''}
+            <div class="service-meta">
+              <span class="service-price">desde ${formatMxn(s.base)}</span>
+              <span class="service-time">· ${L(s.tiempo)}</span>
+            </div>
+          </div>
+          <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" data-cat-id="${catId}" type="button" aria-label="${inCart ? 'Editar' : 'Agregar al carrito'}">
+            ${inCart ? '✓' : '+'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    $('#wizard').innerHTML = `
+      <div class="cat-detail-screen">
+        <button class="cat-detail-back" id="cat-back" type="button">
+          <span class="cat-detail-back-arrow">←</span> Volver a categorías
+        </button>
+        <div class="cat-detail-head">
+          <div class="cat-detail-icon">${iconHtml(cat.icon, 'line')}</div>
+          <div>
+            <h2 class="cat-detail-title">${L(cat.label)}</h2>
+            <p class="cat-detail-subtitle">${L(cat.subtitle)} · ${servs.length} servicios disponibles</p>
+          </div>
+        </div>
+        <div class="cat-detail-services">${servsHtml}</div>
+        <div class="cat-actions">
+          <button class="btn-ghost btn" id="cat-back-2" type="button">← Volver a categorías</button>
+          <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
+            ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Back to grid de categorías
+    const backToGrid = () => {
+      State.expandedCategory = null;
+      trackStepChange();
+      renderCatalog();
+    };
+    $('#cat-back').addEventListener('click', backToGrid);
+    $('#cat-back-2').addEventListener('click', backToGrid);
+
+    // Click "+/✓" agrega/edita servicio
     $$('#wizard .service-add').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -539,31 +620,27 @@
         const cid = btn.dataset.catId;
         const servicio = (PRICING.servicios[cid] || []).find(s => s.id === sid);
         if (!servicio) return;
-
         const inCart = State.cart.servicios.find(s => s.id === sid);
         if (inCart) {
-          // Si ya está en carrito: si tiene subflow, reabrir modal
-          // (caso "editar"). Si no tiene subflow, quitarlo.
           if (servicio.subflow) {
             trackEditClick();
             openSubflowModal(servicio, cid, inCart.config);
           } else {
             removeFromCart(sid);
-            renderCatalog();
+            renderCategoryDetail(cid);
           }
         } else {
-          // No está en carrito: si tiene subflow, abrir modal; si no, agregar directo
           if (servicio.subflow) {
             openSubflowModal(servicio, cid, null);
           } else {
             addToCart(servicio, {});
-            renderCatalog();
+            renderCategoryDetail(cid);
           }
         }
       });
     });
 
-    // Click en el row entero también abre/agrega
+    // Click row también dispara
     $$('#wizard .service-row').forEach(row => {
       row.addEventListener('click', () => {
         const btn = row.querySelector('.service-add');
@@ -571,8 +648,7 @@
       });
     });
 
-    // Nav
-    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
+    // Continuar (mismo CTA del catálogo)
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
