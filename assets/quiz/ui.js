@@ -507,37 +507,20 @@
         return s && (s.tags || []).indexOf(sector) >= 0;
       }).length : 0;
       const isRel = relCount > 0;
-
-      // Preview: 3 sub-categorías o servicios destacados
-      let previewItems = [];
-      if (mega.subCategorias) {
-        previewItems = mega.subCategorias.map(s => ({ label: s.label, count: (s.serviciosIds || []).length })).slice(0, 4);
-      } else {
-        previewItems = (mega.serviciosIds || []).slice(0, 3).map(id => {
-          const s = PRICING.servicios[id];
-          return s ? { label: s.label, price: formatMxn(s.base) } : null;
-        }).filter(Boolean);
-      }
-      const previewHtml = previewItems.map(p =>
-        p.price
-          ? `<li>${L(p.label)} <span class="cat-card-preview-price">${p.price}</span></li>`
-          : `<li>${L(p.label)} <span class="cat-card-preview-count">${p.count}</span></li>`
-      ).join('');
+      const subN = mega.subCategorias ? mega.subCategorias.length : (mega.serviciosIds || []).length;
+      const footLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
 
       return `
         <button class="mega-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
-          <div class="mega-card-head">
-            <div class="mega-card-icon">${iconHtml(mega.icon, 'line')}</div>
-            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : ''}
-            ${isRel && countInCart === 0 ? '<span class="mega-card-relevant">para ti</span>' : ''}
+          <span class="mega-card-info" data-mega-info="${mega.id}" role="button" tabindex="0" aria-label="Más información sobre ${L(mega.label)}">i</span>
+          <div class="mega-card-icon">${iconHtml(mega.icon, 'line')}</div>
+          <div class="mega-card-body">
+            <div class="mega-card-label">${L(mega.label)}</div>
+            <div class="mega-card-summary">${L(mega.summary || '')}</div>
           </div>
-          <div class="mega-card-label">${L(mega.label)}</div>
-          <div class="mega-card-summary">${L(mega.summary || mega.subtitle)}</div>
-          <div class="mega-card-subtitle">${L(mega.subtitle)}</div>
-          <ul class="mega-card-preview">${previewHtml}</ul>
           <div class="mega-card-foot">
-            <span class="mega-card-cta">Explorar</span>
-            <span class="mega-card-arrow">→</span>
+            <span class="mega-card-foot-count">${footLabel}</span>
+            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : (isRel ? '<span class="mega-card-relevant">para ti</span>' : '<span class="mega-card-arrow">→</span>')}
           </div>
         </button>
       `;
@@ -548,7 +531,7 @@
         <div class="eyebrow">— PASO 2 DE 3 · ARMA TU PROYECTO</div>
         <h2 class="cat-title">¿Qué necesitas armar?</h2>
         <p class="cat-help">
-          Elige por dónde empezar. ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante para ' + sectorLabel(sector) + '.' : 'Mezcla categorías sin problema.'}
+          Elige por dónde empezar. ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante.' : 'Toca la (i) si quieres saber qué incluye cada una.'}
         </p>
         <div class="mega-grid">${cardsHtml}</div>
         <div class="cat-actions">
@@ -560,12 +543,25 @@
       </div>
     `;
 
+    // Abrir mega (click en card · pero NO si fue en la (i))
     $$('#wizard [data-mega-open]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        if (e.target.closest('[data-mega-info]')) return; // la (i) maneja su click
         State.catalogPath = { mega: btn.dataset.megaOpen, sub: null };
         trackStepChange();
         renderCatalog();
       });
+    });
+    // Botón (i) · abre modal de info de la categoría
+    $$('#wizard [data-mega-info]').forEach(el => {
+      const open = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const mega = PRICING.megaCategorias.find(m => m.id === el.dataset.megaInfo);
+        if (mega) openInfoModal(L(mega.label), L(mega.info || mega.summary || ''), mega);
+      };
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
     });
     $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
     $('#cat-continue').addEventListener('click', () => {
@@ -573,6 +569,57 @@
       scheduleAdvance('#/datos', 80);
     });
     refreshCart();
+  }
+
+  // ── Modal de información (botón "i" de las cards) ─────────────────────
+  function openInfoModal(title, body, mega){
+    let modal = $('#info-modal');
+    if (modal) modal.remove();
+    modal = document.createElement('div');
+    modal.id = 'info-modal';
+    modal.className = 'info-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+
+    // Si es una mega con subs, listar las áreas que incluye
+    let subsHtml = '';
+    if (mega && mega.subCategorias) {
+      subsHtml = `
+        <div class="info-modal-subs">
+          <div class="info-modal-subs-label">Incluye:</div>
+          <ul>${mega.subCategorias.map(s => `<li><strong>${L(s.label)}</strong> · ${L(s.subtitle || '')}</li>`).join('')}</ul>
+        </div>`;
+    } else if (mega && mega.serviciosIds) {
+      const PRICING = window.IBISNE_PRICING;
+      subsHtml = `
+        <div class="info-modal-subs">
+          <div class="info-modal-subs-label">Incluye:</div>
+          <ul>${mega.serviciosIds.map(id => {
+            const s = PRICING.servicios[id];
+            return s ? `<li><strong>${L(s.label)}</strong> · desde ${formatMxn(s.base)}</li>` : '';
+          }).join('')}</ul>
+        </div>`;
+    }
+
+    modal.innerHTML = `
+      <div class="info-modal-backdrop" data-info-close></div>
+      <div class="info-modal-panel">
+        <button class="info-modal-close" data-info-close type="button" aria-label="Cerrar">×</button>
+        <div class="info-modal-eyebrow">— ${title}</div>
+        <p class="info-modal-body">${body}</p>
+        ${subsHtml}
+        <button class="btn btn-primary info-modal-cta" data-info-close type="button">Entendido</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    function esc(e){ if (e.key === 'Escape') closeInfo(); }
+    function closeInfo(){
+      document.removeEventListener('keydown', esc);
+      modal.remove();
+    }
+    document.addEventListener('keydown', esc);
+    modal.querySelectorAll('[data-info-close]').forEach(b => b.addEventListener('click', closeInfo));
   }
 
   function countRelevantInMega(mega, sector){
@@ -612,14 +659,11 @@
 
       return `
         <button class="sub-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-sub-open="${sub.id}" type="button">
-          <div class="sub-card-head">
-            <div class="sub-card-icon">${iconHtml(sub.icon, 'line')}</div>
-            ${countInCart > 0 ? `<span class="sub-card-count">${countInCart}</span>` : ''}
-          </div>
+          ${sub.info ? `<span class="mega-card-info" data-sub-info="${sub.id}" role="button" tabindex="0" aria-label="Más información">i</span>` : ''}
+          <div class="sub-card-icon">${iconHtml(sub.icon, 'line')}</div>
           <div class="sub-card-label">${L(sub.label)}</div>
           <div class="sub-card-subtitle">${L(sub.subtitle)}</div>
-          <ul class="sub-card-preview">${previewHtml}</ul>
-          <div class="sub-card-foot">${ids.length} servicios <span>→</span></div>
+          <div class="sub-card-foot">${ids.length} servicios ${countInCart > 0 ? `· <span class="sub-card-count">${countInCart} en carrito</span>` : '<span>→</span>'}</div>
         </button>
       `;
     }).join('');
@@ -647,11 +691,22 @@
     `;
 
     $$('#wizard [data-sub-open]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        if (e.target.closest('[data-sub-info]')) return;
         State.catalogPath = { mega: mega.id, sub: btn.dataset.subOpen };
         trackStepChange();
         renderCatalog();
       });
+    });
+    $$('#wizard [data-sub-info]').forEach(el => {
+      const open = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const sub = (mega.subCategorias || []).find(s => s.id === el.dataset.subInfo);
+        if (sub) openInfoModal(L(sub.label), L(sub.info || sub.subtitle || ''), { serviciosIds: sub.serviciosIds });
+      };
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
     });
     const goBackToMega = () => {
       State.catalogPath = { mega: null, sub: null };
