@@ -42,8 +42,8 @@
       modificadores: { plazo: 'normal', modo: 'estandar' },
     },
 
-    // UI state
-    expandedCategory: null,       // 'tech' | 'marketing' | etc.
+    // UI state · navegación jerárquica del catálogo (v6.0.2)
+    catalogPath: { mega: null, sub: null }, // mega | sub | null = grid raíz
     activeModal: null,            // { servicioId, current: {qid: ans} }
     folio: null,
 
@@ -80,6 +80,14 @@
       if (saved.cliente)  State.cliente = Object.assign(State.cliente, saved.cliente);
       if (saved.cart)     State.cart = Object.assign(State.cart, saved.cart);
     } catch(_){}
+  }
+
+  // Helper: dado un service-id, encuentra el servicio en pricing.servicios
+  // (estructura plana indexada por ID en v6.0.2)
+  function findServicio(servicioId){
+    const PRICING = window.IBISNE_PRICING;
+    if (!PRICING || !PRICING.servicios) return null;
+    return PRICING.servicios[servicioId] || null;
   }
   function clearCart(){
     State.cart = { servicios: [], modificadores: { plazo: 'normal', modo: 'estandar' } };
@@ -434,58 +442,102 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // STEP 2 · renderCatalog (vista catálogo o vista detalle de categoría)
+  // STEP 2 · renderCatalog (dispatcher · 3 niveles de navegación)
+  // ═══════════════════════════════════════════════════════════════════
+  //   Nivel 1: 4 mega-categorías        (catalogPath = {})
+  //   Nivel 2: sub-categorías de mega   (catalogPath = {mega})
+  //   Nivel 3: servicios de sub o mega  (catalogPath = {mega, sub})
   // ═══════════════════════════════════════════════════════════════════
   function renderCatalog(){
     setProgress(50);
     trackStepShown('catalog');
     const PRICING = window.IBISNE_PRICING;
+    const path = State.catalogPath || (State.catalogPath = { mega: null, sub: null });
+
+    // Nivel 3 · servicios (de una sub o de una mega sin subs)
+    if (path.mega) {
+      const mega = PRICING.megaCategorias.find(m => m.id === path.mega);
+      if (!mega) { State.catalogPath = { mega: null, sub: null }; return renderCatalog(); }
+
+      // Si la mega tiene subs y NO hay sub elegida → mostrar grid de subs
+      if (mega.subCategorias && !path.sub) {
+        return renderSubGrid(mega);
+      }
+
+      // Si NO tiene subs (auto, training) o YA hay sub elegida → mostrar servicios
+      let title, subtitle, serviciosIds, icon;
+      if (mega.subCategorias && path.sub) {
+        const sub = mega.subCategorias.find(s => s.id === path.sub);
+        if (!sub) { path.sub = null; return renderCatalog(); }
+        title    = sub.label;
+        subtitle = sub.subtitle;
+        icon     = sub.icon;
+        serviciosIds = sub.serviciosIds || [];
+      } else {
+        title    = mega.label;
+        subtitle = mega.subtitle;
+        icon     = mega.icon;
+        serviciosIds = mega.serviciosIds || [];
+      }
+      return renderServicesList(title, subtitle, icon, serviciosIds, mega, path.sub ? mega.subCategorias.find(s=>s.id===path.sub) : null);
+    }
+
+    // Nivel 1 · grid de 4 mega-categorías
+    return renderMegaGrid();
+  }
+
+  // ── Nivel 1 · 4 mega-categorías ──────────────────────────────────────
+  function renderMegaGrid(){
+    const PRICING = window.IBISNE_PRICING;
     const sector = State.sector;
-
-    // Si hay categoría activa → vista detalle de servicios
-    if (State.expandedCategory) {
-      return renderCategoryDetail(State.expandedCategory);
-    }
-
-    // Vista catálogo · grid de cards 3-cols con las 7 categorías
-    // Re-orden: las categorías más relevantes para el sector primero.
-    const ordered = [...PRICING.categorias];
-    if (sector) {
-      ordered.sort((a, b) => {
-        const aRel = (PRICING.servicios[a.id] || []).filter(s => (s.tags || []).indexOf(sector) >= 0).length;
-        const bRel = (PRICING.servicios[b.id] || []).filter(s => (s.tags || []).indexOf(sector) >= 0).length;
-        return bRel - aRel;
-      });
-    }
-
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
-    const cardsHtml = ordered.map(cat => {
-      const servs = PRICING.servicios[cat.id] || [];
-      const count = servs.filter(s => serviciosInCart.has(s.id)).length;
-      const relevantCount = sector ? servs.filter(s => (s.tags || []).indexOf(sector) >= 0).length : 0;
-      const isRel = relevantCount > 0;
+    // Re-orden por relevancia al sector
+    const ordered = [...PRICING.megaCategorias].sort((a, b) => {
+      const aRel = countRelevantInMega(a, sector);
+      const bRel = countRelevantInMega(b, sector);
+      return bRel - aRel;
+    });
 
-      // Preview de 2-3 servicios populares de la categoría (para dar contexto)
-      const preview = servs
-        .filter(s => !sector || (s.tags || []).indexOf(sector) >= 0)
-        .slice(0, 3);
-      const previewFinal = preview.length > 0 ? preview : servs.slice(0, 3);
-      const previewHtml = previewFinal.map(s => `<li>${L(s.label)} <span class="cat-card-preview-price">${formatMxn(s.base)}</span></li>`).join('');
+    const cardsHtml = ordered.map(mega => {
+      const allIds = collectMegaServiceIds(mega);
+      const countInCart = allIds.filter(id => serviciosInCart.has(id)).length;
+      const relCount = sector ? allIds.filter(id => {
+        const s = PRICING.servicios[id];
+        return s && (s.tags || []).indexOf(sector) >= 0;
+      }).length : 0;
+      const isRel = relCount > 0;
+
+      // Preview: 3 sub-categorías o servicios destacados
+      let previewItems = [];
+      if (mega.subCategorias) {
+        previewItems = mega.subCategorias.map(s => ({ label: s.label, count: (s.serviciosIds || []).length })).slice(0, 4);
+      } else {
+        previewItems = (mega.serviciosIds || []).slice(0, 3).map(id => {
+          const s = PRICING.servicios[id];
+          return s ? { label: s.label, price: formatMxn(s.base) } : null;
+        }).filter(Boolean);
+      }
+      const previewHtml = previewItems.map(p =>
+        p.price
+          ? `<li>${L(p.label)} <span class="cat-card-preview-price">${p.price}</span></li>`
+          : `<li>${L(p.label)} <span class="cat-card-preview-count">${p.count}</span></li>`
+      ).join('');
 
       return `
-        <button class="cat-card ${isRel ? 'is-relevant' : ''} ${count > 0 ? 'has-items' : ''}" data-cat-open="${cat.id}" type="button">
-          <div class="cat-card-head">
-            <div class="cat-card-icon">${iconHtml(cat.icon, 'line')}</div>
-            ${count > 0 ? `<span class="cat-card-count">${count} en carrito</span>` : ''}
-            ${isRel && count === 0 ? '<span class="cat-card-relevant">para ti</span>' : ''}
+        <button class="mega-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
+          <div class="mega-card-head">
+            <div class="mega-card-icon">${iconHtml(mega.icon, 'line')}</div>
+            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : ''}
+            ${isRel && countInCart === 0 ? '<span class="mega-card-relevant">para ti</span>' : ''}
           </div>
-          <div class="cat-card-label">${L(cat.label)}</div>
-          <div class="cat-card-subtitle">${L(cat.subtitle)}</div>
-          <ul class="cat-card-preview">${previewHtml}</ul>
-          <div class="cat-card-foot">
-            <span class="cat-card-count-total">${servs.length} servicios</span>
-            <span class="cat-card-arrow">→</span>
+          <div class="mega-card-label">${L(mega.label)}</div>
+          <div class="mega-card-summary">${L(mega.summary || mega.subtitle)}</div>
+          <div class="mega-card-subtitle">${L(mega.subtitle)}</div>
+          <ul class="mega-card-preview">${previewHtml}</ul>
+          <div class="mega-card-foot">
+            <span class="mega-card-cta">Explorar</span>
+            <span class="mega-card-arrow">→</span>
           </div>
         </button>
       `;
@@ -496,9 +548,9 @@
         <div class="eyebrow">— PASO 2 DE 3 · ARMA TU PROYECTO</div>
         <h2 class="cat-title">¿Qué necesitas armar?</h2>
         <p class="cat-help">
-          Elige una categoría para explorar. ${sector ? 'Los servicios más relevantes para ' + sectorLabel(sector) + ' aparecen marcados <span class="cat-help-tag">para ti</span>.' : 'Combina varias categorías en tu carrito.'}
+          Elige por dónde empezar. ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante para ' + sectorLabel(sector) + '.' : 'Mezcla categorías sin problema.'}
         </p>
-        <div class="cat-grid">${cardsHtml}</div>
+        <div class="mega-grid">${cardsHtml}</div>
         <div class="cat-actions">
           <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
@@ -508,59 +560,139 @@
       </div>
     `;
 
-    // Abrir categoría → vista detalle
-    $$('#wizard [data-cat-open]').forEach(btn => {
+    $$('#wizard [data-mega-open]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const cid = btn.dataset.catOpen;
-        State.expandedCategory = cid;
+        State.catalogPath = { mega: btn.dataset.megaOpen, sub: null };
         trackStepChange();
         renderCatalog();
       });
     });
-
-    // Nav
     $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
     });
-
     refreshCart();
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // STEP 2b · renderCategoryDetail (lista de servicios de una categoría)
-  // ═══════════════════════════════════════════════════════════════════
-  function renderCategoryDetail(catId){
-    trackStepShown('cat-detail:' + catId);
+  function countRelevantInMega(mega, sector){
+    if (!sector) return 0;
     const PRICING = window.IBISNE_PRICING;
-    const cat = PRICING.categorias.find(c => c.id === catId);
-    if (!cat) {
-      State.expandedCategory = null;
-      renderCatalog();
-      return;
+    const ids = collectMegaServiceIds(mega);
+    return ids.filter(id => {
+      const s = PRICING.servicios[id];
+      return s && (s.tags || []).indexOf(sector) >= 0;
+    }).length;
+  }
+  function collectMegaServiceIds(mega){
+    if (mega.subCategorias) {
+      return mega.subCategorias.flatMap(s => s.serviciosIds || []);
     }
+    return mega.serviciosIds || [];
+  }
+
+  // ── Nivel 2 · sub-categorías de una mega ─────────────────────────────
+  function renderSubGrid(mega){
+    const PRICING = window.IBISNE_PRICING;
     const sector = State.sector;
-    const servs = PRICING.servicios[catId] || [];
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
-    // Orden: servicios "para ti" primero, luego por tier (micro→medio→grande), luego precio
-    const TIER_ORDER = { micro: 1, medio: 2, grande: 3 };
-    const ordered = [...servs].sort((a, b) => {
-      const aRel = sector && (a.tags || []).indexOf(sector) >= 0 ? 0 : 1;
-      const bRel = sector && (b.tags || []).indexOf(sector) >= 0 ? 0 : 1;
-      if (aRel !== bRel) return aRel - bRel;
-      const aT = TIER_ORDER[a.tier] || 99;
-      const bT = TIER_ORDER[b.tier] || 99;
-      if (aT !== bT) return aT - bT;
-      return (a.base || 0) - (b.base || 0);
-    });
+    const cardsHtml = (mega.subCategorias || []).map(sub => {
+      const ids = sub.serviciosIds || [];
+      const countInCart = ids.filter(id => serviciosInCart.has(id)).length;
+      const relCount = sector ? ids.filter(id => {
+        const s = PRICING.servicios[id];
+        return s && (s.tags || []).indexOf(sector) >= 0;
+      }).length : 0;
+      const isRel = relCount > 0;
 
-    const servsHtml = ordered.map(s => {
+      // Preview: 3 servicios con precio
+      const preview = ids.slice(0, 3).map(id => PRICING.servicios[id]).filter(Boolean);
+      const previewHtml = preview.map(s => `<li>${L(s.label)} <span class="cat-card-preview-price">${formatMxn(s.base)}</span></li>`).join('');
+
+      return `
+        <button class="sub-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-sub-open="${sub.id}" type="button">
+          <div class="sub-card-head">
+            <div class="sub-card-icon">${iconHtml(sub.icon, 'line')}</div>
+            ${countInCart > 0 ? `<span class="sub-card-count">${countInCart}</span>` : ''}
+          </div>
+          <div class="sub-card-label">${L(sub.label)}</div>
+          <div class="sub-card-subtitle">${L(sub.subtitle)}</div>
+          <ul class="sub-card-preview">${previewHtml}</ul>
+          <div class="sub-card-foot">${ids.length} servicios <span>→</span></div>
+        </button>
+      `;
+    }).join('');
+
+    $('#wizard').innerHTML = `
+      <div class="cat-detail-screen">
+        <button class="cat-detail-back" id="cat-back-mega" type="button">
+          <span class="cat-detail-back-arrow">←</span> Volver a categorías
+        </button>
+        <div class="cat-detail-head">
+          <div class="cat-detail-icon">${iconHtml(mega.icon, 'line')}</div>
+          <div>
+            <h2 class="cat-detail-title">${L(mega.label)}</h2>
+            <p class="cat-detail-subtitle">${L(mega.subtitle)} · elige un área</p>
+          </div>
+        </div>
+        <div class="sub-grid">${cardsHtml}</div>
+        <div class="cat-actions">
+          <button class="btn-ghost btn" id="cat-back-mega-2" type="button">← Volver a categorías</button>
+          <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
+            ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    $$('#wizard [data-sub-open]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        State.catalogPath = { mega: mega.id, sub: btn.dataset.subOpen };
+        trackStepChange();
+        renderCatalog();
+      });
+    });
+    const goBackToMega = () => {
+      State.catalogPath = { mega: null, sub: null };
+      trackStepChange();
+      renderCatalog();
+    };
+    $('#cat-back-mega').addEventListener('click', goBackToMega);
+    $('#cat-back-mega-2').addEventListener('click', goBackToMega);
+    $('#cat-continue').addEventListener('click', () => {
+      if (State.cart.servicios.length === 0) return;
+      scheduleAdvance('#/datos', 80);
+    });
+    refreshCart();
+  }
+
+  // ── Nivel 3 · lista de servicios (de una sub o de una mega sin subs) ─
+  function renderServicesList(title, subtitle, icon, serviciosIds, mega, sub){
+    const PRICING = window.IBISNE_PRICING;
+    const sector = State.sector;
+    const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
+
+    // Orden: relevantes primero, luego tier, luego precio
+    const TIER_ORDER = { micro: 1, medio: 2, grande: 3 };
+    const servs = serviciosIds
+      .map(id => Object.assign({ id }, PRICING.servicios[id]))
+      .filter(s => s && s.label)
+      .sort((a, b) => {
+        const aRel = sector && (a.tags || []).indexOf(sector) >= 0 ? 0 : 1;
+        const bRel = sector && (b.tags || []).indexOf(sector) >= 0 ? 0 : 1;
+        if (aRel !== bRel) return aRel - bRel;
+        const aT = TIER_ORDER[a.tier] || 99;
+        const bT = TIER_ORDER[b.tier] || 99;
+        if (aT !== bT) return aT - bT;
+        return (a.base || 0) - (b.base || 0);
+      });
+
+    const servsHtml = servs.map(s => {
       const inCart = serviciosInCart.has(s.id);
       const isRel = sector && (s.tags || []).indexOf(sector) >= 0;
       return `
-        <div class="service-row ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}" data-cat-id="${catId}">
+        <div class="service-row ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}">
           <div class="service-icon">${iconHtml(s.icon, 'line')}</div>
           <div class="service-info">
             <div class="service-label">
@@ -574,28 +706,34 @@
               <span class="service-time">· ${L(s.tiempo)}</span>
             </div>
           </div>
-          <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" data-cat-id="${catId}" type="button" aria-label="${inCart ? 'Editar' : 'Agregar al carrito'}">
+          <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" type="button" aria-label="${inCart ? 'Editar' : 'Agregar al carrito'}">
             ${inCart ? '✓' : '+'}
           </button>
         </div>
       `;
     }).join('');
 
+    // Breadcrumb visible cuando estamos en sub
+    const breadcrumb = sub
+      ? `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <a href="#" id="bc-mega">${L(mega.label)}</a> › <span>${L(sub.label)}</span></div>`
+      : `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <span>${L(mega.label)}</span></div>`;
+
     $('#wizard').innerHTML = `
       <div class="cat-detail-screen">
         <button class="cat-detail-back" id="cat-back" type="button">
-          <span class="cat-detail-back-arrow">←</span> Volver a categorías
+          <span class="cat-detail-back-arrow">←</span> ${sub ? 'Volver a ' + L(mega.label) : 'Volver a categorías'}
         </button>
+        ${breadcrumb}
         <div class="cat-detail-head">
-          <div class="cat-detail-icon">${iconHtml(cat.icon, 'line')}</div>
+          <div class="cat-detail-icon">${iconHtml(icon, 'line')}</div>
           <div>
-            <h2 class="cat-detail-title">${L(cat.label)}</h2>
-            <p class="cat-detail-subtitle">${L(cat.subtitle)} · ${servs.length} servicios disponibles</p>
+            <h2 class="cat-detail-title">${L(title)}</h2>
+            <p class="cat-detail-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
           </div>
         </div>
         <div class="cat-detail-services">${servsHtml}</div>
         <div class="cat-actions">
-          <button class="btn-ghost btn" id="cat-back-2" type="button">← Volver a categorías</button>
+          <button class="btn-ghost btn" id="cat-back-2" type="button">← ${sub ? 'Volver a ' + L(mega.label) : 'Volver a categorías'}</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
             ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
           </button>
@@ -603,59 +741,70 @@
       </div>
     `;
 
-    // Back to grid de categorías
-    const backToGrid = () => {
-      State.expandedCategory = null;
+    const goUp = () => {
+      // Si estamos en sub → vuelve a mega · si estamos en mega → vuelve a root
+      if (sub) State.catalogPath = { mega: mega.id, sub: null };
+      else      State.catalogPath = { mega: null, sub: null };
       trackStepChange();
       renderCatalog();
     };
-    $('#cat-back').addEventListener('click', backToGrid);
-    $('#cat-back-2').addEventListener('click', backToGrid);
+    const goToRoot = (e) => {
+      if (e) e.preventDefault();
+      State.catalogPath = { mega: null, sub: null };
+      trackStepChange();
+      renderCatalog();
+    };
+    const goToMegaLevel = (e) => {
+      if (e) e.preventDefault();
+      State.catalogPath = { mega: mega.id, sub: null };
+      trackStepChange();
+      renderCatalog();
+    };
+    $('#cat-back').addEventListener('click', goUp);
+    $('#cat-back-2').addEventListener('click', goUp);
+    $('#bc-root')?.addEventListener('click', goToRoot);
+    $('#bc-mega')?.addEventListener('click', goToMegaLevel);
 
-    // Click "+/✓" agrega/edita servicio
+    // Click "+/✓" agrega/edita
     $$('#wizard .service-add').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const sid = btn.dataset.serviceId;
-        const cid = btn.dataset.catId;
-        const servicio = (PRICING.servicios[cid] || []).find(s => s.id === sid);
-        if (!servicio) return;
+        const servicio = Object.assign({ id: sid }, findServicio(sid));
+        if (!servicio.label) return;
         const inCart = State.cart.servicios.find(s => s.id === sid);
         if (inCart) {
           if (servicio.subflow) {
             trackEditClick();
-            openSubflowModal(servicio, cid, inCart.config);
+            openSubflowModal(servicio, inCart.config);
           } else {
             removeFromCart(sid);
-            renderCategoryDetail(cid);
+            renderCatalog();
           }
         } else {
           if (servicio.subflow) {
-            openSubflowModal(servicio, cid, null);
+            openSubflowModal(servicio, null);
           } else {
             addToCart(servicio, {});
-            renderCategoryDetail(cid);
+            renderCatalog();
           }
         }
       });
     });
-
-    // Click row también dispara
     $$('#wizard .service-row').forEach(row => {
       row.addEventListener('click', () => {
         const btn = row.querySelector('.service-add');
         if (btn) btn.click();
       });
     });
-
-    // Continuar (mismo CTA del catálogo)
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
     });
-
     refreshCart();
   }
+
+  // (renderCategoryDetail eliminada en v6.0.2 · reemplazada por renderServicesList)
 
   function sectorLabel(id){
     const PRICING = window.IBISNE_PRICING;
@@ -700,12 +849,7 @@
   function updateCart(servicioId, config){
     const idx = State.cart.servicios.findIndex(s => s.id === servicioId);
     if (idx < 0) return;
-    const PRICING = window.IBISNE_PRICING;
-    let servicio = null;
-    for (const cat of PRICING.categorias) {
-      servicio = (PRICING.servicios[cat.id] || []).find(s => s.id === servicioId);
-      if (servicio) break;
-    }
+    const servicio = findServicio(servicioId);
     if (!servicio) return;
     State.cart.servicios[idx].config = config;
     State.cart.servicios[idx].calculatedPrice = calcSubflowPrice(servicio, config);
@@ -719,7 +863,7 @@
   // ═══════════════════════════════════════════════════════════════════
   // MODAL SUB-FLOW (preguntas de un servicio)
   // ═══════════════════════════════════════════════════════════════════
-  function openSubflowModal(servicio, categoryId, existingConfig){
+  function openSubflowModal(servicio, existingConfig){
     const PRICING = window.IBISNE_PRICING;
     const questions = PRICING.subflow[servicio.id] || [];
     if (questions.length === 0) {
@@ -732,7 +876,6 @@
 
     State.activeModal = {
       servicioId: servicio.id,
-      categoryId: categoryId,
       config: existingConfig ? JSON.parse(JSON.stringify(existingConfig)) : {},
       isEdit: !!existingConfig,
     };
@@ -1335,17 +1478,12 @@
     $$('.rk-cart-edit').forEach(btn => {
       btn.addEventListener('click', () => {
         const sid = btn.dataset.serviceId;
-        const PRICING = window.IBISNE_PRICING;
-        let servicio = null, catId = null;
-        for (const cat of PRICING.categorias) {
-          servicio = (PRICING.servicios[cat.id] || []).find(s => s.id === sid);
-          if (servicio) { catId = cat.id; break; }
-        }
-        if (!servicio) return;
+        const servicio = Object.assign({ id: sid }, findServicio(sid));
+        if (!servicio.label) return;
         const existing = State.cart.servicios.find(s => s.id === sid);
         if (!existing) return;
         trackEditClick();
-        openSubflowModal(servicio, catId, existing.config || {});
+        openSubflowModal(servicio, existing.config || {});
       });
     });
 
