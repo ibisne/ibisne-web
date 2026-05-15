@@ -134,15 +134,12 @@
       return mxnAmount;
     },
     format: function(mxnAmount){
-      // v5.3.3 · Nunca devolver "$ 0" · si el valor es 0/null/NaN, retornar em-dash
+      // v5.3.3 · Nunca devolver "$ 0" · si el valor es 0/null/NaN, em-dash
       var n = Number(mxnAmount);
       if (!n || n === 0 || isNaN(n)) return '—';
       var amount = this.convert(n);
-      var isInt = amount === Math.floor(amount);
-      var opts = isInt
-        ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
-        : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-      return '$ ' + amount.toLocaleString('en-US', opts);
+      // v6.1.0 · SIEMPRE 2 decimales (.00) globalmente
+      return '$ ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     },
     currencyCode: function(){ return state.currency === 'usd' ? 'USD' : 'MXN'; },
 

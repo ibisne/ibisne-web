@@ -165,11 +165,9 @@
   function formatMxn(n){
     const num = Number(n);
     if (!num || num === 0 || isNaN(num)) return '—';
-    const isInt = num === Math.floor(num);
     if (window.IBISNE_PREFS) return window.IBISNE_PREFS.format(num);
-    return '$ ' + num.toLocaleString('en-US', isInt
-      ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
-      : { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // v6.1.0 · SIEMPRE 2 decimales (.00) globalmente
+    return '$ ' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
   function L(esText){
     if (!esText) return esText;
@@ -767,9 +765,7 @@
               <span class="service-price">desde ${formatMxn(s.base)}</span>
               <span class="service-time">${L(s.tiempo)}</span>
             </div>
-            <button class="service-add ${inCart ? 'is-added' : ''}" data-service-id="${s.id}" type="button" aria-label="${inCart ? 'Editar selección' : 'Agregar al carrito'}">
-              ${inCart ? '✓ Agregado' : '+ Agregar'}
-            </button>
+            <span class="service-card-state ${inCart ? 'is-added' : ''}">${inCart ? '✓ Agregado · editar' : 'Agregar →'}</span>
           </div>
         </div>
       `;
@@ -827,11 +823,12 @@
     $('#bc-root')?.addEventListener('click', goToRoot);
     $('#bc-mega')?.addEventListener('click', goToMegaLevel);
 
-    // Click "+/✓" agrega/edita
-    $$('#wizard .service-add').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const sid = btn.dataset.serviceId;
+    // v6.1.0 · La card entera es el área de click (sin botón redundante).
+    // Servicio nuevo con subflow → abre configuración. Sin subflow → agrega.
+    // Servicio ya en carrito · con subflow → editar. Sin subflow → quitar.
+    $$('#wizard .service-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const sid = card.dataset.serviceId;
         const servicio = Object.assign({ id: sid }, findServicio(sid));
         if (!servicio.label) return;
         const inCart = State.cart.servicios.find(s => s.id === sid);
@@ -851,14 +848,6 @@
             renderCatalog();
           }
         }
-      });
-    });
-    // Click en el cuerpo de la card (no el botón) también agrega/edita
-    $$('#wizard .service-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.service-add')) return; // el botón maneja su click
-        const btn = card.querySelector('.service-add');
-        if (btn) btn.click();
       });
     });
     $('#cat-continue').addEventListener('click', () => {
@@ -1064,7 +1053,9 @@
     $('#bc-mega')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: null, service: null }; renderCatalog(); });
     $('#bc-sub')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: path.sub, service: null }; renderCatalog(); });
 
-    // Selección de opciones
+    // Selección de opciones · v6.1.0 · update PARCIAL (no re-render total)
+    // Evita el parpadeo: solo cambian las clases is-selected, los metas
+    // de precio y el resumen · el resto del DOM permanece intacto.
     $$('#wizard .sf-card').forEach(btn => {
       btn.addEventListener('click', () => {
         const qid = btn.dataset.q;
@@ -1076,12 +1067,14 @@
           const list = config[qid] || [];
           const exists = list.find(x => x.id === oid);
           config[qid] = exists ? list.filter(x => x.id !== oid) : [...list, o];
-          if (qid === 'metodos_pago') config.pasarelas = null;
+          // metodos_pago resetea pasarelas · cambia opciones disponibles →
+          // ahí sí re-render completo (caso poco frecuente)
+          if (qid === 'metodos_pago') { config.pasarelas = null; trackStepChange(); renderSubflowView(); return; }
         } else {
           config[qid] = o;
         }
         trackStepChange();
-        renderSubflowView();
+        repaintSubflowCards();   // parcial · sin parpadeo
       });
     });
 
@@ -1098,6 +1091,48 @@
       renderCatalog();
     });
 
+    refreshCart();
+  }
+
+  // v6.1.0 · Repintado quirúrgico del sub-flow · sin re-render total.
+  // Actualiza solo: clases is-selected, metas de precio por opción, el
+  // total del resumen, y el carrito vivo (servicio en construcción).
+  function repaintSubflowCards(){
+    const sf = State.subflow;
+    if (!sf) return;
+    const PRICING = window.IBISNE_PRICING;
+    const servicio = Object.assign({ id: sf.servicioId }, findServicio(sf.servicioId));
+    const questions = PRICING.subflow[sf.servicioId] || [];
+    const config = sf.config;
+
+    $$('#wizard .sf-card').forEach(card => {
+      const qid = card.dataset.q;
+      const oid = card.dataset.opt;
+      const q = questions.find(x => x.id === qid);
+      if (!q) return;
+      const o = q.opciones.find(x => x.id === oid);
+      const isMulti = q.multi === true;
+      const ans = config[qid];
+      const isSel = isMulti
+        ? !!((ans || []).find(x => x.id === oid))
+        : !!(ans && ans.id === oid);
+      card.classList.toggle('is-selected', isSel);
+      const metaEl = card.querySelector('.sf-card-meta');
+      if (metaEl) {
+        if (isMulti) {
+          metaEl.textContent = isSel ? ('+ ' + formatMxn(o.add || 0)) : '';
+        } else {
+          const hypo = Object.assign({}, config, { [qid]: o });
+          metaEl.textContent = 'Total ' + formatMxn(calcSubflowPrice(servicio, hypo));
+        }
+      }
+    });
+
+    const liveTotal = calcSubflowPrice(servicio, config);
+    const amt = document.querySelector('#wizard .sf-summary-amount');
+    if (amt) amt.textContent = formatMxn(liveTotal);
+
+    // Carrito vivo · refleja el servicio en construcción + su precio
     refreshCart();
   }
 
@@ -1221,19 +1256,36 @@
         if (t) t.textContent = '✓';
       }
 
-      // Clonar como overlay fixed
+      // v6.1.0 · Handover SIN salto · una sola animación en juego.
+      // 1) Clonar el loader como overlay fixed (cubre la pantalla, opacity 1).
       const overlay = document.createElement('div');
       overlay.className = 'rk-loading-overlay';
       overlay.setAttribute('aria-hidden', 'true');
       overlay.innerHTML = loaderEl.outerHTML;
       document.body.appendChild(overlay);
 
+      // 2) is-handover desactiva el `animation: questionEnter` del
+      //    .result-screen → el resultado pinta ESTABLE, sin su propio
+      //    fade-in que competía con el overlay y causaba el salto.
+      document.body.classList.add('is-handover');
+
+      // 3) Pintar el resultado (queda tapado por el overlay opaco).
       navigate('#/resultado');
 
+      // 4) Esperar paint REAL del resultado pesado (RAF×2 + 90ms) antes
+      //    de iniciar el fade del overlay. Así el resultado ya está
+      //    completamente reflowed/pintado y estable detrás.
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => overlay.classList.add('is-out'));
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            overlay.classList.add('is-out');     // único fade · 450ms
+            setTimeout(() => {
+              try { overlay.remove(); } catch(_){}
+              document.body.classList.remove('is-handover');
+            }, 500);
+          }, 90);
+        });
       });
-      setTimeout(() => { try { overlay.remove(); } catch(_){} }, 700);
     }, total + 200);
   }
 
@@ -1418,9 +1470,25 @@
 
   function renderCartContent(){
     const calc = computeCart();
-    const empty = State.cart.servicios.length === 0;
+    const PRICING = window.IBISNE_PRICING;
     const datosOk = ['nombre','email','whatsapp'].every(k => State.cliente[k] && State.cliente[k].trim());
     const isResultado = parseHash().step === 'resultado';
+
+    // v6.1.0 · Servicio en construcción (carrito siempre vivo)
+    let building = null;
+    if (State.subflow) {
+      const bServ = Object.assign({ id: State.subflow.servicioId }, findServicio(State.subflow.servicioId));
+      if (bServ.label) {
+        building = {
+          servicio: bServ,
+          price: calcSubflowPrice(bServ, State.subflow.config),
+          cfg: renderConfigSummaryInline(State.subflow.config),
+          isEdit: !!State.subflow.isEdit,
+        };
+      }
+    }
+
+    const empty = State.cart.servicios.length === 0 && !building;
 
     if (empty) {
       return `
@@ -1439,6 +1507,8 @@
 
     const itemsHtml = State.cart.servicios.map(s => {
       const cfg = renderConfigSummaryInline(s.config);
+      // No mostrar como item normal el que está en edición ahora mismo
+      if (building && building.isEdit && building.servicio.id === s.id) return '';
       return `
         <li class="rk-cart-item" data-service-id="${s.id}">
           <div class="rk-cart-item-icon">${iconHtml(s.icon, 'line')}</div>
@@ -1455,18 +1525,38 @@
       `;
     }).join('');
 
-    const PRICING = window.IBISNE_PRICING;
-    const plazoOpts = Object.keys(PRICING.modificadores.plazo).map(k => {
+    // Item "en construcción" · se actualiza en vivo con cada selección
+    const buildingHtml = building ? `
+      <li class="rk-cart-item rk-cart-item-building" data-service-id="${building.servicio.id}">
+        <div class="rk-cart-item-icon">${iconHtml(building.servicio.icon, 'line')}</div>
+        <div class="rk-cart-item-info">
+          <div class="rk-cart-item-label">${L(building.servicio.label)} <span class="rk-cart-building-tag">configurando…</span></div>
+          ${building.cfg ? `<div class="rk-cart-item-config">${building.cfg}</div>` : ''}
+          <div class="rk-cart-item-price">${formatMxn(building.price)}</div>
+        </div>
+      </li>
+    ` : '';
+
+    const itemCount = State.cart.servicios.length;
+    const countLabel = building
+      ? (itemCount > 0 ? `${itemCount} + 1 configurando` : '1 configurando')
+      : `${itemCount} servicio${itemCount === 1 ? '' : 's'}`;
+
+    // v6.1.0 · Tiempo/Modo como PILLS (1 click · sin dropdown)
+    const plazoPills = Object.keys(PRICING.modificadores.plazo).map(k => {
       const c = PRICING.modificadores.plazo[k];
-      return `<option value="${k}" ${State.cart.modificadores.plazo === k ? 'selected' : ''}>${L(c.label)}${c.metaSuffix ? ' · ' + c.metaSuffix : ''}</option>`;
+      const active = State.cart.modificadores.plazo === k;
+      return `<button class="rk-pill ${active ? 'is-active' : ''}" data-mod="plazo" data-val="${k}" type="button">${L(c.label).split(' · ')[0]}${c.metaSuffix ? ` <small>${c.metaSuffix}</small>` : ''}</button>`;
     }).join('');
-    const modoOpts = Object.keys(PRICING.modificadores.modo).map(k => {
+    const modoPills = Object.keys(PRICING.modificadores.modo).map(k => {
       const c = PRICING.modificadores.modo[k];
-      return `<option value="${k}" ${State.cart.modificadores.modo === k ? 'selected' : ''}>${L(c.label)}${c.metaSuffix ? ' · ' + c.metaSuffix : ''}</option>`;
+      const active = State.cart.modificadores.modo === k;
+      return `<button class="rk-pill ${active ? 'is-active' : ''}" data-mod="modo" data-val="${k}" type="button">${L(c.label).split(' · ')[0]}${c.metaSuffix ? ` <small>${c.metaSuffix}</small>` : ''}</button>`;
     }).join('');
 
+    // v6.1.0 · Pago: sin anticipo · pago en una sola exhibición (PayPal)
     const ctaLabel = isResultado
-      ? 'Pagar anticipo · ' + formatMxn(calc.totalConIva * 0.5)
+      ? 'Pagar proyecto · ' + formatMxn(calc.totalConIva)
       : (datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total');
     const ctaHref = isResultado ? 'https://paypal.me/iBisne' : '';
     const ctaDisabled = !isResultado && !datosOk;
@@ -1475,20 +1565,20 @@
       <div class="rk-cart">
         <div class="rk-cart-header">
           <span class="rk-cart-eyebrow">— TU CARRITO</span>
-          <span class="rk-cart-count">${State.cart.servicios.length} servicio${State.cart.servicios.length === 1 ? '' : 's'}</span>
+          <span class="rk-cart-count">${countLabel}</span>
         </div>
 
-        <ul class="rk-cart-items">${itemsHtml}</ul>
+        <ul class="rk-cart-items">${itemsHtml}${buildingHtml}</ul>
 
         <div class="rk-cart-toggles">
           <div class="rk-cart-toggle-label">— Ajusta tu cotización</div>
           <div class="rk-cart-toggle">
             <label>Tiempo</label>
-            <select id="rk-cart-plazo">${plazoOpts}</select>
+            <div class="rk-pill-group">${plazoPills}</div>
           </div>
           <div class="rk-cart-toggle">
             <label>Modo</label>
-            <select id="rk-cart-modo">${modoOpts}</select>
+            <div class="rk-pill-group">${modoPills}</div>
           </div>
         </div>
 
@@ -1498,11 +1588,12 @@
           ${calc.modModoSuffix ? `<div class="rk-cart-total-line"><span>${L(calc.modModoLabel)}</span><span>${calc.modModoSuffix}</span></div>` : ''}
           <div class="rk-cart-total-line"><span>IVA 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
           <div class="rk-cart-total-line rk-cart-total-final"><span>TOTAL</span><span>${formatMxn(calc.totalConIva)} <small>MXN</small></span></div>
+          ${building ? `<div class="rk-cart-total-line rk-cart-building-note"><span>+ configurando ahora</span><span>${formatMxn(building.price)}</span></div>` : ''}
         </div>
 
         <div class="rk-cart-ctas">
           ${isResultado
-            ? `<a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-cart-pay">${ctaLabel} →</a>`
+            ? `<a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-cart-pay">${ctaLabel} →</a><div class="rk-cart-pay-note">Pago en una sola exhibición · al aprobar habilitamos tarjeta a meses sin intereses</div>`
             : `<button class="btn btn-primary rk-cart-pay" id="rk-cart-pay" type="button" ${ctaDisabled ? 'disabled' : ''}>${ctaLabel}</button>`
           }
           <button class="btn-ghost btn rk-cart-clear" id="rk-cart-clear" type="button">Vaciar carrito</button>
@@ -1527,18 +1618,17 @@
   }
 
   function bindCart(){
-    // Toggle modificadores
-    const plazo = $('#rk-cart-plazo');
-    const modo = $('#rk-cart-modo');
-    if (plazo) plazo.addEventListener('change', e => {
-      State.cart.modificadores.plazo = e.target.value;
-      persistCart();
-      refreshCart();
-    });
-    if (modo) modo.addEventListener('change', e => {
-      State.cart.modificadores.modo = e.target.value;
-      persistCart();
-      refreshCart();
+    // v6.1.0 · Modificadores como pills · 1 click cambia + recalcula
+    $$('#cart .rk-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const mod = pill.dataset.mod;   // 'plazo' | 'modo'
+        const val = pill.dataset.val;
+        if (!mod || !val) return;
+        if (State.cart.modificadores[mod] === val) return; // ya activo
+        State.cart.modificadores[mod] = val;
+        persistCart();
+        refreshCart();
+      });
     });
 
     // Edit items

@@ -2,115 +2,44 @@
    assets/quiz/styles.css — iBisne v3 Quizz · refactor con HUD + capas
    =================================================================== */
 
-/* ─── BOOT LOADER (scanner con logo central → migra al HUD) ─────────── */
-/* Visible en el primer load de cada página · oculta el resto hasta terminar */
+/* ─── BOOT LOADER · v6.1.0 · SIMPLE (logo fade-in/out limpio) ───────── */
+/* Una sola transición de opacity en el contenedor · cero keyframes
+   competidores · cero migración · imposible que parpadee. */
 .boot-loader{
   position: fixed; inset: 0;
   z-index: 9999;
   background: var(--bg-deep, #0A0E13);
   display: flex; align-items: center; justify-content: center;
   pointer-events: all;
-  transition: opacity 0.45s ease;
+  opacity: 1;
+  transition: opacity 0.36s ease;
 }
-.boot-loader.is-done{ opacity: 0; pointer-events: none; }
-.boot-loader::before, .boot-loader::after{
-  content: ''; position: absolute; left: 0; right: 0;
-  height: 1px; background: var(--bg-line);
+.boot-loader.is-done{
   opacity: 0;
+  pointer-events: none;
 }
-.boot-loader::before{ top: 32%; animation: scanFade 1.6s 0.1s ease-out forwards; }
-.boot-loader::after { bottom: 32%; animation: scanFade 1.6s 0.25s ease-out forwards; }
-@keyframes scanFade{
-  0%   { opacity: 0; transform: scaleX(0); transform-origin: center; }
-  40%  { opacity: 1; transform: scaleX(1); }
-  100% { opacity: 0.45; transform: scaleX(1); }
-}
-/* Línea de scanner que recorre la pantalla */
-.boot-scan{
-  position: absolute; left: -2px; right: -2px; top: 0;
-  height: 2px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(174,255,200,0.0) 15%,
-    var(--accent-mint, #AEFFC8) 50%,
-    rgba(174,255,200,0.0) 85%,
-    transparent 100%);
-  filter: blur(0.4px);
-  animation: scanSweep 1.8s cubic-bezier(0.55, 0.05, 0.45, 1) forwards;
-}
-@keyframes scanSweep{
-  0%   { top: 0; opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-/* Marco corner-brackets evocando un visor */
-.boot-corners span{
-  position: absolute; width: 32px; height: 32px;
-  border: 1px solid var(--accent, #3DFF7F);
-  opacity: 0; animation: cornerFade 1.6s 0.4s ease-out forwards;
-}
-.boot-corners span:nth-child(1){ top: calc(32% - 20px); left: calc(50% - 110px); border-right: none; border-bottom: none; }
-.boot-corners span:nth-child(2){ top: calc(32% - 20px); right: calc(50% - 110px); border-left: none; border-bottom: none; }
-.boot-corners span:nth-child(3){ bottom: calc(32% - 20px); left: calc(50% - 110px); border-right: none; border-top: none; }
-.boot-corners span:nth-child(4){ bottom: calc(32% - 20px); right: calc(50% - 110px); border-left: none; border-top: none; }
-@keyframes cornerFade{
-  0%   { opacity: 0; transform: scale(0.8); }
-  60%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 0.7; }
-}
-/* Logo central · se transforma para migrar al HUD al final */
 .boot-logo{
-  position: relative;
-  width: 160px;
-  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  display: flex; align-items: center; justify-content: center;
   opacity: 0;
-  transform: scale(0.92);
-  animation: bootLogoIn 0.65s 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity;
+  transform: scale(0.96);
+  animation: bootLogoIn 0.45s 0.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.boot-logo img{ width: 160px; height: auto; }
-.boot-logo .label{
-  font-family: var(--font-mono, 'JetBrains Mono'); font-size: 10px;
-  letter-spacing: 0.4em; text-transform: uppercase;
-  color: var(--text-muted);
-  opacity: 0; animation: bootLabelIn 0.5s 0.6s ease-out forwards;
+.boot-logo img{
+  width: 150px; height: auto;
+  display: block;
 }
-.boot-logo .label .blink{ color: var(--accent-mint); animation: blink 0.8s steps(2) infinite; }
 @keyframes bootLogoIn{
-  0%   { opacity: 0; transform: scale(0.85); filter: blur(8px); }
-  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
-@keyframes bootLabelIn{ to { opacity: 1; } }
-@keyframes blink{ 50% { opacity: 0.2; } }
-
-/* FASE 1: limpiar decorativos antes del viaje · scanner/corners/label se desvanecen */
-.boot-loader.is-clearing .boot-scan,
-.boot-loader.is-clearing .boot-corners span,
-.boot-loader.is-clearing .boot-logo .label{
-  opacity: 0;
-  transition: opacity 0.22s ease;
-}
-.boot-loader.is-clearing::before,
-.boot-loader.is-clearing::after{ opacity: 0; transition: opacity 0.22s ease; }
-
-/* FASE 2: el logo VIAJA al HUD · ahora animamos el <img> directamente desde JS.
-   El contenedor .boot-logo NO se transforma (la geometría del flex container
-   confundía el cálculo y causaba el salto visible). */
-.boot-loader.is-migrating{
-  background: rgba(10,14,19,0.85);
-  transition: background 0.5s ease;
-}
-.boot-loader.is-migrating .boot-logo{
-  /* nada — el img se anima inline desde JS */
+@media (prefers-reduced-motion: reduce){
+  .boot-logo{ animation: none; opacity: 1; transform: none; }
+  .boot-loader{ transition: opacity 0.2s linear; }
 }
 
-/* FASE 3: el HUD aparece instantáneo en el momento exacto que llega el boot logo */
+/* HUD oculto durante el boot · aparece limpio al terminar */
 body.is-booting .hud{ opacity: 0; pointer-events: none; transition: none; }
-body:not(.is-booting) .hud{ opacity: 1; }
-
-/* FASE 4: boot loader se desvanece tras el handover */
-.boot-loader.is-done{ opacity: 0; pointer-events: none; }
+body:not(.is-booting) .hud{ opacity: 1; transition: opacity 0.3s ease; }
 
 
 
@@ -482,8 +411,8 @@ body::before{
   flex: 1;
 }
 .quiz-main{
-  padding: 28px max(40px, 5vw) 32px;
-  max-width: 1640px;
+  padding: 32px max(48px, 4vw) 40px;
+  max-width: 1920px;
   margin: 0 auto;
   position: relative;
 }
@@ -3002,8 +2931,8 @@ iframe[src*="vercel.live"]{ display: none !important; }
 /* Grid principal · 62/38 split */
 .rk-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: 32px;
   align-items: flex-start;
 }
 
@@ -3539,20 +3468,26 @@ iframe[src*="vercel.live"]{ display: none !important; }
   justify-content: center;
   padding: 24px;
   opacity: 1;
-  transition: opacity 520ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* v6.1.0 · ÚNICA animación en juego · el resultado debajo está
+     estable (is-handover desactiva su questionEnter) · cero salto. */
+  transition: opacity 450ms ease;
   pointer-events: none;
-  /* El clon trae .rk-loading-wrap dentro · le reseteamos min-height
-     porque el overlay ya cubre toda la pantalla via inset:0 */
 }
 .rk-loading-overlay .rk-loading-wrap{
   min-height: 0;
   width: 100%;
   max-width: 520px;
-  /* Sin animation propia · es un snapshot estático del estado final */
   animation: none !important;
 }
 .rk-loading-overlay.is-out{
   opacity: 0;
+}
+/* v6.1.0 · Durante el handover, el resultado pinta SIN su fade-in
+   propio (questionEnter) · el único movimiento es el overlay saliendo. */
+body.is-handover .result-screen,
+body.is-handover #wizard .result-screen{
+  animation: none !important;
+  opacity: 1 !important;
 }
 @media (prefers-reduced-motion: reduce){
   .rk-loading-overlay{ transition: opacity 200ms linear; }
@@ -3957,12 +3892,13 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   line-height: 1.1;
 }
 .cat-detail-subtitle{
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.10em;
-  color: var(--text-muted);
-  margin: 4px 0 0;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  margin: 5px 0 0;
+  text-transform: none;
+  line-height: 1.4;
 }
 
 .cat-detail-services{
@@ -4402,28 +4338,86 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   margin-bottom: 4px;
 }
 .rk-cart-toggle{
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px;
+  display: flex; flex-direction: column; gap: 8px;
 }
 .rk-cart-toggle label{
-  font-family: var(--font-display);
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
-.rk-cart-toggle select{
+/* v6.1.0 · Pills toggle (reemplaza los <select>) */
+.rk-pill-group{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rk-pill{
   flex: 1;
-  max-width: 180px;
+  min-width: fit-content;
+  padding: 8px 12px;
   background: var(--bg);
   border: 1px solid var(--bg-line);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-family: var(--font-display);
   font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 999px;
   cursor: pointer;
-  outline: none;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.18s ease;
 }
-.rk-cart-toggle select:focus{ border-color: var(--accent); }
+.rk-pill small{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+.rk-pill:hover{
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+.rk-pill.is-active{
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-deep);
+}
+.rk-pill.is-active small{ opacity: 0.85; }
+
+/* v6.1.0 · Item en construcción (carrito vivo) */
+.rk-cart-item-building{
+  border: 1px dashed rgba(61,255,127,0.4) !important;
+  background: rgba(61,255,127,0.04) !important;
+}
+.rk-cart-building-tag{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(61,255,127,0.12);
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.rk-cart-building-note{
+  color: var(--accent-mint) !important;
+  font-style: italic;
+  opacity: 0.85;
+}
+/* v6.1.0 · Nota debajo del CTA de pago */
+.rk-cart-pay-note{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 8px 0 4px;
+}
 
 .rk-cart-totals{
   border-top: 1px solid var(--bg-line);
@@ -5052,32 +5046,26 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   letter-spacing: 0.06em;
   color: var(--text-muted);
 }
-.service-card .service-add{
+/* v6.1.0 · Indicador de estado pasivo (NO botón · la card es clickeable) */
+.service-card-state{
   flex-shrink: 0;
-  width: auto;
-  height: auto;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--bg-line);
-  background: var(--bg);
-  color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.18s ease;
+  color: var(--text-muted);
+  transition: color 0.18s ease, transform 0.22s ease;
 }
-.service-card .service-add:hover{
-  border-color: var(--accent);
+.service-card:hover .service-card-state{
   color: var(--accent);
-  background: rgba(61,255,127,0.08);
+  transform: translateX(3px);
 }
-.service-card .service-add.is-added{
-  background: var(--accent);
-  color: var(--bg-deep);
-  border-color: var(--accent);
+.service-card-state.is-added{
+  color: var(--accent);
+}
+.service-card.is-incart .service-card-state{
+  color: var(--accent);
 }
 
 
@@ -5097,8 +5085,8 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
 .sf-grid{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 8px;
+  gap: 14px;
+  margin-top: 10px;
 }
 @media (max-width: 760px){
   .mega-grid,
@@ -5226,8 +5214,9 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
 .sf-card{ justify-content: flex-start; }
 .sf-card-meta{ margin-top: auto; padding-top: 8px; }
 
-/* Botón "+ Agregar" de service-card · mantiene su pill pero alineado */
-.service-card-foot .service-add{
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+/* v6.1.0 · service-card-foot · alinea meta (precio/tiempo) + estado */
+.service-card-foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
