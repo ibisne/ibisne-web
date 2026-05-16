@@ -1,23 +1,19 @@
-// data/pricing.js — v6.0.2 · Catálogo jerárquico de 2 niveles
+// data/pricing.js — v7.0.0 · Catálogo consolidado + subflow profesional
 //
-// Cambio principal vs v6.0.1: en lugar de 7 categorías al mismo nivel,
-// agrupamos en 4 MEGA-categorías que contienen sub-categorías:
+// Cambio mayor (rework de contenido · plan v7.0.0):
+//   · Pocas cards GENÉRICAS humanas (no 41 servicios técnicos).
+//   · El subflow pregunta-a-pregunta precisa todo y arma el precio.
+//   · Las opciones soportan `add` (suma fija) O `mul` (factor cascada).
+//     calcSubflowPrice: total = base + Σ add, luego × cada mul en orden.
+//   · "No sé / que iBisne recomiende" siempre disponible en singles.
+//   · Estructura de Apps basada en la experiencia real de Eduardo
+//     cotizando apps, expandida heurísticamente.
 //
-//   1. Tecnología       (sitios · tiendas · apps · web3)
-//   2. Marketing y branding (redes · branding · contenido · impresos)
-//   3. Automatización e IA  (sin subs · va directo a servicios)
-//   4. Asesoría y capacitación (sin subs)
-//
-// El cliente ve solo 4 cards al inicio. Tap → ve sub-categorías
-// (o directo servicios si no hay subs). Tap → ve servicios. Cada nivel
-// con back button. "Ir orientando de poco a poco" como pidió Eduardo.
-//
-// servicios[] ahora es un objeto plano indexado por ID para lookup O(1):
-//   servicios['web-bio'] → { ... }
+// megaCategorias → serviciosIds directo (SIN nivel subCategorias).
 
 window.IBISNE_PRICING = {
 
-  // ═══ SECTORES · contexto · no gate · sugiere ═════════════════════════
+  // ═══ SECTORES · contexto · no gate · sugiere ════════════════════════
   sectores: [
     { id: 'arquitecto',    label: 'Arquitectura',          icon: 'sitio' },
     { id: 'dentista',      label: 'Dentista / Salud',      icon: 'shield' },
@@ -33,7 +29,7 @@ window.IBISNE_PRICING = {
     { id: 'otro',          label: 'Otro · cuéntame',       icon: 'arrow' },
   ],
 
-  // ═══ "YA TENGO" · descarta opciones · ahorra preguntas ═══════════════
+  // ═══ "YA TENGO" · descarta opciones · ahorra preguntas ══════════════
   yaTengo: [
     { id: 'web',         label: 'Sitio web',                icon: 'sitio' },
     { id: 'identidad',   label: 'Identidad / logo',         icon: 'dtc' },
@@ -43,450 +39,500 @@ window.IBISNE_PRICING = {
     { id: 'marketing',   label: 'Marketing andando',        icon: 'saas' },
   ],
 
-  // ═══ MEGA-CATEGORÍAS (4) · primer nivel del catálogo ═════════════════
-  // Nombres simples y directos (no técnicos). Cada una con `info`:
-  // texto plano que aparece al tocar la (i) · sin entrar a la categoría.
+  // ═══ MEGA-CATEGORÍAS (4) · serviciosIds directo · SIN subCategorias ══
   megaCategorias: [
     {
-      id: 'web',
-      label: 'Desarrollo web',
+      id: 'web', label: 'Desarrollo web', icon: 'sitio',
       summary: 'Tu presencia en internet',
-      icon: 'sitio',
-      info: 'Todo lo que vive en un navegador: desde una página simple con tus enlaces, una landing para captar clientes, un sitio completo de marca, hasta una tienda en línea o un marketplace. Si tus clientes lo abren desde una computadora o el navegador del celular, va aquí.',
-      subCategorias: [
-        { id: 'sitios',  label: 'Sitios web',     icon: 'sitio',
-          subtitle: 'Donde tus clientes te encuentran',
-          info: 'Páginas web informativas o de captación. Desde un bio-link de 1 página hasta un sitio completo multi-página con blog y secciones.',
-          serviciosIds: ['web-bio', 'landing-simple', 'landing-pro', 'sitio-web'] },
-        { id: 'tiendas', label: 'Tiendas online', icon: 'ecommerce',
-          subtitle: 'Vende aunque estés dormido',
-          info: 'Vender por internet: desde una página de un solo producto, una tienda Shopify gestionable, hasta una plataforma multi-vendedor donde cobras comisión.',
-          serviciosIds: ['ecommerce-1prod', 'ecommerce-shopify', 'ecommerce-pro', 'marketplace'] },
-        { id: 'web3',    label: 'Web3 · Blockchain', icon: 'coin',
-          subtitle: 'El futuro de internet, hoy',
-          info: 'Proyectos en blockchain: colecciones NFT, token propio, apps con contratos inteligentes o finanzas descentralizadas.',
-          serviciosIds: ['blockchain'] },
-      ],
+      info: 'Desde una página de enlaces hasta un sitio completo de marca o una tienda en línea. Si tus clientes lo abren en un navegador, va aquí.',
+      serviciosIds: ['web-sitio', 'web-tienda'],
     },
     {
-      id: 'apps',
-      label: 'Apps',
+      id: 'apps', label: 'Apps', icon: 'app',
       summary: 'Tu negocio en el bolsillo del cliente',
-      icon: 'app',
-      info: 'Aplicaciones que se instalan en el celular (App Store / Google Play). Desde una app rápida con herramientas no-code para validar tu idea en semanas, hasta una app profesional para iPhone y Android con backend propio.',
-      // Sin subCategorias · va directo a servicios
-      serviciosIds: ['app-nocode', 'app-ios-android'],
+      info: 'Aplicaciones para iPhone, Android, web (PWA) o escritorio. No-code para validar rápido o a la medida para máximo control.',
+      serviciosIds: ['app'],
     },
     {
-      id: 'marketing',
-      label: 'Marketing',
+      id: 'marketing', label: 'Marketing', icon: 'leads',
       summary: 'Que te conozcan y te compren',
-      icon: 'leads',
-      info: 'Todo lo que pone tu marca frente al cliente: posts para redes, campañas de anuncios pagados, email marketing, tu logo e identidad visual, fotos y video profesional, y material impreso como tarjetas o brochures.',
-      subCategorias: [
-        { id: 'redes-ads', label: 'Redes y campañas', icon: 'leads',
-          subtitle: 'Aparece donde está tu cliente',
-          info: 'Contenido para redes sociales, campañas de anuncios pagados (Meta/Google/TikTok), email marketing, copywriting y SEO.',
-          serviciosIds: ['posts-10-redes', 'posts-30-redes', 'qr-personalizado', 'email-setup', 'copy-landing', 'campania-ads', 'social-mensual', 'seo-basico', 'estrategia-90d'] },
-        { id: 'branding',  label: 'Branding e identidad', icon: 'dtc',
-          subtitle: 'Que te recuerden a la primera',
-          info: 'La identidad visual de tu marca: logo express, identidad básica o pro con manual completo, o un rebrand total.',
-          serviciosIds: ['logo-express', 'identidad-basica', 'identidad-pro', 'rebrand-full'] },
-        { id: 'contenido', label: 'Fotos y video',   icon: 'camera',
-          subtitle: 'Una imagen vende más que mil palabras',
-          info: 'Contenido visual profesional: sesiones fotográficas, videos cortos para redes, video corporativo o artículos de blog con SEO.',
-          serviciosIds: ['sesion-foto-1h', 'video-corto', 'sesion-foto-full', 'video-corporativo', 'blog-posts'] },
-        { id: 'impresos',  label: 'Impresos físicos', icon: 'edit',
-          subtitle: 'Lo que tu cliente se lleva a casa',
-          info: 'Material impreso físico: tarjetas de presentación, flyers, brochures o papelería corporativa completa. Diseño + impresión incluidos.',
-          serviciosIds: ['tarjetas-500', 'flyers-1000', 'brochure-tri', 'papeleria-full'] },
-      ],
+      info: 'Redes y campañas, identidad de marca, foto/video profesional y material impreso. Que tu marca aparezca donde está tu cliente.',
+      serviciosIds: ['mkt-redes', 'mkt-branding', 'mkt-foto-video', 'mkt-impreso'],
     },
     {
-      id: 'auto',
-      label: 'Automatizaciones',
+      id: 'auto', label: 'Automatizaciones', icon: 'chatbot',
       summary: 'Que el trabajo repetitivo se haga solo',
-      icon: 'chatbot',
-      info: 'Tecnología que trabaja por ti sin que tengas que estar presente: bots de WhatsApp que responden solos, chatbots con IA entrenados con tu negocio, automatizaciones que conectan tus herramientas, configuración de CRM, o consultoría y capacitación para tu equipo.',
-      subCategorias: [
-        { id: 'bots-ia',   label: 'Bots e IA',       icon: 'chatbot',
-          subtitle: 'Atiende 24/7 sin contratar a nadie',
-          info: 'Bots de WhatsApp, chatbots con IA, automatizaciones Zapier/Make, configuración de CRM y automatización end-to-end.',
-          serviciosIds: ['bot-wa-basico', 'zapier-basico', 'chatbot-ia', 'crm-setup', 'automatizacion-end-end'] },
-        { id: 'consultoria', label: 'Consultoría y talleres', icon: 'partnership',
-          subtitle: 'Aprende de quien ya lo hizo',
-          info: 'Asesoría 1-a-1 por hora, talleres grupales o capacitación intensiva para tu equipo.',
-          serviciosIds: ['asesoria-1h', 'taller-grupal', 'capacitacion-equipo'] },
-      ],
+      info: 'Bots y asistentes con IA que atienden 24/7, automatización de procesos, y asesoría/capacitación para tu equipo.',
+      serviciosIds: ['auto-bot', 'auto-asesoria'],
     },
   ],
 
-  // ═══ SERVICIOS · catálogo plano indexado por ID ══════════════════════
+  // ═══ SERVICIOS · catálogo consolidado · indexado por id ═════════════
   servicios: {
-    // ── Tecnología · Sitios web ────────────────────────────────────
-    'web-bio':           { label: 'Bio-link · 1 página',           base: 1499,   tier: 'micro',  tiempo: '24-48hrs',  icon: 'biolink',
-                           subtitle: 'Una sola página con tus enlaces, contacto y productos destacados', subflow: true,
-                           tags: ['influencer','coach','sin-web'] },
-    'landing-simple':    { label: 'Landing simple',                base: 2999,   tier: 'micro',  tiempo: '48hrs',     icon: 'landing',
-                           subtitle: 'Una página de captación · formulario + botón de venta', subflow: true,
-                           tags: ['coach','b2b','sin-web'] },
-    'landing-pro':       { label: 'Landing de venta pro',          base: 19999,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'leads',
-                           subtitle: 'Landing avanzada con copy, animaciones, integraciones y A/B', subflow: true,
-                           tags: ['coach','b2b','influencer'] },
-    'sitio-web':         { label: 'Sitio web completo',            base: 71500,  tier: 'medio',  tiempo: '4-8 sem',   icon: 'sitio',
-                           subtitle: 'Sitio multi-página con secciones, blog, contacto', subflow: true,
-                           tags: ['arquitecto','restaurante','b2b','abogado','inmobiliaria','sin-web'] },
-
-    // ── Tecnología · Tiendas online ───────────────────────────────
-    'ecommerce-1prod':   { label: 'Tienda · 1 producto',           base: 28500,  tier: 'medio',  tiempo: '2-5 sem',   icon: 'ecommerce',
-                           subtitle: 'Página dedicada a vender UN producto · pasarela integrada', subflow: true,
-                           tags: ['ecommerce','coach'] },
-    'ecommerce-shopify': { label: 'Tienda Shopify',                base: 97500,  tier: 'medio',  tiempo: '4-10 sem',  icon: 'ecommerce',
-                           subtitle: 'Tienda con varios productos · panel para administrar todo', subflow: true,
-                           tags: ['ecommerce'] },
-    'ecommerce-pro':     { label: 'Tienda online avanzada',        base: 234000, tier: 'grande', tiempo: '8-16 sem',  icon: 'saas',
-                           subtitle: 'Tienda construida desde cero · velocidad y SEO máximos', subflow: true,
-                           tags: ['ecommerce'] },
-    'marketplace':       { label: 'Marketplace multi-vendor',      base: 416000, tier: 'grande', tiempo: '12-24 sem', icon: 'marketplace',
-                           subtitle: 'Plataforma donde varios vendedores publican y tú cobras comisión', subflow: true,
-                           tags: ['ecommerce','b2b'] },
-
-    // ── Tecnología · Apps móviles ─────────────────────────────────
-    'app-nocode':        { label: 'App rápida (no-code)',          base: 45500,  tier: 'medio',  tiempo: '4-10 sem',  icon: 'nocode',
-                           subtitle: 'App armada con herramientas visuales · validas idea en semanas', subflow: true,
-                           tags: ['b2b','coach','educacion'] },
-    'app-ios-android':   { label: 'App iPhone + Android',          base: 286000, tier: 'grande', tiempo: '12-22 sem', icon: 'hybrid',
-                           subtitle: 'Una sola app para iOS y Android · backend incluido', subflow: true,
-                           tags: ['b2b','educacion'] },
-
-    // ── Tecnología · Web3 ─────────────────────────────────────────
-    'blockchain':        { label: 'Proyecto Web3 / cripto',        base: 234000, tier: 'grande', tiempo: '10-20 sem', icon: 'coin',
-                           subtitle: 'NFTs, contratos inteligentes, DeFi · proyectos en blockchain', subflow: true,
-                           tags: ['b2b'] },
-
-    // ── Marketing · Redes y campañas ──────────────────────────────
-    'posts-10-redes':    { label: '10 posts redes con tu logo',    base: 499,    tier: 'micro',  tiempo: '8hrs express', icon: 'leads',
-                           subtitle: 'Instagram + Facebook · diseño con tu logo · listos para postear', subflow: true,
-                           tags: ['dentista','restaurante','arquitecto','influencer','coach','abogado','inmobiliaria','sin-marketing'] },
-    'posts-30-redes':    { label: '30 posts redes mensuales',      base: 1999,   tier: 'micro',  tiempo: '48hrs',     icon: 'leads',
-                           subtitle: '30 piezas/mes · texto + diseño · listos para programar', subflow: true,
-                           tags: ['dentista','restaurante','influencer','coach','sin-marketing'] },
-    'qr-personalizado':  { label: 'Código QR personalizado',       base: 299,    tier: 'micro',  tiempo: '8hrs',      icon: 'arrow',
-                           subtitle: 'QR con tu logo y colores · imprimes o usas digital · 1 link' },
-    'email-setup':       { label: 'Email marketing · setup',       base: 799,    tier: 'micro',  tiempo: '24hrs',     icon: 'leads',
-                           subtitle: 'Mailchimp/Brevo setup · plantilla de bienvenida + lista importada' },
-    'copy-landing':      { label: 'Copywriting de landing',        base: 1499,   tier: 'micro',  tiempo: '48hrs',     icon: 'edit',
-                           subtitle: 'Textos persuasivos para tu landing · headline + 4 secciones + CTA' },
-    'campania-ads':      { label: 'Campaña Ads 30 días',           base: 9999,   tier: 'medio',  tiempo: 'setup 48hrs', icon: 'saas',
-                           subtitle: 'Meta o Google Ads · 30 días · setup + creativos + optimización', subflow: true,
-                           tags: ['ecommerce','coach','b2b','dentista','restaurante'] },
-    'social-mensual':    { label: 'Manejo de redes · 1 mes',       base: 7999,   tier: 'medio',  tiempo: '1 mes',     icon: 'star',
-                           subtitle: '20 posts + 30 stories + 4 reels · publicación + reporte mensual', subflow: true,
-                           tags: ['dentista','restaurante','influencer','coach','arquitecto'] },
-    'seo-basico':        { label: 'SEO técnico básico',            base: 4999,   tier: 'medio',  tiempo: '1-2 sem',   icon: 'saas',
-                           subtitle: 'Auditoría + on-page + sitemap + schema · primera página Google',
-                           tags: ['sin-marketing'] },
-    'estrategia-90d':    { label: 'Estrategia marketing · 90 días', base: 52000, tier: 'grande', tiempo: '3 meses',   icon: 'partnership',
-                           subtitle: 'Estrategia full-funnel · ads multi-canal · email · contenidos · prensa', subflow: true },
-
-    // ── Marketing · Branding e identidad ──────────────────────────
-    'logo-express':      { label: 'Logo express',                  base: 999,    tier: 'micro',  tiempo: '48hrs',     icon: 'dtc',
-                           subtitle: 'Logo + 2 versiones (color/blanco) · PDF + PNG · 3 propuestas',
-                           tags: ['sin-identidad'] },
-    'identidad-basica':  { label: 'Identidad básica',              base: 4999,   tier: 'medio',  tiempo: '3-5 días',  icon: 'dtc',
-                           subtitle: 'Logo + paleta + tipografías + usos básicos · PDF entregable',
-                           tags: ['sin-identidad'] },
-    'identidad-pro':     { label: 'Identidad pro · manual',        base: 19999,  tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
-                           subtitle: 'Manual completo · isotipo + naming + storytelling + aplicaciones',
-                           tags: ['sin-identidad'] },
-    'rebrand-full':      { label: 'Rebrand completo',              base: 78000,  tier: 'grande', tiempo: '6-10 sem',  icon: 'star',
-                           subtitle: 'Investigación + reposicionamiento + identidad nueva + aplicaciones' },
-
-    // ── Marketing · Contenido ─────────────────────────────────────
-    'sesion-foto-1h':    { label: 'Sesión fotográfica · 1 hora',   base: 1999,   tier: 'micro',  tiempo: '1 día',     icon: 'camera',
-                           subtitle: 'Producto, lugar o retrato · 1 hora + 20 fotos editadas',
-                           tags: ['arquitecto','restaurante','dentista'] },
-    'video-corto':       { label: 'Video corto · 30 segundos',     base: 1499,   tier: 'micro',  tiempo: '3 días',    icon: 'star',
-                           subtitle: 'Reel o post · animación + texto + música licenciada',
-                           tags: ['influencer','coach'] },
-    'sesion-foto-full':  { label: 'Sesión fotográfica · medio día', base: 7999,  tier: 'medio',  tiempo: '1 día + edición', icon: 'camera',
-                           subtitle: '4 horas · 50+ fotos editadas · catálogo o portfolio',
-                           tags: ['arquitecto','restaurante'] },
-    'video-corporativo': { label: 'Video corporativo 2-3 min',     base: 14999,  tier: 'medio',  tiempo: '2-3 sem',   icon: 'star',
-                           subtitle: 'Guion + grabación + edición · para web, redes y ventas' },
-    'blog-posts':        { label: '10 blog posts con SEO',         base: 4999,   tier: 'medio',  tiempo: '2 sem',     icon: 'edit',
-                           subtitle: '10 artículos optimizados SEO · 800-1200 palabras · publicables' },
-
-    // ── Marketing · Impresos ──────────────────────────────────────
-    'tarjetas-500':      { label: '500 tarjetas de presentación',  base: 999,    tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
-                           subtitle: 'Diseño + impresión en couché 350g · 2 caras a color' },
-    'flyers-1000':       { label: '1,000 flyers a color',          base: 1499,   tier: 'micro',  tiempo: '5-7 días',  icon: 'edit',
-                           subtitle: 'Tamaño media carta · couché 150g · 2 caras a color' },
-    'brochure-tri':      { label: 'Brochure tríptico · 500 piezas', base: 2999,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'edit',
-                           subtitle: 'Diseño + 500 piezas impresas en couché 200g · doblado tríptico' },
-    'papeleria-full':    { label: 'Papelería corporativa',         base: 7999,   tier: 'medio',  tiempo: '2-3 sem',   icon: 'partnership',
-                           subtitle: 'Tarjetas + hojas membretadas + sobres + carpetas · diseño + 500 piezas c/u' },
-
-    // ── Automatización ─────────────────────────────────────────────
-    'bot-wa-basico':     { label: 'Bot WhatsApp básico',           base: 1999,   tier: 'micro',  tiempo: '48hrs',     icon: 'whatsapp',
-                           subtitle: 'Bot con respuestas a preguntas frecuentes · menú interactivo' },
-    'zapier-basico':     { label: 'Automatización Zapier/Make',    base: 1499,   tier: 'micro',  tiempo: '48hrs',     icon: 'serverapp',
-                           subtitle: '3 flujos · ej: lead nuevo → CRM + email + Slack',
-                           tags: ['b2b','coach'] },
-    'chatbot-ia':        { label: 'Chatbot con IA',                base: 11500,  tier: 'medio',  tiempo: '1-2 sem',   icon: 'chatbot',
-                           subtitle: 'Bot entrenado con info de tu negocio · responde 24/7', subflow: true },
-    'crm-setup':         { label: 'CRM setup',                     base: 7999,   tier: 'medio',  tiempo: '1 sem',     icon: 'partnership',
-                           subtitle: 'HubSpot/Pipedrive · flujos de seguimiento + reportes',
-                           tags: ['b2b'] },
-    'automatizacion-end-end': { label: 'Automatización end-to-end', base: 65000, tier: 'grande', tiempo: '6-10 sem',  icon: 'serverapp',
-                           subtitle: 'ERP + CRM + Marketing automation integrados · workflows complejos' },
-
-    // ── Capacitación ──────────────────────────────────────────────
-    'asesoria-1h':       { label: 'Asesoría 1-a-1 · 1 hora',       base: 999,    tier: 'micro',  tiempo: 'agendable', icon: 'partnership',
-                           subtitle: '1 hora con un experto · estrategia, tech, marketing o el tema que necesites' },
-    'taller-grupal':     { label: 'Taller grupal · 4 horas',       base: 4999,   tier: 'medio',  tiempo: 'agendable', icon: 'partnership',
-                           subtitle: '4 horas con tu equipo · capacitación práctica + material' },
-    'capacitacion-equipo': { label: 'Capacitación equipo · 2 días', base: 19999, tier: 'medio',  tiempo: 'agendable', icon: 'partnership',
-                           subtitle: '2 días de capacitación intensiva · hasta 12 personas · material + certificado' },
+    'web-sitio': {
+      label: 'Sitio web', base: 6000, tier: 'medio', tiempo: '2-8 sem', icon: 'sitio',
+      subtitle: 'Donde tus clientes te encuentran · de una página a un sitio completo',
+      subflow: true, tags: ['arquitecto','dentista','restaurante','abogado','inmobiliaria','coach','b2b','sin-web'],
+    },
+    'web-tienda': {
+      label: 'Tienda en línea', base: 24000, tier: 'grande', tiempo: '3-16 sem', icon: 'ecommerce',
+      subtitle: 'Vende por internet · de un producto a un marketplace',
+      subflow: true, tags: ['ecommerce','restaurante'],
+    },
+    'app': {
+      label: 'App a la medida', base: 18000, tier: 'grande', tiempo: '4-22 sem', icon: 'app',
+      subtitle: 'Para iPhone, Android, web o escritorio · no-code o a la medida',
+      subflow: true, tags: ['b2b','educacion','coach','influencer'],
+    },
+    'mkt-redes': {
+      label: 'Redes y campañas', base: 3500, tier: 'medio', tiempo: '48hrs-1 mes', icon: 'leads',
+      subtitle: 'Aparece donde está tu cliente · contenido + pauta',
+      subflow: true, tags: ['dentista','restaurante','influencer','coach','arquitecto','sin-marketing'],
+    },
+    'mkt-branding': {
+      label: 'Branding e identidad', base: 999, tier: 'medio', tiempo: '48hrs-10 sem', icon: 'dtc',
+      subtitle: 'Que te recuerden a la primera · logo, manual, rebrand',
+      subflow: true, tags: ['sin-identidad','coach','b2b'],
+    },
+    'mkt-foto-video': {
+      label: 'Foto y video', base: 1499, tier: 'medio', tiempo: '1 día-3 sem', icon: 'camera',
+      subtitle: 'Una imagen vende más que mil palabras',
+      subflow: true, tags: ['arquitecto','restaurante','influencer'],
+    },
+    'mkt-impreso': {
+      label: 'Material impreso', base: 999, tier: 'micro', tiempo: '5-7 días', icon: 'edit',
+      subtitle: 'Lo que tu cliente se lleva a casa',
+      subflow: true, tags: [],
+    },
+    'auto-bot': {
+      label: 'Automatización / Bot con IA', base: 1999, tier: 'medio', tiempo: '48hrs-6 sem', icon: 'chatbot',
+      subtitle: 'Atiende 24/7 sin contratar a nadie',
+      subflow: true, tags: ['b2b','dentista','ecommerce'],
+    },
+    'auto-asesoria': {
+      label: 'Asesoría y capacitación', base: 999, tier: 'micro', tiempo: 'agendable', icon: 'partnership',
+      subtitle: 'Aprende de quien ya lo hizo',
+      subflow: true, tags: ['coach','b2b','educacion'],
+    },
   },
 
-  // ═══ SUB-FLOW · 2-4 preguntas por servicio (modal al agregar) ════════
+  // ═══ SUB-FLOW · una pregunta a la vez · add (suma) | mul (factor) ════
   subflow: {
-    'web-bio': [
-      { id: 'enlaces', label: '¿Cuántos enlaces?', opciones: [
-        { id: 'pocos', label: 'Solo mis redes · 3-5 enlaces', add: 0 },
-        { id: 'medio', label: 'Redes + productos · 6-15',     add: 1500 },
-        { id: 'todo',  label: 'Todo · catálogo + galería + contacto', add: 4500 },
+
+    // ── APP a la medida · estructura estrella (12 pasos) ──────────────
+    'app': [
+      { id: 'plataforma', label: '¿Para qué plataforma necesitas tu app?',
+        help: 'Esto define gran parte del costo · puedes elegir más de una con iPhone+Android.',
+        opciones: [
+          { id: 'pwa',     label: 'App web (PWA) · funciona en navegador y se instala', add: 12000 },
+          { id: 'android', label: 'Solo Android',          add: 28000 },
+          { id: 'ios',     label: 'Solo iPhone (iOS)',      add: 32000 },
+          { id: 'ambas',   label: 'iPhone + Android',       add: 58000 },
+          { id: 'windows', label: 'Windows / Escritorio',   add: 45000 },
+          { id: 'no-se',   label: 'No sé · que iBisne recomiende', add: 40000 },
+      ]},
+      { id: 'tipo', label: '¿Cómo la construimos?',
+        help: 'No-code es más rápido y económico para validar. A la medida da máximo control y rendimiento.',
+        opciones: [
+          { id: 'nocode',  label: 'No-code · más rápida y económica', mul: 0.55 },
+          { id: 'medida',  label: 'A la medida · código propio',      mul: 1.0 },
+          { id: 'no-se',   label: 'No sé · que iBisne recomiende',     mul: 0.85 },
+      ]},
+      { id: 'calidad', label: '¿Qué nivel de acabado buscas?',
+        help: 'Mismo alcance, distinto nivel de pulido y pruebas.',
+        opciones: [
+          { id: 'funcional', label: 'Funcional · que sirva, sin tanto pulido', mul: 0.8 },
+          { id: 'balance',   label: 'Buena relación calidad/precio · recomendado', mul: 1.0 },
+          { id: 'premium',   label: 'Calidad óptima · acabado premium', mul: 1.4 },
+      ]},
+      { id: 'diseno', label: '¿Cómo quieres el diseño?',
+        opciones: [
+          { id: 'medida',   label: 'Diseño a la medida · único para tu marca', add: 22000 },
+          { id: 'plantilla', label: 'Diseño sencillo · plantilla adaptada',    add: 6000 },
+          { id: 'replica',  label: 'Replicar el diseño de mi web/marca',       add: 9000 },
+          { id: 'ninguno',  label: 'No necesito diseño · ya lo tengo',         add: 0 },
+      ]},
+      { id: 'modelo', label: '¿Cómo vas a ganar con tu app?',
+        opciones: [
+          { id: 'ads',      label: 'Gratuita con publicidad',          add: 4000 },
+          { id: 'pago',     label: 'De pago · descarga única',         add: 3000 },
+          { id: 'compras',  label: 'Compras dentro / suscripción',     add: 15000 },
+          { id: 'interno',  label: 'Uso interno · no monetiza',        add: 0 },
+          { id: 'no-se',    label: 'Otros / no lo sé todavía',         add: 0 },
+      ]},
+      { id: 'login', label: '¿Necesita que los usuarios inicien sesión?',
+        opciones: [
+          { id: 'redes',  label: 'Sí · con redes sociales + email', add: 9000 },
+          { id: 'email',  label: 'Sí · solo email',                 add: 5000 },
+          { id: 'no',     label: 'No',                              add: 0 },
+          { id: 'no-se',  label: 'No lo sé todavía',                add: 3000 },
+      ]},
+      { id: 'perfiles', label: '¿Los usuarios tendrán su propio perfil?',
+        opciones: [
+          { id: 'si',    label: 'Sí',         add: 11000 },
+          { id: 'no',    label: 'No',         add: 0 },
+          { id: 'no-se', label: 'No lo sé',   add: 4000 },
+      ]},
+      { id: 'conexion', label: '¿Se conecta con algún sistema externo?', multi: true,
+        help: 'Marca todas las que apliquen.',
+        opciones: [
+          { id: 'web',      label: 'Mi sitio web / tienda', add: 7000 },
+          { id: 'crm',      label: 'Un CRM (HubSpot, etc.)', add: 9000 },
+          { id: 'pasarela', label: 'Pasarela de pago',       add: 8000 },
+          { id: 'api',      label: 'Una API externa',        add: 10000 },
+      ]},
+      { id: 'admin', label: '¿Necesitas un panel de administración?',
+        help: 'Para gestionar usuarios, contenido y ver métricas.',
+        opciones: [
+          { id: 'si',    label: 'Sí',        add: 18000 },
+          { id: 'no',    label: 'No',        add: 0 },
+          { id: 'no-se', label: 'No lo sé',  add: 6000 },
+      ]},
+      { id: 'funciones', label: '¿Qué funciones especiales necesita?', multi: true,
+        help: 'Marca todas las que apliquen · puedes dejar vacío.',
+        opciones: [
+          { id: 'push',      label: 'Notificaciones push',     add: 5000 },
+          { id: 'geo',       label: 'Mapa / geolocalización',  add: 10000 },
+          { id: 'chat',      label: 'Chat / mensajería',       add: 18000 },
+          { id: 'camara',    label: 'Cámara / escáner / QR',   add: 11000 },
+          { id: 'pagos',     label: 'Pagos dentro de la app',  add: 14000 },
+          { id: 'offline',   label: 'Funciona sin internet',   add: 11000 },
+          { id: 'ia',        label: 'Inteligencia artificial', add: 22000, flag: 'ia' },
+          { id: 'streaming', label: 'Streaming de video/audio', add: 22000 },
+      ]},
+      { id: 'idiomas', label: '¿En cuántos idiomas?',
+        opciones: [
+          { id: 'uno',   label: 'Un solo idioma',     add: 0 },
+          { id: 'dos',   label: 'Dos idiomas',        add: 9000 },
+          { id: 'multi', label: 'Multilingüe (3+)',   add: 20000 },
+      ]},
+      { id: 'etapa', label: '¿En qué etapa está tu proyecto?',
+        help: 'Nos ayuda a entender desde dónde empezamos.',
+        opciones: [
+          { id: 'idea',     label: 'Es solo una idea',                       mul: 1.0,  signal: 'temprano' },
+          { id: 'mvp',      label: 'Tengo un MVP / prototipo',               mul: 1.0,  signal: 'caliente' },
+          { id: 'desarrollo', label: 'En desarrollo · necesito terminarla',  mul: 0.85, signal: 'caliente' },
+          { id: 'updates',  label: 'Ya está · necesita actualizaciones',     mul: 0.6,  signal: 'tibio' },
+          { id: 'rehacer',  label: 'Ya está pero quiero rehacerla desde cero', mul: 1.0, signal: 'caliente' },
       ]},
     ],
 
-    'landing-simple': [
-      { id: 'objetivo', label: '¿Qué objetivo principal?', opciones: [
-        { id: 'captar',  label: 'Capturar correos / WhatsApps', add: 0 },
-        { id: 'vender',  label: 'Vender un producto o curso',  add: 3500 },
-        { id: 'evento',  label: 'Inscripciones a evento',       add: 2500 },
-        { id: 'agendar', label: 'Agendar llamada / cita',       add: 2500 },
+    // ── SITIO WEB (9 pasos) ───────────────────────────────────────────
+    'web-sitio': [
+      { id: 'tipo', label: '¿Qué necesitas exactamente?',
+        help: 'Desde lo más simple hasta un sitio completo de marca.',
+        opciones: [
+          { id: 'biolink', label: 'Una página de enlaces (bio-link)',     add: 0 },
+          { id: 'landing', label: 'Una página para captar clientes',      add: 9000 },
+          { id: 'completo', label: 'Un sitio completo de marca',          add: 55000 },
+          { id: 'no-se',   label: 'No sé · que iBisne recomiende',        add: 30000 },
+      ]},
+      { id: 'secciones', label: '¿Cuántas secciones o páginas?',
+        opciones: [
+          { id: 'pocas',   label: 'Pocas · 1 a 3',     add: 0 },
+          { id: 'medianas', label: 'Medianas · 4 a 7', add: 12000 },
+          { id: 'muchas',  label: 'Muchas · 8 o más',  add: 28000 },
+      ]},
+      { id: 'calidad', label: '¿Qué nivel de acabado buscas?',
+        opciones: [
+          { id: 'funcional', label: 'Funcional · directo al grano',       mul: 0.8 },
+          { id: 'balance',   label: 'Buena relación calidad/precio',      mul: 1.0 },
+          { id: 'premium',   label: 'Premium con animaciones · efecto wow', mul: 1.4, flag: 'animacion-pro' },
+      ]},
+      { id: 'diseno', label: '¿Cómo quieres el diseño?',
+        opciones: [
+          { id: 'medida',   label: 'A la medida · único para ti',  add: 28000 },
+          { id: 'plantilla', label: 'Plantilla adaptada a tu marca', add: 6000 },
+          { id: 'replica',  label: 'Replicar mi identidad existente', add: 9000 },
+          { id: 'ninguno',  label: 'Ya tengo el diseño',            add: 0 },
+      ]},
+      { id: 'cms', label: '¿Quieres editar el contenido tú mismo?',
+        help: 'Un panel para cambiar textos, imágenes y publicar sin depender de nosotros.',
+        opciones: [
+          { id: 'si', label: 'Sí · con panel para editar', add: 14000 },
+          { id: 'no', label: 'No · ustedes lo administran', add: 0 },
+      ]},
+      { id: 'idiomas', label: '¿En cuántos idiomas?',
+        opciones: [
+          { id: 'uno',   label: 'Un solo idioma',   add: 0 },
+          { id: 'dos',   label: 'Dos idiomas',      add: 11000 },
+          { id: 'multi', label: 'Multilingüe (3+)', add: 24000 },
+      ]},
+      { id: 'modulos', label: '¿Qué módulos necesitas?', multi: true,
+        help: 'Marca todos los que apliquen · puedes dejar vacío.',
+        opciones: [
+          { id: 'blog',       label: 'Blog / noticias',              add: 8000 },
+          { id: 'agenda',     label: 'Agenda / sistema de citas',    add: 12000 },
+          { id: 'chatbot',    label: 'Chatbot con IA',               add: 14000, flag: 'ia' },
+          { id: 'galeria',    label: 'Galería / portafolio',         add: 6000 },
+          { id: 'miembros',   label: 'Área de miembros con login',   add: 22000, flag: 'auth-or-api' },
+          { id: 'newsletter', label: 'Suscripción a newsletter',     add: 4000 },
+          { id: 'forms',      label: 'Formularios avanzados',        add: 5000 },
+      ]},
+      { id: 'conexion', label: '¿Conectar con alguna herramienta?', multi: true,
+        opciones: [
+          { id: 'analytics', label: 'Analytics + Meta Pixel',     add: 3000 },
+          { id: 'crm',       label: 'Un CRM',                     add: 8000 },
+          { id: 'mailing',   label: 'Email marketing',            add: 4000 },
+          { id: 'whatsapp',  label: 'WhatsApp Business',          add: 5000 },
+      ]},
+      { id: 'etapa', label: '¿En qué etapa está tu proyecto?',
+        opciones: [
+          { id: 'idea',    label: 'Es una idea nueva',                  mul: 1.0,  signal: 'temprano' },
+          { id: 'tengo',   label: 'Tengo algo · quiero mejorarlo',      mul: 0.9,  signal: 'caliente' },
+          { id: 'rehacer', label: 'Tengo sitio pero quiero rehacerlo',  mul: 1.0,  signal: 'caliente' },
+          { id: 'updates', label: 'Solo actualizar lo que ya tengo',    mul: 0.55, signal: 'tibio' },
       ]},
     ],
 
-    'landing-pro': [
-      { id: 'paginas', label: '¿Cuántas secciones?', opciones: [
-        { id: 'std',    label: 'Estándar · 6 secciones',   add: 0 },
-        { id: 'plus',   label: 'Extendida · 10 secciones', add: 6500 },
+    // ── TIENDA EN LÍNEA (8 pasos) ─────────────────────────────────────
+    'web-tienda': [
+      { id: 'tamano', label: '¿Qué tamaño tendrá tu tienda?',
+        opciones: [
+          { id: 'single',  label: 'Un solo producto',                  add: 0 },
+          { id: 'pequeno', label: 'Catálogo pequeño · hasta 50',       add: 12000 },
+          { id: 'mediano', label: 'Mediano · hasta 500 productos',     add: 35000 },
+          { id: 'grande',  label: 'Grande / avanzado · 500+',          add: 90000 },
+          { id: 'market',  label: 'Marketplace · varios vendedores',   add: 180000 },
       ]},
-      { id: 'integraciones', label: '¿Integraciones?', multi: true, opciones: [
-        { id: 'crm',       label: 'CRM (HubSpot, Pipedrive)',     add: 3500 },
-        { id: 'mail',      label: 'Email marketing',              add: 2500 },
-        { id: 'analytics', label: 'Analytics + Meta Pixel',       add: 2500 },
-        { id: 'whatsapp',  label: 'WhatsApp Business',            add: 3500 },
+      { id: 'plataforma', label: '¿Sobre qué la construimos?',
+        help: 'Shopify es más rápido de lanzar. A la medida da control total.',
+        opciones: [
+          { id: 'shopify', label: 'Shopify · rápido de lanzar', mul: 0.8 },
+          { id: 'medida',  label: 'A la medida · control total', mul: 1.0 },
+          { id: 'no-se',   label: 'No sé · que iBisne recomiende', mul: 0.9 },
       ]},
-    ],
-
-    'sitio-web': [
-      { id: 'paginas', label: '¿Cuántas páginas?', opciones: [
-        { id: '3-5',  label: 'Pocas · 3 a 5 páginas',       add: 0 },
-        { id: '6-10', label: 'Medianas · 6 a 10 páginas',   add: 9500 },
-        { id: '10+',  label: 'Muchas · más de 10 páginas',  add: 23500 },
+      { id: 'pagos', label: '¿Cómo te van a pagar?', multi: true,
+        help: 'Marca todas · te sugerimos el set mínimo que cubre todo.',
+        opciones: [
+          { id: 'tarjeta-nac', label: 'Tarjeta nacional',        add: 6000 },
+          { id: 'tarjeta-int', label: 'Tarjeta internacional',   add: 6000 },
+          { id: 'spei-oxxo',   label: 'SPEI / OXXO',             add: 5000 },
+          { id: 'paypal',      label: 'PayPal',                  add: 4000 },
+          { id: 'mercadopago', label: 'Mercado Pago',            add: 5000 },
+          { id: 'cripto',      label: 'Criptomonedas',           add: 12000 },
       ]},
-      { id: 'idiomas', label: '¿Cuántos idiomas?', opciones: [
-        { id: 'uno',  label: 'Solo español',         add: 0 },
-        { id: 'dos',  label: 'Español + inglés',     add: 11500 },
-        { id: 'tres', label: 'Tres o más idiomas',   add: 23500 },
+      { id: 'envios', label: '¿Cómo manejas los envíos?',
+        opciones: [
+          { id: 'digital',  label: 'Producto digital · no se envía',  add: 0 },
+          { id: 'manual',   label: 'Yo gestiono los envíos',          add: 0 },
+          { id: 'auto',     label: 'Cálculo automático + guías',      add: 9000 },
       ]},
-      { id: 'modulos', label: '¿Qué módulos extra?', multi: true, opciones: [
-        { id: 'cms',          label: 'Panel para editar contenido', add: 11500 },
-        { id: 'blog',         label: 'Blog con SEO',                 add: 8000 },
-        { id: 'agenda',       label: 'Sistema de citas / reservas',  add: 9500 },
-        { id: 'chatbot',      label: 'Chatbot con IA',               add: 11500 },
-        { id: 'galeria',      label: 'Galería de proyectos animada', add: 5500 },
-        { id: 'membersarea',  label: 'Área de miembros con login',   add: 19500 },
-        { id: 'newsletter',   label: 'Suscripción newsletter',       add: 4000 },
-        { id: 'animaciones',  label: 'Animaciones premium scroll',   add: 9500, flag: 'animacion-pro' },
+      { id: 'calidad', label: '¿Qué nivel de acabado buscas?',
+        opciones: [
+          { id: 'funcional', label: 'Funcional · vender ya',         mul: 0.8 },
+          { id: 'balance',   label: 'Buena relación calidad/precio', mul: 1.0 },
+          { id: 'premium',   label: 'Premium · experiencia de marca', mul: 1.4 },
       ]},
-    ],
-
-    'ecommerce-1prod': [
-      { id: 'pasarelas', label: '¿Cómo te van a pagar?', multi: true, opciones: [
-        { id: 'mercadopago', label: 'Mercado Pago (tarjetas + SPEI + OXXO)', add: 2500 },
-        { id: 'stripe',      label: 'Stripe (tarjetas internacionales)',     add: 2500 },
-        { id: 'paypal',      label: 'PayPal',                                 add: 1500 },
+      { id: 'diseno', label: '¿Cómo quieres el diseño?',
+        opciones: [
+          { id: 'medida',   label: 'A la medida',           add: 28000 },
+          { id: 'plantilla', label: 'Plantilla adaptada',    add: 6000 },
+          { id: 'ninguno',  label: 'Ya tengo el diseño',     add: 0 },
       ]},
-      { id: 'envio', label: '¿Tipo de envío?', opciones: [
-        { id: 'digital',    label: 'Es digital · no se envía',     add: 0 },
-        { id: 'manual',     label: 'Gestiono envíos a mano',       add: 0 },
-        { id: 'automatico', label: 'Cálculo + guías automáticas',  add: 4500 },
+      { id: 'modulos', label: '¿Qué módulos necesitas?', multi: true,
+        opciones: [
+          { id: 'cupones',   label: 'Cupones y descuentos',       add: 4000 },
+          { id: 'resenas',   label: 'Reseñas de productos',       add: 5000 },
+          { id: 'wishlist',  label: 'Lista de deseos',            add: 4000 },
+          { id: 'suscrip',   label: 'Suscripciones recurrentes',  add: 18000 },
+          { id: 'multimoneda', label: 'Multi-moneda',             add: 7000 },
+          { id: 'inventario', label: 'Inventario / almacén',      add: 15000 },
+          { id: 'lealtad',   label: 'Programa de lealtad',        add: 12000 },
       ]},
-    ],
-
-    'ecommerce-shopify': [
-      { id: 'catalogo', label: '¿Cuántos productos?', opciones: [
-        { id: '<50',    label: 'Menos de 50',    add: 0 },
-        { id: '50-500', label: '50 a 500',       add: 6500 },
-        { id: '500+',   label: 'Más de 500',     add: 19500 },
-      ]},
-      { id: 'pasarelas', label: '¿Pasarelas?', multi: true, opciones: [
-        { id: 'mercadopago', label: 'Mercado Pago',     add: 3000 },
-        { id: 'stripe',      label: 'Stripe',           add: 3500 },
-        { id: 'paypal',      label: 'PayPal',           add: 2500 },
-        { id: 'oxxo',        label: 'OXXO / SPEI',      add: 4500 },
-      ]},
-    ],
-
-    'ecommerce-pro': [
-      { id: 'catalogo', label: '¿Cuántos productos?', opciones: [
-        { id: '<500',   label: 'Menos de 500',   add: 0 },
-        { id: '500-5k', label: '500 a 5,000',    add: 15500 },
-        { id: '5k+',    label: 'Más de 5,000',   add: 32500 },
-      ]},
-      { id: 'integraciones', label: '¿Integraciones?', multi: true, opciones: [
-        { id: 'erp', label: 'ERP / sistema admin',    add: 19500 },
-        { id: 'crm', label: 'CRM',                    add: 10500 },
-        { id: '3pl', label: 'Servicio de envíos',     add: 13000 },
-        { id: 'mkt', label: 'Email marketing',        add: 4000 },
+      { id: 'etapa', label: '¿En qué etapa está tu proyecto?',
+        opciones: [
+          { id: 'idea',    label: 'Es una idea nueva',                 mul: 1.0,  signal: 'temprano' },
+          { id: 'tengo',   label: 'Ya vendo · quiero mejorar online',  mul: 0.95, signal: 'caliente' },
+          { id: 'rehacer', label: 'Tengo tienda pero quiero rehacerla', mul: 1.0, signal: 'caliente' },
+          { id: 'updates', label: 'Solo actualizar la que tengo',      mul: 0.55, signal: 'tibio' },
       ]},
     ],
 
-    'marketplace': [
-      { id: 'modelo', label: '¿Modelo de cobro?', opciones: [
-        { id: 'comision',    label: 'Solo comisión por venta',        add: 0 },
-        { id: 'suscripcion', label: 'Suscripción de vendedores',      add: 19500 },
-        { id: 'mixto',       label: 'Comisión + suscripción',          add: 32500 },
+    // ── MARKETING · Redes y campañas (6 pasos) ────────────────────────
+    'mkt-redes': [
+      { id: 'alcance', label: '¿Qué necesitas?',
+        opciones: [
+          { id: 'contenido', label: 'Solo contenido / posts',            add: 0 },
+          { id: 'pauta',     label: 'Posts + pauta pagada (ads)',        add: 9000 },
+          { id: 'fullfunnel', label: 'Estrategia full-funnel · 90 días', add: 45000 },
+      ]},
+      { id: 'redes', label: '¿En qué redes?', multi: true,
+        opciones: [
+          { id: 'ig',       label: 'Instagram',  add: 0 },
+          { id: 'fb',       label: 'Facebook',   add: 1500 },
+          { id: 'tiktok',   label: 'TikTok',     add: 3000 },
+          { id: 'linkedin', label: 'LinkedIn',   add: 2000 },
+          { id: 'x',        label: 'X (Twitter)', add: 1500 },
+          { id: 'youtube',  label: 'YouTube',    add: 6000 },
+      ]},
+      { id: 'volumen', label: '¿Cuánto contenido al mes?',
+        opciones: [
+          { id: '10',  label: '10 piezas',     add: 0 },
+          { id: '20',  label: '20 piezas',     add: 6000 },
+          { id: '30',  label: '30 o más',      add: 14000 },
+      ]},
+      { id: 'diseno', label: '¿Incluye diseño gráfico?',
+        opciones: [
+          { id: 'texto',   label: 'Solo texto / copy',  add: 0 },
+          { id: 'basico',  label: 'Diseño básico',      add: 4000 },
+          { id: 'premium', label: 'Diseño premium',     add: 12000 },
+      ]},
+      { id: 'email', label: '¿Email marketing?',
+        opciones: [
+          { id: 'no',    label: 'No por ahora',                add: 0 },
+          { id: 'setup', label: 'Setup inicial',               add: 5000 },
+          { id: 'full',  label: 'Setup + campañas mensuales',  add: 14000 },
+      ]},
+      { id: 'reportes', label: '¿Reportes y analítica?',
+        opciones: [
+          { id: 'basico', label: 'Reporte básico',          add: 0 },
+          { id: 'dash',   label: 'Dashboard mensual',       add: 6000 },
       ]},
     ],
 
-    'app-nocode': [
-      { id: 'plataforma', label: '¿Plataforma?', opciones: [
-        { id: 'flutterflow', label: 'FlutterFlow · app real iOS+Android', add: 0 },
-        { id: 'bubble',      label: 'Bubble · plataforma web',            add: 0 },
-        { id: 'thunkable',   label: 'Thunkable · prototipo muy rápido',   add: 0 },
-        { id: 'recomienda',  label: 'Que iBisne elija',                    add: 0 },
+    // ── MARKETING · Branding e identidad (4 pasos) ────────────────────
+    'mkt-branding': [
+      { id: 'alcance', label: '¿Qué alcance necesitas?',
+        opciones: [
+          { id: 'logo',     label: 'Solo logo express',                 add: 0 },
+          { id: 'basica',   label: 'Identidad básica · colores+tipos',   add: 4000 },
+          { id: 'pro',      label: 'Identidad pro + manual completo',    add: 19000 },
+          { id: 'rebrand',  label: 'Rebrand completo · investigación',   add: 77000 },
       ]},
-      { id: 'funciones', label: '¿Funciones?', multi: true, opciones: [
-        { id: 'push',     label: 'Notificaciones push',         add: 3500 },
-        { id: 'login',    label: 'Cuentas de usuario',          add: 2500 },
-        { id: 'pagos',    label: 'Cobrar dentro de la app',     add: 8000 },
-        { id: 'geo',      label: 'Mapa y ubicación',            add: 5000 },
-        { id: 'chat',     label: 'Chat entre usuarios',         add: 8000 },
+      { id: 'aplicaciones', label: '¿Qué aplicaciones de marca?', multi: true,
+        opciones: [
+          { id: 'papeleria', label: 'Papelería corporativa',     add: 5000 },
+          { id: 'redes',     label: 'Templates para redes',       add: 6000 },
+          { id: 'presenta',  label: 'Presentación corporativa',   add: 7000 },
+          { id: 'empaque',   label: 'Empaque / etiqueta',         add: 12000 },
       ]},
-    ],
-
-    'app-ios-android': [
-      { id: 'tipo_app', label: '¿Qué hace tu app?', opciones: [
-        { id: 'info',     label: 'Muestra información',           add: 0,     flag: 'app-info' },
-        { id: 'login',    label: 'Con cuentas de usuario',        add: 13000, flag: 'auth-or-api' },
-        { id: 'backend',  label: 'Marketplace / chat / tiempo real', add: 39000, flag: 'auth-or-api' },
-        { id: 'fintech',  label: 'Maneja dinero · billetera',     add: 65000, flag: 'auth-or-api' },
+      { id: 'naming', label: '¿Necesitas naming o copy de marca?',
+        opciones: [
+          { id: 'no', label: 'No · ya tengo el nombre', add: 0 },
+          { id: 'si', label: 'Sí · ayúdenme con eso',   add: 9000 },
       ]},
-      { id: 'funciones', label: '¿Qué funciones?', multi: true, opciones: [
-        { id: 'push',     label: 'Push notifications',                  add: 5000 },
-        { id: 'chat',     label: 'Chat en vivo',                         add: 23500 },
-        { id: 'geo',      label: 'Mapa y ubicación',                     add: 10500 },
-        { id: 'camara',   label: 'Cámara / QR / OCR',                    add: 13000 },
-        { id: 'pagos',    label: 'Pagos in-app',                         add: 15500 },
-        { id: 'offline',  label: 'Funciona offline',                     add: 11500 },
-        { id: 'biometria', label: 'Face ID / Huella',                    add: 6500 },
-        { id: 'streaming', label: 'Streaming video/audio',               add: 23500 },
-        { id: 'ia',       label: 'Inteligencia artificial',              add: 23500, flag: 'ia' },
+      { id: 'calidad', label: '¿Qué nivel de acabado?',
+        opciones: [
+          { id: 'funcional', label: 'Funcional · directo',           mul: 0.85 },
+          { id: 'balance',   label: 'Buena relación calidad/precio',  mul: 1.0 },
+          { id: 'premium',   label: 'Premium · diferenciación total', mul: 1.35 },
       ]},
     ],
 
-    'blockchain': [
-      { id: 'tipo_proyecto', label: '¿Qué quieres construir?', opciones: [
-        { id: 'nft',   label: 'Colección NFT',                  add: 0, flag: 'blockchain' },
-        { id: 'token', label: 'Token / criptomoneda propia',    add: 26000, flag: 'blockchain' },
-        { id: 'dapp',  label: 'App con contratos inteligentes', add: 65000, flag: 'blockchain' },
-        { id: 'defi',  label: 'Finanzas descentralizadas',      add: 130000, flag: 'blockchain' },
+    // ── MARKETING · Foto y video (4 pasos) ────────────────────────────
+    'mkt-foto-video': [
+      { id: 'tipo', label: '¿Qué necesitas?',
+        opciones: [
+          { id: 'foto-1h',  label: 'Sesión de fotos · 1 hora',          add: 0 },
+          { id: 'foto-med', label: 'Sesión de fotos · media jornada',   add: 6000 },
+          { id: 'reel',     label: 'Video corto (reel)',                add: 1000 },
+          { id: 'corp',     label: 'Video corporativo · 2-3 min',       add: 13000 },
       ]},
-      { id: 'red', label: '¿En qué blockchain?', opciones: [
-        { id: 'ethereum', label: 'Ethereum',                add: 0 },
-        { id: 'polygon',  label: 'Polygon · barata y rápida', add: 0 },
-        { id: 'solana',   label: 'Solana · ultra rápida',    add: 6500 },
-        { id: 'no-se',    label: 'Que iBisne recomiende',    add: 0 },
+      { id: 'cantidad', label: '¿Cuántas piezas finales?',
+        opciones: [
+          { id: 'pocas',  label: 'Pocas · lo esencial',  add: 0 },
+          { id: 'media',  label: 'Paquete medio',         add: 4000 },
+          { id: 'amplio', label: 'Paquete amplio',        add: 10000 },
       ]},
-    ],
-
-    'posts-10-redes': [
-      { id: 'redes', label: '¿En qué redes?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 250 },
-        { id: 'facebook',  label: 'Facebook',  add: 250 },
-        { id: 'tiktok',    label: 'TikTok',    add: 400 },
-        { id: 'linkedin',  label: 'LinkedIn',  add: 400 },
+      { id: 'locacion', label: '¿Dónde se graba?',
+        opciones: [
+          { id: 'estudio',  label: 'En estudio',           add: 0 },
+          { id: 'tulugar',  label: 'En tu local / oficina', add: 4000 },
+          { id: 'exterior', label: 'En exteriores',         add: 6000 },
       ]},
-      { id: 'urgencia', label: '¿Lo quieres hoy mismo?', opciones: [
-        { id: 'normal',  label: 'Normal · 48-72 hrs',     add: 0 },
-        { id: 'express', label: 'Express · 8 hrs hábiles', add: 299 },
-      ]},
-      { id: 'qr', label: '¿Con código QR personalizado?', opciones: [
-        { id: 'no', label: 'No por ahora',              add: 0 },
-        { id: 'si', label: 'Sí · agrega QR a 1 post',   add: 199 },
+      { id: 'edicion', label: '¿Nivel de edición?',
+        opciones: [
+          { id: 'basica',  label: 'Edición básica',                add: 0 },
+          { id: 'premium', label: 'Edición premium / motion graphics', add: 8000 },
       ]},
     ],
 
-    'posts-30-redes': [
-      { id: 'redes', label: '¿En qué redes?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 600 },
-        { id: 'facebook',  label: 'Facebook',  add: 600 },
-        { id: 'tiktok',    label: 'TikTok',    add: 999 },
-        { id: 'linkedin',  label: 'LinkedIn',  add: 999 },
+    // ── MARKETING · Material impreso (3 pasos) ────────────────────────
+    'mkt-impreso': [
+      { id: 'pieza', label: '¿Qué necesitas imprimir?', multi: true,
+        opciones: [
+          { id: 'tarjetas',  label: 'Tarjetas de presentación (500)', add: 0 },
+          { id: 'flyers',    label: 'Flyers a color (1,000)',         add: 1500 },
+          { id: 'brochure',  label: 'Brochure tríptico (500)',        add: 3000 },
+          { id: 'papeleria', label: 'Papelería corporativa completa', add: 8000 },
       ]},
-      { id: 'stories', label: '¿Incluir stories?', opciones: [
-        { id: 'no',   label: 'No · solo posts en feed', add: 0 },
-        { id: 'si',   label: 'Sí · agregar 30 stories', add: 999 },
+      { id: 'diseno', label: '¿Incluye diseño?',
+        opciones: [
+          { id: 'tengo', label: 'Ya tengo el diseño · solo impresión', add: 0 },
+          { id: 'disenar', label: 'Necesito que lo diseñen',           add: 4000 },
       ]},
-    ],
-
-    'campania-ads': [
-      { id: 'plataforma', label: '¿Qué plataforma?', multi: true, opciones: [
-        { id: 'meta',    label: 'Meta (Facebook + Instagram)', add: 2500 },
-        { id: 'google',  label: 'Google Ads (búsqueda + display)', add: 3500 },
-        { id: 'tiktok',  label: 'TikTok Ads',                   add: 3500 },
-      ]},
-      { id: 'objetivo', label: '¿Objetivo de la campaña?', opciones: [
-        { id: 'leads',     label: 'Generar leads/contactos',      add: 0 },
-        { id: 'ventas',    label: 'Generar ventas directas',      add: 2500 },
-        { id: 'awareness', label: 'Awareness / posicionamiento',  add: 0 },
+      { id: 'acabado', label: '¿Qué acabado?',
+        opciones: [
+          { id: 'estandar', label: 'Estándar',                  add: 0 },
+          { id: 'premium',  label: 'Premium · barniz / texturas', add: 3500 },
       ]},
     ],
 
-    'social-mensual': [
-      { id: 'redes', label: '¿Qué redes manejamos?', multi: true, opciones: [
-        { id: 'instagram', label: 'Instagram', add: 1500 },
-        { id: 'facebook',  label: 'Facebook',  add: 1500 },
-        { id: 'tiktok',    label: 'TikTok',    add: 1999 },
-        { id: 'linkedin',  label: 'LinkedIn',  add: 999 },
+    // ── AUTOMATIZACIÓN · Bot con IA (5 pasos) ─────────────────────────
+    'auto-bot': [
+      { id: 'objetivo', label: '¿Qué quieres lograr?',
+        opciones: [
+          { id: 'faq',      label: 'Responder dudas frecuentes',          add: 0 },
+          { id: 'leads',    label: 'Calificar y agendar leads',           add: 9000 },
+          { id: 'procesos', label: 'Automatizar procesos internos',       add: 15000 },
+          { id: 'asistente', label: 'Asistente IA entrenado con mi negocio', add: 18000, flag: 'ia' },
       ]},
-      { id: 'ads', label: '¿Incluye pauta pagada?', opciones: [
-        { id: 'no',  label: 'Solo orgánico',                add: 0 },
-        { id: 'si',  label: 'Sí · $3,000 MXN de pauta',     add: 3000 },
+      { id: 'canal', label: '¿En qué canal vive?', multi: true,
+        opciones: [
+          { id: 'whatsapp', label: 'WhatsApp',         add: 4000 },
+          { id: 'web',      label: 'Mi sitio web',     add: 0 },
+          { id: 'redes',    label: 'Instagram / FB',   add: 4000 },
+          { id: 'app',      label: 'Dentro de una app', add: 6000 },
+      ]},
+      { id: 'ia', label: '¿Con inteligencia artificial generativa?',
+        help: 'IA conversa natural. Reglas es más simple y económico.',
+        opciones: [
+          { id: 'reglas', label: 'No · por reglas (más simple)', mul: 0.7 },
+          { id: 'ia',     label: 'Sí · con IA generativa',       mul: 1.0, flag: 'ia' },
+      ]},
+      { id: 'integra', label: '¿Con qué se integra?', multi: true,
+        opciones: [
+          { id: 'crm',   label: 'Un CRM',                add: 9000 },
+          { id: 'sheets', label: 'Hoja de cálculo / Sheets', add: 3000 },
+          { id: 'cal',   label: 'Calendario / agenda',   add: 4000 },
+          { id: 'erp',   label: 'Un ERP',                add: 15000 },
+          { id: 'api',   label: 'Una API custom',        add: 12000 },
+      ]},
+      { id: 'calidad', label: '¿Qué nivel de acabado?',
+        opciones: [
+          { id: 'funcional', label: 'Funcional · que responda',       mul: 0.85 },
+          { id: 'balance',   label: 'Buena relación calidad/precio',  mul: 1.0 },
+          { id: 'premium',   label: 'Premium · afinado y entrenado',  mul: 1.3 },
       ]},
     ],
 
-    'estrategia-90d': [
-      { id: 'canales', label: '¿Qué canales priorizamos?', multi: true, opciones: [
-        { id: 'ads',     label: 'Ads pagados (Meta/Google/TikTok)', add: 12000 },
-        { id: 'organico', label: 'Contenido orgánico',              add: 9500 },
-        { id: 'email',   label: 'Email marketing',                  add: 6500 },
-        { id: 'prensa',  label: 'Prensa / PR LATAM',                add: 19500 },
-        { id: 'partnerships', label: 'Partnerships con marcas',     add: 9500 },
+    // ── AUTOMATIZACIÓN · Asesoría y capacitación (3 pasos) ────────────
+    'auto-asesoria': [
+      { id: 'modalidad', label: '¿Qué modalidad necesitas?',
+        opciones: [
+          { id: '1a1',    label: 'Asesoría 1-a-1 · 1 hora',         add: 0 },
+          { id: 'taller', label: 'Taller grupal · 4 horas',         add: 4000 },
+          { id: 'equipo', label: 'Capacitación a equipo · 2 días',  add: 19000 },
       ]},
-    ],
-
-    'chatbot-ia': [
-      { id: 'canal', label: '¿Dónde vive el bot?', opciones: [
-        { id: 'web',      label: 'En mi sitio web',                add: 0 },
-        { id: 'whatsapp', label: 'En WhatsApp',                    add: 4500, flag: 'ia' },
-        { id: 'app',      label: 'Dentro de una app',              add: 6500, flag: 'ia' },
-        { id: 'multi',    label: 'Múltiples canales',              add: 9500, flag: 'ia' },
+      { id: 'tema', label: '¿Sobre qué tema?', multi: true,
+        help: 'Define el enfoque · marca los que apliquen.',
+        opciones: [
+          { id: 'estrategia', label: 'Estrategia digital',   add: 0 },
+          { id: 'marketing',  label: 'Marketing',            add: 0 },
+          { id: 'tech',       label: 'Tech / No-code',       add: 0 },
+          { id: 'ia',         label: 'Inteligencia artificial', add: 0 },
+          { id: 'ventas',     label: 'Ventas',               add: 0 },
       ]},
-      { id: 'fuente', label: '¿De dónde aprende?', opciones: [
-        { id: 'web',    label: 'De mi sitio web',                  add: 0 },
-        { id: 'docs',   label: 'PDFs y documentos',                add: 3500 },
-        { id: 'sistema', label: 'Mi sistema interno (CRM, ERP)',   add: 9500 },
+      { id: 'lugar', label: '¿Remoto o presencial?',
+        opciones: [
+          { id: 'remoto',     label: 'Remoto',      add: 0 },
+          { id: 'presencial', label: 'Presencial',  add: 6000 },
       ]},
     ],
   },
 
-  // ═══ MODIFICADORES GLOBALES (toggles del carrito) ═════════════════════
+  // ═══ MODIFICADORES GLOBALES (toggles del carrito) ═══════════════════
   modificadores: {
     plazo: {
       urgente:  { mul: 1.5,  label: 'Express · entrega prioritaria', metaSuffix: '+50%' },
@@ -511,7 +557,7 @@ window.IBISNE_PRICING = {
   getTeam(total, flags){
     const team = ['KAM'];
     if (total >= 1500)                                                       team.push('Frontend');
-    if (total >= 15000 || flags.has('auth-or-api') || flags.has('headless')) team.push('Backend');
+    if (total >= 15000 || flags.has('auth-or-api'))                          team.push('Backend');
     if (flags.has('animacion-pro'))                                          team.push('UX/UI');
     if (total >= 40000)                                                      team.push('PM');
     if (flags.has('ia') || flags.has('blockchain'))                          team.push('DevOps');
@@ -532,9 +578,9 @@ window.IBISNE_PRICING = {
     return Math.max(0, Math.min(100, score));
   },
   getSpeedText(speed){
-    if (speed < 35) return 'Tu carrito apunta a entregables rápidos. Cero burocracia · iteramos en el camino.';
-    if (speed < 70) return 'Tu carrito balancea alcance y pulido. Calidad de producción estándar.';
-    return 'Tu carrito apunta a un producto premium · acabado de alta gama.';
+    if (speed < 35) return 'Tu proyecto apunta a entregables rápidos. Cero burocracia · iteramos en el camino.';
+    if (speed < 70) return 'Tu proyecto balancea alcance y pulido. Calidad de producción estándar.';
+    return 'Tu proyecto apunta a un producto premium · acabado de alta gama.';
   },
   getSpeedZone(speed){
     if (speed < 35) return 'mvp';
@@ -546,43 +592,29 @@ window.IBISNE_PRICING = {
       return ['Stack a definir según alcance', 'Tecnología adecuada', 'Hosting confiable'];
     }
     const STACK_MAP = {
-      'web-bio':           ['HTML + CSS + JS vanilla',            'Hosting económico (Hostinger)'],
-      'landing-simple':    ['Astro / HTML estático',              'Hosting económico (Hostinger)'],
-      'landing-pro':       ['Astro + islands · TailwindCSS',      'Deploy en Hostinger'],
-      'sitio-web':         ['Next.js 15 + React 19',              'Deploy en Vercel'],
-      'ecommerce-1prod':   ['Astro + Stripe Checkout',            'Deploy en Hostinger'],
-      'ecommerce-shopify': ['Shopify · Liquid + apps',            'Hosting Shopify nativo'],
-      'ecommerce-pro':     ['Next.js + Shopify Storefront API',   'Deploy en Vercel + Railway'],
-      'marketplace':       ['Next.js + Node/NestJS · PostgreSQL', 'Deploy en Vercel + Railway'],
-      'app-nocode':        ['FlutterFlow / Bubble / Thunkable',   'Distribución según plataforma'],
-      'app-ios-android':   ['React Native o Flutter · Firebase',  'App Store + Google Play'],
-      'blockchain':        ['Smart contracts + Web3 frontend',    'Hosting híbrido (IPFS + cloud)'],
-      'chatbot-ia':        ['LLM (OpenAI/Anthropic) + vector DB', 'Hosting según arquitectura'],
+      'web-sitio':  ['Astro / Next.js según alcance', 'TailwindCSS', 'Deploy en Vercel / Hostinger'],
+      'web-tienda': ['Shopify o Next.js + headless',  'Pasarela integrada', 'Deploy en Vercel + Railway'],
+      'app':        ['React Native / Flutter o no-code', 'Firebase / Supabase', 'App Store + Google Play'],
+      'mkt-redes':  ['Meta/Google Ads + Metricool',   'Suite de diseño'],
+      'mkt-branding': ['Figma / Illustrator',         'Manual de marca'],
+      'mkt-foto-video': ['Equipo profesional + edición', 'Adobe Premiere / After Effects'],
+      'auto-bot':   ['LLM (OpenAI/Anthropic) + n8n',  'Hosting según arquitectura'],
     };
     const unique = new Set();
     for (const s of servicios) {
       const tech = STACK_MAP[s.id];
       if (tech) tech.forEach(t => unique.add(t));
     }
-    if (unique.size === 0) return ['Stack adecuado al alcance', 'Sin componente tecnológico complejo'];
+    if (unique.size === 0) return ['Stack adecuado al alcance', 'Tecnología según necesidad'];
     return Array.from(unique).slice(0, 4);
   },
   getTime(servicios){
     if (!Array.isArray(servicios) || servicios.length === 0) return '—';
-    const TIME_ORDER = {
-      'agendable': 0, '24-48hrs': 1, '24hrs': 2, '48hrs': 3, '8hrs': 4, '8hrs express': 5,
-      '3 días': 6, '5-7 días': 7, '1 día': 8, '1 día + edición': 9,
-      '1 sem': 10, '1-2 sem': 11, '2 sem': 12, '2-3 sem': 13,
-      '1 mes': 14, '2-5 sem': 15, '4-8 sem': 16, '4-10 sem': 17,
-      '6-10 sem': 18, '8-16 sem': 19, '10-20 sem': 20, '12-22 sem': 21,
-      '12-24 sem': 22, '3 meses': 23, 'setup 48hrs': 1,
-    };
-    let longest = servicios[0].tiempo;
-    let longestScore = TIME_ORDER[longest] || 99;
+    // Heurística: el servicio más caro suele marcar el tiempo de entrega.
+    let top = servicios[0];
     for (const s of servicios) {
-      const score = TIME_ORDER[s.tiempo] || 99;
-      if (score > longestScore) { longest = s.tiempo; longestScore = score; }
+      if ((s.calculatedPrice || s.base || 0) > (top.calculatedPrice || top.base || 0)) top = s;
     }
-    return longest;
+    return top.tiempo || '4-8 sem';
   },
 };
