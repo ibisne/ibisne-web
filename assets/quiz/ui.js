@@ -198,10 +198,26 @@
   }
 
   // Persiste un lead a localStorage (CRM/Slack lo levantan después · MVP)
+  // v7.0.0 · Recolecta la señal comercial de la pregunta "etapa" de cada
+  // servicio en el carrito (idea=temprano · mvp/desarrollo/rehacer=caliente
+  // · updates=tibio). Alimenta el lead scoring para priorizar el inbox.
+  function collectEtapaSignals(){
+    const out = [];
+    try {
+      for (const s of (State.cart && State.cart.servicios) || []) {
+        const cfg = s.config || {};
+        const et = cfg.etapa;
+        if (et && et.signal) out.push({ servicio: s.id, etapa: et.id, signal: et.signal });
+      }
+    } catch(_){}
+    return out;
+  }
+
   function persistLead(payload){
     try {
       payload = payload || {};
       payload.heuristics = computeLeadScore();
+      payload.etapaSignals = collectEtapaSignals();
       payload.timestamp = new Date().toISOString();
       const arr = JSON.parse(localStorage.getItem('ibisne.leads') || '[]');
       arr.push(payload);
@@ -454,35 +470,21 @@
 
     trackStepShown('catalog');
 
-    // Nivel 3 · servicios (de una sub o de una mega sin subs)
+    // v7.0.0 · Sin nivel subCategorias · mega → lista de servicios directo
     if (path.mega) {
       const mega = PRICING.megaCategorias.find(m => m.id === path.mega);
-      if (!mega) { State.catalogPath = { mega: null, sub: null }; return renderCatalog(); }
-
-      // Si la mega tiene subs y NO hay sub elegida → mostrar grid de subs
-      if (mega.subCategorias && !path.sub) {
-        return renderSubGrid(mega);
-      }
-
-      // Si NO tiene subs (auto, training) o YA hay sub elegida → mostrar servicios
-      let title, subtitle, serviciosIds, icon;
-      if (mega.subCategorias && path.sub) {
-        const sub = mega.subCategorias.find(s => s.id === path.sub);
-        if (!sub) { path.sub = null; return renderCatalog(); }
-        title    = sub.label;
-        subtitle = sub.subtitle;
-        icon     = sub.icon;
-        serviciosIds = sub.serviciosIds || [];
-      } else {
-        title    = mega.label;
-        subtitle = mega.subtitle;
-        icon     = mega.icon;
-        serviciosIds = mega.serviciosIds || [];
-      }
-      return renderServicesList(title, subtitle, icon, serviciosIds, mega, path.sub ? mega.subCategorias.find(s=>s.id===path.sub) : null);
+      if (!mega) { State.catalogPath = { mega: null, sub: null, service: null }; return renderCatalog(); }
+      return renderServicesList(
+        mega.label,
+        mega.summary || mega.subtitle || '',   // v7 · fix "undefined"
+        mega.icon,
+        mega.serviciosIds || [],
+        mega,
+        null
+      );
     }
 
-    // Nivel 1 · grid de 4 mega-categorías
+    // Nivel 1 · grid de mega-categorías
     return renderMegaGrid();
   }
 
@@ -872,20 +874,25 @@
   // ═══════════════════════════════════════════════════════════════════
   // CART · agregar / editar / quitar
   // ═══════════════════════════════════════════════════════════════════
+  // v7.0.0 · Soporta `add` (suma fija) Y `mul` (factor en cascada).
+  // total = base + Σ add · luego × cada mul en orden de pregunta.
+  // Así "calidad/tipo/etapa" escalan proporcionalmente (no suma plana).
   function calcSubflowPrice(servicio, config){
     const PRICING = window.IBISNE_PRICING;
     const sub = PRICING.subflow[servicio.id] || [];
     let total = servicio.base || 0;
+    const muls = [];
     for (const q of sub) {
       const ans = config[q.id];
       if (!ans) continue;
-      if (Array.isArray(ans)) {
-        ans.forEach(o => { total += o.add || 0; });
-      } else if (typeof ans === 'object') {
-        total += ans.add || 0;
+      const opts = Array.isArray(ans) ? ans : [ans];
+      for (const o of opts) {
+        if (typeof o.add === 'number')  total += o.add;
+        if (typeof o.mul === 'number')  muls.push(o.mul);
       }
     }
-    return total;
+    for (const m of muls) total *= m;
+    return Math.round(total);
   }
 
   function addToCart(servicio, config){
