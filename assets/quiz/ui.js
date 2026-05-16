@@ -377,61 +377,86 @@
   // ═══════════════════════════════════════════════════════════════════
   // STEP 1 · renderContext (sector + ya tengo)
   // ═══════════════════════════════════════════════════════════════════
+  // v7.0.1 · Contexto = 2 pasos, UNA pregunta por pantalla (no saturar).
+  // Paso 0: ¿A qué te dedicas? (single · auto-avanza)
+  // Paso 1: ¿Qué ya tienes?   (multi · opcional · Continuar/Omitir)
   function renderContext(){
-    setProgress(20);
-    trackStepShown('context');
     const PRICING = window.IBISNE_PRICING;
+    if (typeof State.ctxStep !== 'number') State.ctxStep = 0;
 
-    const sectoresHtml = PRICING.sectores.map(s => `
-      <button class="sector-chip ${State.sector === s.id ? 'is-selected' : ''}" data-sector="${s.id}" type="button">
-        <span class="sector-chip-icon">${iconHtml(s.icon, 'line')}</span>
-        <span class="sector-chip-label">${L(s.label)}</span>
-      </button>
-    `).join('');
+    // ── Paso 0 · Sector ──────────────────────────────────────────────
+    if (State.ctxStep === 0) {
+      setProgress(12);
+      trackStepShown('context:sector');
+      const sectoresHtml = PRICING.sectores.map(s => `
+        <button class="sf-card ctx-chip ${State.sector === s.id ? 'is-selected' : ''}" data-sector="${s.id}" type="button">
+          <span class="ctx-chip-icon">${iconHtml(s.icon, 'line')}</span>
+          <span class="sf-card-label">${L(s.label)}</span>
+        </button>
+      `).join('');
 
+      $('#wizard').innerHTML = `
+        <div class="sf-screen">
+          <div class="sf-progress">
+            <div class="sf-progress-label">Contexto · paso 1 de 2</div>
+            <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:0%"></div></div>
+          </div>
+          <div class="sf-q-head">
+            <h2 class="sf-q-title">¿A qué te dedicas?</h2>
+            <p class="sf-q-help">Para sugerirte mejor lo que necesitas.</p>
+          </div>
+          <div class="sf-grid ctx-grid">${sectoresHtml}</div>
+          <div class="wizard-actions">
+            <a href="index.html" class="wizard-back">← Volver al inicio</a>
+            <span class="wizard-hint">Elige tu giro para continuar</span>
+          </div>
+        </div>
+      `;
+
+      $$('#wizard .ctx-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          State.sector = btn.dataset.sector;
+          trackStepChange();
+          persistCart();
+          $$('#wizard .ctx-chip').forEach(c => c.classList.remove('is-selected'));
+          btn.classList.add('is-selected');
+          State.ctxStep = 1;
+          setTimeout(() => renderContext(), 180);
+        });
+      });
+      refreshCart();
+      return;
+    }
+
+    // ── Paso 1 · ¿Qué ya tienes? (opcional) ──────────────────────────
+    setProgress(20);
+    trackStepShown('context:yatengo');
     const yaTengoHtml = PRICING.yaTengo.map(y => `
-      <button class="yatengo-chip ${State.yaTengo.indexOf(y.id) >= 0 ? 'is-selected' : ''}" data-yatengo="${y.id}" type="button">
-        <span class="yatengo-chip-icon">${iconHtml(y.icon, 'line')}</span>
-        <span class="yatengo-chip-label">${L(y.label)}</span>
+      <button class="sf-card ctx-chip ${State.yaTengo.indexOf(y.id) >= 0 ? 'is-selected' : ''}" data-yatengo="${y.id}" type="button">
+        <span class="ctx-chip-icon">${iconHtml(y.icon, 'line')}</span>
+        <span class="sf-card-label">${L(y.label)}</span>
       </button>
     `).join('');
 
     $('#wizard').innerHTML = `
-      <div class="ctx-screen">
-        <div class="eyebrow">— PASO 1 DE 3 · CONTEXTO RÁPIDO</div>
-        <h2 class="ctx-title">Cuéntame de tu negocio</h2>
-        <p class="ctx-help">Para sugerirte mejor lo que necesitas. Toma 10 segundos.</p>
-
-        <div class="ctx-section">
-          <div class="ctx-question">¿A qué te dedicas?</div>
-          <div class="sector-grid">${sectoresHtml}</div>
+      <div class="sf-screen">
+        <div class="sf-progress">
+          <div class="sf-progress-label">Contexto · paso 2 de 2</div>
+          <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:50%"></div></div>
         </div>
-
-        <div class="ctx-section">
-          <div class="ctx-question">¿Qué ya tienes? <span class="ctx-optional">(opcional · marca lo que tengas)</span></div>
-          <div class="yatengo-grid">${yaTengoHtml}</div>
+        <div class="sf-q-head">
+          <h2 class="sf-q-title">¿Qué ya tienes?</h2>
+          <p class="sf-q-help">Marca lo que ya tengas · así no te cobramos de más. Es opcional.</p>
         </div>
-
-        <div class="ctx-actions">
-          <a href="index.html" class="btn-ghost btn">← Volver al inicio</a>
-          <button class="btn btn-primary" id="ctx-continue" type="button" ${State.sector ? '' : 'disabled'}>Continuar →</button>
+        <div class="sf-grid ctx-grid is-multi">${yaTengoHtml}</div>
+        <div class="wizard-actions">
+          <button class="wizard-back" id="ctx-back" type="button">← ¿A qué te dedicas?</button>
+          <button class="btn btn-primary" id="ctx-continue" type="button">Continuar →</button>
         </div>
       </div>
     `;
 
-    // Sector · single select
-    $$('#wizard .sector-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        State.sector = btn.dataset.sector;
-        trackStepChange();
-        $$('#wizard .sector-chip').forEach(b => b.classList.toggle('is-selected', b.dataset.sector === State.sector));
-        $('#ctx-continue').disabled = false;
-        persistCart();
-      });
-    });
-
-    // YaTengo · multi-select toggle
-    $$('#wizard .yatengo-chip').forEach(btn => {
+    $$('#wizard .ctx-chip').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.yatengo;
         const idx = State.yaTengo.indexOf(id);
@@ -443,8 +468,12 @@
       });
     });
 
+    $('#ctx-back').addEventListener('click', () => {
+      trackNavBack();
+      State.ctxStep = 0;
+      renderContext();
+    });
     $('#ctx-continue').addEventListener('click', () => {
-      if (!State.sector) return;
       scheduleAdvance('#/catalog', 80);
     });
 
