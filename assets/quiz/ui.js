@@ -346,13 +346,9 @@
       });
     }
 
-    // Backward compat: rutas viejas redirigen al nuevo flow
-    if (step === 'servicio' || step === 'classifier' || step === 'puertas' ||
-        step === 'socio' || step === 'inversor' || step === 'discovery') {
-      navigate('#/catalog');
-      return;
-    }
-
+    // v6.2.0 · Rutas válidas únicamente · cualquier otra → context
+    // (eliminado el redirect de rutas legacy servicio/classifier/socio/
+    //  inversor/discovery/puertas · ya no existen flujos viejos)
     if (step === 'context')    return renderContext();
     if (step === 'catalog')    return renderCatalog();
     if (step === 'datos')      return renderDatos();
@@ -530,18 +526,28 @@
       `;
     }).join('');
 
+    // v6.2.0 · C · Contexto del carrito · si ya hay servicios, el catálogo
+    // NUNCA suelta al usuario sin rumbo · banner claro arriba.
+    const nCart = State.cart.servicios.length;
+    const cartContext = nCart > 0 ? `
+      <div class="cat-cart-context">
+        <span>Ya llevas <strong>${nCart} servicio${nCart === 1 ? '' : 's'}</strong> en tu cotización.</span>
+        <button class="cat-cart-context-cta" id="cat-ctx-quote" type="button">Ver mi cotización →</button>
+      </div>` : '';
+
     $('#wizard').innerHTML = `
       <div class="cat-screen">
         <div class="eyebrow">— PASO 2 DE 3 · ARMA TU PROYECTO</div>
-        <h2 class="cat-title">¿Qué necesitas armar?</h2>
+        <h2 class="cat-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas armar?'}</h2>
         <p class="cat-help">
-          Elige por dónde empezar. ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante.' : 'Toca la (i) si quieres saber qué incluye cada una.'}
+          ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar.'} ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante.' : ''}
         </p>
+        ${cartContext}
         <div class="mega-grid">${cardsHtml}</div>
-        <div class="cat-actions">
-          <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
-          <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
-            ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
+        <div class="wizard-actions">
+          <button class="wizard-back" data-prev type="button">← Atrás</button>
+          <button class="btn btn-primary" id="cat-continue" type="button" ${nCart === 0 ? 'disabled' : ''}>
+            ${nCart === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
           </button>
         </div>
       </div>
@@ -568,10 +574,12 @@
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
     });
     $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
-    $('#cat-continue').addEventListener('click', () => {
+    const goQuote = () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
-    });
+    };
+    $('#cat-continue').addEventListener('click', goQuote);
+    $('#cat-ctx-quote')?.addEventListener('click', goQuote);
     refreshCart();
   }
 
@@ -672,11 +680,10 @@
       `;
     }).join('');
 
+    const nCartSub = State.cart.servicios.length;
     $('#wizard').innerHTML = `
       <div class="cat-detail-screen">
-        <button class="cat-detail-back" id="cat-back-mega" type="button">
-          <span class="cat-detail-back-arrow">←</span> Volver a categorías
-        </button>
+        <div class="cat-breadcrumb"><a href="#" id="bc-root-sg">Categorías</a> › <span>${L(mega.label)}</span></div>
         <div class="cat-detail-head">
           <div class="cat-detail-icon">${iconHtml(mega.icon, 'line')}</div>
           <div>
@@ -685,10 +692,10 @@
           </div>
         </div>
         <div class="sub-grid">${cardsHtml}</div>
-        <div class="cat-actions">
-          <button class="btn-ghost btn" id="cat-back-mega-2" type="button">← Volver a categorías</button>
-          <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
-            ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
+        <div class="wizard-actions">
+          <button class="wizard-back" id="cat-back-mega" type="button">← Volver a categorías</button>
+          <button class="btn btn-primary" id="cat-continue" type="button" ${nCartSub === 0 ? 'disabled' : ''}>
+            ${nCartSub === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
           </button>
         </div>
       </div>
@@ -718,7 +725,7 @@
       renderCatalog();
     };
     $('#cat-back-mega').addEventListener('click', goBackToMega);
-    $('#cat-back-mega-2').addEventListener('click', goBackToMega);
+    $('#bc-root-sg')?.addEventListener('click', (e) => { e.preventDefault(); goBackToMega(); });
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
@@ -776,11 +783,9 @@
       ? `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <a href="#" id="bc-mega">${L(mega.label)}</a> › <span>${L(sub.label)}</span></div>`
       : `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <span>${L(mega.label)}</span></div>`;
 
+    const backLabel = sub ? L(mega.label) : 'categorías';
     $('#wizard').innerHTML = `
       <div class="cat-detail-screen">
-        <button class="cat-detail-back" id="cat-back" type="button">
-          <span class="cat-detail-back-arrow">←</span> ${sub ? 'Volver a ' + L(mega.label) : 'Volver a categorías'}
-        </button>
         ${breadcrumb}
         <div class="cat-detail-head">
           <div class="cat-detail-icon">${iconHtml(icon, 'line')}</div>
@@ -790,10 +795,10 @@
           </div>
         </div>
         <div class="service-grid">${servsHtml}</div>
-        <div class="cat-actions">
-          <button class="btn-ghost btn" id="cat-back-2" type="button">← ${sub ? 'Volver a ' + L(mega.label) : 'Volver a categorías'}</button>
+        <div class="wizard-actions">
+          <button class="wizard-back" id="cat-back" type="button">← Volver a ${backLabel}</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
-            ${State.cart.servicios.length === 0 ? 'Agrega al menos un servicio' : 'Continuar a tus datos →'}
+            ${State.cart.servicios.length === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
           </button>
         </div>
       </div>
@@ -819,7 +824,6 @@
       renderCatalog();
     };
     $('#cat-back').addEventListener('click', goUp);
-    $('#cat-back-2').addEventListener('click', goUp);
     $('#bc-root')?.addEventListener('click', goToRoot);
     $('#bc-mega')?.addEventListener('click', goToMegaLevel);
 
@@ -921,22 +925,20 @@
   function openSubflowModal(servicio, existingConfig){
     const PRICING = window.IBISNE_PRICING;
     const questions = PRICING.subflow[servicio.id] || [];
-    if (questions.length === 0) {
-      if (existingConfig) updateCart(servicio.id, {});
-      else                addToCart(servicio, {});
-      renderCatalog();
-      return;
-    }
     State.subflow = {
       servicioId: servicio.id,
       config: existingConfig ? JSON.parse(JSON.stringify(existingConfig)) : {},
       isEdit: !!existingConfig,
+      qIndex: 0,
+      confirming: questions.length === 0, // sin preguntas → directo a confirmar
     };
     State.catalogPath = Object.assign({}, State.catalogPath, { service: servicio.id });
     renderCatalog();
   }
 
-  // Render del sub-flow como vista de cards (dentro de #wizard)
+  // ═══════════════════════════════════════════════════════════════════
+  // SUB-FLOW · v6.2.0 · UNA pregunta a la vez (wizard step-by-step)
+  // ═══════════════════════════════════════════════════════════════════
   function renderSubflowView(){
     const PRICING = window.IBISNE_PRICING;
     const sf = State.subflow;
@@ -944,196 +946,210 @@
     const servicio = Object.assign({ id: sf.servicioId }, findServicio(sf.servicioId));
     const questions = PRICING.subflow[sf.servicioId] || [];
     const config = sf.config;
-    const isEdit = sf.isEdit;
-    trackStepShown('subflow:' + sf.servicioId);
 
-    const questionsHtml = questions.map(q => {
-      const isMulti = q.multi === true;
-      const ans = config[q.id];
-      const selIds = isMulti
-        ? new Set((ans || []).map(s => s.id))
-        : new Set(ans ? [ans.id] : []);
+    // Si terminó las preguntas (o no tiene) → pantalla de confirmación
+    if (sf.confirming || sf.qIndex >= questions.length) {
+      return renderServiceConfirm(servicio, config);
+    }
 
-      // v5.3.4 · Pre-fill inteligente para pasarelas
-      let recommendedIds = new Set();
-      if (q.id === 'pasarelas' && isMulti && config.metodos_pago) {
-        const methodIds = (config.metodos_pago || []).map(m => m.id);
-        const recArr = recommendGateways(methodIds, q.opciones);
-        recommendedIds = new Set(recArr);
-        if (!ans || ans.length === 0) {
-          config[q.id] = recArr.map(id => q.opciones.find(o => o.id === id)).filter(Boolean);
-        }
+    trackStepShown('subflow:' + sf.servicioId + ':q' + sf.qIndex);
+    const q = questions[sf.qIndex];
+    const isMulti = q.multi === true;
+    const total = questions.length;
+    const ans = config[q.id];
+    const selIds = isMulti
+      ? new Set((ans || []).map(s => s.id))
+      : new Set(ans ? [ans.id] : []);
+
+    // v5.3.4 · Pre-fill inteligente para pasarelas
+    let recommendedIds = new Set();
+    if (q.id === 'pasarelas' && isMulti && config.metodos_pago) {
+      const methodIds = (config.metodos_pago || []).map(m => m.id);
+      const recArr = recommendGateways(methodIds, q.opciones);
+      recommendedIds = new Set(recArr);
+      if (!ans || ans.length === 0) {
+        config[q.id] = recArr.map(id => q.opciones.find(o => o.id === id)).filter(Boolean);
       }
+    }
 
-      const opcionesHtml = q.opciones.map(o => {
-        // v6.0.5 · NUNCA "$0"/"Incluido" · todo se cobra.
-        // - single-select: muestra el PRECIO TOTAL del servicio si eliges
-        //   esta opción (base + esta opción + otras respuestas actuales).
-        //   La opción base muestra el precio base · nunca $0.
-        // - multi-select: muestra "+ $X" (add garantizado > 0 en pricing)
-        let meta;
-        if (isMulti) {
-          meta = '+ ' + formatMxn(o.add || 0);
-        } else {
-          const hypothetical = Object.assign({}, config, { [q.id]: o });
-          meta = formatMxn(calcSubflowPrice(servicio, hypothetical));
-        }
-        const isSel = selIds.has(o.id);
-        const isRec = recommendedIds.has(o.id);
-        return `
-          <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-q="${q.id}" data-opt="${o.id}" data-multi="${isMulti}" type="button">
-            ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
-            <div class="sf-card-label">${L(o.label)}</div>
-            ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
-            <div class="sf-card-meta">${isMulti && !isSel ? '' : (isMulti ? meta : 'Total ' + meta)}</div>
-          </button>
-        `;
-      }).join('');
-
+    // v6.2.0 · F · El precio total vive SOLO en el carrito (siempre vivo).
+    // Las cards solo muestran un delta discreto en multi-select.
+    const opcionesHtml = q.opciones.map(o => {
+      const isSel = selIds.has(o.id);
+      const isRec = recommendedIds.has(o.id);
+      const delta = (isMulti && o.add) ? `<div class="sf-card-meta">+ ${formatMxn(o.add)}</div>` : '';
       return `
-        <div class="sf-question">
-          <div class="sf-question-label">${L(q.label)}${q.help ? ` <span class="sf-question-help">· ${L(q.help)}</span>` : ''}${isMulti ? ' <span class="sf-question-multi">· marca las que apliquen</span>' : ''}</div>
-          <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
-        </div>
+        <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-opt="${o.id}" type="button">
+          ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
+          <div class="sf-card-label">${L(o.label)}</div>
+          ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
+          ${delta}
+        </button>
       `;
     }).join('');
 
-    const liveTotal = calcSubflowPrice(servicio, config);
-
-    // Breadcrumb · usa el path previo (mega/sub)
-    const path = State.catalogPath;
-    const mega = path.mega ? PRICING.megaCategorias.find(m => m.id === path.mega) : null;
-    const sub  = (mega && mega.subCategorias && path.sub) ? mega.subCategorias.find(s => s.id === path.sub) : null;
-    const backLabel = sub ? L(sub.label) : (mega ? L(mega.label) : 'categorías');
+    const pct = Math.round(((sf.qIndex) / total) * 100);
+    const backLabel = sf.qIndex > 0 ? 'pregunta anterior' : L(servicio.label);
 
     $('#wizard').innerHTML = `
-      <div class="cat-detail-screen">
-        <button class="cat-detail-back" id="sf-back" type="button">
-          <span class="cat-detail-back-arrow">←</span> Volver a ${backLabel}
-        </button>
-        <div class="cat-breadcrumb">
-          <a href="#" id="bc-root">Categorías</a>
-          ${mega ? ` › <a href="#" id="bc-mega">${L(mega.label)}</a>` : ''}
-          ${sub ? ` › <a href="#" id="bc-sub">${L(sub.label)}</a>` : ''}
-          › <span>${L(servicio.label)}</span>
+      <div class="sf-screen">
+        <div class="sf-progress">
+          <div class="sf-progress-label">${L(servicio.label)} · pregunta ${sf.qIndex + 1} de ${total}</div>
+          <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:${pct}%"></div></div>
         </div>
-        <div class="cat-detail-head">
-          <div class="cat-detail-icon">${iconHtml(servicio.icon, 'line')}</div>
-          <div>
-            <h2 class="cat-detail-title">${L(servicio.label)}</h2>
-            <p class="cat-detail-subtitle">${L(servicio.subtitle || '')} · configura tu proyecto</p>
-          </div>
+        <div class="sf-q-head">
+          <h2 class="sf-q-title">${L(q.label)}</h2>
+          ${q.help ? `<p class="sf-q-help">${L(q.help)}</p>` : ''}
+          ${isMulti ? '<p class="sf-q-multi">Marca todas las que apliquen.</p>' : ''}
         </div>
-        <div class="sf-questions">${questionsHtml}</div>
-        <div class="sf-summary-bar">
-          <div class="sf-summary-total">
-            <span class="sf-summary-label">Total de este servicio</span>
-            <span class="sf-summary-amount">${formatMxn(liveTotal)}</span>
-          </div>
-          <div class="sf-summary-actions">
-            <button class="btn-ghost btn" id="sf-cancel" type="button">Cancelar</button>
-            <button class="btn btn-primary" id="sf-confirm" type="button">
-              ${isEdit ? 'Actualizar en carrito' : 'Agregar al carrito'} →
-            </button>
-          </div>
+        <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
+        <div class="wizard-actions">
+          <button class="wizard-back" id="sf-back" type="button">← ${backLabel}</button>
+          ${isMulti
+            ? `<button class="btn btn-primary" id="sf-next" type="button">Continuar →</button>`
+            : `<span class="wizard-hint">Elige una opción para continuar</span>`}
         </div>
       </div>
     `;
 
-    // Volver atrás · descarta config no confirmada
-    const goBack = () => {
-      State.subflow = null;
-      State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
-      trackStepChange();
-      renderCatalog();
-    };
-    $('#sf-back').addEventListener('click', goBack);
-    $('#sf-cancel').addEventListener('click', goBack);
-    $('#bc-root')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: null, sub: null, service: null }; renderCatalog(); });
-    $('#bc-mega')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: null, service: null }; renderCatalog(); });
-    $('#bc-sub')?.addEventListener('click', (e) => { e.preventDefault(); State.subflow = null; State.catalogPath = { mega: path.mega, sub: path.sub, service: null }; renderCatalog(); });
+    // ← Volver: pregunta anterior, o salir del subflow si es la primera
+    $('#sf-back').addEventListener('click', () => {
+      trackNavBack();
+      if (sf.qIndex > 0) { sf.qIndex--; renderSubflowView(); }
+      else {
+        State.subflow = null;
+        State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
+        renderCatalog();
+      }
+    });
 
-    // Selección de opciones · v6.1.0 · update PARCIAL (no re-render total)
-    // Evita el parpadeo: solo cambian las clases is-selected, los metas
-    // de precio y el resumen · el resto del DOM permanece intacto.
+    // Avanzar a la siguiente pregunta (o a confirmación)
+    const advance = () => {
+      trackStepChange();
+      if (sf.qIndex < total - 1) { sf.qIndex++; renderSubflowView(); }
+      else { sf.confirming = true; renderSubflowView(); }
+    };
+
     $$('#wizard .sf-card').forEach(btn => {
       btn.addEventListener('click', () => {
-        const qid = btn.dataset.q;
         const oid = btn.dataset.opt;
-        const isMulti = btn.dataset.multi === 'true';
-        const q = questions.find(x => x.id === qid);
         const o = q.opciones.find(x => x.id === oid);
         if (isMulti) {
-          const list = config[qid] || [];
+          const list = config[q.id] || [];
           const exists = list.find(x => x.id === oid);
-          config[qid] = exists ? list.filter(x => x.id !== oid) : [...list, o];
-          // metodos_pago resetea pasarelas · cambia opciones disponibles →
-          // ahí sí re-render completo (caso poco frecuente)
-          if (qid === 'metodos_pago') { config.pasarelas = null; trackStepChange(); renderSubflowView(); return; }
+          config[q.id] = exists ? list.filter(x => x.id !== oid) : [...list, o];
+          if (q.id === 'metodos_pago') config.pasarelas = null;
+          btn.classList.toggle('is-selected');
+          refreshCart(); // carrito vivo refleja el delta
         } else {
-          config[qid] = o;
+          config[q.id] = o;
+          // feedback visual breve → auto-avanza
+          $$('#wizard .sf-card').forEach(c => c.classList.remove('is-selected'));
+          btn.classList.add('is-selected');
+          refreshCart();
+          setTimeout(advance, 180);
         }
-        trackStepChange();
-        repaintSubflowCards();   // parcial · sin parpadeo
       });
     });
 
-    // Confirmar
-    $('#sf-confirm').addEventListener('click', () => {
-      for (const q of questions) {
-        if (q.multi) continue;
-        if (!config[q.id]) { alert('Falta responder: ' + L(q.label)); return; }
-      }
-      if (isEdit) updateCart(servicio.id, config);
-      else        addToCart(servicio, config);
+    const nextBtn = $('#sf-next');
+    if (nextBtn) nextBtn.addEventListener('click', advance);
+
+    refreshCart();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // v6.2.0 · C · Pantalla de confirmación del servicio (multi guiado).
+  // El servicio se agrega/actualiza al carrito AQUÍ (único punto).
+  // Nunca suelta al usuario al catálogo sin contexto.
+  // ═══════════════════════════════════════════════════════════════════
+  function renderServiceConfirm(servicio, config){
+    const sf = State.subflow;
+    trackStepShown('confirm:' + servicio.id);
+
+    // Un solo punto de verdad: agregar/actualizar el carrito aquí.
+    if (sf.isEdit) updateCart(servicio.id, config);
+    else if (!State.cart.servicios.find(s => s.id === servicio.id)) addToCart(servicio, config);
+    else updateCart(servicio.id, config); // re-confirmación del mismo
+
+    const price = calcSubflowPrice(servicio, config);
+    const cfg = renderConfigSummaryInline(config);
+    const total = State.cart.servicios.length;
+
+    $('#wizard').innerHTML = `
+      <div class="sf-confirm-screen">
+        <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
+        <h2 class="sf-confirm-title">${L(servicio.label)} quedó configurado</h2>
+        ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
+        <div class="sf-confirm-price">
+          <span class="sf-confirm-price-label">Precio de este servicio</span>
+          <span class="sf-confirm-price-amount">${formatMxn(price)}</span>
+        </div>
+        <p class="sf-confirm-hint">Ya está en tu carrito. ¿Qué sigue?</p>
+        <div class="sf-confirm-actions">
+          <button class="btn-line btn" id="sf-add-more" type="button">+ Agregar otro servicio</button>
+          <button class="btn btn-primary" id="sf-go-quote" type="button">Ver mi cotización →</button>
+        </div>
+        <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← Ajustar este servicio</button>
+      </div>
+    `;
+
+    // Animación sutil: el servicio "vuela" al carrito
+    flyToCart(servicio);
+
+    $('#sf-add-more').addEventListener('click', () => {
+      State.subflow = null;
+      // Vuelve al grid de categorías CON contexto (el carrito ya tiene N)
+      State.catalogPath = { mega: null, sub: null, service: null };
+      renderCatalog();
+    });
+    $('#sf-go-quote').addEventListener('click', () => {
       State.subflow = null;
       State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
-      renderCatalog();
+      scheduleAdvance('#/datos', 80);
+    });
+    $('#sf-edit').addEventListener('click', () => {
+      // Volver a editar: regresa a la última pregunta
+      const PRICING = window.IBISNE_PRICING;
+      const qs = PRICING.subflow[servicio.id] || [];
+      sf.confirming = false;
+      sf.qIndex = Math.max(0, qs.length - 1);
+      sf.isEdit = true; // ya está en carrito → editar al re-confirmar
+      renderSubflowView();
     });
 
     refreshCart();
   }
 
-  // v6.1.0 · Repintado quirúrgico del sub-flow · sin re-render total.
-  // Actualiza solo: clases is-selected, metas de precio por opción, el
-  // total del resumen, y el carrito vivo (servicio en construcción).
-  function repaintSubflowCards(){
-    const sf = State.subflow;
-    if (!sf) return;
-    const PRICING = window.IBISNE_PRICING;
-    const servicio = Object.assign({ id: sf.servicioId }, findServicio(sf.servicioId));
-    const questions = PRICING.subflow[sf.servicioId] || [];
-    const config = sf.config;
-
-    $$('#wizard .sf-card').forEach(card => {
-      const qid = card.dataset.q;
-      const oid = card.dataset.opt;
-      const q = questions.find(x => x.id === qid);
-      if (!q) return;
-      const o = q.opciones.find(x => x.id === oid);
-      const isMulti = q.multi === true;
-      const ans = config[qid];
-      const isSel = isMulti
-        ? !!((ans || []).find(x => x.id === oid))
-        : !!(ans && ans.id === oid);
-      card.classList.toggle('is-selected', isSel);
-      const metaEl = card.querySelector('.sf-card-meta');
-      if (metaEl) {
-        if (isMulti) {
-          metaEl.textContent = isSel ? ('+ ' + formatMxn(o.add || 0)) : '';
-        } else {
-          const hypo = Object.assign({}, config, { [qid]: o });
-          metaEl.textContent = 'Total ' + formatMxn(calcSubflowPrice(servicio, hypo));
-        }
-      }
-    });
-
-    const liveTotal = calcSubflowPrice(servicio, config);
-    const amt = document.querySelector('#wizard .sf-summary-amount');
-    if (amt) amt.textContent = formatMxn(liveTotal);
-
-    // Carrito vivo · refleja el servicio en construcción + su precio
-    refreshCart();
+  // v6.2.0 · D · Animación "vuela al carrito" · chip del servicio se
+  // desplaza del centro hacia el #cart con scale+fade. Respeta
+  // prefers-reduced-motion.
+  function flyToCart(servicio){
+    try {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const cartEl = document.getElementById('cart');
+      if (!cartEl) return;
+      const cartRect = cartEl.getBoundingClientRect();
+      const chip = document.createElement('div');
+      chip.className = 'fly-to-cart';
+      chip.innerHTML = '<span class="fly-icon">' + (iconHtml(servicio.icon, 'line') || '✓') + '</span><span class="fly-label">' + L(servicio.label) + '</span>';
+      document.body.appendChild(chip);
+      const startX = window.innerWidth * 0.40;
+      const startY = window.innerHeight * 0.45;
+      chip.style.left = startX + 'px';
+      chip.style.top = startY + 'px';
+      const dx = (cartRect.left + cartRect.width / 2) - startX;
+      const dy = (cartRect.top + 60) - startY;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          chip.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.35)';
+          chip.style.opacity = '0';
+        });
+      });
+      cartEl.classList.add('cart-pulse');
+      setTimeout(() => { try { chip.remove(); } catch(_){} }, 600);
+      setTimeout(() => cartEl.classList.remove('cart-pulse'), 650);
+    } catch(_){}
   }
 
   // ═══════════════════════════════════════════════════════════════════

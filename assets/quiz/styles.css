@@ -5220,3 +5220,225 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
   align-items: center;
   justify-content: space-between;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v6.2.0 · Replanteamiento del flujo · wizard step-by-step + confirm
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Barra de acciones UNIFICADA (misma posición en TODAS las vistas) ── */
+.wizard-actions{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bg-line);
+  min-height: 56px;
+}
+.wizard-back{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color 0.18s ease;
+}
+.wizard-back:hover{ color: var(--accent); }
+.wizard-hint{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* ── Sub-flow · una pregunta a la vez ───────────────────────────────── */
+.sf-screen{
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: questionEnter 280ms ease-out;
+}
+.sf-progress{ display: flex; flex-direction: column; gap: 8px; }
+.sf-progress-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sf-progress-rail{
+  height: 3px;
+  background: var(--bg-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.sf-progress-fill{
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.sf-q-head{ display: flex; flex-direction: column; gap: 8px; }
+.sf-q-title{
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin: 0;
+}
+.sf-q-help{
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 620px;
+}
+.sf-q-multi{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent-mint);
+  margin: 0;
+}
+
+/* ── Pantalla de confirmación del servicio (multi guiado) ──────────── */
+.sf-confirm-screen{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 40px 24px 24px;
+  animation: questionEnter 320ms ease-out;
+}
+.sf-confirm-check{
+  width: 64px; height: 64px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(61,255,127,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(61,255,127,0.35);
+}
+.sf-confirm-check svg{ width: 30px; height: 30px; }
+.sf-confirm-title{
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 4px 0 0;
+}
+.sf-confirm-cfg{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 560px;
+}
+.sf-confirm-price{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 14px 0 6px;
+}
+.sf-confirm-price-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sf-confirm-price-amount{
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.sf-confirm-hint{
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}
+.sf-confirm-actions{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.sf-confirm-edit{
+  margin-top: 6px;
+}
+@media (max-width: 640px){
+  .sf-confirm-actions{ flex-direction: column; width: 100%; }
+  .sf-confirm-actions .btn{ width: 100%; justify-content: center; }
+}
+
+/* ── Contexto del carrito en el catálogo (nunca suelta sin rumbo) ──── */
+.cat-cart-context{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: rgba(61,255,127,0.06);
+  border: 1px solid rgba(61,255,127,0.22);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.cat-cart-context strong{ color: var(--accent); }
+.cat-cart-context-cta{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.cat-cart-context-cta:hover{ background: var(--accent-mint); }
+
+/* ── Animación "vuela al carrito" ───────────────────────────────────── */
+.fly-to-cart{
+  position: fixed;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+  transform: translate(0,0) scale(1);
+  opacity: 1;
+  transition: transform 0.55s cubic-bezier(0.5,0,0.4,1), opacity 0.55s ease;
+  will-change: transform, opacity;
+}
+.fly-to-cart .fly-icon{ display: inline-flex; }
+.fly-to-cart .fly-icon svg{ width: 16px; height: 16px; }
+@keyframes cartPulse{
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.025); }
+  100% { transform: scale(1); }
+}
+#cart.cart-pulse{ animation: cartPulse 0.5s ease-out; }
+@media (prefers-reduced-motion: reduce){
+  #cart.cart-pulse{ animation: none; }
+}
