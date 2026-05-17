@@ -5,9 +5,10 @@
    catálogo modular. Categorías intercambiables. Layout permanente
    (wizard izquierda · carrito sticky derecha · sin bottom-bar).
 
-   Flow:
-     #/context    → sector + ya tengo (step rápido)
-     #/catalog    → catálogo de servicios (cliente agrega)
+   Flow (v7.0.2 · sin step de contexto · arranca en catálogo):
+     #/catalog    → catálogo de servicios (cliente elige)
+     (subflow)    → preguntas del servicio, una por pantalla
+     (confirm)    → "✓ configurado · ¿otro o cotización?"
      #/datos      → datos del cliente (gate de captura)
      #/loading    → overlay 900ms (handover suave)
      #/resultado  → cotización final (pago + FAQ + hunter)
@@ -317,7 +318,7 @@
   function parseHash(){
     let h = (location.hash || '#/').slice(2);
     const parts = h.split('/').filter(Boolean);
-    return { step: parts[0] || 'context' };
+    return { step: parts[0] || 'catalog' }; // v7.0.2 · arranca en catálogo
   }
   function navigate(hash){ location.hash = hash; }
   window.addEventListener('hashchange', () => {
@@ -362,123 +363,17 @@
       });
     }
 
-    // v6.2.0 · Rutas válidas únicamente · cualquier otra → context
-    // (eliminado el redirect de rutas legacy servicio/classifier/socio/
-    //  inversor/discovery/puertas · ya no existen flujos viejos)
-    if (step === 'context')    return renderContext();
+    // v7.0.2 · Eliminado el step de contexto (sector + ya tengo).
+    // El quiz arranca directo en el catálogo. Rutas válidas únicamente ·
+    // cualquier otra (incl. legacy #/context) → catálogo.
     if (step === 'catalog')    return renderCatalog();
     if (step === 'datos')      return renderDatos();
     if (step === 'loading')    return renderLoading();
     if (step === 'resultado')  return renderResultado();
 
-    navigate('#/context');
+    navigate('#/catalog');
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // STEP 1 · renderContext (sector + ya tengo)
-  // ═══════════════════════════════════════════════════════════════════
-  // v7.0.1 · Contexto = 2 pasos, UNA pregunta por pantalla (no saturar).
-  // Paso 0: ¿A qué te dedicas? (single · auto-avanza)
-  // Paso 1: ¿Qué ya tienes?   (multi · opcional · Continuar/Omitir)
-  function renderContext(){
-    const PRICING = window.IBISNE_PRICING;
-    if (typeof State.ctxStep !== 'number') State.ctxStep = 0;
-
-    // ── Paso 0 · Sector ──────────────────────────────────────────────
-    if (State.ctxStep === 0) {
-      setProgress(12);
-      trackStepShown('context:sector');
-      const sectoresHtml = PRICING.sectores.map(s => `
-        <button class="sf-card ctx-chip ${State.sector === s.id ? 'is-selected' : ''}" data-sector="${s.id}" type="button">
-          <span class="ctx-chip-icon">${iconHtml(s.icon, 'line')}</span>
-          <span class="sf-card-label">${L(s.label)}</span>
-        </button>
-      `).join('');
-
-      $('#wizard').innerHTML = `
-        <div class="sf-screen">
-          <div class="sf-progress">
-            <div class="sf-progress-label">Contexto · paso 1 de 2</div>
-            <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:0%"></div></div>
-          </div>
-          <div class="sf-q-head">
-            <h2 class="sf-q-title">¿A qué te dedicas?</h2>
-            <p class="sf-q-help">Para sugerirte mejor lo que necesitas.</p>
-          </div>
-          <div class="sf-grid ctx-grid">${sectoresHtml}</div>
-          <div class="wizard-actions">
-            <a href="index.html" class="wizard-back">← Volver al inicio</a>
-            <span class="wizard-hint">Elige tu giro para continuar</span>
-          </div>
-        </div>
-      `;
-
-      $$('#wizard .ctx-chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          State.sector = btn.dataset.sector;
-          trackStepChange();
-          persistCart();
-          $$('#wizard .ctx-chip').forEach(c => c.classList.remove('is-selected'));
-          btn.classList.add('is-selected');
-          State.ctxStep = 1;
-          setTimeout(() => renderContext(), 180);
-        });
-      });
-      refreshCart();
-      return;
-    }
-
-    // ── Paso 1 · ¿Qué ya tienes? (opcional) ──────────────────────────
-    setProgress(20);
-    trackStepShown('context:yatengo');
-    const yaTengoHtml = PRICING.yaTengo.map(y => `
-      <button class="sf-card ctx-chip ${State.yaTengo.indexOf(y.id) >= 0 ? 'is-selected' : ''}" data-yatengo="${y.id}" type="button">
-        <span class="ctx-chip-icon">${iconHtml(y.icon, 'line')}</span>
-        <span class="sf-card-label">${L(y.label)}</span>
-      </button>
-    `).join('');
-
-    $('#wizard').innerHTML = `
-      <div class="sf-screen">
-        <div class="sf-progress">
-          <div class="sf-progress-label">Contexto · paso 2 de 2</div>
-          <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:50%"></div></div>
-        </div>
-        <div class="sf-q-head">
-          <h2 class="sf-q-title">¿Qué ya tienes?</h2>
-          <p class="sf-q-help">Marca lo que ya tengas · así no te cobramos de más. Es opcional.</p>
-        </div>
-        <div class="sf-grid ctx-grid is-multi">${yaTengoHtml}</div>
-        <div class="wizard-actions">
-          <button class="wizard-back" id="ctx-back" type="button">← ¿A qué te dedicas?</button>
-          <button class="btn btn-primary" id="ctx-continue" type="button">Continuar →</button>
-        </div>
-      </div>
-    `;
-
-    $$('#wizard .ctx-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.yatengo;
-        const idx = State.yaTengo.indexOf(id);
-        if (idx >= 0) State.yaTengo.splice(idx, 1);
-        else          State.yaTengo.push(id);
-        btn.classList.toggle('is-selected');
-        trackStepChange();
-        persistCart();
-      });
-    });
-
-    $('#ctx-back').addEventListener('click', () => {
-      trackNavBack();
-      State.ctxStep = 0;
-      renderContext();
-    });
-    $('#ctx-continue').addEventListener('click', () => {
-      scheduleAdvance('#/catalog', 80);
-    });
-
-    refreshCart();
-  }
 
   // ═══════════════════════════════════════════════════════════════════
   // STEP 2 · renderCatalog (dispatcher · 3 niveles de navegación)
@@ -488,7 +383,7 @@
   //   Nivel 3: servicios de sub o mega  (catalogPath = {mega, sub})
   // ═══════════════════════════════════════════════════════════════════
   function renderCatalog(){
-    setProgress(50);
+    setProgress(15); // v7.0.2 · catálogo es el inicio (sin step contexto)
     const PRICING = window.IBISNE_PRICING;
     const path = State.catalogPath || (State.catalogPath = { mega: null, sub: null, service: null });
 
@@ -568,15 +463,15 @@
 
     $('#wizard').innerHTML = `
       <div class="cat-screen">
-        <div class="eyebrow">— PASO 2 DE 3 · ARMA TU PROYECTO</div>
-        <h2 class="cat-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas armar?'}</h2>
+        <div class="eyebrow">— ARMA TU PROYECTO</div>
+        <h2 class="cat-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
         <p class="cat-help">
-          ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar.'} ${sector ? 'Te marcamos <span class="cat-help-tag">para ti</span> lo más relevante.' : ''}
+          ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
         </p>
         ${cartContext}
         <div class="mega-grid">${cardsHtml}</div>
         <div class="wizard-actions">
-          <button class="wizard-back" data-prev type="button">← Atrás</button>
+          <a href="index.html" class="wizard-back">← Volver al inicio</a>
           <button class="btn btn-primary" id="cat-continue" type="button" ${nCart === 0 ? 'disabled' : ''}>
             ${nCart === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
           </button>
@@ -604,7 +499,7 @@
       el.addEventListener('click', open);
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
     });
-    $('[data-prev]')?.addEventListener('click', () => { trackNavBack(); navigate('#/context'); });
+    // v7.0.2 · "Volver al inicio" es un <a href="index.html"> · sin listener
     const goQuote = () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
