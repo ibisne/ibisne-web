@@ -903,18 +903,33 @@
       }
     }
 
-    // v6.2.0 · F · El precio total vive SOLO en el carrito (siempre vivo).
-    // Las cards solo muestran un delta discreto en multi-select.
+    // v7.1.0 · Cada card: título + descripción + PRECIO a simple vista.
+    // Single → precio TOTAL resultante si eliges esa opción (base + esa
+    //   opción + lo ya respondido). Multi → "+ $X".
+    // Si la opción tiene `detalle`, botón +/- para expandir.
     const opcionesHtml = q.opciones.map(o => {
       const isSel = selIds.has(o.id);
       const isRec = recommendedIds.has(o.id);
-      const delta = (isMulti && o.add) ? `<div class="sf-card-meta">+ ${formatMxn(o.add)}</div>` : '';
+      let priceHtml;
+      if (isMulti) {
+        priceHtml = o.add ? `+ ${formatMxn(o.add)}` : (o.mul ? '×' + o.mul : 'Incluido');
+      } else {
+        const hypo = Object.assign({}, config, { [q.id]: o });
+        priceHtml = formatMxn(calcSubflowPrice(servicio, hypo));
+      }
+      const detalleHtml = o.detalle
+        ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">+ qué incluye</button>
+           <div class="sf-card-detalle" hidden>${L(o.detalle)}</div>`
+        : '';
       return `
         <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-opt="${o.id}" type="button">
           ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
           <div class="sf-card-label">${L(o.label)}</div>
           ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
-          ${delta}
+          <div class="sf-card-foot">
+            <span class="sf-card-price">${priceHtml}</span>
+            ${detalleHtml}
+          </div>
         </button>
       `;
     }).join('');
@@ -961,8 +976,22 @@
       else { sf.confirming = true; renderSubflowView(); }
     };
 
+    // v7.1.0 · Botón "+ qué incluye" expande el detalle · no selecciona
+    $$('#wizard .sf-card [data-more]').forEach(more => {
+      more.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const det = more.parentElement.querySelector('.sf-card-detalle');
+        if (!det) return;
+        const open = det.hasAttribute('hidden');
+        if (open) { det.removeAttribute('hidden'); more.textContent = '− cerrar'; }
+        else      { det.setAttribute('hidden', ''); more.textContent = '+ qué incluye'; }
+      });
+    });
+
     $$('#wizard .sf-card').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (ev) => {
+        if (ev.target.closest('[data-more]') || ev.target.closest('.sf-card-detalle')) return;
         const oid = btn.dataset.opt;
         const o = q.opciones.find(x => x.id === oid);
         if (isMulti) {
@@ -1218,6 +1247,21 @@
 
       // 3) Pintar el resultado (queda tapado por el overlay opaco).
       navigate('#/resultado');
+
+      // v7.1.0 · FALLBACK DEFENSIVO · garantiza que la cotización
+      // SIEMPRE aparezca. Si tras el navigate el #wizard no tiene
+      // .result-screen en 280ms (hashchange perdido, render abortado,
+      // etc.), forzamos renderResultado() directo. Mata el bug "carga
+      // pero no muestra cotización" sea cual sea la causa raíz.
+      setTimeout(() => {
+        const w = document.getElementById('wizard');
+        if (w && !w.querySelector('.result-screen')) {
+          try {
+            if (location.hash !== '#/resultado') location.hash = '#/resultado';
+            renderResultado();
+          } catch(_){}
+        }
+      }, 280);
 
       // 4) Esperar paint REAL del resultado pesado (RAF×2 + 90ms) antes
       //    de iniciar el fade del overlay. Así el resultado ya está
