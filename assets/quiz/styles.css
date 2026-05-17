@@ -5471,3 +5471,57 @@ body.has-bottom-bar-expanded .quiz-main{ padding-bottom: 32px; }
 .ctx-chip .ctx-chip-icon svg{ width: 20px; height: 20px; }
 .ctx-chip .sf-card-label{ font-size: 16px; }
 .ctx-chip.is-selected .ctx-chip-icon{ color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v7.1.0 · sf-card · precio visible + descripción + expand (+/-)
+   ═══════════════════════════════════════════════════════════════════ */
+.sf-card-foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  flex-wrap: wrap;
+}
+.sf-card-price{
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.sf-card.is-selected .sf-card-price{ color: var(--accent-mint); }
+.sf-card-more{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--bg-line);
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.sf-card-more:hover{ border-color: var(--accent); color: var(--accent); }
+.sf-card-detalle{
+  flex-basis: 100%;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--bg-line);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: left;
+}
+.sf-card-detalle[hidden]{ display: none; }
+/* el subtitle de sf-card siempre visible · descripción humana */
+.sf-card .sf-card-subtitle{
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-top: 4px;
+}
