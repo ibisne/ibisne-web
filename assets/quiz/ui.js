@@ -1667,9 +1667,11 @@
       navigate('#/loading');
     });
 
-    // Mobile: toggle expand del carrito
+    // Mobile/tablet: toggle expand del carrito (bottom-sheet).
+    // v8.0.0 · alineado al breakpoint desktop del CSS (1100): debajo de
+    // 1100 el carrito es bottom-sheet con peek → necesita el toggle.
     const header = document.querySelector('#cart .rk-cart-header');
-    if (header && window.matchMedia('(max-width: 900px)').matches) {
+    if (header && window.matchMedia('(max-width: 1099px)').matches) {
       header.addEventListener('click', () => {
         const cartEl = $('#cart');
         cartEl.classList.toggle('is-expanded');
