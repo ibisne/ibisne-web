@@ -10,6 +10,8 @@ window.IBISNE_I18N_DATA = {
   // v8.3.1 · mega-card foot (precio mínimo + count + state)
   'desde': 'from',
   'en carrito': 'in cart',
+  // v8.3.2 · sf-card state
+  'seleccionada': 'selected',
   // Verticales
   'Web': 'Web',
   'Ecommerce': 'Ecommerce',

@@ -385,14 +385,14 @@ body.is-booting{ overflow:hidden; }
 }
 .mega-card.has-items,.sub-card.has-items{ border-color:var(--text-secondary); }
 
-/* Iconos de card · cuadro neutro */
-.mega-card-icon,.sub-card-icon,.service-card-icon,.cat-detail-icon{
+/* Iconos de card · cuadro neutro · regla global aplica a mega/sub/service/sf */
+.mega-card-icon,.sub-card-icon,.service-card-icon,.sf-card-icon,.cat-detail-icon{
   display:inline-flex; align-items:center; justify-content:center;
   width:40px; height:40px; flex:none;
   border:1px solid var(--bg-line); border-radius:var(--radius-input);
   color:var(--text-primary);
 }
-.mega-card-icon svg,.sub-card-icon svg,.service-card-icon svg,
+.mega-card-icon svg,.sub-card-icon svg,.service-card-icon svg,.sf-card-icon svg,
 .cat-detail-icon svg{ width:20px; height:20px; }
 
 /* Títulos / subtítulos de card · jerarquía consistente */
@@ -435,8 +435,11 @@ body.is-booting{ overflow:hidden; }
 }
 .mega-card-info:hover{ color:var(--text-primary); border-color:var(--text-secondary); }
 
-/* ── service-card · anatomía con tier + estado ───────────────────── */
-.service-card-top{ display:flex; align-items:center; gap:var(--sp-2); }
+/* ── service-card + sf-card · anatomía idéntica · regla global ────
+ * v8.3.2 · sf-card adopta sf-card-top (icon) y foot rico de service-card.
+ * Las 3 clases (mega/service/sf) comparten ahora misma jerarquía visual.
+ */
+.service-card-top,.sf-card-top{ display:flex; align-items:center; gap:var(--sp-2); }
 .service-tier{
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-secondary);
@@ -446,32 +449,28 @@ body.is-booting{ overflow:hidden; }
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
-.service-card-foot{
+.service-card-foot,.sf-card-foot{
   display:flex; align-items:flex-end; justify-content:space-between;
   gap:var(--sp-2); margin-top:auto; padding-top:var(--sp-2);
 }
-.service-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
-.service-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); }
+.service-card-meta,.sf-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.service-price,.sf-card-price{
+  font-family:var(--font-mono); font-size:var(--fs-small);
+  color:var(--text-primary); font-weight:var(--fw-medium);
+}
 .service-time{
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
-.service-card-state{
+.service-card-state,.sf-card-state{
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
-.service-card-state.is-added{ color:var(--accent); }          /* (c) verde estado */
+.service-card-state.is-added,.sf-card-state.is-added{ color:var(--accent); }   /* (c) verde estado */
+.sf-card-arrow{ color:var(--text-secondary); font-family:var(--font-mono); font-size:var(--fs-nano); }
 
-/* ── sf-card · opción del subflow ────────────────────────────────── */
+/* sf-card · gap interno match con mega/service (8px), no más sp-1 */
 .sf-card{ gap:var(--sp-2); }
-.sf-card-foot{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:var(--sp-2); margin-top:auto; flex-wrap:wrap;
-}
-.sf-card-price{
-  font-family:var(--font-mono); font-size:var(--fs-small);
-  color:var(--text-primary); font-weight:var(--fw-medium);
-}
 .sf-card-more{
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase;
