@@ -964,8 +964,8 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard: 4 columnas en desktop (v8.4.0 · Ecommerce = 4 megas) */
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(4,1fr); gap:var(--sp-4); }
+  /* Grids del wizard: 3 columnas en desktop · 4 megas se acomodan 3+1 (v8.4.1) */
+  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
 }
