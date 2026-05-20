@@ -413,7 +413,10 @@
       const allIds = collectMegaServiceIds(mega);
       const countInCart = allIds.filter(id => serviciosInCart.has(id)).length;
       const subN = mega.subCategorias ? mega.subCategorias.length : (mega.serviciosIds || []).length;
-      const footLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
+      const countLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
+      // v8.3.1 · mega-card respeta lógica de service-card: precio "desde $X" + count.
+      const bases = allIds.map(id => (PRICING.servicios[id] && PRICING.servicios[id].base) || 0).filter(b => b > 0);
+      const minBase = bases.length ? Math.min(...bases) : 0;
 
       return `
         <button class="mega-card ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
@@ -424,8 +427,11 @@
             <div class="mega-card-summary">${L(mega.summary || '')}</div>
           </div>
           <div class="mega-card-foot">
-            <span class="mega-card-foot-count">${footLabel}</span>
-            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : '<span class="mega-card-arrow">→</span>'}
+            <div class="mega-card-meta">
+              ${minBase > 0 ? `<span class="mega-card-price">${L('desde')} ${formatMxn(minBase)}</span>` : ''}
+              <span class="mega-card-count">${countLabel}</span>
+            </div>
+            ${countInCart > 0 ? `<span class="mega-card-state is-added">${countInCart} ${L('en carrito')}</span>` : '<span class="mega-card-arrow">→</span>'}
           </div>
         </button>
       `;
@@ -442,7 +448,7 @@
 
     $('#wizard').innerHTML = `
       <div class="cat-screen">
-        <div class="eyebrow">— ARMA TU PROYECTO</div>
+        <div class="eyebrow">${L('— ARMA TU PROYECTO')}</div>
         <h2 class="cat-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
         <p class="cat-help">
           ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
@@ -642,7 +648,7 @@
 
     const servsHtml = servs.map(s => {
       const inCart = serviciosInCart.has(s.id);
-      const tierLabel = s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo');
+      const tierLabel = s.tier === 'micro' ? L('rápido') : (s.tier === 'medio' ? L('medio') : L('completo'));
       return `
         <div class="service-card ${inCart ? 'is-incart' : ''}" data-service-id="${s.id}">
           <div class="service-card-top">
@@ -870,7 +876,7 @@
         priceHtml = formatMxn(calcSubflowPrice(servicio, hypo));
       }
       const detalleHtml = o.detalle
-        ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">+ qué incluye</button>
+        ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">${L('+ qué incluye')}</button>
            <div class="sf-card-detalle" hidden>${L(o.detalle)}</div>`
         : '';
       return `
@@ -898,14 +904,14 @@
         <div class="sf-q-head">
           <h2 class="sf-q-title">${L(q.label)}</h2>
           ${q.help ? `<p class="sf-q-help">${L(q.help)}</p>` : ''}
-          ${isMulti ? '<p class="sf-q-multi">Marca todas las que apliquen.</p>' : ''}
+          ${isMulti ? `<p class="sf-q-multi">${L('Marca todas las que apliquen.')}</p>` : ''}
         </div>
         <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
         <div class="wizard-actions">
           <button class="wizard-back" id="sf-back" type="button">← ${backLabel}</button>
           ${isMulti
             ? `<button class="btn btn-primary" id="sf-next" type="button">Continuar →</button>`
-            : `<span class="wizard-hint">Elige una opción para continuar</span>`}
+            : `<span class="wizard-hint">${L('Elige una opción para continuar')}</span>`}
         </div>
       </div>
     `;
@@ -936,8 +942,8 @@
         const det = more.parentElement.querySelector('.sf-card-detalle');
         if (!det) return;
         const open = det.hasAttribute('hidden');
-        if (open) { det.removeAttribute('hidden'); more.textContent = '− cerrar'; }
-        else      { det.setAttribute('hidden', ''); more.textContent = '+ qué incluye'; }
+        if (open) { det.removeAttribute('hidden'); more.textContent = L('− cerrar'); }
+        else      { det.setAttribute('hidden', ''); more.textContent = L('+ qué incluye'); }
       });
     });
 
@@ -1080,7 +1086,7 @@
     const d = State.cliente;
     $('#wizard').innerHTML = `
       <div class="datos-screen">
-        <div class="eyebrow">— PASO 3 DE 3 · TUS DATOS</div>
+        <div class="eyebrow">${L('— PASO 3 DE 3 · TUS DATOS')}</div>
         <h2 class="datos-title">Falta poco para ver tu cotización</h2>
         <p class="datos-help">Te enviamos la propuesta firmable + folio. Te respondemos en menos de 24 horas. Cero spam · cero llamadas no solicitadas.</p>
         <div class="datos-fields">
@@ -1101,7 +1107,7 @@
             <input type="text" name="empresa" placeholder="Nombre de tu negocio o proyecto" value="${(d.empresa||'').replace(/"/g,'&quot;')}" autocomplete="organization">
           </div>
         </div>
-        <p class="datos-privacy">🔒 Tus datos quedan privados · solo nosotros y tú · ver <a href="legal/privacidad.html" target="_blank">aviso de privacidad</a></p>
+        <p class="datos-privacy">${L('Tus datos quedan privados · solo nosotros y tú · ver')} <a href="legal/privacidad.html" target="_blank">${L('aviso de privacidad')}</a></p>
         <div class="datos-actions">
           <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
           <button class="btn btn-primary" id="datos-continue" type="button" disabled>Ver mi cotización →</button>
@@ -1277,13 +1283,13 @@
     $('#wizard').innerHTML = `
       <div class="result-screen result-checkout">
         <div class="rk-head">
-          <div class="rk-folio">— FOLIO #${folio} · INDICATIVO · SUJETO A DISCOVERY</div>
+          <div class="rk-folio">${L('— FOLIO #')}${folio}${L(' · INDICATIVO · SUJETO A DISCOVERY')}</div>
           <h2 class="rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
           <p class="rk-sub">Revisa el desglose, confirma con un pago de anticipo y arrancamos. Cero compromisos hasta que tú decidas.</p>
         </div>
 
         <article class="rk-card rk-project">
-          <div class="rk-card-eyebrow">— TU PROYECTO</div>
+          <div class="rk-card-eyebrow">${L('— TU PROYECTO')}</div>
           <div class="rk-project-head">
             <div class="rk-project-name">${calc.lineItems.length} servicio${calc.lineItems.length === 1 ? '' : 's'} configurado${calc.lineItems.length === 1 ? '' : 's'}</div>
             <div class="rk-project-vertical">Tier ${calc.tier.label}</div>
@@ -1321,7 +1327,7 @@
         </article>
 
         <article class="rk-card rk-breakdown">
-          <div class="rk-card-eyebrow">— DESGLOSE</div>
+          <div class="rk-card-eyebrow">${L('— DESGLOSE')}</div>
           <div class="rk-lines">${lineItemsHtml}</div>
           <div class="rk-totals">
             <div class="rk-total-row"><span>Subtotal</span><span>${formatMxn(calc.subtotal)}</span></div>
@@ -1333,7 +1339,7 @@
         </article>
 
         <article class="rk-card rk-highlights">
-          <div class="rk-card-eyebrow">— LO QUE INCLUYE TRABAJAR CON iBISNE</div>
+          <div class="rk-card-eyebrow">${L('— LO QUE INCLUYE TRABAJAR CON iBISNE')}</div>
           <div class="bp-grid">
             <div class="bp-item">
               <span class="bp-icon">${iconHtml('partnership','line')}</span>
@@ -1355,7 +1361,7 @@
         </article>
 
         <article class="rk-card rk-faq">
-          <div class="rk-card-eyebrow">— PREGUNTAS COMUNES</div>
+          <div class="rk-card-eyebrow">${L('— PREGUNTAS COMUNES')}</div>
           <details class="rk-faq-item">
             <summary>¿Qué pasa después de pagar el anticipo?</summary>
             <div>Te asignamos KAM en menos de 24h. Agendamos discovery call para firmar el alcance exacto. Si en discovery decidimos que el proyecto no es viable, devolvemos el 100% del anticipo.</div>
@@ -1436,7 +1442,7 @@
       return `
         <div class="rk-cart">
           <div class="rk-cart-header">
-            <span class="rk-cart-eyebrow">— TU CARRITO</span>
+            <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
           </div>
           <div class="rk-cart-empty">
             <div class="rk-cart-empty-icon">${iconHtml('ecommerce','line')}</div>
@@ -1506,7 +1512,7 @@
     return `
       <div class="rk-cart">
         <div class="rk-cart-header">
-          <span class="rk-cart-eyebrow">— TU CARRITO</span>
+          <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
           <span class="rk-cart-count">${countLabel}</span>
         </div>
 
@@ -1600,7 +1606,7 @@
     // Clear cart
     const clearBtn = $('#rk-cart-clear');
     if (clearBtn) clearBtn.addEventListener('click', () => {
-      if (!confirm('¿Vaciar el carrito? Perderás los servicios agregados.')) return;
+      if (!confirm(L('¿Vaciar el carrito? Perderás los servicios agregados.'))) return;
       clearCart();
       State.folio = null;
       refreshCart();

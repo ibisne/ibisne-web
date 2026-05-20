@@ -405,15 +405,26 @@ body.is-booting{ overflow:hidden; }
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
 }
 
-/* Pie de card · meta mono + indicador */
+/* Pie de card · meta mono + indicador
+ * v8.3.1 · mega-card-foot adopta layout de service-card-foot (align-items:flex-end)
+ * con meta vertical (precio + count). Resultado: las 3 clases de card respetan la
+ * misma jerarquía visual · cero ruido entre niveles del flujo.
+ */
 .mega-card-foot,.sub-card-foot{
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-2);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-2);
   margin-top:auto; padding-top:var(--sp-2);
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
+.mega-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.mega-card-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); text-transform:none; letter-spacing:0; }
 .mega-card-arrow,.sub-card-foot span{ color:var(--text-secondary); }
-.mega-card-count,.sub-card-count,.mega-card-relevant{ color:var(--text-secondary); }
+.mega-card-count,.sub-card-count,.mega-card-relevant{ color:var(--text-muted); }
+.mega-card-state{
+  font-family:var(--font-mono); font-size:var(--fs-nano);
+  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
+}
+.mega-card-state.is-added{ color:var(--accent); }   /* (c) verde estado · igual que service-card */
 
 /* Botón "i" de info (esquina) */
 .mega-card-info{
@@ -429,7 +440,7 @@ body.is-booting{ overflow:hidden; }
 .service-tier{
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-secondary);
-  padding:3px var(--sp-2); border:1px solid var(--bg-line); border-radius:var(--radius-pill);
+  padding:var(--sp-1) var(--sp-2); border:1px solid var(--bg-line); border-radius:var(--radius-pill);
 }
 .service-relevant,.mega-card-relevant{
   font-family:var(--font-mono); font-size:var(--fs-pico);
@@ -439,23 +450,23 @@ body.is-booting{ overflow:hidden; }
   display:flex; align-items:flex-end; justify-content:space-between;
   gap:var(--sp-2); margin-top:auto; padding-top:var(--sp-2);
 }
-.service-card-meta{ display:flex; flex-direction:column; gap:2px; }
+.service-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .service-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); }
 .service-time{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
+  font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .service-card-state{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
+  font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .service-card-state.is-added{ color:var(--accent); }          /* (c) verde estado */
 
 /* ── sf-card · opción del subflow ────────────────────────────────── */
-.sf-card{ gap:var(--sp-1); }
+.sf-card{ gap:var(--sp-2); }
 .sf-card-foot{
   display:flex; align-items:center; justify-content:space-between;
-  gap:var(--sp-2); margin-top:var(--sp-2); flex-wrap:wrap;
+  gap:var(--sp-2); margin-top:auto; flex-wrap:wrap;
 }
 .sf-card-price{
   font-family:var(--font-mono); font-size:var(--fs-small);
@@ -930,8 +941,8 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard se quedan en 2 columnas (legible) */
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ gap:var(--sp-4); }
+  /* Grids del wizard: 3 columnas en desktop */
+  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
 }
