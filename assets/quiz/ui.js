@@ -30,10 +30,6 @@
   const STORAGE_KEY = 'ibisne.cart.v6';
 
   const State = {
-    // Contexto del cliente (step 1)
-    sector: null,                 // ej: 'arquitecto'
-    yaTengo: [],                  // ['identidad', 'web']
-
     // Datos del cliente (step datos)
     cliente: { nombre: '', email: '', whatsapp: '', empresa: '' },
 
@@ -63,8 +59,6 @@
   function persistCart(){
     try {
       const slim = {
-        sector: State.sector,
-        yaTengo: State.yaTengo,
         cliente: State.cliente,
         cart: State.cart,
       };
@@ -76,8 +70,6 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const saved = JSON.parse(raw);
-      if (saved.sector)   State.sector = saved.sector;
-      if (saved.yaTengo)  State.yaTengo = saved.yaTengo;
       if (saved.cliente)  State.cliente = Object.assign(State.cliente, saved.cliente);
       if (saved.cart)     State.cart = Object.assign(State.cart, saved.cart);
     } catch(_){}
@@ -415,29 +407,16 @@
   // ── Nivel 1 · 4 mega-categorías ──────────────────────────────────────
   function renderMegaGrid(){
     const PRICING = window.IBISNE_PRICING;
-    const sector = State.sector;
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
-    // Re-orden por relevancia al sector
-    const ordered = [...PRICING.megaCategorias].sort((a, b) => {
-      const aRel = countRelevantInMega(a, sector);
-      const bRel = countRelevantInMega(b, sector);
-      return bRel - aRel;
-    });
-
-    const cardsHtml = ordered.map(mega => {
+    const cardsHtml = PRICING.megaCategorias.map(mega => {
       const allIds = collectMegaServiceIds(mega);
       const countInCart = allIds.filter(id => serviciosInCart.has(id)).length;
-      const relCount = sector ? allIds.filter(id => {
-        const s = PRICING.servicios[id];
-        return s && (s.tags || []).indexOf(sector) >= 0;
-      }).length : 0;
-      const isRel = relCount > 0;
       const subN = mega.subCategorias ? mega.subCategorias.length : (mega.serviciosIds || []).length;
       const footLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
 
       return `
-        <button class="mega-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
+        <button class="mega-card ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
           <span class="mega-card-info" data-mega-info="${mega.id}" role="button" tabindex="0" aria-label="Más información sobre ${L(mega.label)}">i</span>
           <div class="mega-card-icon">${iconHtml(mega.icon, 'line')}</div>
           <div class="mega-card-body">
@@ -446,7 +425,7 @@
           </div>
           <div class="mega-card-foot">
             <span class="mega-card-foot-count">${footLabel}</span>
-            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : (isRel ? '<span class="mega-card-relevant">para ti</span>' : '<span class="mega-card-arrow">→</span>')}
+            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : '<span class="mega-card-arrow">→</span>'}
           </div>
         </button>
       `;
@@ -560,15 +539,6 @@
     modal.querySelectorAll('[data-info-close]').forEach(b => b.addEventListener('click', closeInfo));
   }
 
-  function countRelevantInMega(mega, sector){
-    if (!sector) return 0;
-    const PRICING = window.IBISNE_PRICING;
-    const ids = collectMegaServiceIds(mega);
-    return ids.filter(id => {
-      const s = PRICING.servicios[id];
-      return s && (s.tags || []).indexOf(sector) >= 0;
-    }).length;
-  }
   function collectMegaServiceIds(mega){
     if (mega.subCategorias) {
       return mega.subCategorias.flatMap(s => s.serviciosIds || []);
@@ -579,24 +549,18 @@
   // ── Nivel 2 · sub-categorías de una mega ─────────────────────────────
   function renderSubGrid(mega){
     const PRICING = window.IBISNE_PRICING;
-    const sector = State.sector;
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
     const cardsHtml = (mega.subCategorias || []).map(sub => {
       const ids = sub.serviciosIds || [];
       const countInCart = ids.filter(id => serviciosInCart.has(id)).length;
-      const relCount = sector ? ids.filter(id => {
-        const s = PRICING.servicios[id];
-        return s && (s.tags || []).indexOf(sector) >= 0;
-      }).length : 0;
-      const isRel = relCount > 0;
 
       // Preview: 3 servicios con precio
       const preview = ids.slice(0, 3).map(id => PRICING.servicios[id]).filter(Boolean);
       const previewHtml = preview.map(s => `<li>${L(s.label)} <span class="cat-card-preview-price">${formatMxn(s.base)}</span></li>`).join('');
 
       return `
-        <button class="sub-card ${isRel ? 'is-relevant' : ''} ${countInCart > 0 ? 'has-items' : ''}" data-sub-open="${sub.id}" type="button">
+        <button class="sub-card ${countInCart > 0 ? 'has-items' : ''}" data-sub-open="${sub.id}" type="button">
           ${sub.info ? `<span class="mega-card-info" data-sub-info="${sub.id}" role="button" tabindex="0" aria-label="Más información">i</span>` : ''}
           <div class="sub-card-icon">${iconHtml(sub.icon, 'line')}</div>
           <div class="sub-card-label">${L(sub.label)}</div>
@@ -662,18 +626,14 @@
   // ── Nivel 3 · lista de servicios (de una sub o de una mega sin subs) ─
   function renderServicesList(title, subtitle, icon, serviciosIds, mega, sub){
     const PRICING = window.IBISNE_PRICING;
-    const sector = State.sector;
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
-    // Orden: relevantes primero, luego tier, luego precio
+    // Orden: tier, luego precio
     const TIER_ORDER = { micro: 1, medio: 2, grande: 3 };
     const servs = serviciosIds
       .map(id => Object.assign({ id }, PRICING.servicios[id]))
       .filter(s => s && s.label)
       .sort((a, b) => {
-        const aRel = sector && (a.tags || []).indexOf(sector) >= 0 ? 0 : 1;
-        const bRel = sector && (b.tags || []).indexOf(sector) >= 0 ? 0 : 1;
-        if (aRel !== bRel) return aRel - bRel;
         const aT = TIER_ORDER[a.tier] || 99;
         const bT = TIER_ORDER[b.tier] || 99;
         if (aT !== bT) return aT - bT;
@@ -682,14 +642,12 @@
 
     const servsHtml = servs.map(s => {
       const inCart = serviciosInCart.has(s.id);
-      const isRel = sector && (s.tags || []).indexOf(sector) >= 0;
       const tierLabel = s.tier === 'micro' ? 'rápido' : (s.tier === 'medio' ? 'medio' : 'completo');
       return `
-        <div class="service-card ${inCart ? 'is-incart' : ''} ${isRel ? 'is-relevant' : ''}" data-service-id="${s.id}">
+        <div class="service-card ${inCart ? 'is-incart' : ''}" data-service-id="${s.id}">
           <div class="service-card-top">
             <div class="service-card-icon">${iconHtml(s.icon, 'line')}</div>
             <span class="service-tier service-tier-${s.tier}">${tierLabel}</span>
-            ${isRel ? '<span class="service-relevant">para ti</span>' : ''}
           </div>
           <div class="service-card-label">${L(s.label)}</div>
           ${s.subtitle ? `<div class="service-card-subtitle">${L(s.subtitle)}</div>` : ''}
@@ -788,12 +746,6 @@
   }
 
   // (renderCategoryDetail eliminada en v6.0.2 · reemplazada por renderServicesList)
-
-  function sectorLabel(id){
-    const PRICING = window.IBISNE_PRICING;
-    const s = (PRICING.sectores || []).find(x => x.id === id);
-    return s ? L(s.label).toLowerCase() : '';
-  }
 
   // ═══════════════════════════════════════════════════════════════════
   // CART · agregar / editar / quitar
@@ -1298,7 +1250,6 @@
       State.folio = nextFolio();
       persistLead({
         route: 'cotiza-v6', stage: 'final',
-        sector: State.sector, yaTengo: State.yaTengo,
         cart: State.cart, cliente: State.cliente, folio: State.folio,
       });
     }
@@ -1335,7 +1286,7 @@
           <div class="rk-card-eyebrow">— TU PROYECTO</div>
           <div class="rk-project-head">
             <div class="rk-project-name">${calc.lineItems.length} servicio${calc.lineItems.length === 1 ? '' : 's'} configurado${calc.lineItems.length === 1 ? '' : 's'}</div>
-            <div class="rk-project-vertical">${sectorLabel(State.sector) ? 'Para ' + sectorLabel(State.sector) + ' · ' : ''}Tier ${calc.tier.label}</div>
+            <div class="rk-project-vertical">Tier ${calc.tier.label}</div>
           </div>
           <div class="rk-project-meta">
             <div class="rk-meta-item">
