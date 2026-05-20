@@ -78,7 +78,7 @@ window.IBISNE_I18N_DATA = {
   'Elige la opción que mejor refleje tu proyecto.': 'Pick the option that best reflects your project.',
   'Selecciona todas las que apliquen.': 'Select all that apply.',
   'Selecciona todas las que apliquen. Cada una se cobra como módulo de integración.': 'Select all that apply. Each is charged as an integration module.',
-  'La urgencia tiene costo; la flexibilidad tiene cortesía.': 'Urgency has a cost; flexibility brings a courtesy.',
+  'La urgencia tiene costo; la flexibilidad tiene cortesía.': 'Faster costs more. With time, you save.',
   'Cobertura post-lanzamiento. Define qué equipo de iBisne queda asignado a tu proyecto.': 'Post-launch coverage. Defines which iBisne team is assigned to your project.',
   // Diseño options
   'Adaptado de template': 'Template-based',
@@ -110,9 +110,6 @@ window.IBISNE_I18N_DATA = {
   // Eyebrows del quiz
   'Servicio': 'Service',
   'Socio tecnológico': 'Tech partner',
-  'Inversionista': 'Investor',
-  'Consultoría': 'Consulting',
-  'Discovery': 'Discovery',
   'Cierre · Servicio': 'Closing · Service',
   'Preferencias del proyecto': 'Project preferences',
   // CTAs / nav
@@ -166,10 +163,6 @@ window.IBISNE_I18N_DATA = {
   // Pluralización
   'módulo': 'module',
   'módulos': 'modules',
-  // Discovery / inversor / consultoria placeholders
-  'Cuéntanos para precisar el alcance del proyecto.': 'Tell us to refine the project scope.',
-  'Ayúdanos a entender tu perfil de inversión.': 'Help us understand your investor profile.',
-  'Definamos juntos cómo te acompañamos.': 'Let\'s define together how we support you.',
   // Memberships
   'Foundation': 'Foundation',
   'Growth': 'Growth',
@@ -356,9 +349,6 @@ window.IBISNE_I18N_EN = {
 
   // ── Quiz · etiquetas comunes ───────────────────────────────
   'quiz.eyebrow.service': 'Service',
-  'quiz.eyebrow.investor': 'Investor',
-  'quiz.eyebrow.consulting': 'Consulting',
-  'quiz.eyebrow.discovery': 'Discovery',
   'quiz.actions.back': '← Back',
   'quiz.actions.continue': 'Continue →',
   'quiz.actions.viewQuote': 'View quote →',
@@ -420,7 +410,7 @@ window.IBISNE_I18N_EN = {
   // ── v4.0 · Mega-pivot · 3 puertas + jerga simple ──────────────
   // 3 puertas (entry screen del quiz)
   'doors.title': 'How can we help?',
-  'doors.subtitle': 'Choose where you fit best · we adapt the rest.',
+  'doors.subtitle': 'Tell us what you need · we\'ll build it.',
   'doors.builder.label': "I'm an entrepreneur",
   'doors.builder.sub': 'I need technology for my project',
   'doors.investor.label': "I'm an investor",
@@ -474,7 +464,7 @@ window.IBISNE_I18N_EN = {
 if (window.IBISNE_I18N_DATA) {
   Object.assign(window.IBISNE_I18N_DATA, {
     // Jerga anti-tontos · reemplazos data-layer
-    'Stack tecnológico': 'Technology we use',
+    'Stack tecnológico': 'Tech we use',
     'Membresía': 'iBisne Plan',
     'Cotización indicativa': 'Approximate price',
     'Sub-tipo': 'Type of project',
@@ -489,6 +479,7 @@ if (window.IBISNE_I18N_DATA) {
     // 3 puertas (DATA layer · ES side)
     '¿Cómo te podemos ayudar?': 'How can we help?',
     'Elige dónde encajas · adaptamos el resto.': 'Choose where you fit · we adapt the rest.',
+    'Cuéntanos qué necesitas · armamos algo a tu medida.': 'Tell us what you need · we\'ll build it.',
     'Soy emprendedor': "I'm an entrepreneur",
     'Necesito tecnología para mi proyecto': 'I need technology for my project',
     'Soy inversionista': "I'm an investor",

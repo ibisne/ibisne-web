@@ -429,7 +429,7 @@ body.is-booting{ overflow:hidden; }
 .service-tier{
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-secondary);
-  padding:3px var(--sp-2); border:1px solid var(--bg-line); border-radius:var(--radius-pill);
+  padding:var(--sp-1) var(--sp-2); border:1px solid var(--bg-line); border-radius:var(--radius-pill);
 }
 .service-relevant,.mega-card-relevant{
   font-family:var(--font-mono); font-size:var(--fs-pico);
@@ -439,23 +439,23 @@ body.is-booting{ overflow:hidden; }
   display:flex; align-items:flex-end; justify-content:space-between;
   gap:var(--sp-2); margin-top:auto; padding-top:var(--sp-2);
 }
-.service-card-meta{ display:flex; flex-direction:column; gap:2px; }
+.service-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .service-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); }
 .service-time{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
+  font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .service-card-state{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
+  font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .service-card-state.is-added{ color:var(--accent); }          /* (c) verde estado */
 
 /* ── sf-card · opción del subflow ────────────────────────────────── */
-.sf-card{ gap:var(--sp-1); }
+.sf-card{ gap:var(--sp-2); }
 .sf-card-foot{
   display:flex; align-items:center; justify-content:space-between;
-  gap:var(--sp-2); margin-top:var(--sp-2); flex-wrap:wrap;
+  gap:var(--sp-2); margin-top:auto; flex-wrap:wrap;
 }
 .sf-card-price{
   font-family:var(--font-mono); font-size:var(--fs-small);
@@ -930,8 +930,8 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard se quedan en 2 columnas (legible) */
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ gap:var(--sp-4); }
+  /* Grids del wizard: 3 columnas en desktop */
+  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
 }
