@@ -368,6 +368,22 @@
 
 
   // ═══════════════════════════════════════════════════════════════════
+  // v8.4.0 · Breadcrumb unificado para todas las pantallas (catalog,
+  // services, subflow, datos, resultado). Reemplaza eyebrows ad-hoc
+  // y cat-breadcrumb HTML inline.
+  // ═══════════════════════════════════════════════════════════════════
+  function renderBreadcrumb(crumbs) {
+    if (!crumbs || crumbs.length === 0) return '';
+    const html = crumbs.map((c, i) => {
+      const isLast = i === crumbs.length - 1;
+      const label = L(c.label);
+      if (isLast || !c.href) return `<span>${label}</span>`;
+      return `<a href="${c.href}" data-bc="${c.action || ''}">${label}</a>`;
+    }).join(' <span class="screen-breadcrumb-sep">›</span> ');
+    return `<div class="screen-breadcrumb">${html}</div>`;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
   // STEP 2 · renderCatalog (dispatcher · 3 niveles de navegación)
   // ═══════════════════════════════════════════════════════════════════
   //   Nivel 1: 4 mega-categorías        (catalogPath = {})
@@ -448,8 +464,8 @@
 
     $('#wizard').innerHTML = `
       <div class="cat-screen">
-        <div class="eyebrow">${L('— ARMA TU PROYECTO')}</div>
-        <h2 class="cat-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
+        ${renderBreadcrumb([{ label: 'Inicio' }])}
+        <h2 class="cat-title screen-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
         <p class="cat-help">
           ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
         </p>
@@ -579,7 +595,10 @@
     const nCartSub = State.cart.servicios.length;
     $('#wizard').innerHTML = `
       <div class="cat-detail-screen">
-        <div class="cat-breadcrumb"><a href="#" id="bc-root-sg">Categorías</a> › <span>${L(mega.label)}</span></div>
+        ${renderBreadcrumb([
+          { label: 'Inicio', href: '#/catalog' },
+          { label: mega.label }
+        ])}
         <div class="cat-detail-head">
           <div class="cat-detail-icon">${iconHtml(mega.icon, 'line')}</div>
           <div>
@@ -621,7 +640,11 @@
       renderCatalog();
     };
     $('#cat-back-mega').addEventListener('click', goBackToMega);
-    $('#bc-root-sg')?.addEventListener('click', (e) => { e.preventDefault(); goBackToMega(); });
+    // bc-root-sg removed (breadcrumb now uses renderBreadcrumb · no inline id)
+    // breadcrumb links handled via delegation below
+    document.querySelectorAll('#wizard .screen-breadcrumb a[href="#/catalog"]').forEach(a => {
+      a.addEventListener('click', (e) => { e.preventDefault(); goBackToMega(); });
+    });
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
@@ -668,10 +691,17 @@
       `;
     }).join('');
 
-    // Breadcrumb visible cuando estamos en sub
+    // Breadcrumb via helper (v8.4.0 · reemplaza cat-breadcrumb inline)
     const breadcrumb = sub
-      ? `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <a href="#" id="bc-mega">${L(mega.label)}</a> › <span>${L(sub.label)}</span></div>`
-      : `<div class="cat-breadcrumb"><a href="#" id="bc-root">Categorías</a> › <span>${L(mega.label)}</span></div>`;
+      ? renderBreadcrumb([
+          { label: 'Inicio', href: '#/catalog' },
+          { label: mega.label, href: '#/catalog' },
+          { label: sub.label }
+        ])
+      : renderBreadcrumb([
+          { label: 'Inicio', href: '#/catalog' },
+          { label: mega.label }
+        ]);
 
     const backLabel = sub ? L(mega.label) : 'categorías';
     $('#wizard').innerHTML = `
@@ -714,8 +744,15 @@
       renderCatalog();
     };
     $('#cat-back').addEventListener('click', goUp);
-    $('#bc-root')?.addEventListener('click', goToRoot);
-    $('#bc-mega')?.addEventListener('click', goToMegaLevel);
+    // bc-root / bc-mega removed (breadcrumb now uses renderBreadcrumb · no inline ids)
+    // Bind breadcrumb links by position: first link = root, second link = mega level (sub only)
+    const bcLinks = document.querySelectorAll('#wizard .screen-breadcrumb a');
+    if (sub) {
+      if (bcLinks[0]) bcLinks[0].addEventListener('click', goToRoot);
+      if (bcLinks[1]) bcLinks[1].addEventListener('click', goToMegaLevel);
+    } else {
+      if (bcLinks[0]) bcLinks[0].addEventListener('click', goToRoot);
+    }
 
     // v6.1.0 · La card entera es el área de click (sin botón redundante).
     // Servicio nuevo con subflow → abre configuración. Sin subflow → agrega.
@@ -905,10 +942,21 @@
     const pct = Math.round(((sf.qIndex) / total) * 100);
     const backLabel = sf.qIndex > 0 ? 'pregunta anterior' : L(servicio.label);
 
+    // v8.4.0 · Lookup mega para el breadcrumb del subflow
+    const PRICING_sf = window.IBISNE_PRICING;
+    const megaSf = PRICING_sf && PRICING_sf.megaCategorias
+      ? PRICING_sf.megaCategorias.find(m => (m.serviciosIds || []).includes(sf.servicioId)
+          || (m.subCategorias || []).some(sc => (sc.serviciosIds || []).includes(sf.servicioId)))
+      : null;
+
     $('#wizard').innerHTML = `
       <div class="sf-screen">
+        ${renderBreadcrumb([
+          { label: 'Inicio', href: '#/catalog' },
+          { label: megaSf ? megaSf.label : 'Servicios', href: '#/catalog' },
+          { label: servicio.label }
+        ])}
         <div class="sf-progress">
-          <div class="sf-progress-label">${L(servicio.label)} · pregunta ${sf.qIndex + 1} de ${total}</div>
           <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:${pct}%"></div></div>
         </div>
         <div class="sf-q-head">
@@ -1004,8 +1052,20 @@
     const cfg = renderConfigSummaryInline(config);
     const total = State.cart.servicios.length;
 
+    // v8.4.0 · Lookup mega para el breadcrumb de confirmación
+    const PRICING_confirm = window.IBISNE_PRICING;
+    const megaConfirm = PRICING_confirm && PRICING_confirm.megaCategorias
+      ? PRICING_confirm.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id)
+          || (m.subCategorias || []).some(sc => (sc.serviciosIds || []).includes(servicio.id)))
+      : null;
+
     $('#wizard').innerHTML = `
       <div class="sf-confirm-screen">
+        ${renderBreadcrumb([
+          { label: 'Inicio', href: '#/catalog' },
+          { label: megaConfirm ? megaConfirm.label : 'Servicios', href: '#/catalog' },
+          { label: servicio.label }
+        ])}
         <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
         <h2 class="sf-confirm-title">${L(servicio.label)} quedó configurado</h2>
         ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
@@ -1096,8 +1156,8 @@
     const d = State.cliente;
     $('#wizard').innerHTML = `
       <div class="datos-screen">
-        <div class="eyebrow">${L('— PASO 3 DE 3 · TUS DATOS')}</div>
-        <h2 class="datos-title">Falta poco para ver tu cotización</h2>
+        ${renderBreadcrumb([{ label: 'Tu cotización · paso final' }])}
+        <h2 class="screen-title datos-title">Falta poco para ver tu cotización</h2>
         <p class="datos-help">Te enviamos la propuesta firmable + folio. Te respondemos en menos de 24 horas. Cero spam · cero llamadas no solicitadas.</p>
         <div class="datos-fields">
           <div class="datos-field">
@@ -1293,8 +1353,8 @@
     $('#wizard').innerHTML = `
       <div class="result-screen result-checkout">
         <div class="rk-head">
-          <div class="rk-folio">${L('— FOLIO #')}${folio}${L(' · INDICATIVO · SUJETO A DISCOVERY')}</div>
-          <h2 class="rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
+          ${renderBreadcrumb([{ label: 'Cotización · folio #' + folio }])}
+          <h2 class="screen-title rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
           <p class="rk-sub">Revisa el desglose, confirma con un pago de anticipo y arrancamos. Cero compromisos hasta que tú decidas.</p>
         </div>
 
