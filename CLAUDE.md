@@ -6,7 +6,7 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v8.0.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Las pantallas legacy de marketplace/portal inversor (`marketplace.html`, `inversionistas.html`, `portal/*`, `cliente/approval.html`) **siguen en el repo pero están dormidas** — no se navega a ellas desde el sitio nuevo. No tocar salvo petición explícita.
+**El sitio web actual (v8.1.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
 
 ## El design system OFICIAL es **VAULT (v2)** — `/design-system-v2/`
 
@@ -19,7 +19,7 @@ iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional)
 
 ### El sistema "Operator Grid" (v1) es legacy
 
-Vive ARCHIVADO en `/legacy/design-system/` y `/legacy/pages/index.html`. Estaba pensado con estética cyberpunk-tech (cyan/violet, scanlines, glow). **No tocar** salvo que Eduardo lo pida explícito. Cualquier nuevo trabajo de UI consume VAULT.
+Vivía en `/design-system/` y `/pages/index.html` con estética cyberpunk-tech (cyan/violet, scanlines, glow). Esas carpetas se eliminaron del repo (v1 vive solo en git history). **No resucitar** salvo que Eduardo lo pida explícito. Cualquier nuevo trabajo de UI consume VAULT v2.
 
 Si encuentras código v1 mezclado en archivos nuevos (markers `//`, tokens `--cyan`/`--violet`, fuentes Space Grotesk, glow, scanlines) → es bug, limpiar.
 
@@ -39,12 +39,12 @@ Si encuentras código v1 mezclado en archivos nuevos (markers `//`, tokens `--cy
 12. **Markers de sección**: `§ NN.NN` (numeración) y `—` (em dash). **NUNCA `//`** — eso es del v1 Operator Grid.
 13. **Verde phosphor escaso, mint informacional.** Política Apple monocromática: phosphor SOLO en (a) `.btn-primary`, (b) precio TOTAL final del cotizador, (c) card seleccionada/agregada. Mint informacional (eyebrows, highlights de texto). Ver `/design-system-v2/HANDOFF.md` sección "Política del verde".
 
-## Sistema antiguo (Operator Grid v1 — `/legacy/`)
+## Sistema antiguo (Operator Grid v1) — eliminado del repo
 
-Es **legacy archivado**, no deprecado en uso (nadie lo carga). Vive intacto en `/legacy/design-system/` y `/legacy/pages/index.html`. **No tocar** salvo que Eduardo lo pida explícito.
+Vivía en `/design-system/` (tokens cyberpunk) y `/pages/` (Home + verticales + portafolio). **Borrado del repo** en pivotes v5→v8. Solo subsiste en git history. **No resucitar** salvo petición explícita de Eduardo.
 
-- Si construyes una página nueva → consume **VAULT (v2)**, no v1.
-- Si ves código mezclado v1+v2 en un archivo nuevo → es bug, limpiar.
+- Si construyes una página nueva → consume **VAULT (v2)**.
+- Si ves código v1 colándose en archivos nuevos → es bug, limpiar.
 
 Indicadores de código v1 que NO debe vivir en v2:
 - Tokens `--cyan`, `--violet`, `--grad-brand`, `--grad-fade`
@@ -53,7 +53,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v8.0.0)
+## Estructura del repo (actual · v8.1.0)
 
 ```
 /
@@ -61,10 +61,6 @@ Indicadores de código v1 que NO debe vivir en v2:
 ├─ quiz.html                   ← Cotizador completo (entrypoint principal)
 ├─ no.html                     ← Pantalla de salida amable ("ya tengo agencia")
 ├─ 404.html                    ← 404 brandeada
-├─ marketplace.html            ← DORMIDA · legacy v4 · NO tocar
-├─ inversionistas.html         ← DORMIDA · legacy v4 · NO tocar
-├─ portal/                     ← DORMIDA · legacy v4 · NO tocar
-├─ cliente/approval.html       ← DORMIDA · legacy v4 · NO tocar
 ├─ legal/                      ← privacidad.html + terminos.html
 ├─ api/lead.js                 ← Vercel function · webhook Slack + Web3Forms email
 ├─ assets/
@@ -93,9 +89,6 @@ Indicadores de código v1 que NO debe vivir en v2:
 │   ├─ README.md
 │   ├─ icons-reference.html
 │   └─ UI Kit.html
-├─ legacy/                     ← v1 Operator Grid · archivado · NO TOCAR
-│   ├─ design-system/
-│   └─ pages/index.html
 ├─ docs/crm/                   ← planificación CRM (NO en producción)
 ├─ sw.js                       ← SW PWA · CACHE = 'ibisne-vX.Y.Z'
 ├─ manifest.webmanifest
@@ -104,6 +97,8 @@ Indicadores de código v1 que NO debe vivir en v2:
 ├─ sitemap.xml
 └─ CLAUDE.md                   ← este archivo
 ```
+
+**Repo unificado · sin código muerto · sin pantallas legacy.** El sitio servido es exactamente lo que se ve en el árbol arriba. Si te encuentras editando algo que no aparece aquí, párate y verifica.
 
 ## Estructura del Home actual (`index.html`)
 
@@ -134,9 +129,8 @@ Hash routing:
 - **Cambios de layout dentro del sistema:** libres si usan componentes existentes en `assets/quiz/styles.css` y tokens VAULT v2.
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing.js` es la fuente única.
-- **Pantallas dormidas (marketplace/portal/inversionistas/approval):** NO TOCAR salvo petición explícita de Eduardo.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v8.0.0`.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v8.1.0`.
 
 ## Voice & copy
 
