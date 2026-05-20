@@ -413,7 +413,10 @@
       const allIds = collectMegaServiceIds(mega);
       const countInCart = allIds.filter(id => serviciosInCart.has(id)).length;
       const subN = mega.subCategorias ? mega.subCategorias.length : (mega.serviciosIds || []).length;
-      const footLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
+      const countLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
+      // v8.3.1 · mega-card respeta lógica de service-card: precio "desde $X" + count.
+      const bases = allIds.map(id => (PRICING.servicios[id] && PRICING.servicios[id].base) || 0).filter(b => b > 0);
+      const minBase = bases.length ? Math.min(...bases) : 0;
 
       return `
         <button class="mega-card ${countInCart > 0 ? 'has-items' : ''}" data-mega-open="${mega.id}" type="button">
@@ -424,8 +427,11 @@
             <div class="mega-card-summary">${L(mega.summary || '')}</div>
           </div>
           <div class="mega-card-foot">
-            <span class="mega-card-foot-count">${footLabel}</span>
-            ${countInCart > 0 ? `<span class="mega-card-count">${countInCart} en carrito</span>` : '<span class="mega-card-arrow">→</span>'}
+            <div class="mega-card-meta">
+              ${minBase > 0 ? `<span class="mega-card-price">${L('desde')} ${formatMxn(minBase)}</span>` : ''}
+              <span class="mega-card-count">${countLabel}</span>
+            </div>
+            ${countInCart > 0 ? `<span class="mega-card-state is-added">${countInCart} ${L('en carrito')}</span>` : '<span class="mega-card-arrow">→</span>'}
           </div>
         </button>
       `;

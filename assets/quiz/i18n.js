@@ -7,6 +7,9 @@
 // El helper L() en ui.js busca por valor exacto. Si no encuentra, devuelve el ES.
 // Solo traduce conceptos genéricos · nombres propios (Stripe, PayPal, etc.) quedan iguales.
 window.IBISNE_I18N_DATA = {
+  // v8.3.1 · mega-card foot (precio mínimo + count + state)
+  'desde': 'from',
+  'en carrito': 'in cart',
   // Verticales
   'Web': 'Web',
   'Ecommerce': 'Ecommerce',

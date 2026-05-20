@@ -405,15 +405,26 @@ body.is-booting{ overflow:hidden; }
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
 }
 
-/* Pie de card · meta mono + indicador */
+/* Pie de card · meta mono + indicador
+ * v8.3.1 · mega-card-foot adopta layout de service-card-foot (align-items:flex-end)
+ * con meta vertical (precio + count). Resultado: las 3 clases de card respetan la
+ * misma jerarquía visual · cero ruido entre niveles del flujo.
+ */
 .mega-card-foot,.sub-card-foot{
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-2);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-2);
   margin-top:auto; padding-top:var(--sp-2);
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
+.mega-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.mega-card-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); text-transform:none; letter-spacing:0; }
 .mega-card-arrow,.sub-card-foot span{ color:var(--text-secondary); }
-.mega-card-count,.sub-card-count,.mega-card-relevant{ color:var(--text-secondary); }
+.mega-card-count,.sub-card-count,.mega-card-relevant{ color:var(--text-muted); }
+.mega-card-state{
+  font-family:var(--font-mono); font-size:var(--fs-nano);
+  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
+}
+.mega-card-state.is-added{ color:var(--accent); }   /* (c) verde estado · igual que service-card */
 
 /* Botón "i" de info (esquina) */
 .mega-card-info{
