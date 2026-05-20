@@ -278,7 +278,7 @@ body.is-booting{ overflow:hidden; }
 }
 
 .cat-title,.cat-detail-title,.sf-q-title,.datos-title,.rk-title,
-.sf-confirm-title{
+.sf-confirm-title,.screen-title{
   font-family:var(--font-display);
   font-size:var(--ds-fs-title);
   font-weight:var(--fw-medium);
@@ -528,6 +528,30 @@ body.is-booting{ overflow:hidden; }
 .cat-breadcrumb{ display:flex; flex-wrap:wrap; gap:6px; }
 .cat-breadcrumb a:hover{ color:var(--text-primary); }
 .cat-breadcrumb span{ color:var(--text-secondary); }
+
+/* v8.4.0 · Breadcrumb global · todas las pantallas usan esta clase unificada
+ * para dar continuidad visual entre catalog/services/subflow/datos/resultado.
+ * Reemplaza .eyebrow inline en headers de pantalla y .cat-breadcrumb ad-hoc. */
+.screen-breadcrumb{
+  font-family:var(--font-mono);
+  font-size:var(--fs-nano);
+  letter-spacing:var(--ls-mono);
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:var(--sp-3);
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--sp-2);
+  align-items:center;
+}
+.screen-breadcrumb a{
+  color:var(--text-secondary);
+  text-decoration:none;
+  transition:color var(--dur-quick) var(--ease-out);
+}
+.screen-breadcrumb a:hover{ color:var(--text-primary); }
+.screen-breadcrumb-sep{ color:var(--text-muted); opacity:0.6; }
+.screen-breadcrumb span:last-child{ color:var(--text-primary); }
 .cat-detail-head{
   display:flex; align-items:center; gap:var(--sp-3); margin-top:var(--sp-3);
 }
@@ -940,8 +964,8 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard: 3 columnas en desktop */
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
+  /* Grids del wizard: 4 columnas en desktop (v8.4.0 · Ecommerce = 4 megas) */
+  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(4,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
 }

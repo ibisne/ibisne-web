@@ -1,29 +1,35 @@
-// data/pricing.js — v8.2.0 · Catálogo 3 megas · 15 servicios visibles
+// data/pricing.js — v8.4.0 · Catálogo 4 megas · 19 servicios visibles
 //
-// Cambios respecto a v7.0.0:
-//   · 3 mega-categorías (Web · Apps · Automatizaciones) — Marketing eliminado
-//   · 15 servicios visibles (antes 9 · escondían bio/landing/funnel/plataformas)
-//   · Sin sectores[] ni yaTengo[] ni tags[] (desconectados del flujo en v7.0.2 · zombis)
-//   · Subflows compactos 4-7 preguntas (antes app tenía 12)
-//   · App por plataforma: el servicio define plataforma, subflow NO la vuelve a preguntar
+// Cambios respecto a v8.2.0:
+//   · 4 mega-categorías (Web · Apps · Ecommerce · Automatizaciones)
+//   · Nueva mega Ecommerce con 4 servicios: ec-mini, ec-shopify, ec-tienda, ec-app
+//   · web-tienda MUDADO a ec-tienda (preserva su subflow con pequeños ajustes)
+//   · Web queda con 4 servicios (biolink, landing, funnel, sitio)
+//   · 19 servicios totales visibles
 //
 // Estructura: window.IBISNE_PRICING = { megaCategorias, servicios, subflow, modificadores, helpers }
 
 window.IBISNE_PRICING = {
 
-  // ═══ MEGA-CATEGORÍAS (3) · serviciosIds directo ══════════════════════
+  // ═══ MEGA-CATEGORÍAS (4) · serviciosIds directo ══════════════════════
   megaCategorias: [
     {
       id: 'web', label: 'Desarrollo web', icon: 'sitio',
       summary: 'Tu presencia en internet',
-      info: 'Desde una página de enlaces hasta una tienda en línea. Si tus clientes lo abren en un navegador, va aquí.',
-      serviciosIds: ['web-biolink', 'web-landing', 'web-funnel', 'web-sitio', 'web-tienda'],
+      info: 'Desde una página de enlaces hasta un sitio completo con CMS y módulos. Si tus clientes lo abren en un navegador, va aquí.',
+      serviciosIds: ['web-biolink', 'web-landing', 'web-funnel', 'web-sitio'],
     },
     {
       id: 'apps', label: 'Apps', icon: 'app',
       summary: 'Tu negocio en el bolsillo del cliente',
       info: 'Aplicaciones nativas o web (PWA). Elige plataforma; nosotros nos encargamos del resto.',
       serviciosIds: ['app-pwa', 'app-android', 'app-ios', 'app-ambas', 'app-desktop'],
+    },
+    {
+      id: 'ecommerce', label: 'Vender por internet', icon: 'ecommerce',
+      summary: 'Tus productos online',
+      info: 'Desde una landing de 1 producto hasta una tienda multi-producto, en código propio, Shopify o app nativa.',
+      serviciosIds: ['ec-mini', 'ec-shopify', 'ec-tienda', 'ec-app'],
     },
     {
       id: 'auto', label: 'Automatizaciones', icon: 'chatbot',
@@ -33,10 +39,10 @@ window.IBISNE_PRICING = {
     },
   ],
 
-  // ═══ SERVICIOS · 15 en total · indexados por id ══════════════════════
+  // ═══ SERVICIOS · 18 en total · indexados por id ══════════════════════
   servicios: {
 
-    // ── Web (5) ──────────────────────────────────────────────────────
+    // ── Web (4) ──────────────────────────────────────────────────────
     'web-biolink': {
       label: 'Bio link / Página de enlaces', base: 2500, tier: 'micro',
       tiempo: '3-7 días', icon: 'sitio',
@@ -61,13 +67,6 @@ window.IBISNE_PRICING = {
       subtitle: 'Tu negocio entero online · varias secciones, CMS, módulos',
       subflow: true,
     },
-    'web-tienda': {
-      label: 'Tienda en línea', base: 35000, tier: 'grande',
-      tiempo: '3-12 sem', icon: 'ecommerce',
-      subtitle: 'Vende por internet · catálogo, pagos, envíos',
-      subflow: true,
-    },
-
     // ── Apps (5) ─────────────────────────────────────────────────────
     'app-pwa': {
       label: 'Web app (PWA)', base: 18000, tier: 'medio',
@@ -97,6 +96,28 @@ window.IBISNE_PRICING = {
       label: 'App de escritorio', base: 50000, tier: 'grande',
       tiempo: '5-14 sem', icon: 'serverapp',
       subtitle: 'Para Windows / Mac · uso interno o profesional',
+      subflow: true,
+    },
+
+    // ── Ecommerce (4) ────────────────────────────────────────────────
+    'ec-mini': {
+      label: 'Landing de 1 producto', base: 8000, tier: 'medio', tiempo: '1-2 sem', icon: 'ecommerce',
+      subtitle: 'Una página enfocada en vender UN producto · ideal para validar',
+      subflow: true,
+    },
+    'ec-shopify': {
+      label: 'Tienda en Shopify', base: 12000, tier: 'medio', tiempo: '2-4 sem', icon: 'ecommerce',
+      subtitle: 'Tienda en plataforma de terceros · rápido de salir · ~30% más barato',
+      subflow: true,
+    },
+    'ec-tienda': {
+      label: 'Tienda en código propio', base: 35000, tier: 'grande', tiempo: '3-12 sem', icon: 'ecommerce',
+      subtitle: 'Tu tienda 100% a la medida · escalable a marketplace',
+      subflow: true,
+    },
+    'ec-app': {
+      label: 'Ecommerce app nativa', base: 55000, tier: 'grande', tiempo: '6-14 sem', icon: 'app',
+      subtitle: 'Tu tienda como app en App Store y Google Play',
       subflow: true,
     },
 
@@ -321,61 +342,127 @@ window.IBISNE_PRICING = {
           ]},
       ],
 
-      // ── Tienda en línea (6 preguntas) ─────────────────────────────
-      'web-tienda': [
-        { id: 'tamano', label: '¿Tamaño del catálogo?',
-          opciones: [
-            { id: 'uno',      label: '1 producto',         add: 0 },
-            { id: 'pequeno',  label: 'Pequeño · 2 a 50',   add: 12000 },
-            { id: 'mediano',  label: 'Mediano · 51 a 500',  add: 28000 },
-            { id: 'grande',   label: 'Grande · 500+',       add: 70000 },
-          ]},
-        { id: 'plataforma', label: '¿Tech?',
-          help: 'Shopify es más rápido de lanzar. A la medida da control total.',
-          opciones: [
-            { id: 'shopify', label: 'Shopify',       mul: 0.85 },
-            { id: 'medida',  label: 'A la medida',   mul: 1.0 },
-          ]},
-        { id: 'pagos', label: '¿Pasarelas?', multi: true,
-          help: 'Marca las que apliquen.',
-          opciones: [
-            { id: 'tarjeta-nac', label: 'Tarjeta nacional',      add: 5000 },
-            { id: 'tarjeta-int', label: 'Tarjeta internacional',  add: 5000 },
-            { id: 'spei',        label: 'SPEI / OXXO',            add: 4000 },
-            { id: 'paypal',      label: 'PayPal',                 add: 3500 },
-            { id: 'mercadopago', label: 'Mercado Pago',           add: 4500 },
-          ]},
-        { id: 'envios', label: '¿Envíos?',
-          opciones: [
-            { id: 'digital', label: 'Solo digital · no se envía', add: 0 },
-            { id: 'manual',  label: 'Manual',                     add: 0 },
-            { id: 'auto',    label: 'Cálculo automático + guías', add: 8000 },
-          ]},
-        { id: 'modulos', label: '¿Módulos extra?', multi: true,
-          help: 'Marca los que apliquen · puedes dejar vacío.',
-          opciones: [
-            { id: 'cupones',    label: 'Cupones y descuentos',          add: 3500 },
-            { id: 'resenas',    label: 'Reseñas de productos',          add: 4000 },
-            { id: 'wishlist',   label: 'Lista de deseos',               add: 3500 },
-            { id: 'suscrip',    label: 'Suscripciones recurrentes',     add: 15000 },
-            { id: 'multimoneda', label: 'Multi-moneda',                 add: 6000 },
-            { id: 'inventario', label: 'Inventario avanzado',           add: 12000 },
-            { id: 'lealtad',    label: 'Programa de lealtad',           add: 10000 },
-          ]},
-        { id: 'calidad', label: '¿Acabado?',
-          opciones: [
-            { id: 'funcional', label: 'Funcional · vender ya',          mul: 0.85 },
-            { id: 'balance',   label: 'Buena relación calidad/precio',  mul: 1.0 },
-            { id: 'premium',   label: 'Premium · experiencia de marca', mul: 1.35 },
-          ]},
-      ],
-
       // ── Apps · subflow compartido ─────────────────────────────────
       'app-pwa':     APP_SUBFLOW,
       'app-android': APP_SUBFLOW,
       'app-ios':     APP_SUBFLOW,
       'app-ambas':   APP_SUBFLOW,
       'app-desktop': APP_SUBFLOW,
+
+      // ── Ecommerce · subflows (4 servicios) ───────────────────────
+
+      'ec-mini': [
+        { id: 'producto', label: '¿Qué vendes?', multi: false, opciones: [
+          { id: 'fisico',   label: 'Producto físico',  subtitle: 'Te lo enviamos al cliente',   add: 0 },
+          { id: 'digital',  label: 'Producto digital', subtitle: 'Descarga, curso, ebook',       add: 1500 },
+          { id: 'servicio', label: 'Servicio',         subtitle: 'Reserva, consulta, sesión',    add: 2000 },
+        ]},
+        { id: 'pagos', label: '¿Cómo cobras?', multi: true, opciones: [
+          { id: 'tarjeta',   label: 'Tarjeta',      subtitle: 'Visa, Mastercard, AMEX',          add: 4000 },
+          { id: 'spei-oxxo', label: 'SPEI / OXXO',  subtitle: 'Cliente mexicano sin tarjeta',    add: 3500 },
+          { id: 'paypal',    label: 'PayPal',        subtitle: 'Cliente internacional',           add: 3000 },
+        ]},
+        { id: 'diseno', label: '¿Diseño?', multi: false, opciones: [
+          { id: 'plantilla',    label: 'Plantilla',     subtitle: 'Salida rápida',    add: 0 },
+          { id: 'personalizado', label: 'Personalizado', subtitle: 'Identidad propia', add: 5000 },
+        ]},
+        { id: 'extras', label: '¿Algo extra?', multi: true, opciones: [
+          { id: 'analytics', label: 'Analytics',         subtitle: 'Saber quién entra',                  add: 1500 },
+          { id: 'pixel',     label: 'Pixel ads',         subtitle: 'Para reanunciar',                     add: 2000 },
+          { id: 'email',     label: 'Email automation',  subtitle: 'Carrito abandonado, seguimiento',     add: 4000 },
+        ]},
+      ],
+
+      'ec-shopify': [
+        { id: 'catalogo', label: '¿Cuántos productos?', multi: false, opciones: [
+          { id: 'pocos',  label: '1-25 productos',  subtitle: 'Catálogo curado',  add: 0 },
+          { id: 'medio',  label: '26-200 productos', subtitle: 'Catálogo mediano', add: 6000 },
+          { id: 'muchos', label: '200+ productos',   subtitle: 'Catálogo grande',  add: 14000 },
+        ]},
+        { id: 'tema', label: '¿Tema/Diseño?', multi: false, opciones: [
+          { id: 'gratuito', label: 'Tema gratuito personalizado', subtitle: 'Más económico',          add: 0 },
+          { id: 'premium',  label: 'Tema premium',                subtitle: '$200-$500 USD incluido', add: 6000 },
+          { id: 'custom',   label: 'Diseño 100% custom',          subtitle: 'Identidad única',        add: 15000 },
+        ]},
+        { id: 'apps', label: '¿Apps extra?', multi: true, opciones: [
+          { id: 'reviews',      label: 'Reseñas',           subtitle: 'Loox o Judge.me',       add: 1500 },
+          { id: 'email',        label: 'Email marketing',   subtitle: 'Klaviyo o Mailchimp',   add: 3500 },
+          { id: 'lealtad',      label: 'Programa de lealtad', subtitle: 'Smile.io o Yotpo',   add: 4500 },
+          { id: 'multi-idioma', label: 'Multi-idioma',      subtitle: 'Langify',               add: 3000 },
+        ]},
+        { id: 'migracion', label: '¿Migración?', multi: false, opciones: [
+          { id: 'no',        label: 'No tengo tienda',    subtitle: 'Arrancamos desde cero',  add: 0 },
+          { id: 'si-pocos',  label: 'Migración chica',    subtitle: 'Menos de 50 productos',  add: 4000 },
+          { id: 'si-muchos', label: 'Migración grande',   subtitle: '50+ productos',           add: 10000 },
+        ]},
+      ],
+
+      'ec-tienda': [
+        { id: 'tamano', label: '¿Tamaño del catálogo?', multi: false, opciones: [
+          { id: 'mini',    label: '1-10 productos',    subtitle: 'Boutique digital', add: 0 },
+          { id: 'pequeno', label: '11-50 productos',   subtitle: 'Tienda pequeña',  add: 8000 },
+          { id: 'mediano', label: '51-500 productos',  subtitle: 'Tienda mediana',  add: 28000 },
+          { id: 'grande',  label: '500+ productos',    subtitle: 'Tienda grande',   add: 70000 },
+        ]},
+        { id: 'plataforma', label: '¿Stack tech?', multi: false, opciones: [
+          { id: 'next',      label: 'Next.js + headless CMS', subtitle: 'Velocidad y SEO máximo', mul: 1.0 },
+          { id: 'wordpress', label: 'WordPress + WooCommerce', subtitle: 'Más económico',          mul: 0.85 },
+        ]},
+        { id: 'pagos', label: '¿Pasarelas?', multi: true, opciones: [
+          { id: 'tarjeta-nac', label: 'Tarjeta nacional',     subtitle: 'Stripe / Mercado Pago',    add: 5000 },
+          { id: 'tarjeta-int', label: 'Tarjeta internacional', subtitle: 'Cliente fuera de MX',     add: 5000 },
+          { id: 'spei-oxxo',   label: 'SPEI / OXXO',          subtitle: 'Cliente MX sin tarjeta',  add: 4000 },
+          { id: 'paypal',      label: 'PayPal',                subtitle: 'Internacional',            add: 3500 },
+          { id: 'mercadopago', label: 'Mercado Pago',          subtitle: 'LATAM',                   add: 4500 },
+        ]},
+        { id: 'envios', label: '¿Envíos?', multi: false, opciones: [
+          { id: 'digital', label: 'Solo digital',            subtitle: 'Producto descargable',           add: 0 },
+          { id: 'manual',  label: 'Calculo manual',          subtitle: 'Tabla fija o por ciudad',        add: 0 },
+          { id: 'auto',    label: 'Cotización automática',   subtitle: 'API DHL/Estafeta/Fedex',         add: 8000 },
+        ]},
+        { id: 'modulos', label: '¿Módulos extra?', multi: true, opciones: [
+          { id: 'cupones',      label: 'Cupones / descuentos',  subtitle: '',                         add: 3500 },
+          { id: 'resenas',      label: 'Reseñas',               subtitle: '',                         add: 4000 },
+          { id: 'wishlist',     label: 'Wishlist',              subtitle: '',                         add: 3500 },
+          { id: 'suscripciones', label: 'Suscripciones',       subtitle: 'Pago recurrente',           add: 15000 },
+          { id: 'multimoneda',  label: 'Multi-moneda',          subtitle: '',                         add: 6000 },
+          { id: 'inventario',   label: 'Inventario avanzado',   subtitle: 'Multi-almacén',            add: 12000 },
+          { id: 'lealtad',      label: 'Programa de lealtad',   subtitle: 'Puntos, niveles',          add: 10000 },
+        ]},
+        { id: 'calidad', label: '¿Acabado?', multi: false, opciones: [
+          { id: 'funcional', label: 'Funcional', subtitle: 'Sale rápido · calidad básica',           mul: 0.85 },
+          { id: 'balance',   label: 'Balanceado', subtitle: 'Recomendado',                           mul: 1.0 },
+          { id: 'premium',   label: 'Premium',    subtitle: 'Animaciones, microinteracciones',       mul: 1.35 },
+        ]},
+      ],
+
+      'ec-app': [
+        { id: 'plataforma', label: '¿Para qué plataformas?', multi: false, opciones: [
+          { id: 'ios',     label: 'Solo iPhone',       subtitle: 'App Store',                          add: 0 },
+          { id: 'android', label: 'Solo Android',      subtitle: 'Google Play · más rápido',           mul: 0.85 },
+          { id: 'ambas',   label: 'iPhone + Android',  subtitle: 'La más común',                       add: 18000 },
+        ]},
+        { id: 'tipo', label: '¿A la medida o no-code?', multi: false, opciones: [
+          { id: 'nocode', label: 'No-code', subtitle: 'Más rápido y económico · ideal para validar', mul: 0.55 },
+          { id: 'medida', label: 'A la medida', subtitle: 'Control total · escalable a largo plazo', mul: 1.0 },
+        ]},
+        { id: 'productos', label: '¿Cuántos productos?', multi: false, opciones: [
+          { id: 'pocos',  label: 'Catálogo curado (<25)', subtitle: '', add: 0 },
+          { id: 'medio',  label: 'Mediano (25-200)',       subtitle: '', add: 8000 },
+          { id: 'muchos', label: 'Grande (200+)',          subtitle: '', add: 18000 },
+        ]},
+        { id: 'pagos', label: '¿Pagos in-app?', multi: false, opciones: [
+          { id: 'apple-google', label: 'Apple Pay / Google Pay', subtitle: 'Comisión 30% de las tiendas', add: 6000 },
+          { id: 'externa',      label: 'Pasarela externa',       subtitle: 'Stripe / Mercado Pago · evita 30%', add: 12000 },
+        ]},
+        { id: 'funciones', label: '¿Funciones especiales?', multi: true, opciones: [
+          { id: 'push',     label: 'Notificaciones push', subtitle: 'Carrito abandonado, promos', add: 5000 },
+          { id: 'login',    label: 'Login + perfiles',    subtitle: 'Historial, favoritos',       add: 9000, flag: 'auth-or-api' },
+          { id: 'lealtad',  label: 'Programa de lealtad', subtitle: 'Puntos, niveles',            add: 10000 },
+          { id: 'chat',     label: 'Chat de soporte',     subtitle: 'Atención in-app',            add: 12000 },
+          { id: 'tracking', label: 'Tracking de pedidos', subtitle: 'Estado en tiempo real',      add: 8000 },
+        ]},
+      ],
 
       // ── Chatbot con IA (4 preguntas) ──────────────────────────────
       'auto-chatbot': [
@@ -579,12 +666,15 @@ window.IBISNE_PRICING = {
       'web-landing':        ['Astro / Next.js', 'TailwindCSS', 'Deploy en Vercel'],
       'web-funnel':         ['Next.js + integraciones', 'Email automation', 'Analytics avanzado'],
       'web-sitio':          ['Next.js / Astro', 'CMS (Sanity/Strapi)', 'Deploy en Vercel'],
-      'web-tienda':         ['Shopify o Next.js + headless', 'Pasarela integrada'],
       'app-pwa':            ['React/Next.js PWA', 'Service Worker + Manifest'],
       'app-android':        ['React Native / Flutter / Kotlin', 'Google Play Console'],
       'app-ios':            ['React Native / Flutter / Swift', 'App Store Connect'],
       'app-ambas':          ['React Native / Flutter', 'Google Play + App Store'],
       'app-desktop':        ['Electron / Tauri', 'Auto-update'],
+      'ec-mini':            ['Next.js / Astro single-page', 'Stripe / Mercado Pago', 'Deploy en Vercel'],
+      'ec-shopify':         ['Shopify + apps oficiales', 'Theme customization', 'Apps de terceros'],
+      'ec-tienda':          ['Next.js + headless CMS', 'Pasarela integrada', 'Deploy en Vercel + Railway'],
+      'ec-app':             ['React Native / Flutter', 'Firebase + pagos in-app', 'App Store + Google Play'],
       'auto-chatbot':       ['LLM (OpenAI/Anthropic) + n8n', 'WhatsApp Business API'],
       'auto-agenda':        ['Cal.com / Calendly API + custom', 'Google Calendar sync'],
       'auto-integraciones': ['Zapier / Make / n8n', 'APIs REST + webhooks'],
