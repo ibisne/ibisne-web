@@ -879,14 +879,24 @@
         ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">${L('+ qué incluye')}</button>
            <div class="sf-card-detalle" hidden>${L(o.detalle)}</div>`
         : '';
+      // v8.3.2 · sf-card adopta lógica de service-card: icon top (del servicio
+      // padre) + foot con meta. Cero compactación.
+      const stateHtml = isSel
+        ? `<span class="sf-card-state is-added">${L('seleccionada')}</span>`
+        : '<span class="sf-card-arrow">→</span>';
       return `
         <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-opt="${o.id}" type="button">
           ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
+          <div class="sf-card-top">
+            <div class="sf-card-icon">${iconHtml(servicio.icon || 'arrow', 'line')}</div>
+          </div>
           <div class="sf-card-label">${L(o.label)}</div>
           ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
           <div class="sf-card-foot">
-            <span class="sf-card-price">${priceHtml}</span>
-            ${detalleHtml}
+            <div class="sf-card-meta">
+              <span class="sf-card-price">${priceHtml}</span>
+            </div>
+            ${detalleHtml ? detalleHtml : stateHtml}
           </div>
         </button>
       `;
