@@ -462,12 +462,12 @@
         <div class="screen-header">
           ${renderBreadcrumb([{ label: 'Inicio' }])}
           <h2 class="cat-title screen-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
-          <p class="cat-help">
-            ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
+          <p class="cat-help screen-subtitle">
+            ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · armamos tu cotización.'}
           </p>
-          ${cartContext}
         </div>
         <div class="screen-body">
+          ${cartContext}
           <div class="mega-grid">${cardsHtml}</div>
         </div>
         <div class="screen-actions">
@@ -614,13 +614,8 @@
       <div class="screen cat-detail-screen">
         <div class="screen-header">
           ${breadcrumb}
-          <div class="cat-detail-head">
-            <div class="cat-detail-icon">${iconHtml(icon, 'line')}</div>
-            <div>
-              <h2 class="cat-detail-title screen-title">${L(title)}</h2>
-              <p class="cat-detail-subtitle screen-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
-            </div>
-          </div>
+          <h2 class="cat-detail-title screen-title">${L(title)}</h2>
+          <p class="cat-detail-subtitle screen-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
         </div>
         <div class="screen-body">
           <div class="service-grid">${servsHtml}</div>
@@ -979,16 +974,16 @@
             { label: megaConfirm ? megaConfirm.label : 'Servicios', href: '#/catalog' },
             { label: servicio.label }
           ])}
+          <h2 class="screen-title">Servicio configurado</h2>
+          <p class="screen-subtitle">${L(servicio.label)} ya está en tu carrito. ¿Qué sigue?</p>
         </div>
         <div class="screen-body">
           <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
-          <h2 class="sf-confirm-title screen-title">${L(servicio.label)} quedó configurado</h2>
           ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
           <div class="sf-confirm-price">
             <span class="sf-confirm-price-label">Precio de este servicio</span>
             <span class="sf-confirm-price-amount">${formatMxn(price)}</span>
           </div>
-          <p class="sf-confirm-hint">Ya está en tu carrito. ¿Qué sigue?</p>
         </div>
         <div class="screen-actions">
           <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← Ajustar este servicio</button>

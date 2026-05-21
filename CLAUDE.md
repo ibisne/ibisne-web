@@ -6,7 +6,7 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v8.5.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v8.5.1) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
 
 ## El design system OFICIAL es **VAULT (v2)** — `/design-system-v2/`
 
@@ -53,7 +53,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v8.5.0)
+## Estructura del repo (actual · v8.5.1)
 
 ```
 /
@@ -130,7 +130,7 @@ Hash routing:
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v8.5.0`.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v8.5.1`.
 
 ## Voice & copy
 
