@@ -173,11 +173,6 @@
     const v = variant || 'line';
     return window.IBISNE_ICONS.get(id, v) || '';
   }
-  function iconCard(id){
-    if (!window.IBISNE_ICONS || !id) return '';
-    return window.IBISNE_ICONS.card(id) || '';
-  }
-
   // ═══════════════════════════════════════════════════════════════════
   // FOLIO + LEAD (preservado)
   // ═══════════════════════════════════════════════════════════════════
@@ -428,8 +423,8 @@
     const cardsHtml = PRICING.megaCategorias.map(mega => {
       const allIds = collectMegaServiceIds(mega);
       const countInCart = allIds.filter(id => serviciosInCart.has(id)).length;
-      const subN = mega.subCategorias ? mega.subCategorias.length : (mega.serviciosIds || []).length;
-      const countLabel = mega.subCategorias ? subN + ' áreas' : subN + ' servicios';
+      const subN = (mega.serviciosIds || []).length;
+      const countLabel = subN + ' servicios';
       // v8.3.1 · mega-card respeta lógica de service-card: precio "desde $X" + count.
       const bases = allIds.map(id => (PRICING.servicios[id] && PRICING.servicios[id].base) || 0).filter(b => b > 0);
       const minBase = bases.length ? Math.min(...bases) : 0;
@@ -463,15 +458,19 @@
       </div>` : '';
 
     $('#wizard').innerHTML = `
-      <div class="cat-screen">
-        ${renderBreadcrumb([{ label: 'Inicio' }])}
-        <h2 class="cat-title screen-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
-        <p class="cat-help">
-          ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
-        </p>
-        ${cartContext}
-        <div class="mega-grid">${cardsHtml}</div>
-        <div class="wizard-actions">
+      <div class="screen cat-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([{ label: 'Inicio' }])}
+          <h2 class="cat-title screen-title">${nCart > 0 ? '¿Agregar otro servicio?' : '¿Qué necesitas?'}</h2>
+          <p class="cat-help">
+            ${nCart > 0 ? 'Suma otro servicio o ve directo a tu cotización.' : 'Elige por dónde empezar · respondes unas preguntas y armamos tu cotización.'}
+          </p>
+          ${cartContext}
+        </div>
+        <div class="screen-body">
+          <div class="mega-grid">${cardsHtml}</div>
+        </div>
+        <div class="screen-actions">
           <a href="index.html" class="wizard-back">← Volver al inicio</a>
           <button class="btn btn-primary" id="cat-continue" type="button" ${nCart === 0 ? 'disabled' : ''}>
             ${nCart === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
@@ -520,15 +519,9 @@
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
 
-    // Si es una mega con subs, listar las áreas que incluye
+    // Listar los servicios que incluye la categoría
     let subsHtml = '';
-    if (mega && mega.subCategorias) {
-      subsHtml = `
-        <div class="info-modal-subs">
-          <div class="info-modal-subs-label">Incluye:</div>
-          <ul>${mega.subCategorias.map(s => `<li><strong>${L(s.label)}</strong> · ${L(s.subtitle || '')}</li>`).join('')}</ul>
-        </div>`;
-    } else if (mega && mega.serviciosIds) {
+    if (mega && mega.serviciosIds) {
       const PRICING = window.IBISNE_PRICING;
       subsHtml = `
         <div class="info-modal-subs">
@@ -562,94 +555,7 @@
   }
 
   function collectMegaServiceIds(mega){
-    if (mega.subCategorias) {
-      return mega.subCategorias.flatMap(s => s.serviciosIds || []);
-    }
     return mega.serviciosIds || [];
-  }
-
-  // ── Nivel 2 · sub-categorías de una mega ─────────────────────────────
-  function renderSubGrid(mega){
-    const PRICING = window.IBISNE_PRICING;
-    const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
-
-    const cardsHtml = (mega.subCategorias || []).map(sub => {
-      const ids = sub.serviciosIds || [];
-      const countInCart = ids.filter(id => serviciosInCart.has(id)).length;
-
-      // Preview: 3 servicios con precio
-      const preview = ids.slice(0, 3).map(id => PRICING.servicios[id]).filter(Boolean);
-      const previewHtml = preview.map(s => `<li>${L(s.label)} <span class="cat-card-preview-price">${formatMxn(s.base)}</span></li>`).join('');
-
-      return `
-        <button class="sub-card ${countInCart > 0 ? 'has-items' : ''}" data-sub-open="${sub.id}" type="button">
-          ${sub.info ? `<span class="mega-card-info" data-sub-info="${sub.id}" role="button" tabindex="0" aria-label="Más información">i</span>` : ''}
-          <div class="sub-card-icon">${iconHtml(sub.icon, 'line')}</div>
-          <div class="sub-card-label">${L(sub.label)}</div>
-          <div class="sub-card-subtitle">${L(sub.subtitle)}</div>
-          <div class="sub-card-foot">${ids.length} servicios ${countInCart > 0 ? `· <span class="sub-card-count">${countInCart} en carrito</span>` : '<span>→</span>'}</div>
-        </button>
-      `;
-    }).join('');
-
-    const nCartSub = State.cart.servicios.length;
-    $('#wizard').innerHTML = `
-      <div class="cat-detail-screen">
-        ${renderBreadcrumb([
-          { label: 'Inicio', href: '#/catalog' },
-          { label: mega.label }
-        ])}
-        <div class="cat-detail-head">
-          <div class="cat-detail-icon">${iconHtml(mega.icon, 'line')}</div>
-          <div>
-            <h2 class="cat-detail-title">${L(mega.label)}</h2>
-            <p class="cat-detail-subtitle">${L(mega.subtitle)} · elige un área</p>
-          </div>
-        </div>
-        <div class="sub-grid">${cardsHtml}</div>
-        <div class="wizard-actions">
-          <button class="wizard-back" id="cat-back-mega" type="button">← Volver a categorías</button>
-          <button class="btn btn-primary" id="cat-continue" type="button" ${nCartSub === 0 ? 'disabled' : ''}>
-            ${nCartSub === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
-          </button>
-        </div>
-      </div>
-    `;
-
-    $$('#wizard [data-sub-open]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        if (e.target.closest('[data-sub-info]')) return;
-        State.catalogPath = { mega: mega.id, sub: btn.dataset.subOpen };
-        trackStepChange();
-        renderCatalog();
-      });
-    });
-    $$('#wizard [data-sub-info]').forEach(el => {
-      const open = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const sub = (mega.subCategorias || []).find(s => s.id === el.dataset.subInfo);
-        if (sub) openInfoModal(L(sub.label), L(sub.info || sub.subtitle || ''), { serviciosIds: sub.serviciosIds });
-      };
-      el.addEventListener('click', open);
-      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
-    });
-    const goBackToMega = () => {
-      State.catalogPath = { mega: null, sub: null };
-      trackStepChange();
-      renderCatalog();
-    };
-    $('#cat-back-mega').addEventListener('click', goBackToMega);
-    // bc-root-sg removed (breadcrumb now uses renderBreadcrumb · no inline id)
-    // breadcrumb links handled via delegation below
-    document.querySelectorAll('#wizard .screen-breadcrumb a[href="#/catalog"]').forEach(a => {
-      a.addEventListener('click', (e) => { e.preventDefault(); goBackToMega(); });
-    });
-    $('#cat-continue').addEventListener('click', () => {
-      if (State.cart.servicios.length === 0) return;
-      scheduleAdvance('#/datos', 80);
-    });
-    refreshCart();
   }
 
   // ── Nivel 3 · lista de servicios (de una sub o de una mega sin subs) ─
@@ -705,17 +611,21 @@
 
     const backLabel = sub ? L(mega.label) : 'categorías';
     $('#wizard').innerHTML = `
-      <div class="cat-detail-screen">
-        ${breadcrumb}
-        <div class="cat-detail-head">
-          <div class="cat-detail-icon">${iconHtml(icon, 'line')}</div>
-          <div>
-            <h2 class="cat-detail-title">${L(title)}</h2>
-            <p class="cat-detail-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
+      <div class="screen cat-detail-screen">
+        <div class="screen-header">
+          ${breadcrumb}
+          <div class="cat-detail-head">
+            <div class="cat-detail-icon">${iconHtml(icon, 'line')}</div>
+            <div>
+              <h2 class="cat-detail-title screen-title">${L(title)}</h2>
+              <p class="cat-detail-subtitle screen-subtitle">${L(subtitle)} · ${servs.length} servicios disponibles</p>
+            </div>
           </div>
         </div>
-        <div class="service-grid">${servsHtml}</div>
-        <div class="wizard-actions">
+        <div class="screen-body">
+          <div class="service-grid">${servsHtml}</div>
+        </div>
+        <div class="screen-actions">
           <button class="wizard-back" id="cat-back" type="button">← Volver a ${backLabel}</button>
           <button class="btn btn-primary" id="cat-continue" type="button" ${State.cart.servicios.length === 0 ? 'disabled' : ''}>
             ${State.cart.servicios.length === 0 ? 'Elige un servicio' : 'Ver mi cotización →'}
@@ -945,27 +855,30 @@
     // v8.4.0 · Lookup mega para el breadcrumb del subflow
     const PRICING_sf = window.IBISNE_PRICING;
     const megaSf = PRICING_sf && PRICING_sf.megaCategorias
-      ? PRICING_sf.megaCategorias.find(m => (m.serviciosIds || []).includes(sf.servicioId)
-          || (m.subCategorias || []).some(sc => (sc.serviciosIds || []).includes(sf.servicioId)))
+      ? PRICING_sf.megaCategorias.find(m => (m.serviciosIds || []).includes(sf.servicioId))
       : null;
 
     $('#wizard').innerHTML = `
-      <div class="sf-screen">
-        ${renderBreadcrumb([
-          { label: 'Inicio', href: '#/catalog' },
-          { label: megaSf ? megaSf.label : 'Servicios', href: '#/catalog' },
-          { label: servicio.label }
-        ])}
-        <div class="sf-progress">
-          <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:${pct}%"></div></div>
+      <div class="screen sf-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([
+            { label: 'Inicio', href: '#/catalog' },
+            { label: megaSf ? megaSf.label : 'Servicios', href: '#/catalog' },
+            { label: servicio.label }
+          ])}
+          <div class="sf-progress">
+            <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:${pct}%"></div></div>
+          </div>
+          <div class="sf-q-head">
+            <h2 class="sf-q-title screen-title">${L(q.label)}</h2>
+            ${q.help ? `<p class="sf-q-help screen-subtitle">${L(q.help)}</p>` : ''}
+            ${isMulti ? `<p class="sf-q-multi">${L('Marca todas las que apliquen.')}</p>` : ''}
+          </div>
         </div>
-        <div class="sf-q-head">
-          <h2 class="sf-q-title">${L(q.label)}</h2>
-          ${q.help ? `<p class="sf-q-help">${L(q.help)}</p>` : ''}
-          ${isMulti ? `<p class="sf-q-multi">${L('Marca todas las que apliquen.')}</p>` : ''}
+        <div class="screen-body">
+          <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
         </div>
-        <div class="sf-grid ${isMulti ? 'is-multi' : ''}">${opcionesHtml}</div>
-        <div class="wizard-actions">
+        <div class="screen-actions">
           <button class="wizard-back" id="sf-back" type="button">← ${backLabel}</button>
           ${isMulti
             ? `<button class="btn btn-primary" id="sf-next" type="button">Continuar →</button>`
@@ -1055,30 +968,35 @@
     // v8.4.0 · Lookup mega para el breadcrumb de confirmación
     const PRICING_confirm = window.IBISNE_PRICING;
     const megaConfirm = PRICING_confirm && PRICING_confirm.megaCategorias
-      ? PRICING_confirm.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id)
-          || (m.subCategorias || []).some(sc => (sc.serviciosIds || []).includes(servicio.id)))
+      ? PRICING_confirm.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id))
       : null;
 
     $('#wizard').innerHTML = `
-      <div class="sf-confirm-screen">
-        ${renderBreadcrumb([
-          { label: 'Inicio', href: '#/catalog' },
-          { label: megaConfirm ? megaConfirm.label : 'Servicios', href: '#/catalog' },
-          { label: servicio.label }
-        ])}
-        <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
-        <h2 class="sf-confirm-title">${L(servicio.label)} quedó configurado</h2>
-        ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
-        <div class="sf-confirm-price">
-          <span class="sf-confirm-price-label">Precio de este servicio</span>
-          <span class="sf-confirm-price-amount">${formatMxn(price)}</span>
+      <div class="screen sf-confirm-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([
+            { label: 'Inicio', href: '#/catalog' },
+            { label: megaConfirm ? megaConfirm.label : 'Servicios', href: '#/catalog' },
+            { label: servicio.label }
+          ])}
         </div>
-        <p class="sf-confirm-hint">Ya está en tu carrito. ¿Qué sigue?</p>
-        <div class="sf-confirm-actions">
-          <button class="btn-line btn" id="sf-add-more" type="button">+ Agregar otro servicio</button>
-          <button class="btn btn-primary" id="sf-go-quote" type="button">Ver mi cotización →</button>
+        <div class="screen-body">
+          <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
+          <h2 class="sf-confirm-title screen-title">${L(servicio.label)} quedó configurado</h2>
+          ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
+          <div class="sf-confirm-price">
+            <span class="sf-confirm-price-label">Precio de este servicio</span>
+            <span class="sf-confirm-price-amount">${formatMxn(price)}</span>
+          </div>
+          <p class="sf-confirm-hint">Ya está en tu carrito. ¿Qué sigue?</p>
         </div>
-        <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← Ajustar este servicio</button>
+        <div class="screen-actions">
+          <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← Ajustar este servicio</button>
+          <div class="sf-confirm-actions">
+            <button class="btn-line btn" id="sf-add-more" type="button">+ Agregar otro servicio</button>
+            <button class="btn btn-primary" id="sf-go-quote" type="button">Ver mi cotización →</button>
+          </div>
+        </div>
       </div>
     `;
 
@@ -1155,30 +1073,34 @@
 
     const d = State.cliente;
     $('#wizard').innerHTML = `
-      <div class="datos-screen">
-        ${renderBreadcrumb([{ label: 'Tu cotización · paso final' }])}
-        <h2 class="screen-title datos-title">Falta poco para ver tu cotización</h2>
-        <p class="datos-help">Te enviamos la propuesta firmable + folio. Te respondemos en menos de 24 horas. Cero spam · cero llamadas no solicitadas.</p>
-        <div class="datos-fields">
-          <div class="datos-field">
-            <label>${iconHtml('login','line')} Nombre <span class="datos-req">*</span></label>
-            <input type="text" name="nombre" required placeholder="Tu nombre" value="${(d.nombre||'').replace(/"/g,'&quot;')}" autocomplete="name">
-          </div>
-          <div class="datos-field">
-            <label>${iconHtml('whatsapp','line')} WhatsApp <span class="datos-req">*</span></label>
-            <input type="tel" name="whatsapp" required placeholder="+52 33 0000 0000" value="${(d.whatsapp||'').replace(/"/g,'&quot;')}" autocomplete="tel">
-          </div>
-          <div class="datos-field">
-            <label>${iconHtml('arrow','line')} Email <span class="datos-req">*</span></label>
-            <input type="email" name="email" required placeholder="hola@tudominio.com" value="${(d.email||'').replace(/"/g,'&quot;')}" autocomplete="email">
-          </div>
-          <div class="datos-field">
-            <label>${iconHtml('service','line')} <span class="datos-empresa-label">Empresa <span class="datos-opt">(opcional)</span></span></label>
-            <input type="text" name="empresa" placeholder="Nombre de tu negocio o proyecto" value="${(d.empresa||'').replace(/"/g,'&quot;')}" autocomplete="organization">
-          </div>
+      <div class="screen datos-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([{ label: 'Tu cotización · paso final' }])}
+          <h2 class="screen-title datos-title">Falta poco para ver tu cotización</h2>
+          <p class="datos-help screen-subtitle">Te enviamos la propuesta firmable + folio. Te respondemos en menos de 24 horas. Cero spam · cero llamadas no solicitadas.</p>
         </div>
-        <p class="datos-privacy">${L('Tus datos quedan privados · solo nosotros y tú · ver')} <a href="legal/privacidad.html" target="_blank">${L('aviso de privacidad')}</a></p>
-        <div class="datos-actions">
+        <div class="screen-body">
+          <div class="datos-fields">
+            <div class="datos-field">
+              <label>${iconHtml('login','line')} Nombre <span class="datos-req">*</span></label>
+              <input type="text" name="nombre" required placeholder="Tu nombre" value="${(d.nombre||'').replace(/"/g,'&quot;')}" autocomplete="name">
+            </div>
+            <div class="datos-field">
+              <label>${iconHtml('whatsapp','line')} WhatsApp <span class="datos-req">*</span></label>
+              <input type="tel" name="whatsapp" required placeholder="+52 33 0000 0000" value="${(d.whatsapp||'').replace(/"/g,'&quot;')}" autocomplete="tel">
+            </div>
+            <div class="datos-field">
+              <label>${iconHtml('arrow','line')} Email <span class="datos-req">*</span></label>
+              <input type="email" name="email" required placeholder="hola@tudominio.com" value="${(d.email||'').replace(/"/g,'&quot;')}" autocomplete="email">
+            </div>
+            <div class="datos-field">
+              <label>${iconHtml('service','line')} <span class="datos-empresa-label">Empresa <span class="datos-opt">(opcional)</span></span></label>
+              <input type="text" name="empresa" placeholder="Nombre de tu negocio o proyecto" value="${(d.empresa||'').replace(/"/g,'&quot;')}" autocomplete="organization">
+            </div>
+          </div>
+          <p class="datos-privacy">${L('Tus datos quedan privados · solo nosotros y tú · ver')} <a href="legal/privacidad.html" target="_blank">${L('aviso de privacidad')}</a></p>
+        </div>
+        <div class="screen-actions">
           <button class="btn-ghost btn" data-prev type="button">← Atrás</button>
           <button class="btn btn-primary" id="datos-continue" type="button" disabled>Ver mi cotización →</button>
         </div>
@@ -1351,12 +1273,15 @@
     const waUrl = `https://wa.me/523329575274?text=${encodeURIComponent(waMsg)}`;
 
     $('#wizard').innerHTML = `
-      <div class="result-screen result-checkout">
-        <div class="rk-head">
-          ${renderBreadcrumb([{ label: 'Cotización · folio #' + folio }])}
-          <h2 class="screen-title rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
-          <p class="rk-sub">Revisa el desglose, confirma con un pago de anticipo y arrancamos. Cero compromisos hasta que tú decidas.</p>
+      <div class="screen result-screen result-checkout">
+        <div class="screen-header">
+          <div class="rk-head">
+            ${renderBreadcrumb([{ label: 'Cotización · folio #' + folio }])}
+            <h2 class="screen-title rk-title">${datosCliente.nombre ? `${datosCliente.nombre.split(' ')[0]}, t` : 'T'}u cotización está lista.</h2>
+            <p class="screen-subtitle rk-sub">Revisa el desglose, confirma con un pago de anticipo y arrancamos. Cero compromisos hasta que tú decidas.</p>
+          </div>
         </div>
+        <div class="screen-body">
 
         <article class="rk-card rk-project">
           <div class="rk-card-eyebrow">${L('— TU PROYECTO')}</div>
@@ -1454,6 +1379,7 @@
           <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn rk-aux-wa">${iconHtml('whatsapp','line')} Hablar con un hunter sobre esta cotización</a>
         </article>
 
+        </div>
       </div>
     `;
 

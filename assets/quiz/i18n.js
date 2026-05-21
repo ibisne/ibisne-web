@@ -12,21 +12,6 @@ window.IBISNE_I18N_DATA = {
   'en carrito': 'in cart',
   // v8.3.2 · sf-card state
   'seleccionada': 'selected',
-  // Verticales
-  'Web': 'Web',
-  'Ecommerce': 'Ecommerce',
-  'App móvil': 'Mobile App',
-  'Avanzado': 'Advanced',
-  // Categorías de vertical
-  'Sitio o landing': 'Site or landing',
-  'Venta en línea': 'Online sales',
-  'Producto móvil': 'Mobile product',
-  'Tech especializado': 'Specialized tech',
-  // Helps de vertical
-  'Landing, sitio completo, bio-link, página de leads.': 'Landing, full site, bio-link, leads page.',
-  'Single product, Shopify, headless, marketplace.': 'Single product, Shopify, headless, marketplace.',
-  'iOS, Android, híbrida o MVP no-code.': 'iOS, Android, hybrid or no-code MVP.',
-  'IA, Web3, SaaS custom, plataformas complejas.': 'AI, Web3, custom SaaS, complex platforms.',
   // Subtipos · web
   'Bio-link / Linktree': 'Bio-link / Linktree',
   'Landing page': 'Landing page',
@@ -123,7 +108,6 @@ window.IBISNE_I18N_DATA = {
   '← Volver al inicio': '← Back to home',
   'Continuar →': 'Continue →',
   'Ver cotización →': 'See quote →',
-  '← Clasificador': '← Classifier',
   'Generar mi cotización →': 'Generate my quote →',
   '← Volver al clasificador': '← Back to classifier',
   // Bottom bar
