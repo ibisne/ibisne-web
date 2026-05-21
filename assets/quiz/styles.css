@@ -381,14 +381,13 @@ body.is-booting{ overflow:hidden; }
 .mega-card.has-items{ border-color:var(--text-secondary); }
 
 /* Iconos de card · cuadro neutro · regla global aplica a mega/service/sf */
-.mega-card-icon,.service-card-icon,.sf-card-icon,.cat-detail-icon{
+.mega-card-icon,.service-card-icon,.sf-card-icon{
   display:inline-flex; align-items:center; justify-content:center;
   width:40px; height:40px; flex:none;
   border:1px solid var(--bg-line); border-radius:var(--radius-input);
   color:var(--text-primary);
 }
-.mega-card-icon svg,.service-card-icon svg,.sf-card-icon svg,
-.cat-detail-icon svg{ width:20px; height:20px; }
+.mega-card-icon svg,.service-card-icon svg,.sf-card-icon svg{ width:20px; height:20px; }
 
 /* Títulos / subtítulos de card · jerarquía consistente · v8.5.0 */
 .mega-card-label,.service-card-label,.sf-card-label{
@@ -542,12 +541,9 @@ body.is-booting{ overflow:hidden; }
 .screen-breadcrumb a:hover{ color:var(--text-primary); }
 .screen-breadcrumb-sep{ color:var(--text-muted); opacity:0.6; }
 .screen-breadcrumb span:last-child{ color:var(--text-primary); }
-.cat-detail-head{
-  display:flex; align-items:center; gap:var(--sp-3); margin-top:var(--sp-3);
-}
-.cat-detail-icon{ width:48px; height:48px; }
-.cat-detail-icon svg{ width:24px; height:24px; }
-.cat-detail-subtitle{ margin-top:4px; }
+/* v8.5.1 · .cat-detail-head/.cat-detail-icon eliminados · el header de
+ * servicios ahora es plano (breadcrumb + título + subtítulo) igual que
+ * todas las demás pantallas · cero salto horizontal del título. */
 
 .cat-card-preview-price{ font-family:var(--font-mono); color:var(--text-primary); }
 
@@ -989,6 +985,10 @@ body.is-handover .result-screen{ animation:none !important; }
   flex-direction: column;
   gap: var(--sp-3);
   flex: 0 0 auto;
+  /* v8.5.1 · altura reservada · el .screen-body (grid) arranca siempre
+   * en el mismo Y entre pantallas · cero salto vertical. Escala con el
+   * viewport igual que el título fluido (clamp). */
+  min-height: clamp(116px, 13vw, 168px);
 }
 .screen-body {
   flex: 1 1 auto;
