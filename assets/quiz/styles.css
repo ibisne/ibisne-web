@@ -39,9 +39,11 @@
   --ds-tap: 44px;                          /* touch target mínimo */
 
   /* Títulos/sub fluidos mobile→desktop (capa propia · VAULT no tiene
-     un paso intermedio para títulos de wizard) */
-  --ds-fs-title: clamp(25px, 6.4vw, 38px);
-  --ds-fs-sub:   clamp(15px, 2.4vw, 17px);
+     un paso intermedio para títulos de wizard) · v8.5.0 premium */
+  --ds-fs-title:      clamp(28px, 6.4vw, 44px);    /* era clamp(25, 6.4vw, 38) */
+  --ds-fs-sub:        clamp(16px, 2.8vw, 19px);    /* era clamp(15, 2.4vw, 17) */
+  --ds-fs-card-label: clamp(20px, 1.4vw, 26px);
+  --ds-fs-card-price: clamp(13px, 0.8vw, 15px);
 
   /* Mapeo de tokens propios viejos → VAULT (no se duplican):
      --bg-elevated → --bg-paper · --bg-deep-2 → --bg-deep
@@ -268,7 +270,7 @@ body.is-booting{ overflow:hidden; }
 /* ───────────────────────────────────────────────────────────────────
    § 07 · TIPOGRAFÍA DE PANTALLA (tokenizada · fluida)
    ─────────────────────────────────────────────────────────────────── */
-.eyebrow,.rk-folio,.rk-card-eyebrow,.cat-breadcrumb,.sf-progress-label,
+.eyebrow,.rk-folio,.rk-card-eyebrow,
 .rk-cart-eyebrow,.rk-cart-count,.info-modal-eyebrow,.menu-label{
   font-family:var(--font-mono);
   font-size:var(--fs-nano);
@@ -340,13 +342,7 @@ body.is-booting{ overflow:hidden; }
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 
-/* Barra de acciones del wizard · misma posición SIEMPRE (cero salto) */
-.wizard-actions{
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
-  margin-top:var(--sp-5); padding-top:var(--sp-4);
-  border-top:1px solid var(--bg-line);
-}
-.wizard-actions .btn{ flex:none; }
+/* .wizard-actions eliminado en v8.5.0 · reemplazado por .screen-actions */
 
 /* ───────────────────────────────────────────────────────────────────
    § 09 · SISTEMA DE CARDS UNIFICADO
@@ -354,11 +350,11 @@ body.is-booting{ overflow:hidden; }
    icon · título · subtítulo · pills · precio · (+/− detalle)
    Estados: hover = gris (sin verde) · selected/added = verde (único uso)
    ─────────────────────────────────────────────────────────────────── */
-.mega-card,.sub-card,.service-card,.sf-card{
+.mega-card,.service-card,.sf-card{
   position:relative;
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
-  padding:var(--sp-4);
+  padding:var(--sp-5);
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
   border-radius:var(--radius);
@@ -368,12 +364,11 @@ body.is-booting{ overflow:hidden; }
              transform var(--dur-fast) var(--ease-out-quart),
              background var(--dur-fast) var(--ease-out-quart);
 }
-.mega-card:hover,.sub-card:hover,.service-card:hover,.sf-card:hover{
+.mega-card:hover,.service-card:hover,.sf-card:hover{
   border-color:var(--text-muted);
   transform:translateY(-2px);            /* feedback mono · SIN verde */
 }
-.mega-card:focus-visible,.sub-card:focus-visible,
-.service-card:focus-visible,.sf-card:focus-visible{
+.mega-card:focus-visible,.service-card:focus-visible,.sf-card:focus-visible{
   outline:1px solid var(--text-secondary); outline-offset:2px;
 }
 
@@ -383,25 +378,25 @@ body.is-booting{ overflow:hidden; }
   border-color:var(--accent);
   background:var(--accent-soft);
 }
-.mega-card.has-items,.sub-card.has-items{ border-color:var(--text-secondary); }
+.mega-card.has-items{ border-color:var(--text-secondary); }
 
-/* Iconos de card · cuadro neutro · regla global aplica a mega/sub/service/sf */
-.mega-card-icon,.sub-card-icon,.service-card-icon,.sf-card-icon,.cat-detail-icon{
+/* Iconos de card · cuadro neutro · regla global aplica a mega/service/sf */
+.mega-card-icon,.service-card-icon,.sf-card-icon,.cat-detail-icon{
   display:inline-flex; align-items:center; justify-content:center;
   width:40px; height:40px; flex:none;
   border:1px solid var(--bg-line); border-radius:var(--radius-input);
   color:var(--text-primary);
 }
-.mega-card-icon svg,.sub-card-icon svg,.service-card-icon svg,.sf-card-icon svg,
+.mega-card-icon svg,.service-card-icon svg,.sf-card-icon svg,
 .cat-detail-icon svg{ width:20px; height:20px; }
 
-/* Títulos / subtítulos de card · jerarquía consistente */
-.mega-card-label,.sub-card-label,.service-card-label,.sf-card-label{
-  font-family:var(--font-display); font-size:var(--fs-card-title);
+/* Títulos / subtítulos de card · jerarquía consistente · v8.5.0 */
+.mega-card-label,.service-card-label,.sf-card-label{
+  font-family:var(--font-display); font-size:var(--ds-fs-card-label);
   font-weight:var(--fw-medium); line-height:var(--lh-tight);
   letter-spacing:var(--ls-body); color:var(--text-primary);
 }
-.mega-card-summary,.sub-card-subtitle,.service-card-subtitle,.sf-card-subtitle{
+.mega-card-summary,.service-card-subtitle,.sf-card-subtitle{
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
 }
 
@@ -410,16 +405,16 @@ body.is-booting{ overflow:hidden; }
  * con meta vertical (precio + count). Resultado: las 3 clases de card respetan la
  * misma jerarquía visual · cero ruido entre niveles del flujo.
  */
-.mega-card-foot,.sub-card-foot{
+.mega-card-foot{
   display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-2);
   margin-top:auto; padding-top:var(--sp-2);
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .mega-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
-.mega-card-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); text-transform:none; letter-spacing:0; }
-.mega-card-arrow,.sub-card-foot span{ color:var(--text-secondary); }
-.mega-card-count,.sub-card-count,.mega-card-relevant{ color:var(--text-muted); }
+.mega-card-price{ font-family:var(--font-mono); font-size:var(--ds-fs-card-price); color:var(--text-primary); text-transform:none; letter-spacing:0; }
+.mega-card-arrow{ color:var(--text-secondary); }
+.mega-card-count,.mega-card-relevant{ color:var(--text-muted); }
 .mega-card-state{
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
@@ -455,11 +450,11 @@ body.is-booting{ overflow:hidden; }
 }
 .service-card-meta,.sf-card-meta{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .service-price,.sf-card-price{
-  font-family:var(--font-mono); font-size:var(--fs-small);
+  font-family:var(--font-mono); font-size:var(--ds-fs-card-price);
   color:var(--text-primary); font-weight:var(--fw-medium);
 }
 .service-time{
-  font-family:var(--font-mono); font-size:var(--fs-nano);
+  font-family:var(--font-mono); font-size:var(--ds-fs-card-price);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 .service-card-state,.sf-card-state{
@@ -496,10 +491,10 @@ body.is-booting{ overflow:hidden; }
 /* ───────────────────────────────────────────────────────────────────
    § 10 · GRID ÚNICO (mobile 1col · ≥768 2col · ≥1100 2col)
    ─────────────────────────────────────────────────────────────────── */
-.mega-grid,.sub-grid,.service-grid,.sf-grid,.bp-grid,.rk-project-meta{
+.mega-grid,.service-grid,.sf-grid,.bp-grid,.rk-project-meta{
   display:grid; grid-template-columns:1fr; gap:var(--sp-3);
 }
-.mega-grid,.sub-grid,.service-grid,.sf-grid{ margin-top:var(--sp-4); }
+.mega-grid,.service-grid,.sf-grid{ margin-top:var(--sp-4); }
 
 /* ───────────────────────────────────────────────────────────────────
    § 11 · CATÁLOGO (mega · sub · servicios)
@@ -523,11 +518,6 @@ body.is-booting{ overflow:hidden; }
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-primary);
 }
 .cat-cart-context-cta:hover{ color:var(--accent); }
-
-/* Breadcrumb + cabecera de detalle */
-.cat-breadcrumb{ display:flex; flex-wrap:wrap; gap:6px; }
-.cat-breadcrumb a:hover{ color:var(--text-primary); }
-.cat-breadcrumb span{ color:var(--text-secondary); }
 
 /* v8.4.0 · Breadcrumb global · todas las pantallas usan esta clase unificada
  * para dar continuidad visual entre catalog/services/subflow/datos/resultado.
@@ -919,7 +909,7 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:768px){
   .quiz-main{ padding:var(--sp-5) var(--sp-5) calc(var(--ds-cart-peek) + var(--sp-6)); }
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
+  .mega-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .datos-fields{ grid-template-columns:repeat(2,1fr); }
   .sf-confirm-actions{ flex-direction:row; }
@@ -941,11 +931,24 @@ body.is-handover .result-screen{ animation:none !important; }
   .quiz-main{
     max-width:1440px;
     padding:var(--sp-6) var(--sp-6) var(--sp-8);
+    min-height:calc(100vh - var(--hud-h));
+    display:flex;
+    flex-direction:column;
   }
   .rk-grid{
     display:grid;
     grid-template-columns:minmax(0,1fr) var(--ds-cart-w);
     gap:var(--sp-5); align-items:start;
+    flex:1;
+    min-height:0;
+  }
+  .rk-left{
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+  .rk-left > .screen{
+    flex:1;
   }
   .rk-right#cart{
     position:sticky; inset:auto;
@@ -964,10 +967,44 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard: 3 columnas en desktop · 4 megas se acomodan 3+1 (v8.4.1) */
-  .mega-grid,.sub-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
+  /* Grids del wizard: 2 columnas grandes en desktop · v8.5.0 (era repeat(3,1fr)) */
+  .mega-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-5); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+ * § 30 — Screen layout esqueletal · v8.5.0
+ * Todas las pantallas del wizard usan esta estructura para que el
+ * usuario nunca sienta que "cambia de página", solo de pregunta.
+ * ────────────────────────────────────────────────────────────────── */
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  gap: var(--sp-4);
+}
+.screen-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  flex: 0 0 auto;
+}
+.screen-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.screen-actions {
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--bg-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1001,7 +1038,7 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media print{
   .hud,.hud-mobile-menu,.ambient-dots,.ambient-scan,.progress-rail,
-  .legal-strip,.rk-right#cart,.wizard-actions,.rk-aux,.boot-loader{ display:none !important; }
+  .legal-strip,.rk-right#cart,.wizard-actions,.screen-actions,.rk-aux,.boot-loader{ display:none !important; }
   body{ background:#fff; color:#000; }
   .quiz-main{ padding:0; max-width:none; }
   .rk-card{ border:1px solid #ccc; background:#fff; break-inside:avoid; }
