@@ -26,8 +26,8 @@ window.IBISNE_PRICING = {
       serviciosIds: ['app-pwa', 'app-android', 'app-ios', 'app-ambas', 'app-desktop'],
     },
     {
-      id: 'ecommerce', label: 'Vender por internet', icon: 'ecommerce',
-      summary: 'Tus productos online',
+      id: 'ecommerce', label: 'Ecommerce', icon: 'ecommerce',
+      summary: 'Vende tus productos online',
       info: 'Desde una landing de 1 producto hasta una tienda multi-producto, en código propio, Shopify o app nativa.',
       serviciosIds: ['ec-mini', 'ec-shopify', 'ec-tienda', 'ec-app'],
     },
