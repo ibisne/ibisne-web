@@ -1,11 +1,11 @@
-// data/pricing.js — v8.4.0 · Catálogo 4 megas · 19 servicios visibles
+// data/pricing.js — v8.6.0 · Catálogo 4 megas · 18 servicios visibles
 //
 // Cambios respecto a v8.2.0:
 //   · 4 mega-categorías (Web · Apps · Ecommerce · Automatizaciones)
 //   · Nueva mega Ecommerce con 4 servicios: ec-mini, ec-shopify, ec-tienda, ec-app
 //   · web-tienda MUDADO a ec-tienda (preserva su subflow con pequeños ajustes)
 //   · Web queda con 4 servicios (biolink, landing, funnel, sitio)
-//   · 19 servicios totales visibles
+//   · 18 servicios totales visibles (×2.5 precios desde v8.6.0)
 //
 // Estructura: window.IBISNE_PRICING = { megaCategorias, servicios, subflow, modificadores, helpers }
 
