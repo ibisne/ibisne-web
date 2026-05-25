@@ -1263,8 +1263,30 @@
     `).join('');
 
     // WhatsApp message
-    const itemsText = calc.lineItems.map(li => `• ${li.label} · ${formatMxn(li.price)}`).join('\n');
-    const waMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\n${calc.modPlazoSuffix ? 'Plazo: ' + calc.modPlazoLabel + '\n' : ''}${calc.modModoSuffix ? 'Modo: ' + calc.modModoLabel + '\n' : ''}\nQuiero hablar para precisar el alcance.`;
+    // v8.6.1 · Fix A2 · incluir config DETALLADA de cada servicio (no sólo
+    // label+precio) · más plazo+modo legibles · ayuda al hunter a entrar
+    // con contexto completo desde el primer mensaje.
+    function configToTextFull(cfg){
+      if (!cfg) return '';
+      const parts = [];
+      for (const qid of Object.keys(cfg)) {
+        const ans = cfg[qid];
+        if (!ans) continue;
+        if (Array.isArray(ans)) {
+          if (ans.length) parts.push(ans.map(o => L(o.label)).join(', '));
+        } else if (ans.label) {
+          parts.push(L(ans.label));
+        }
+      }
+      return parts.join(' · ');
+    }
+    const itemsText = calc.lineItems.map(li => {
+      const cfgText = configToTextFull(li.config);
+      return `• ${li.label} · ${formatMxn(li.price)}${cfgText ? '\n   ↳ ' + cfgText : ''}`;
+    }).join('\n');
+    const plazoLine = calc.modPlazoLabel ? `Plazo: ${L(calc.modPlazoLabel)}${calc.modPlazoSuffix ? ' (' + calc.modPlazoSuffix + ')' : ''}\n` : '';
+    const modoLine  = calc.modModoLabel  ? `Modo: ${L(calc.modModoLabel)}${calc.modModoSuffix ? ' (' + calc.modModoSuffix + ')' : ''}\n` : '';
+    const waMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\n${plazoLine}${modoLine}IVA 16%: ${formatMxn(calc.total * 0.16)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\nQuiero hablar para precisar el alcance.`;
     const waUrl = `https://wa.me/523329575274?text=${encodeURIComponent(waMsg)}`;
 
     $('#wizard').innerHTML = `
@@ -1414,8 +1436,11 @@
     const isResultado = parseHash().step === 'resultado';
 
     // v6.1.0 · Servicio en construcción (carrito siempre vivo)
+    // v8.6.1 · Fix A1 · si ya estamos en confirm (servicio ya agregado al cart),
+    // no construir "building" para evitar doble visualización "1 + 1 configurando"
+    // (TOTAL ya estaba correcto, solo era UX confusa · ver auditoría v8.6.0).
     let building = null;
-    if (State.subflow) {
+    if (State.subflow && !State.subflow.confirming) {
       const bServ = Object.assign({ id: State.subflow.servicioId }, findServicio(State.subflow.servicioId));
       if (bServ.label) {
         building = {
@@ -1494,10 +1519,13 @@
     }).join('');
 
     // v6.1.0 · Pago: sin anticipo · pago en una sola exhibición (PayPal)
+    // v8.6.1 · Fix A3 · PayPal.me con monto pre-fill (formato /{amount}MXN
+    // soportado por PayPal) · el cliente abre la pantalla con el monto ya
+    // cargado · cero ambigüedad sobre cuánto cobrar.
     const ctaLabel = isResultado
       ? 'Pagar proyecto · ' + formatMxn(calc.totalConIva)
       : (datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total');
-    const ctaHref = isResultado ? 'https://paypal.me/iBisne' : '';
+    const ctaHref = isResultado ? `https://paypal.me/iBisne/${Math.round(calc.totalConIva)}MXN` : '';
     const ctaDisabled = !isResultado && !datosOk;
 
     return `

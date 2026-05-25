@@ -190,9 +190,12 @@ body.is-booting{ overflow:hidden; }
 .hud-mobile-toggle svg{ width:22px; height:22px; }
 .hud-mobile-toggle.is-active{ color:var(--accent); }
 
-/* Mobile-first: por defecto sólo logo + WhatsApp + hamburguesa.
-   Grupos social/pref/ui viven en el menú mobile. */
+/* Mobile-first: por defecto sólo logo + hamburguesa (HUD compacto).
+   Grupos social/pref/ui y CTAs (hunter, install) viven en el menú mobile.
+   v8.6.1 · ocultar .hud-cta y .hud-install-cta en HUD top para evitar
+   overflow horizontal en viewports ≤768px · el hamburger queda accesible. */
 .hud-group-social,.hud-group-pref,.hud-group-ui,.hud-divider{ display:none; }
+.hud-cta,.hud-install-cta{ display:none; }
 
 /* ── Menú mobile · overlay full-screen (CLAUDE.md regla 11) ───────── */
 .hud-mobile-menu{
@@ -527,7 +530,10 @@ body.is-booting{ overflow:hidden; }
   letter-spacing:var(--ls-mono);
   text-transform:uppercase;
   color:var(--text-muted);
-  margin-bottom:var(--sp-3);
+  /* v8.6.1 · margin-bottom eliminado · sumaba 16px al header del subflow
+   * que ya excedía min-height 168px por el sf-progress · el gap del
+   * .screen-header (sp-3) basta para el spacing. Esto cierra la diferencia
+   * de 13px en headerH entre catalog (168) y subflow (181) post-v8.5.1. */
   display:flex;
   flex-wrap:wrap;
   gap:var(--sp-2);
@@ -556,7 +562,11 @@ body.is-booting{ overflow:hidden; }
   height:100%; background:var(--text-secondary); border-radius:var(--radius-pill);
   transition:width var(--dur-reg) var(--ease-out-expo);   /* mono · NO verde */
 }
-.sf-q-head{ margin-top:var(--sp-5); display:flex; flex-direction:column; gap:var(--sp-2); }
+/* v8.6.1 · margin-top eliminado · usaba sp-5 (40px) que empujaba el contenido
+ * fuera del min-height 168px del .screen-header · regresión de v8.5.1 confirmada
+ * en auditoría (subflow header crecía a 213px · grid arrancaba en Y=251 vs Y=326
+ * en catalog/servicios). El gap del .screen-header (sp-3) ya da el spacing. */
+.sf-q-head{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .sf-q-help{ max-width:54ch; }
 .sf-q-multi{
   font-family:var(--font-mono); font-size:var(--fs-micro);
@@ -921,6 +931,9 @@ body.is-handover .result-screen{ animation:none !important; }
   .hud-logo{ height:24px; }
   .hud-group-social,.hud-group-pref,.hud-group-ui{ display:flex; }
   .hud-divider{ display:block; }
+  /* v8.6.1 · en desktop re-mostramos los CTAs del HUD top */
+  .hud-cta{ display:inline-flex; }
+  .hud-install-cta:not([hidden]){ display:inline-flex; }
   .hud-mobile-toggle{ display:none; }
   .hud-mobile-menu{ display:none; }
 
