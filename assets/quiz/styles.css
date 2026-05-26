@@ -1058,3 +1058,134 @@ body.is-handover .result-screen{ animation:none !important; }
   .rk-title,.rk-line-label,.rk-total-final span,.rk-project-name{ color:#000 !important; }
   .result-screen{ animation:none !important; }
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   § 30 · v9.0 · TYPE CARD (chooser de tipo del servicio) y ADDON CHIP (extras)
+   .type-card hereda anatomía visual de .sf-card · .addon-chip es horizontal compacto
+   ─────────────────────────────────────────────────────────────────── */
+.type-card{
+  position:relative;
+  display:flex; flex-direction:column; gap:var(--sp-2);
+  width:100%; text-align:left;
+  padding:var(--sp-5);
+  background:var(--bg-paper);
+  border:1px solid var(--bg-line);
+  border-radius:var(--radius);
+  color:var(--text-primary);
+  cursor:pointer;
+  transition:border-color var(--dur-fast) var(--ease-out-quart),
+             transform var(--dur-fast) var(--ease-out-quart),
+             background var(--dur-fast) var(--ease-out-quart);
+}
+.type-card:hover{ border-color:var(--text-muted); transform:translateY(-2px); }
+.type-card:focus-visible{ outline:1px solid var(--text-secondary); outline-offset:2px; }
+.type-card.is-selected{ border-color:var(--accent); background:var(--accent-soft); }
+
+.type-card-top{ display:flex; align-items:center; gap:var(--sp-2); }
+.type-card-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; flex:none;
+  border:1px solid var(--bg-line); border-radius:var(--radius-input);
+  color:var(--text-primary);
+}
+.type-card-icon svg{ width:20px; height:20px; }
+.type-card-label{
+  font-family:var(--font-display); font-size:var(--ds-fs-card-label);
+  font-weight:var(--fw-medium); line-height:var(--lh-tight);
+  letter-spacing:var(--ls-body); color:var(--text-primary);
+}
+.type-card-summary{
+  font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
+}
+.type-card-foot{
+  display:flex; align-items:flex-end; justify-content:flex-end; gap:var(--sp-2);
+  margin-top:auto; padding-top:var(--sp-2);
+  font-family:var(--font-mono); font-size:var(--fs-nano);
+  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
+}
+
+.type-grid{ display:grid; grid-template-columns:1fr; gap:var(--sp-3); margin-top:var(--sp-4); }
+@media (min-width:768px){ .type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); } }
+@media (min-width:1100px){ .type-grid{ grid-template-columns:repeat(3,1fr); } }
+
+/* ── ADDON CHIP · horizontal compact card con label + price + check ── */
+.addon-list{
+  display:flex; flex-direction:column; gap:var(--sp-2);
+  margin-top:var(--sp-3);
+}
+.addon-chip{
+  display:flex; align-items:center; gap:var(--sp-3);
+  width:100%; text-align:left;
+  padding:var(--sp-3) var(--sp-4);
+  background:var(--bg-paper);
+  border:1px solid var(--bg-line);
+  border-radius:var(--radius-btn);
+  color:var(--text-primary);
+  cursor:pointer;
+  transition:border-color var(--dur-fast) var(--ease-out-quart),
+             background var(--dur-fast) var(--ease-out-quart);
+}
+.addon-chip:hover{ border-color:var(--text-muted); }
+.addon-chip:focus-visible{ outline:1px solid var(--text-secondary); outline-offset:2px; }
+.addon-chip.is-selected{ border-color:var(--accent); background:var(--accent-soft); }
+
+.addon-chip-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; flex:none;
+  border:1px solid var(--bg-line); border-radius:var(--radius-input);
+  color:var(--text-primary);
+}
+.addon-chip-icon svg{ width:16px; height:16px; }
+
+.addon-chip-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.addon-chip-label{
+  font-family:var(--font-display); font-weight:var(--fw-medium);
+  color:var(--text-primary); line-height:var(--lh-tight);
+}
+.addon-chip-summary{
+  font-size:var(--fs-micro); color:var(--text-secondary); line-height:var(--lh-body);
+}
+.addon-chip-price{
+  flex:none;
+  font-family:var(--font-mono); font-size:var(--fs-base);
+  color:var(--text-primary);
+}
+.addon-chip-check{
+  flex:none;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; min-width:24px;
+  border:1px solid var(--bg-line); border-radius:var(--radius-pill);
+  color:var(--bg-deep); font-size:var(--fs-micro); font-weight:var(--fw-bold);
+}
+.addon-chip.is-selected .addon-chip-check{
+  background:var(--accent); border-color:var(--accent); color:var(--bg-deep);
+}
+
+.addon-preview-total{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
+  margin-top:var(--sp-4); padding:var(--sp-3) var(--sp-4);
+  background:var(--bg-paper); border:1px solid var(--bg-line); border-radius:var(--radius);
+  font-family:var(--font-mono); font-size:var(--fs-small);
+}
+.addon-preview-label{ color:var(--text-secondary); text-transform:uppercase; letter-spacing:var(--ls-mono); }
+.addon-preview-amount{ color:var(--accent); font-size:var(--fs-base); font-weight:var(--fw-bold); }
+
+/* ── Confirm screen · tipo + addons inline (v9) ── */
+.sf-confirm-tipo,.sf-confirm-addons{
+  font-size:var(--fs-base); color:var(--text-secondary);
+  text-align:center; max-width:54ch; margin:0 auto;
+}
+.sf-confirm-tipo strong{ color:var(--text-primary); }
+
+/* ── Cart item · tipo + add-ons inline sub-líneas (v9) ── */
+.rk-cart-item-tipo{
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  color:var(--accent-mint); margin-top:2px;
+}
+.rk-cart-item-addons{
+  display:flex; flex-direction:column; gap:2px;
+  margin:var(--sp-2) 0 0; padding:0; list-style:none;
+  font-size:var(--fs-micro); color:var(--text-secondary);
+}
+.rk-cart-item-addon small{ color:var(--text-muted); margin-left:var(--sp-1); }
