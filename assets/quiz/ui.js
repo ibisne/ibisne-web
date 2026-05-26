@@ -42,6 +42,8 @@
     // Carrito (acumulado del catálogo)
     cart: {
       servicios: [],              // [{ id, label, base, tipoId, addOnIds, config, calculatedPrice }]
+      paymentPlan: 'contado',     // v10.1 · 'contado' | 'msi-3' | 'msi-6' | 'msi-9' | 'msi-12'
+      discountCode: '',           // v10.1 · código de descuento ingresado (uppercase al validar)
     },
 
     // UI state · navegación jerárquica del catálogo
@@ -90,8 +92,41 @@
     return PRICING.servicios[servicioId] || null;
   }
   function clearCart(){
-    State.cart = { servicios: [] };
+    State.cart = { servicios: [], paymentPlan: 'contado', discountCode: '' };
     persistCart();
+  }
+
+  // v10.1 · Aplica descuento por código (demo IBISNE40) + plan de pago.
+  // Cálculo:
+  //   1. Descuento por código (-40% si código = IBISNE40)
+  //   2. Plan: contado -20% adicional · MSI sin intereses (divide en N)
+  // Eduardo: link real de pago a meses se manda por WhatsApp al hunter post-cotización.
+  function applyPaymentPlan(totalConIva){
+    const plan = (State.cart && State.cart.paymentPlan) || 'contado';
+    const code = (State.cart && State.cart.discountCode || '').trim().toUpperCase();
+
+    let afterCode = totalConIva;
+    let codeApplied = false;
+    if (code === 'IBISNE40') {
+      afterCode = totalConIva * 0.60;
+      codeApplied = true;
+    }
+
+    let finalTotal = afterCode;
+    let monthsCount = 0;
+    let planLabel = '';
+    let planDiscount = 0;
+    if (plan === 'contado') {
+      finalTotal = afterCode * 0.80;
+      planLabel = 'Una sola exhibición';
+      planDiscount = 0.20;
+    } else if (plan === 'msi-3')  { monthsCount = 3;  planLabel = '3 meses sin intereses'; }
+    else if (plan === 'msi-6')  { monthsCount = 6;  planLabel = '6 meses sin intereses'; }
+    else if (plan === 'msi-9')  { monthsCount = 9;  planLabel = '9 meses sin intereses'; }
+    else if (plan === 'msi-12') { monthsCount = 12; planLabel = '12 meses sin intereses'; }
+
+    const monthlyAmount = monthsCount > 0 ? finalTotal / monthsCount : 0;
+    return { finalTotal, monthlyAmount, monthsCount, planLabel, planDiscount, codeApplied, plan, code };
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -897,9 +932,19 @@
       }
     }
 
+    // v10.1 · Precio por opción (no total acumulado) en Apps · feedback Eduardo
+    // Detectar si el servicio pertenece a la mega 'apps' para aplicar la lógica delta.
+    // Otros megas (Web/Ecom/Plat) siguen mostrando total acumulado hasta su migración.
+    const isAppsMega = (() => {
+      const P = getPricing();
+      const m = P && P.megaCategorias
+        ? P.megaCategorias.find(mc => (mc.serviciosIds || []).includes(servicio.id))
+        : null;
+      return !!(m && m.id === 'apps');
+    })();
+
     // v7.1.0 · Cada card: título + descripción + PRECIO a simple vista.
-    // Single → precio TOTAL resultante si eliges esa opción (base + esa
-    //   opción + lo ya respondido). Multi → "+ $X".
+    // Multi → "+ $X" · Single (Apps) → delta por opción · Single (otros) → total acumulado.
     // Si la opción tiene `detalle`, botón +/- para expandir.
     const opcionesHtml = q.opciones.map(o => {
       const isSel = selIds.has(o.id);
@@ -907,7 +952,16 @@
       let priceHtml;
       if (isMulti) {
         priceHtml = o.add ? `+ ${formatMxn(o.add)}` : (o.mul ? '×' + o.mul : 'Incluido');
+      } else if (isAppsMega) {
+        // v10.1 Apps · delta por opción (estilo cuantocuestamiapp)
+        if (typeof o.add === 'number' && o.add > 0) priceHtml = `+ ${formatMxn(o.add)}`;
+        else if (typeof o.add === 'number' && o.add === 0) priceHtml = 'Incluido';
+        else if (typeof o.mul === 'number' && o.mul !== 1.0) {
+          const pct = Math.round((o.mul - 1) * 100);
+          priceHtml = pct > 0 ? `+${pct}%` : `${pct}%`;
+        } else priceHtml = 'Incluido';
       } else {
+        // Web/Ecom/Plat · comportamiento legacy · total acumulado
         const hypo = Object.assign({}, config, { [q.id]: o });
         priceHtml = formatMxn(calcSubflowPrice(servicio, hypo, sf.tipoId, sf.addOnIds));
       }
@@ -1837,13 +1891,67 @@
       ? (itemCount > 0 ? `${itemCount} + 1 configurando` : '1 configurando')
       : `${itemCount} servicio${itemCount === 1 ? '' : 's'}`;
 
-    // v9 · sin pills Plazo/Modo · esos ahora son preguntas dentro del subflow.
-    // PayPal con monto pre-fill (heredado de v8.6.1).
-    const ctaLabel = isResultado
-      ? 'Pagar proyecto · ' + formatMxn(calc.totalConIva)
-      : (datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total');
-    const ctaHref = isResultado ? `https://paypal.me/iBisne/${Math.round(calc.totalConIva)}MXN` : '';
+    // v10.1 · Payment plan + descuento (sólo cuando isResultado)
+    // applyPaymentPlan calcula finalTotal según plan + código de descuento.
+    const pay = isResultado ? applyPaymentPlan(calc.totalConIva) : null;
+    const folio = State.folio || '';
+
+    // CTA principal:
+    //  · contado → PayPal con monto descontado
+    //  · MSI-N → WhatsApp con plan pre-fillado al hunter
+    let ctaLabel, ctaHref;
     const ctaDisabled = !isResultado && !datosOk;
+    if (isResultado) {
+      if (pay.plan === 'contado') {
+        ctaLabel = `Pagar contado · ${formatMxn(pay.finalTotal)}`;
+        ctaHref = `https://paypal.me/iBisne/${Math.round(pay.finalTotal)}MXN`;
+      } else {
+        ctaLabel = `Apartar 1ra mensualidad · ${formatMxn(pay.monthlyAmount)}/mes`;
+        const waText = `Hola, quiero pagar mi cotización #${folio} a ${pay.monthsCount} meses sin intereses.\n` +
+          `Mensualidad: ${formatMxn(pay.monthlyAmount)} MXN.\n` +
+          `Total con plan: ${formatMxn(pay.finalTotal)} MXN.\n` +
+          (pay.codeApplied ? `Código aplicado: ${pay.code} (-40%)\n` : '') +
+          `¿Cómo procedemos?`;
+        ctaHref = `https://wa.me/523329575274?text=${encodeURIComponent(waText)}`;
+      }
+    } else {
+      ctaLabel = datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total';
+      ctaHref = '';
+    }
+
+    // Sección payment plan: 5 radio opciones
+    const planRadios = [
+      { id: 'contado', icon: 'zap',           title: 'Contado · -20% descuento', sub: `Pago en una exhibición · ahorra ${formatMxn(calc.totalConIva * 0.20)}`, amountLabel: pay ? formatMxn(pay.plan === 'contado' ? pay.finalTotal : calc.totalConIva * 0.80) : '' },
+      { id: 'msi-3',   icon: 'wallet',        title: '3 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 3)}/mes` : '' },
+      { id: 'msi-6',   icon: 'wallet',        title: '6 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 6)}/mes` : '' },
+      { id: 'msi-9',   icon: 'wallet',        title: '9 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 9)}/mes` : '' },
+      { id: 'msi-12',  icon: 'wallet',        title: '12 meses sin intereses',  sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 12)}/mes` : '' },
+    ];
+    const planHtml = isResultado ? `
+      <div class="rk-cart-payment-plan">
+        <div class="rk-cart-payment-label">— ¿Cómo quieres pagar?</div>
+        <div class="rk-cart-payment-options">
+          ${planRadios.map(r => `
+            <label class="payment-opt ${pay.plan === r.id ? 'is-active' : ''}" data-plan="${r.id}">
+              <input type="radio" name="payment-plan" value="${r.id}" ${pay.plan === r.id ? 'checked' : ''}>
+              <span class="payment-opt-icon">${iconHtml(r.icon,'line')}</span>
+              <span class="payment-opt-info">
+                <span class="payment-opt-title">${L(r.title)}</span>
+                <span class="payment-opt-sub">${L(r.sub)}</span>
+              </span>
+              <span class="payment-opt-amount">${r.amountLabel}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="rk-cart-discount">
+          <input type="text" class="rk-cart-discount-input" id="rk-cart-discount-input"
+                 placeholder="¿Código de descuento?"
+                 value="${(State.cart.discountCode || '').replace(/"/g,'')}">
+          <button class="rk-cart-discount-apply" id="rk-cart-discount-apply" type="button">Aplicar</button>
+        </div>
+        ${pay.codeApplied ? `<div class="rk-cart-discount-success">✓ Código <strong>${pay.code}</strong> aplicado · -40%</div>` : ''}
+      </div>
+    ` : '';
 
     return `
       <div class="rk-cart">
@@ -1861,9 +1969,14 @@
           ${building ? `<div class="rk-cart-total-line rk-cart-building-note"><span>+ configurando ahora</span><span>${formatMxn(building.price)}</span></div>` : ''}
         </div>
 
+        ${planHtml}
+
         <div class="rk-cart-ctas">
           ${isResultado
-            ? `<a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-cart-pay">${ctaLabel} →</a><div class="rk-cart-pay-note">Pago en una sola exhibición · al aprobar habilitamos tarjeta a meses sin intereses</div>`
+            ? `<a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-cart-pay">${ctaLabel} →</a>
+               <div class="rk-cart-pay-note">${pay.plan === 'contado'
+                 ? 'Pago en una sola exhibición · -20% descuento aplicado'
+                 : 'Tu hunter te confirma el link de pago a meses por WhatsApp · cero compromiso hasta aprobar'}</div>`
             : `<button class="btn btn-primary rk-cart-pay" id="rk-cart-pay" type="button" ${ctaDisabled ? 'disabled' : ''}>${ctaLabel}</button>`
           }
           <button class="btn-ghost btn rk-cart-clear" id="rk-cart-clear" type="button">Vaciar carrito</button>
@@ -1888,7 +2001,34 @@
   }
 
   function bindCart(){
-    // v9 · sin pills Plazo/Modo · ese binding se eliminó
+    // v10.1 · Payment plan radio · cambia plan + recalcula
+    $$('#cart .payment-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        // Evitar doble-trigger del input radio interno
+        if (e.target.tagName === 'INPUT') return;
+        const plan = opt.dataset.plan;
+        if (!plan || State.cart.paymentPlan === plan) return;
+        State.cart.paymentPlan = plan;
+        persistCart();
+        refreshCart();
+      });
+    });
+
+    // v10.1 · Aplicar código de descuento
+    const discInput = $('#rk-cart-discount-input');
+    const discApply = $('#rk-cart-discount-apply');
+    const applyDiscount = () => {
+      if (!discInput) return;
+      const val = (discInput.value || '').trim();
+      if (val === (State.cart.discountCode || '')) return;
+      State.cart.discountCode = val;
+      persistCart();
+      refreshCart();
+    };
+    if (discApply) discApply.addEventListener('click', applyDiscount);
+    if (discInput) discInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }
+    });
 
     // Edit items · v9 pasa tipo+addons al openSubflowModal para hidratar estado
     $$('.rk-cart-edit').forEach(btn => {

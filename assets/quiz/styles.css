@@ -688,16 +688,22 @@ body.is-handover .result-screen{ animation:none !important; }
 /* ───────────────────────────────────────────────────────────────────
    § 16 · RESULTADO (cotización final)
    ─────────────────────────────────────────────────────────────────── */
-.result-screen{ display:flex; flex-direction:column; gap:var(--sp-4); animation:resultIn 320ms var(--ease-out-quart) both; }
+.result-screen{ display:flex; flex-direction:column; gap:var(--sp-6); animation:resultIn 320ms var(--ease-out-quart) both; }
 @keyframes resultIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
 .rk-head{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .rk-title{ margin-top:var(--sp-1); }
 .rk-sub{ max-width:60ch; }
 
+/* v10.1 · padding sp-5 (24px) en cards del resultado · más respiro */
 .rk-card{
   display:flex; flex-direction:column; gap:var(--sp-3);
-  padding:var(--sp-4);
+  padding:var(--sp-5);
   background:var(--bg-paper); border:1px solid var(--bg-line); border-radius:var(--radius);
+}
+/* Mobile · apretado para no saturar */
+@media (max-width: 767px){
+  .result-screen{ gap:var(--sp-5); }
+  .rk-card{ padding:var(--sp-4); }
 }
 .rk-card-eyebrow{ margin-bottom:0; }
 
@@ -1189,3 +1195,86 @@ body.is-handover .result-screen{ animation:none !important; }
   font-size:var(--fs-micro); color:var(--text-secondary);
 }
 .rk-cart-item-addon small{ color:var(--text-muted); margin-left:var(--sp-1); }
+
+/* ───────────────────────────────────────────────────────────────────
+   § 31 · v10.1 · Cart payment plan + código descuento (cuando isResultado)
+   - 5 opciones de pago como radio-cards (contado / 3 / 6 / 9 / 12 meses)
+   - input de código de descuento (demo IBISNE40 = -40%)
+   ─────────────────────────────────────────────────────────────────── */
+.rk-cart-payment-plan{
+  padding:var(--sp-3) var(--sp-4);
+  border-top:1px solid var(--bg-line);
+  display:flex; flex-direction:column; gap:var(--sp-3);
+}
+.rk-cart-payment-label{
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  color:var(--text-muted);
+}
+.rk-cart-payment-options{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.payment-opt{
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-3);
+  background:transparent;
+  border:1px solid var(--bg-line); border-radius:var(--radius-btn);
+  cursor:pointer;
+  transition:border-color var(--dur-fast) var(--ease-out-quart), background var(--dur-fast) var(--ease-out-quart);
+}
+.payment-opt:hover{ border-color:var(--text-muted); }
+.payment-opt.is-active{
+  border-color:var(--accent);
+  background:var(--accent-soft);
+}
+.payment-opt input[type="radio"]{ display:none; }
+.payment-opt-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; flex:none;
+  color:var(--text-secondary);
+}
+.payment-opt-icon svg{ width:18px; height:18px; }
+.payment-opt-info{ flex:1; display:flex; flex-direction:column; min-width:0; }
+.payment-opt-title{
+  font-family:var(--font-display); font-size:var(--fs-small);
+  font-weight:var(--fw-medium); line-height:var(--lh-tight);
+  color:var(--text-primary);
+}
+.payment-opt-sub{
+  font-size:var(--fs-micro); color:var(--text-secondary);
+  line-height:var(--lh-body);
+}
+.payment-opt-amount{
+  flex:none; font-family:var(--font-mono); font-size:var(--fs-small);
+  color:var(--text-primary);
+  white-space:nowrap;
+}
+.payment-opt.is-active .payment-opt-amount{ color:var(--accent); }
+
+.rk-cart-discount{
+  display:flex; gap:var(--sp-2); align-items:center;
+  margin-top:var(--sp-2);
+}
+.rk-cart-discount-input{
+  flex:1; height:36px; padding:0 var(--sp-3);
+  background:var(--bg); border:1px solid var(--bg-line); border-radius:var(--radius-input);
+  color:var(--text-primary);
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+}
+.rk-cart-discount-input:focus{ outline:none; border-color:var(--accent-mint); }
+.rk-cart-discount-input::placeholder{ color:var(--text-muted); }
+.rk-cart-discount-apply{
+  height:36px; padding:0 var(--sp-3);
+  background:transparent; border:1px solid var(--bg-line); border-radius:var(--radius-input);
+  color:var(--text-primary);
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color var(--dur-fast) var(--ease-out-quart);
+}
+.rk-cart-discount-apply:hover{ border-color:var(--text-secondary); }
+.rk-cart-discount-success{
+  margin-top:var(--sp-2);
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  color:var(--accent);
+}
