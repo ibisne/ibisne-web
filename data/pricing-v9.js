@@ -2233,14 +2233,15 @@ window.IBISNE_PRICING_V9 = {
 // Esto evita duplicar la definición ~20 veces en el JS.
 (function expandSharedMarkers(){
 
-  // ── Tipos compartidos ────────────────────────────────────────────
+  // ── Tipos compartidos · v10 · lenguaje de negocio con ejemplos concretos ──
   const APP_TIPOS = [
-    { id: 'catalogo',         label: 'Catálogo',             summary: 'Browse productos/contenido · sin transacciones' },
-    { id: 'contenido',        label: 'Contenido',            summary: 'Feed · video · audio · descubrimiento' },
-    { id: 'transacciones',    label: 'Transacciones',        summary: 'Compra-venta interna · marketplace' },
-    { id: 'productividad',    label: 'Productividad interna', summary: 'Herramienta para tu equipo' },
-    { id: 'social-comunidad', label: 'Social / comunidad',   summary: 'Perfiles · interacción · feed social' },
-    { id: 'servicios-citas',  label: 'Servicios / citas',    summary: 'Booking · suscripciones · agenda' },
+    { id: 'catalogo',         icon: 'grid',        label: 'Catálogo',                       summary: 'Mostrar productos o servicios · sin venta directa · como AliExpress, Doctoralia (parte del catálogo)' },
+    { id: 'contenido',        icon: 'info_app',    label: 'Contenido y entretenimiento',    summary: 'Distribuir video, audio o artículos · como Netflix, Spotify, YouTube' },
+    { id: 'transacciones',    icon: 'fintech',     label: 'Compras y pagos in-app',         summary: 'Vender productos · transferir dinero · pagar servicios · como Mercado Libre, PayPal, Cashapp' },
+    { id: 'productividad',    icon: 'serverapp',   label: 'Herramienta para tu equipo',     summary: 'Tasks, docs, chat, dashboards internos · como Slack, Notion, Monday' },
+    { id: 'social-comunidad', icon: 'partnership', label: 'Red social o comunidad',         summary: 'Perfiles, feed, grupos, mensajes entre usuarios · como Instagram, Discord, Reddit' },
+    { id: 'servicios-citas',  icon: 'clock',       label: 'Servicios y citas',              summary: 'Agendar con profesionales · pagos por sesión · como Doctoralia, Calendly, Glovo' },
+    { id: 'generico',         icon: 'otro',        label: 'No estoy seguro · ayúdame a decidir', summary: 'Te mostramos las preguntas más comunes y vemos juntos qué encaja con tu idea' },
   ];
   const EC_TIPOS = [
     { id: 'fisico',  label: 'Producto físico',  summary: 'Te lo enviamos al cliente' },
@@ -2249,202 +2250,417 @@ window.IBISNE_PRICING_V9 = {
     { id: 'mixto',   label: 'Mixto',            summary: 'Físico + digital + servicio combinados' },
   ];
 
-  // ── Subflows compartidos ─────────────────────────────────────────
-  // Apps · mismas 5 preguntas byType (×6 tipos) + shared (acabado + plazo)
-  // Las preguntas distinguen INTENCIÓN, no PLATAFORMA (esa ya está en el servicio).
+  // ── Subflow Apps · v10 · lenguaje de negocio + iconos por opción ──
+  //   Estructura: preShared (vibe global) + byType (5 q por tipo · 6 tipos) + shared (4 q)
+  //   Total: ~10-11 preguntas por servicio · cada opción con icon+label+subtitle+price
+  //   "No estoy seguro" disponible en preguntas técnicas (flag: 'needs-discovery')
   const APP_SUBFLOW_V9 = {
+    // preShared · pregunta universal ANTES de byType · afecta mul base
+    preShared: [
+      { id: 'vibe', label: '¿Qué vibe tiene tu proyecto?',
+        help: 'Esto nos ayuda a recomendar opciones acordes · podrás cambiar de idea en cualquier momento.', opciones: [
+        { id: 'mvp',      icon: 'leads',       label: 'MVP / Económico',
+          subtitle: 'Salir rápido al mercado · lo esencial · iteras después con datos',                              mul: 0.80 },
+        { id: 'balance',  icon: 'palette',     label: 'Balance',
+          subtitle: 'Producto sólido de mercado · sin sobre-engineering · listo para crecer',                        mul: 1.00 },
+        { id: 'premium',  icon: 'star',        label: 'Premium · escalable',
+          subtitle: 'Pulido máximo · animaciones · arquitectura para escalar · marca fuerte',                        mul: 1.35, flag: 'animacion-pro' },
+        { id: 'help',     icon: 'otro',        label: 'No estoy seguro · ayúdenme',
+          subtitle: 'Marcamos tu cotización para discovery · el hunter te llama y define contigo',                   mul: 1.00, flag: 'needs-discovery' },
+      ]},
+    ],
+
     byType: {
+
+      // ─── TIPO: catalogo (ejemplos: AliExpress catálogo, Doctoralia directorio) ───
       'catalogo': [
-        { id: 'productos-app', label: '¿Tipo de catálogo?', opciones: [
-          { id: 'productos',  label: 'Productos físicos · con stock',     add: 0 },
-          { id: 'servicios',  label: 'Servicios · con prestadores',        add: 5000 },
-          { id: 'contenido',  label: 'Contenido · cursos/biblioteca',      add: 7500 },
+        { id: 'estructura-cat', label: '¿Cuántos productos o servicios mostrarás?', opciones: [
+          { id: 'pocos',   icon: 'app',         label: 'Pocos · menos de 100',
+            subtitle: 'Boutique digital · catálogo curado',                                                          add: 0 },
+          { id: 'medio',   icon: 'grid',        label: 'Medio · 100 a 1,000',
+            subtitle: 'Tienda mediana · catálogo amplio',                                                            add: 12500 },
+          { id: 'grande',  icon: 'serverapp',   label: 'Mucho · más de 1,000',
+            subtitle: 'Catálogo grande · necesita búsqueda avanzada y filtros',                                      add: 27500 },
+          { id: 'help',    icon: 'otro',        label: 'No estoy seguro',
+            subtitle: 'Asumimos medio · ajustamos en discovery',                                                     add: 6000, flag: 'needs-discovery' },
         ]},
-        { id: 'tamano-cat-app', label: '¿Tamaño del catálogo?', opciones: [
-          { id: 'chico',  label: '<100 items',                              add: 0 },
-          { id: 'medio',  label: '100-1000',                                add: 12500 },
-          { id: 'grande', label: '1000+',                                   add: 27500 },
+        { id: 'busqueda-cat', label: '¿Cómo encontrarán los usuarios lo que buscan?', opciones: [
+          { id: 'categorias', icon: 'grid',     label: 'Lista con categorías',
+            subtitle: 'Como un catálogo impreso digital · navegar por secciones',                                    add: 0 },
+          { id: 'filtros',    icon: 'wrench',   label: 'Filtros avanzados',
+            subtitle: 'Como Amazon · filtrar por precio, marca, características',                                    add: 12500 },
+          { id: 'busqueda',   icon: 'explore',  label: 'Búsqueda inteligente',
+            subtitle: 'Como Google · escribes y aparecen resultados al instante',                                    add: 27500 },
+          { id: 'help',       icon: 'otro',     label: 'No estoy seguro',
+            subtitle: 'Empezamos con categorías · agregamos filtros si los pides',                                   add: 6000, flag: 'needs-discovery' },
         ]},
-        { id: 'busqueda-app', label: '¿Búsqueda y filtros?', opciones: [
-          { id: 'basica',  label: 'Básica · categorías + tags',             add: 0 },
-          { id: 'avanzada', label: 'Avanzada · multi-atributo',             add: 12500 },
-          { id: 'algolia',  label: 'Algolia · instant + sugerencias',       add: 27500 },
+        { id: 'detalle-cat', label: '¿Cómo se ve cada producto/servicio?', opciones: [
+          { id: 'simple',   icon: 'landing',    label: 'Imagen + descripción',
+            subtitle: 'Lo básico · suficiente para presentar',                                                       add: 0 },
+          { id: 'galeria',  icon: 'palette',    label: 'Galería + ficha técnica',
+            subtitle: 'Varias fotos · especificaciones detalladas · como una ficha de producto',                     add: 7500 },
+          { id: 'rich',     icon: 'star',       label: 'Video + 360° + reseñas',
+            subtitle: 'Experiencia premium · vendes con storytelling',                                                add: 22500 },
         ]},
-        { id: 'detalle-app', label: '¿Detalle por item?', opciones: [
-          { id: 'simple',  label: 'Simple · imagen + descripción',          add: 0 },
-          { id: 'galeria', label: 'Galería + specs',                        add: 7500 },
-          { id: 'rich',    label: 'Rich · video + 360° + reviews',          add: 22500 },
+        { id: 'cta-cat', label: '¿Cómo se contactan los clientes con tu negocio?', opciones: [
+          { id: 'whatsapp', icon: 'chatbot',    label: 'WhatsApp directo',
+            subtitle: 'El cliente da clic y abre WhatsApp con tu equipo',                                            add: 2500 },
+          { id: 'form',     icon: 'leads',      label: 'Formulario in-app',
+            subtitle: 'Llenan datos · tu equipo los contacta después',                                               add: 5000 },
+          { id: 'compra',   icon: 'ecommerce',  label: 'Compra in-app',
+            subtitle: 'Checkout integrado · cobras dentro de la app · requiere pasarela',                            add: 22500 },
+          { id: 'todos',    icon: 'partnership', label: 'Todos los anteriores',
+            subtitle: 'El usuario elige cómo prefiere contactarte',                                                   add: 27500 },
         ]},
-        { id: 'cta-app', label: '¿CTA principal?', opciones: [
-          { id: 'whatsapp', label: 'WhatsApp directo',                      add: 2500 },
-          { id: 'form',     label: 'Form de cotización in-app',             add: 5000 },
-          { id: 'compra',   label: 'Compra in-app (requiere checkout)',     add: 22500 },
+        { id: 'extras-cat', label: '¿Necesitas algo más?', multi: true,
+          help: 'Marca todos los que apliquen · puedes dejar vacío.', opciones: [
+          { id: 'favoritos',     icon: 'star',     label: 'Wishlist / favoritos',
+            subtitle: 'El usuario guarda productos para después',                                                    add: 5000 },
+          { id: 'notificaciones', icon: 'chatbot', label: 'Notificaciones de novedades',
+            subtitle: 'Avisas cuando entra nuevo producto o promoción',                                              add: 7500 },
+          { id: 'compartir',     icon: 'partnership', label: 'Compartir productos en redes',
+            subtitle: 'El cliente comparte en WhatsApp/IG/etc · trae tráfico orgánico',                              add: 3500 },
+          { id: 'offline',       icon: 'shield',  label: 'Modo offline',
+            subtitle: 'Ver catálogo sin internet · útil en zonas rurales',                                           add: 17500 },
         ]},
       ],
+
+      // ─── TIPO: contenido (ejemplos: Netflix, Spotify, YouTube) ───
       'contenido': [
-        { id: 'tipo-contenido', label: '¿Tipo de contenido?', multi: true, opciones: [
-          { id: 'video',  label: 'Video on-demand',                        add: 22500 },
-          { id: 'audio',  label: 'Audio / podcast',                        add: 12500 },
-          { id: 'texto',  label: 'Texto · artículos/libros',               add: 5000 },
-          { id: 'live',   label: 'Streaming en vivo',                      add: 45000 },
+        { id: 'tipo-contenido', label: '¿Qué tipo de contenido distribuyes?', multi: true, opciones: [
+          { id: 'video',   icon: 'info_app',    label: 'Video on-demand',
+            subtitle: 'Como YouTube · usuarios ven cuando quieren',                                                  add: 22500 },
+          { id: 'audio',   icon: 'chatbot',     label: 'Audio / podcast',
+            subtitle: 'Como Spotify · podcast, música, audiolibros',                                                 add: 12500 },
+          { id: 'texto',   icon: 'sitio',       label: 'Texto · artículos/libros',
+            subtitle: 'Como Substack o Kindle · lecturas largas',                                                    add: 5000 },
+          { id: 'live',    icon: 'serverapp',   label: 'Streaming en vivo',
+            subtitle: 'Como Twitch · transmisión en directo · más caro porque requiere infra de servidores',         add: 45000 },
         ]},
-        { id: 'feed-app', label: '¿Feed personalizado?', opciones: [
-          { id: 'cronologico', label: 'Cronológico · sin personalización',  add: 0 },
-          { id: 'tematico',    label: 'Temático · categorías que sigues',   add: 7500 },
-          { id: 'ml-feed',     label: 'ML · recomendaciones personalizadas', add: 32500 },
+        { id: 'feed-contenido', label: '¿Cómo descubren contenido los usuarios?', opciones: [
+          { id: 'cronologico', icon: 'clock',   label: 'Cronológico',
+            subtitle: 'Los más recientes arriba · simple y predecible',                                              add: 0 },
+          { id: 'tematico',    icon: 'grid',    label: 'Por categorías',
+            subtitle: 'El usuario sigue temas que le interesan',                                                     add: 7500 },
+          { id: 'ml-feed',     icon: 'shield',  label: 'Recomendaciones personalizadas',
+            subtitle: 'Como TikTok · la app aprende qué te gusta · necesita backend pesado',                         add: 32500 },
+          { id: 'help',        icon: 'otro',    label: 'No estoy seguro',
+            subtitle: 'Empezamos cronológico · agregamos personalización si crece',                                  add: 5000, flag: 'needs-discovery' },
         ]},
-        { id: 'social-cont', label: '¿Interacción social?', multi: true, opciones: [
-          { id: 'likes',    label: 'Likes / favoritos',                     add: 2500 },
-          { id: 'comments', label: 'Comentarios',                           add: 5000 },
-          { id: 'share',    label: 'Compartir externo',                     add: 2500 },
-          { id: 'follow',   label: 'Follow de creators',                    add: 7500 },
+        { id: 'social-contenido', label: '¿Hay interacción social entre usuarios?', multi: true, opciones: [
+          { id: 'likes',    icon: 'star',       label: 'Likes / favoritos',
+            subtitle: 'Marcar contenido que te gustó',                                                                add: 2500 },
+          { id: 'comments', icon: 'chatbot',    label: 'Comentarios',
+            subtitle: 'Discusión bajo cada contenido',                                                                add: 5000 },
+          { id: 'share',    icon: 'partnership', label: 'Compartir externo',
+            subtitle: 'Botón para mandar contenido a WhatsApp/Twitter/etc',                                          add: 2500 },
+          { id: 'follow',   icon: 'partnership', label: 'Seguir creadores',
+            subtitle: 'Suscribirse a un creador específico',                                                          add: 7500 },
         ]},
-        { id: 'monetizacion-cont', label: '¿Monetización?', opciones: [
-          { id: 'gratis',      label: 'Gratis · ads o sponsor',             add: 0 },
-          { id: 'suscripcion', label: 'Suscripción · paywall',              add: 22500 },
-          { id: 'pago-x-item', label: 'Pago por item',                      add: 17500 },
-          { id: 'mixto',       label: 'Mixto · freemium',                   add: 32500 },
+        { id: 'monetizacion-contenido', label: '¿Cómo ganas dinero?', opciones: [
+          { id: 'gratis',      icon: 'leads',   label: 'Gratis con publicidad',
+            subtitle: 'Como YouTube gratis · ads patrocinados',                                                       add: 0 },
+          { id: 'suscripcion', icon: 'shield',  label: 'Suscripción mensual',
+            subtitle: 'Como Netflix · paywall · acceso a todo el catálogo',                                          add: 22500 },
+          { id: 'pago-x-item', icon: 'ecommerce', label: 'Pago por contenido',
+            subtitle: 'Como compra de un curso · pagas solo por lo que quieres',                                     add: 17500 },
+          { id: 'mixto',       icon: 'palette', label: 'Mixto · freemium',
+            subtitle: 'Algo gratis + premium pagado · como Spotify Free + Premium',                                  add: 32500 },
+          { id: 'help',        icon: 'otro',    label: 'No estoy seguro',
+            subtitle: 'Lo definimos en discovery con tu modelo de negocio',                                          add: 10000, flag: 'needs-discovery' },
         ]},
-        { id: 'descarga-offline', label: '¿Descarga offline?', opciones: [
-          { id: 'no', label: 'No · siempre online',                         add: 0 },
-          { id: 'si', label: 'Sí · cache local + DRM básico',                add: 17500 },
+        { id: 'offline-contenido', label: '¿Pueden descargar para ver offline?', opciones: [
+          { id: 'no',  icon: 'app',     label: 'No · solo online',
+            subtitle: 'El usuario siempre necesita internet',                                                        add: 0 },
+          { id: 'si',  icon: 'shield',  label: 'Sí · descarga local',
+            subtitle: 'Como Netflix offline · útil en aviones y zonas sin señal · más caro por protección',          add: 17500 },
         ]},
       ],
+
+      // ─── TIPO: transacciones (ejemplos: Mercado Libre, PayPal, Cashapp) ───
       'transacciones': [
-        { id: 'tipo-tx', label: '¿Tipo de transacción?', opciones: [
-          { id: 'compra-venta', label: 'Compra-venta · marketplace',        add: 5000 },
-          { id: 'subasta',      label: 'Subastas',                          add: 27500 },
-          { id: 'tickets',      label: 'Tickets / boletos',                  add: 12500 },
-          { id: 'remesas',      label: 'Transferencias / remesas',          add: 47500 },
+        { id: 'tipo-tx', label: '¿Qué tipo de transacción manejas?', opciones: [
+          { id: 'compra-venta', icon: 'ecommerce', label: 'Compra-venta',
+            subtitle: 'Marketplace de productos · como Mercado Libre · vendedores y compradores',                    add: 5000 },
+          { id: 'subasta',      icon: 'star',      label: 'Subastas',
+            subtitle: 'Como eBay · pujas en tiempo real · más caro por la mecánica',                                 add: 27500 },
+          { id: 'tickets',      icon: 'landing',   label: 'Tickets / boletos',
+            subtitle: 'Eventos, conciertos, transporte · validación con QR',                                         add: 12500 },
+          { id: 'remesas',      icon: 'phonepay',  label: 'Transferencias de dinero',
+            subtitle: 'Como PayPal o remesas · regulación más fuerte · backend financiero',                          add: 47500 },
         ]},
-        { id: 'pasarela-app', label: '¿Pasarelas in-app?', multi: true, opciones: [
-          { id: 'apple-pay',    label: 'Apple Pay',                          add: 7500 },
-          { id: 'google-pay',   label: 'Google Pay',                         add: 7500 },
-          { id: 'tarjeta',      label: 'Tarjeta · Stripe/MercadoPago',       add: 10000 },
-          { id: 'spei-oxxo',    label: 'SPEI/OXXO',                          add: 10000 },
-          { id: 'crypto',       label: 'Crypto · USDT/BTC',                  add: 22500 },
+        { id: 'pasarela-tx', label: '¿Qué métodos de pago aceptas?', multi: true,
+          help: 'Marca todos · cada método cuesta integrarlo.', opciones: [
+          { id: 'apple-pay',  icon: 'ios',       label: 'Apple Pay',
+            subtitle: 'Cliente paga con un toque desde su iPhone',                                                    add: 7500 },
+          { id: 'google-pay', icon: 'android',   label: 'Google Pay',
+            subtitle: 'Cliente paga con un toque desde su Android',                                                   add: 7500 },
+          { id: 'tarjeta',    icon: 'wallet',    label: 'Tarjeta',
+            subtitle: 'Stripe o Mercado Pago · Visa/Mastercard/Amex',                                                 add: 10000 },
+          { id: 'spei-oxxo',  icon: 'cash',      label: 'SPEI y OXXO',
+            subtitle: 'Para clientes mexicanos sin tarjeta',                                                          add: 10000 },
+          { id: 'crypto',     icon: 'coin',      label: 'Crypto · USDT/BTC',
+            subtitle: 'Pago en criptomonedas · útil para internacional',                                              add: 22500 },
         ]},
-        { id: 'kyc', label: '¿KYC / verificación de identidad?', opciones: [
-          { id: 'no',     label: 'No · sólo email',                          add: 0 },
-          { id: 'basico', label: 'Básico · CURP/RFC + selfie',               add: 17500 },
-          { id: 'kyc-pro', label: 'Pro · proveedor externo (Mati/Truora)',   add: 32500 },
+        { id: 'verificacion-tx', label: '¿Verificas que el usuario es quien dice ser?',
+          help: 'Esto se conoce como KYC (Know Your Customer) · obligatorio en algunos sectores financieros.', opciones: [
+          { id: 'no',     icon: 'app',     label: 'No · solo email basta',
+            subtitle: 'Para servicios de bajo riesgo',                                                                add: 0 },
+          { id: 'basico', icon: 'shield',  label: 'Verificación básica',
+            subtitle: 'Pides CURP/RFC + selfie con INE · suficiente para la mayoría',                                 add: 17500 },
+          { id: 'pro',    icon: 'serverapp', label: 'Verificación profesional',
+            subtitle: 'Con proveedor externo (Mati, Truora) · obligatorio en fintech',                                add: 32500 },
+          { id: 'help',   icon: 'otro',    label: 'No estoy seguro',
+            subtitle: 'Lo decidimos según regulación que aplica a tu sector',                                         add: 8500, flag: 'needs-discovery' },
         ]},
-        { id: 'historial-tx', label: '¿Historial y comprobantes?', opciones: [
-          { id: 'simple',  label: 'Simple · lista de movimientos',           add: 2500 },
-          { id: 'detalle', label: 'Detalle · comprobante PDF',               add: 7500 },
-          { id: 'cfdi',    label: 'CFDI · facturación automática',           add: 22500 },
+        { id: 'historial-tx', label: '¿Necesitas que el usuario tenga historial de movimientos?', opciones: [
+          { id: 'simple',  icon: 'landing',  label: 'Lista simple',
+            subtitle: 'El usuario ve qué compró y cuándo',                                                            add: 2500 },
+          { id: 'detalle', icon: 'sitio',    label: 'Detalle con comprobante PDF',
+            subtitle: 'Cada movimiento descarga PDF · útil para empresas',                                            add: 7500 },
+          { id: 'cfdi',    icon: 'serverapp', label: 'Facturación automática (CFDI · SAT México)',
+            subtitle: 'La factura llega sola al email del cliente · cumple con SAT',                                  add: 22500 },
         ]},
-        { id: 'limites', label: '¿Límites y compliance?', opciones: [
-          { id: 'no',       label: 'No · sin límites',                       add: 0 },
-          { id: 'limites',  label: 'Límites por usuario/día',                add: 7500 },
-          { id: 'aml',      label: 'Límites + alertas AML',                  add: 22500 },
+        { id: 'limites-tx', label: '¿Hay límites o alertas de seguridad?',
+          help: 'Importante si manejas dinero · previene fraude.', opciones: [
+          { id: 'no',       icon: 'app',     label: 'No · sin límites',
+            subtitle: 'Para servicios donde no hay riesgo financiero',                                                add: 0 },
+          { id: 'limites',  icon: 'shield',  label: 'Límites por usuario / día',
+            subtitle: 'Tope de monto diario · evita fraude masivo',                                                   add: 7500 },
+          { id: 'aml',      icon: 'serverapp', label: 'Alertas de movimientos sospechosos',
+            subtitle: 'Conocido como AML · obligatorio si eres banco o fintech regulada',                             add: 22500 },
+          { id: 'help',     icon: 'otro',    label: 'No estoy seguro',
+            subtitle: 'Discovery con tu equipo legal',                                                                add: 6000, flag: 'needs-discovery' },
         ]},
       ],
+
+      // ─── TIPO: productividad (ejemplos: Slack, Notion, Monday) ───
       'productividad': [
-        { id: 'modulos-prod', label: '¿Módulos core?', multi: true, opciones: [
-          { id: 'tasks',    label: 'Tasks · lista + asignación',             add: 7500 },
-          { id: 'docs',     label: 'Documentos · markdown',                  add: 12500 },
-          { id: 'chat',     label: 'Chat interno · canales',                 add: 17500 },
-          { id: 'wiki',     label: 'Wiki · base de conocimiento',            add: 12500 },
-          { id: 'calendar', label: 'Calendar interno',                       add: 10000 },
+        { id: 'modulos-prod', label: '¿Qué funciones necesita tu herramienta?', multi: true,
+          help: 'Marca los módulos que tu equipo va a usar día a día.', opciones: [
+          { id: 'tasks',    icon: 'landing',    label: 'Tareas',
+            subtitle: 'Lista de pendientes · asignar a personas · fechas límite',                                    add: 7500 },
+          { id: 'docs',     icon: 'sitio',      label: 'Documentos',
+            subtitle: 'Notas y archivos · como Google Docs interno',                                                  add: 12500 },
+          { id: 'chat',     icon: 'chatbot',    label: 'Chat interno',
+            subtitle: 'Canales por equipo · como Slack',                                                              add: 17500 },
+          { id: 'wiki',     icon: 'info_app',   label: 'Wiki / base de conocimiento',
+            subtitle: 'Manuales internos · como Notion',                                                              add: 12500 },
+          { id: 'calendar', icon: 'clock',      label: 'Calendario compartido',
+            subtitle: 'Reuniones y eventos del equipo',                                                               add: 10000 },
         ]},
-        { id: 'colaboracion-prod', label: '¿Multi-usuario simultáneo?', opciones: [
-          { id: 'no',        label: 'No · 1 usuario por sesión',             add: 0 },
-          { id: 'async',     label: 'Comentarios async',                     add: 5000 },
-          { id: 'realtime',  label: 'Realtime · presencia + cursores',       add: 27500 },
+        { id: 'colaboracion-prod', label: '¿Pueden varios usar la app al mismo tiempo?', opciones: [
+          { id: 'no',        icon: 'app',       label: 'Uno a la vez',
+            subtitle: 'Cada usuario trabaja por separado',                                                            add: 0 },
+          { id: 'async',     icon: 'chatbot',   label: 'Sí · con comentarios',
+            subtitle: 'Pueden dejar comentarios y reaccionar · pero no editan al mismo tiempo',                       add: 5000 },
+          { id: 'realtime',  icon: 'partnership', label: 'Sí · edición simultánea',
+            subtitle: 'Como Google Docs · ven cursores de otros usuarios en vivo',                                    add: 27500 },
         ]},
-        { id: 'integraciones-prod', label: '¿Integraciones de día 1?', opciones: [
-          { id: 'ninguna',  label: 'Ninguna · sólo internas',                 add: 0 },
-          { id: 'google',   label: 'Google Workspace',                       add: 7500 },
-          { id: 'office',   label: 'Microsoft 365',                          add: 7500 },
-          { id: 'multi',    label: 'Multi · Google + MS + Slack',            add: 17500 },
+        { id: 'integraciones-prod', label: '¿Conectar con apps que tu equipo ya usa?', opciones: [
+          { id: 'ninguna',  icon: 'app',       label: 'Ninguna por ahora',
+            subtitle: 'Solo nuestras funciones internas',                                                              add: 0 },
+          { id: 'google',   icon: 'partnership', label: 'Google Workspace',
+            subtitle: 'Gmail, Drive, Calendar, Sheets',                                                                add: 7500 },
+          { id: 'office',   icon: 'partnership', label: 'Microsoft 365',
+            subtitle: 'Outlook, OneDrive, Teams, Excel',                                                               add: 7500 },
+          { id: 'multi',    icon: 'partnership', label: 'Varias · Google + Microsoft + Slack',
+            subtitle: 'Integración completa de día 1',                                                                add: 17500 },
         ]},
-        { id: 'permisos-prod', label: '¿Permisos?', opciones: [
-          { id: 'iguales',  label: 'Todos iguales',                          add: 0 },
-          { id: 'roles',    label: 'Roles · admin/editor/lectura',           add: 5000 },
-          { id: 'granular', label: 'Granular · por workspace/folder',        add: 17500 },
+        { id: 'permisos-prod', label: '¿Todos los usuarios ven y hacen lo mismo?', opciones: [
+          { id: 'iguales',  icon: 'app',       label: 'Sí · todos iguales',
+            subtitle: 'Sin niveles · simple y rápido',                                                                add: 0 },
+          { id: 'roles',    icon: 'partnership', label: 'Roles · admin / editor / solo lectura',
+            subtitle: 'Lo más común · el admin controla todo',                                                        add: 5000 },
+          { id: 'granular', icon: 'shield',    label: 'Permisos específicos',
+            subtitle: 'Cada workspace o folder tiene sus propios permisos · empresas con áreas separadas',            add: 17500 },
         ]},
-        { id: 'reportes-prod', label: '¿Dashboards / reportes?', opciones: [
-          { id: 'no',      label: 'No',                                      add: 0 },
-          { id: 'basico',  label: 'Básico · counts + estados',                add: 5000 },
-          { id: 'custom',  label: 'Custom · dashboards configurables',        add: 22500 },
+        { id: 'reportes-prod', label: '¿Necesitas dashboards o reportes?', opciones: [
+          { id: 'no',      icon: 'app',       label: 'No por ahora',
+            subtitle: 'Las funciones básicas son suficientes',                                                        add: 0 },
+          { id: 'basico',  icon: 'landing',   label: 'Básico',
+            subtitle: 'Contar tareas, ver estados, métricas simples',                                                 add: 5000 },
+          { id: 'custom',  icon: 'serverapp', label: 'Dashboards configurables',
+            subtitle: 'El admin arma sus propios reportes · como Monday avanzado',                                    add: 22500 },
         ]},
       ],
+
+      // ─── TIPO: social-comunidad (ejemplos: Instagram, Discord, Reddit) ───
       'social-comunidad': [
-        { id: 'estructura-social', label: '¿Estructura social?', opciones: [
-          { id: 'feed',     label: 'Feed plano · sin grupos',                add: 0 },
-          { id: 'grupos',   label: 'Grupos / comunidades',                   add: 17500 },
-          { id: 'multi',    label: 'Grupos + subgrupos + roles',             add: 32500 },
+        { id: 'estructura-social', label: '¿Cómo se organiza tu comunidad?', opciones: [
+          { id: 'feed',   icon: 'landing',     label: 'Feed plano',
+            subtitle: 'Como Twitter/Instagram · todos ven todo · sin grupos',                                         add: 0 },
+          { id: 'grupos', icon: 'grid',        label: 'Grupos / canales',
+            subtitle: 'Como Discord · cada usuario se une a comunidades específicas',                                add: 17500 },
+          { id: 'multi',  icon: 'serverapp',   label: 'Grupos con subgrupos y roles',
+            subtitle: 'Como Reddit · jerarquía compleja · moderadores · niveles',                                    add: 32500 },
         ]},
-        { id: 'tipos-post', label: '¿Tipos de post?', multi: true, opciones: [
-          { id: 'texto',   label: 'Texto + imagen',                          add: 0 },
-          { id: 'video',   label: 'Video corto · feed estilo TikTok',        add: 27500 },
-          { id: 'audio',   label: 'Audio · clubhouse-style',                  add: 22500 },
-          { id: 'polls',   label: 'Encuestas',                               add: 5000 },
-          { id: 'eventos', label: 'Eventos / meetups',                       add: 12500 },
+        { id: 'tipos-post', label: '¿Qué pueden publicar los usuarios?', multi: true, opciones: [
+          { id: 'texto',   icon: 'sitio',      label: 'Texto + imagen',
+            subtitle: 'Como Twitter o Facebook básico',                                                                add: 0 },
+          { id: 'video',   icon: 'info_app',   label: 'Video corto',
+            subtitle: 'Como TikTok o Reels · infra de video pesada',                                                  add: 27500 },
+          { id: 'audio',   icon: 'chatbot',    label: 'Audio',
+            subtitle: 'Como Clubhouse · salas de voz · audio asíncrono',                                              add: 22500 },
+          { id: 'polls',   icon: 'leads',      label: 'Encuestas',
+            subtitle: 'Preguntas con opciones · útil para engagement',                                                add: 5000 },
+          { id: 'eventos', icon: 'clock',      label: 'Eventos / meetups',
+            subtitle: 'Como Facebook Events · RSVP · recordatorios',                                                  add: 12500 },
         ]},
-        { id: 'moderacion', label: '¿Moderación?', opciones: [
-          { id: 'sin',      label: 'Sin moderación · sólo reportes',          add: 0 },
-          { id: 'mods',     label: 'Moderadores manuales',                    add: 7500 },
-          { id: 'auto-ai',  label: 'Auto · IA + revisión humana',             add: 27500 },
+        { id: 'moderacion-social', label: '¿Quién modera el contenido?', opciones: [
+          { id: 'sin',     icon: 'app',        label: 'Solo reportes de usuarios',
+            subtitle: 'Si alguien reporta, alguien revisa manualmente',                                              add: 0 },
+          { id: 'mods',    icon: 'partnership', label: 'Moderadores manuales',
+            subtitle: 'Personas tuyas revisan todo lo reportado · más control',                                       add: 7500 },
+          { id: 'auto-ai', icon: 'shield',     label: 'IA + revisión humana',
+            subtitle: 'Filtros automáticos primero · humano confirma · escala mejor',                                add: 27500 },
         ]},
-        { id: 'mensajes-dm', label: '¿Mensajes directos?', opciones: [
-          { id: 'no',      label: 'No · solo público',                        add: 0 },
-          { id: 'dm',      label: 'DM 1-a-1',                                 add: 12500 },
-          { id: 'grupos-dm', label: 'DM + grupos privados',                   add: 22500 },
+        { id: 'mensajes-dm', label: '¿Pueden mandarse mensajes privados entre usuarios?', opciones: [
+          { id: 'no',        icon: 'app',     label: 'No · solo público',
+            subtitle: 'Toda interacción es visible',                                                                  add: 0 },
+          { id: 'dm',        icon: 'chatbot', label: 'Mensajes 1-a-1',
+            subtitle: 'Conversaciones privadas entre 2 personas',                                                     add: 12500 },
+          { id: 'grupos-dm', icon: 'partnership', label: 'Mensajes + grupos privados',
+            subtitle: 'Como WhatsApp · 1-a-1 y grupos privados',                                                      add: 22500 },
         ]},
-        { id: 'monetizacion-soc', label: '¿Monetización?', multi: true, opciones: [
-          { id: 'creators',  label: 'Tip a creators',                         add: 15000 },
-          { id: 'premium',   label: 'Suscripción premium',                    add: 22500 },
-          { id: 'badges',    label: 'Badges/items comprables',                add: 12500 },
+        { id: 'monetizacion-social', label: '¿Cómo monetizas la comunidad?', multi: true, opciones: [
+          { id: 'creators', icon: 'wallet',   label: 'Tips / propinas a creadores',
+            subtitle: 'Como Twitch · los seguidores le dan dinero al creador',                                       add: 15000 },
+          { id: 'premium',  icon: 'shield',   label: 'Suscripción premium',
+            subtitle: 'Algunos features solo para usuarios que pagan al mes',                                         add: 22500 },
+          { id: 'badges',   icon: 'star',     label: 'Items / badges comprables',
+            subtitle: 'Como Discord Nitro · cosméticos virtuales · estatus',                                          add: 12500 },
         ]},
       ],
+
+      // ─── TIPO: servicios-citas (ejemplos: Doctoralia, Calendly, Glovo) ───
       'servicios-citas': [
-        { id: 'profesionales', label: '¿Cuántos profesionales?', opciones: [
-          { id: 'uno',    label: '1 profesional',                             add: 0 },
-          { id: 'equipo', label: 'Equipo · 2-10',                             add: 7500 },
-          { id: 'marketplace', label: 'Marketplace · 11+',                    add: 22500 },
+        { id: 'profesionales', label: '¿Cuántas personas atienden citas?', opciones: [
+          { id: 'uno',         icon: 'login',        label: '1 profesional',
+            subtitle: 'Solo tú · 1 calendario · 1 lista de servicios',                                                add: 0 },
+          { id: 'equipo',      icon: 'partnership',  label: 'Equipo (2 a 10)',
+            subtitle: 'Varios profesionales · cada uno con su agenda y servicios',                                    add: 7500 },
+          { id: 'marketplace', icon: 'marketplace', label: 'Marketplace (11+)',
+            subtitle: 'Conectar profesionales independientes con clientes · como Doctoralia',                          add: 22500 },
         ]},
-        { id: 'modalidad-cita', label: '¿Modalidad?', opciones: [
-          { id: 'presencial', label: 'Sólo presencial',                       add: 0 },
-          { id: 'online',     label: 'Sólo online · videollamada in-app',     add: 17500 },
-          { id: 'hibrido',    label: 'Híbrido · cliente elige',               add: 22500 },
+        { id: 'modalidad-cita', label: '¿Cómo es la cita?', opciones: [
+          { id: 'presencial', icon: 'servicio',  label: 'Presencial',
+            subtitle: 'Cliente va al consultorio/oficina · agendamos lugar y hora',                                  add: 0 },
+          { id: 'online',     icon: 'chatbot',   label: 'Online · videollamada in-app',
+            subtitle: 'Como Doctoralia online · sin necesidad de Zoom externo',                                       add: 17500 },
+          { id: 'hibrido',    icon: 'hybrid',    label: 'Híbrido · cliente elige',
+            subtitle: 'Algunos servicios online · otros presenciales · el cliente decide',                            add: 22500 },
+          { id: 'help',       icon: 'otro',      label: 'No estoy seguro',
+            subtitle: 'Empezamos con presencial · agregamos online si lo necesitas',                                 add: 6000, flag: 'needs-discovery' },
         ]},
-        { id: 'pagos-cita', label: '¿Pagos?', opciones: [
-          { id: 'no',       label: 'No · gratis o cobra externo',             add: 0 },
-          { id: 'reserva',  label: 'Al reservar · 100%',                       add: 12500 },
-          { id: 'anticipo', label: 'Anticipo + resto post-cita',               add: 17500 },
-          { id: 'suscripcion', label: 'Suscripción · X citas/mes',             add: 22500 },
+        { id: 'pagos-cita', label: '¿Cobras por las citas?', opciones: [
+          { id: 'no',          icon: 'app',       label: 'No · gratis o cobras fuera',
+            subtitle: 'Servicio sin costo · o cobras por otro lado',                                                  add: 0 },
+          { id: 'reserva',     icon: 'wallet',    label: 'Al reservar (100%)',
+            subtitle: 'Cliente paga todo al hacer cita · si no llega, ya pagó',                                       add: 12500 },
+          { id: 'anticipo',    icon: 'ecommerce', label: 'Anticipo + resto post-cita',
+            subtitle: 'Reserva con porcentaje · termina de pagar después del servicio',                              add: 17500 },
+          { id: 'suscripcion', icon: 'shield',    label: 'Suscripción · X citas al mes',
+            subtitle: 'Membresía mensual con citas incluidas · como gym',                                            add: 22500 },
         ]},
-        { id: 'historial-cita', label: '¿Historial del cliente?', opciones: [
-          { id: 'simple',  label: 'Simple · citas pasadas',                   add: 2500 },
-          { id: 'expediente', label: 'Expediente · notas privadas',           add: 12500 },
-          { id: 'archivos',  label: 'Expediente + archivos adjuntos',         add: 22500 },
+        { id: 'historial-cita', label: '¿Necesitas guardar info de tus clientes?', opciones: [
+          { id: 'simple',     icon: 'landing',    label: 'Historial básico',
+            subtitle: 'Lista de citas pasadas · útil para que el cliente vuelva',                                    add: 2500 },
+          { id: 'expediente', icon: 'sitio',      label: 'Expediente privado',
+            subtitle: 'Notas tuyas por cliente · tratamientos · evolución · como un doctor',                          add: 12500 },
+          { id: 'archivos',   icon: 'serverapp',  label: 'Expediente + archivos adjuntos',
+            subtitle: 'Notas + PDFs/fotos/análisis subidos · más completo',                                           add: 22500 },
         ]},
-        { id: 'recordatorios-cita', label: '¿Recordatorios?', multi: true, opciones: [
-          { id: 'push',     label: 'Push notification',                       add: 2500 },
-          { id: 'email',    label: 'Email',                                   add: 1500 },
-          { id: 'sms',      label: 'SMS',                                     add: 3500 },
-          { id: 'whatsapp', label: 'WhatsApp',                                add: 5000 },
+        { id: 'recordatorios-cita', label: '¿Cómo avisas a tus clientes antes de la cita?', multi: true,
+          help: 'Marca todos los canales que quieras usar.', opciones: [
+          { id: 'push',     icon: 'app',       label: 'Notificación de la app',
+            subtitle: 'Aviso dentro del celular si tienen la app instalada',                                          add: 2500 },
+          { id: 'email',    icon: 'partnership', label: 'Email',
+            subtitle: 'Aviso al correo · funciona aunque no abran la app',                                            add: 1500 },
+          { id: 'sms',      icon: 'chatbot',   label: 'SMS / mensaje de texto',
+            subtitle: 'Más caro por mensaje pero llega siempre',                                                       add: 3500 },
+          { id: 'whatsapp', icon: 'chatbot',   label: 'WhatsApp',
+            subtitle: 'Aviso por WhatsApp Business · más leído · costo medio',                                        add: 5000 },
+        ]},
+      ],
+
+      // ─── TIPO: generico (cuando el usuario eligió "no estoy seguro" en Q1) ───
+      // Set reducido · 3 preguntas universales · marca needs-discovery
+      'generico': [
+        { id: 'que-hace', label: '¿Qué hace tu app a grandes rasgos?', opciones: [
+          { id: 'info',       icon: 'info_app', label: 'Muestra información',
+            subtitle: 'Catálogo, galería, contenido informativo',                                                     add: 5000, flag: 'needs-discovery' },
+          { id: 'transactiona', icon: 'fintech', label: 'Maneja dinero o ventas',
+            subtitle: 'Pagos, compras, transferencias',                                                                add: 25000, flag: 'needs-discovery' },
+          { id: 'comunica',   icon: 'chatbot', label: 'Conecta usuarios entre sí',
+            subtitle: 'Chat, comunidad, mensajes',                                                                    add: 20000, flag: 'needs-discovery' },
+          { id: 'gestiona',   icon: 'serverapp', label: 'Organiza algo (interno o cliente)',
+            subtitle: 'Citas, tareas, agendas, dashboards',                                                           add: 15000, flag: 'needs-discovery' },
+        ]},
+        { id: 'cuanto-tiene', label: '¿Qué tan grande es la app que imaginas?', opciones: [
+          { id: 'mvp',    icon: 'leads',  label: 'Lo más simple posible',
+            subtitle: '5-7 pantallas · validar la idea',                                                              add: 0, flag: 'needs-discovery' },
+          { id: 'medio',  icon: 'app',    label: 'Algo robusto pero no enorme',
+            subtitle: '10-20 pantallas · funciones core completas',                                                  add: 15000, flag: 'needs-discovery' },
+          { id: 'grande', icon: 'star',   label: 'Una app completa',
+            subtitle: '20+ pantallas · todo el ecosistema',                                                           add: 45000, flag: 'needs-discovery' },
+        ]},
+        { id: 'help-cta', label: '¿Continuamos con un hunter por WhatsApp?',
+          help: 'Marcamos tu cotización para que el hunter te llame y precisemos juntos qué necesitas.', opciones: [
+          { id: 'si',  icon: 'chatbot', label: 'Sí · que me contacten',
+            subtitle: 'Te buscan en menos de 24 horas',                                                                add: 0, flag: 'needs-discovery' },
         ]},
       ],
     },
+
+    // shared · 4 preguntas que aplican a todos los tipos · al final del flow
     shared: [
-      { id: 'login-app', label: '¿Login del usuario?', opciones: [
-        { id: 'no',       label: 'No · uso sin login (sólo browse)',         add: 0 },
-        { id: 'email',    label: 'Email + password',                          add: 12500 },
-        { id: 'redes',    label: 'Email + redes (Google/Apple)',              add: 22500 },
-        { id: 'perfiles', label: 'Login + perfiles de usuario',                add: 35000, flag: 'auth-or-api' },
+      { id: 'usuarios-y1', label: '¿Cuántos usuarios esperas el primer año?',
+        help: 'Nos ayuda a dimensionar infraestructura · si crece más rápido, escalamos.', opciones: [
+        { id: 'probando',  icon: 'leads',       label: 'Probando',
+          subtitle: 'Menos de 100 usuarios · validar idea con early adopters',                                       add: 0 },
+        { id: 'chico',     icon: 'app',         label: 'Negocio chico',
+          subtitle: '100 a 1,000 usuarios · clientes locales · arranque controlado',                                 add: 0 },
+        { id: 'creciendo', icon: 'clock',       label: 'Negocio creciendo',
+          subtitle: '1,000 a 10,000 usuarios · escalar tras validación',                                             add: 15000 },
+        { id: 'medio',     icon: 'partnership', label: 'Escala media',
+          subtitle: '10,000 a 100,000 usuarios · regional o nacional',                                               add: 45000 },
+        { id: 'grande',    icon: 'star',        label: 'Escala grande',
+          subtitle: '100,000+ usuarios · infra robusta · CDN · base de datos distribuida',                           add: 125000 },
+        { id: 'help',      icon: 'otro',        label: 'No estoy seguro',
+          subtitle: 'Asumimos negocio chico · ajustamos si crece más rápido',                                        add: 5000, flag: 'needs-discovery' },
       ]},
-      { id: 'acabado', label: '¿Acabado del diseño?', opciones: [
-        { id: 'funcional', label: 'Funcional · directo al grano',          mul: 0.85 },
-        { id: 'balance',   label: 'Balance · calidad/precio óptimo',       mul: 1.0 },
-        { id: 'premium',   label: 'Premium · animaciones + pulido máximo', mul: 1.35, flag: 'animacion-pro' },
+
+      { id: 'login-app', label: '¿Cómo entran tus usuarios a la app?', opciones: [
+        { id: 'no',       icon: 'app',        label: 'Sin login',
+          subtitle: 'Cualquiera puede usar la app · sin crear cuenta',                                                add: 0 },
+        { id: 'email',    icon: 'login',      label: 'Email + contraseña',
+          subtitle: 'Lo clásico · el usuario crea cuenta tradicional',                                                add: 12500 },
+        { id: 'redes',    icon: 'partnership', label: 'Email + Google/Apple (1-click)',
+          subtitle: 'Botones de 1-click · entran sin escribir nada · menos abandono',                                add: 22500 },
+        { id: 'perfiles', icon: 'shield',     label: 'Login + perfiles personales',
+          subtitle: 'Cuenta con foto, datos, preferencias · útil para comunidades y citas',                          add: 35000, flag: 'auth-or-api' },
+        { id: 'help',     icon: 'otro',       label: 'No estoy seguro',
+          subtitle: 'Empezamos con email simple · ajustamos si tu equipo prefiere otra cosa',                        add: 15000, flag: 'needs-discovery' },
       ]},
-      { id: 'plazo', label: '¿Plazo deseado?', opciones: [
-        { id: 'flexible', label: 'Flexible · cuando salga',  mul: 0.95 },
-        { id: 'normal',   label: 'Normal · plazo estándar',  mul: 1.0 },
-        { id: 'express',  label: 'Express · más rápido',     mul: 1.5 },
+
+      { id: 'idiomas-app', label: '¿En cuántos idiomas estará la app?', opciones: [
+        { id: 'uno',   icon: 'app',         label: 'Solo español',
+          subtitle: 'Mercado MX/LATAM · sin complicaciones',                                                          add: 0 },
+        { id: 'dos',   icon: 'partnership', label: 'Español + inglés',
+          subtitle: 'Para clientes internacionales o mercado USA',                                                    add: 12500 },
+        { id: 'multi', icon: 'star',        label: '3 o más idiomas',
+          subtitle: 'Multi-idioma serio · CMS de traducciones · gestión por país',                                   add: 30000 },
+      ]},
+
+      { id: 'plazo', label: '¿Cuándo necesitas la app lista?',
+        help: 'El plazo afecta el costo · si la quieres rápido, el equipo trabaja más intensivo.', opciones: [
+        { id: 'flexible', icon: 'clock',  label: 'Flexible · cuando salga bien',
+          subtitle: 'Sin prisa · armamos el equipo más eficiente · más barato',                                       mul: 0.95 },
+        { id: 'normal',   icon: 'app',    label: 'Plazo normal',
+          subtitle: '6 a 16 semanas según servicio · ritmo de trabajo cómodo',                                       mul: 1.0 },
+        { id: 'express',  icon: 'star',   label: 'Express · lo necesito ya',
+          subtitle: 'Equipo dedicado overtime · sprints diarios · cuesta 50% más',                                   mul: 1.5 },
       ]},
     ],
   };
