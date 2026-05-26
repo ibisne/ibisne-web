@@ -733,13 +733,14 @@
     const PRICING = getPricing();
     let total = servicio.base || 0;
 
-    // 1+2. Preguntas del subflow (byType + shared)
+    // 1+2. Preguntas del subflow (preShared + byType + shared) · v10
     const sf = PRICING.subflow ? PRICING.subflow[servicio.id] : null;
     const muls = [];
     if (sf) {
+      const preQs = sf.preShared || [];
       const tipoQs = (sf.byType && tipoId) ? (sf.byType[tipoId] || []) : [];
       const sharedQs = sf.shared || [];
-      const allQs = [...tipoQs, ...sharedQs];
+      const allQs = [...preQs, ...tipoQs, ...sharedQs];
       for (const q of allQs) {
         const ans = config[q.id];
         if (!ans) continue;
@@ -764,7 +765,7 @@
     return Math.round(total);
   }
 
-  function addToCart(servicio, config, tipoId, addOnIds){
+  function addToCart(servicio, config, tipoId, addOnIds, needsDiscovery){
     const price = calcSubflowPrice(servicio, config, tipoId, addOnIds);
     State.cart.servicios.push({
       id: servicio.id,
@@ -776,12 +777,13 @@
       subtitle: servicio.subtitle,
       tipoId: tipoId || null,
       addOnIds: Array.isArray(addOnIds) ? [...addOnIds] : [],
+      needsDiscovery: !!needsDiscovery,    // v10 · marca que el lead pidió 'no estoy seguro'
       config: config,
       calculatedPrice: price,
     });
     persistCart();
   }
-  function updateCart(servicioId, config, tipoId, addOnIds){
+  function updateCart(servicioId, config, tipoId, addOnIds, needsDiscovery){
     const idx = State.cart.servicios.findIndex(s => s.id === servicioId);
     if (idx < 0) return;
     const servicio = findServicio(servicioId);
@@ -789,6 +791,7 @@
     State.cart.servicios[idx].config = config;
     if (tipoId !== undefined) State.cart.servicios[idx].tipoId = tipoId;
     if (addOnIds !== undefined) State.cart.servicios[idx].addOnIds = Array.isArray(addOnIds) ? [...addOnIds] : [];
+    if (needsDiscovery !== undefined) State.cart.servicios[idx].needsDiscovery = !!needsDiscovery;
     const final = State.cart.servicios[idx];
     State.cart.servicios[idx].calculatedPrice = calcSubflowPrice(servicio, config, final.tipoId, final.addOnIds);
     persistCart();
@@ -828,14 +831,17 @@
     renderCatalog();
   }
 
-  // v9 · construye el array de preguntas adaptativas: byType[tipoId] + shared
+  // v10 · construye el array de preguntas adaptativas con preShared
+  // Orden: [preShared] → [byType[tipoId]] → [shared]
+  // preShared se introdujo en v10 Apps para hacer Q0 vibe universal antes del flow específico.
   function buildQFlow(servicioId, tipoId){
     const PRICING = getPricing();
     const sf = PRICING.subflow ? PRICING.subflow[servicioId] : null;
     if (!sf) return [];
+    const preQs = sf.preShared || [];
     const tipoQs = (sf.byType && tipoId) ? (sf.byType[tipoId] || []) : [];
     const sharedQs = sf.shared || [];
-    return [...tipoQs, ...sharedQs];
+    return [...preQs, ...tipoQs, ...sharedQs];
   }
 
   // v9 · dispatcher según sf.step
@@ -909,16 +915,17 @@
         ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">${L('+ qué incluye')}</button>
            <div class="sf-card-detalle" hidden>${L(o.detalle)}</div>`
         : '';
-      // v8.3.2 · sf-card adopta lógica de service-card: icon top (del servicio
-      // padre) + foot con meta. Cero compactación.
+      // v10 · sf-card · icono PRIORIZA el de la opción (más específico).
+      // Si la opción no tiene icon, cae al del servicio padre.
       const stateHtml = isSel
         ? `<span class="sf-card-state is-added">${L('seleccionada')}</span>`
         : '<span class="sf-card-arrow">→</span>';
+      const optIcon = o.icon || servicio.icon || 'arrow';
       return `
         <button class="sf-card ${isSel ? 'is-selected' : ''} ${isRec ? 'is-recommended' : ''}" data-opt="${o.id}" type="button">
           ${isRec ? '<span class="option-badge-recomendada">RECOMENDADA</span>' : ''}
           <div class="sf-card-top">
-            <div class="sf-card-icon">${iconHtml(servicio.icon || 'arrow', 'line')}</div>
+            <div class="sf-card-icon">${iconHtml(optIcon, 'line')}</div>
           </div>
           <div class="sf-card-label">${L(o.label)}</div>
           ${o.subtitle ? `<div class="sf-card-subtitle">${L(o.subtitle)}</div>` : ''}
@@ -1012,9 +1019,14 @@
           config[q.id] = exists ? list.filter(x => x.id !== oid) : [...list, o];
           if (q.id === 'metodos_pago') config.pasarelas = null;
           btn.classList.toggle('is-selected');
-          refreshCart(); // carrito vivo refleja el delta
+          // v10 · si la opción tiene flag 'needs-discovery', marcamos el subflow.
+          // Solo aplica al toggle ON (no al destoggle).
+          if (o.flag === 'needs-discovery' && !exists) sf.needsDiscovery = true;
+          refreshCart();
         } else {
           config[q.id] = o;
+          // v10 · marca needsDiscovery si la opción lo pide.
+          if (o.flag === 'needs-discovery') sf.needsDiscovery = true;
           // feedback visual breve → auto-avanza
           $$('#wizard .sf-card').forEach(c => c.classList.remove('is-selected'));
           btn.classList.add('is-selected');
@@ -1234,9 +1246,11 @@
     trackStepShown('confirm:' + servicio.id);
 
     // Un solo punto de verdad: agregar/actualizar el carrito aquí.
-    if (sf.isEdit) updateCart(servicio.id, config, sf.tipoId, sf.addOnIds);
-    else if (!State.cart.servicios.find(s => s.id === servicio.id)) addToCart(servicio, config, sf.tipoId, sf.addOnIds);
-    else updateCart(servicio.id, config, sf.tipoId, sf.addOnIds);
+    // v10 · propagamos `needsDiscovery` capturado en el subflow al item del cart.
+    const nd = !!sf.needsDiscovery;
+    if (sf.isEdit) updateCart(servicio.id, config, sf.tipoId, sf.addOnIds, nd);
+    else if (!State.cart.servicios.find(s => s.id === servicio.id)) addToCart(servicio, config, sf.tipoId, sf.addOnIds, nd);
+    else updateCart(servicio.id, config, sf.tipoId, sf.addOnIds, nd);
 
     const price = calcSubflowPrice(servicio, config, sf.tipoId, sf.addOnIds);
     const cfg = renderConfigSummaryInline(config);
@@ -1579,7 +1593,13 @@
         : '';
       return `• ${li.label} · ${formatMxn(li.price)}${tipoLine}${cfgLine}${addOnsLine}`;
     }).join('\n');
-    const waMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\nIVA 16%: ${formatMxn(calc.total * 0.16)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\nQuiero hablar para precisar el alcance.`;
+    // v10 · si algún servicio del cart tiene needsDiscovery, alertamos al hunter
+    // para que sepa que el lead pidió ayuda en el discovery.
+    const needsDiscoveryAny = State.cart.servicios.some(s => s.needsDiscovery);
+    const ndPrefix = needsDiscoveryAny
+      ? '⚠️ Este lead marcó "no estoy seguro" en alguna pregunta · agendar discovery antes de propuesta.\n\n'
+      : '';
+    const waMsg = `${ndPrefix}Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\nIVA 16%: ${formatMxn(calc.total * 0.16)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\nQuiero hablar para precisar el alcance.`;
     const waUrl = `https://wa.me/523329575274?text=${encodeURIComponent(waMsg)}`;
 
     $('#wizard').innerHTML = `
