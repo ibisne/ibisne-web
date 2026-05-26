@@ -80,8 +80,8 @@
     } catch(_){}
   }
 
-  // v9 · helper centralizado para acceder al pricing (siempre v9 ahora)
-  function getPricing(){ return window.IBISNE_PRICING_V9 || window.IBISNE_PRICING; }
+  // v9 · helper centralizado para acceder al pricing (v8 fallback eliminado en Fase 4)
+  function getPricing(){ return window.IBISNE_PRICING_V9; }
 
   // Helper: dado un service-id, encuentra el servicio en pricing.servicios
   function findServicio(servicioId){

@@ -3,7 +3,7 @@
    Las claves siguen formato 'seccion.key'. Si no existe, prefs.t() cae al ES.
    Cobertura inicial: HUD, hero, CTAs, labels críticos del quiz/resultado.
    =================================================================== */
-// ─── Diccionario de DATA (strings que vienen de data/pricing.js · ES → EN) ──
+// ─── Diccionario de DATA (strings que vienen de data/pricing-v9.js · ES → EN) ──
 // El helper L() en ui.js busca por valor exacto. Si no encuentra, devuelve el ES.
 // Solo traduce conceptos genéricos · nombres propios (Stripe, PayPal, etc.) quedan iguales.
 window.IBISNE_I18N_DATA = {

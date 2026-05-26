@@ -6,7 +6,7 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v9.0.1) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v9.0.2) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
 
 ## El design system OFICIAL es **VAULT (v2)** — `/design-system-v2/`
 
@@ -53,7 +53,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v9.0.1)
+## Estructura del repo (actual · v9.0.2)
 
 ```
 /
@@ -61,7 +61,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 ├─ quiz.html                   ← Cotizador completo (entrypoint principal)
 ├─ no.html                     ← Pantalla de salida amable ("ya tengo agencia")
 ├─ 404.html                    ← 404 brandeada
-├─ legal/                      ← privacidad.html + terminos.html
+├─ legal/                      ← privacidad.html + terminos.html + contrato.html (v9.0)
 ├─ api/lead.js                 ← Vercel function · webhook Slack + Web3Forms email
 ├─ assets/
 │   ├─ pwa/                    ← iconos PWA (192, 512, apple-touch)
@@ -78,7 +78,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 │       └─ pwa-modal.css       ← modal de install instructions
 ├─ brand/                      ← logos iBisne (192/512 PNG + iBisne_blanco)
 ├─ data/
-│   └─ pricing.js              ← ÚNICO · motor de precios · 4 mega × 18 servicios × subflows
+│   └─ pricing-v9.js           ← ÚNICO · motor adaptativo · 4 mega × 22 servicios × tipos × add-ons
 ├─ design-system-v2/           ← VAULT v2 OFICIAL · contrato intocable
 │   ├─ tokens.css              ← --bg-* --text-* --accent (#3DFF7F) --sp-* --fs-* --font-*
 │   ├─ components.css
@@ -100,37 +100,50 @@ Indicadores de código v1 que NO debe vivir en v2:
 
 **Repo unificado · sin código muerto · sin pantallas legacy.** El sitio servido es exactamente lo que se ve en el árbol arriba. Si te encuentras editando algo que no aparece aquí, párate y verifica.
 
-## Estructura del Home actual (`index.html`)
+## Estructura del Home actual (`index.html` · v9.0 expandido)
 
 1. **HUD persistente** (`<header class="hud">`) — brand, social (IG/LI/X), lang/currency, theme/music, install CTA, hunter CTA (WhatsApp), hamburger mobile.
-2. **Mobile menu** (`<nav class="hud-mobile-menu" id="hud-menu">`) — overlay con redes, prefs, CTA hunter, CTA install.
-3. **Hero block** — eyebrow mono (`§ COTIZA TU SERVICIO · SIN COMPROMISO`), h1 grande con `.highlight` mint, sub, 2 CTAs (`Cotizar ahora →` → `quiz.html#/servicio/1` y `Ya tengo agencia` → `no.html`).
-4. **Highlights grid** (5 `.hl-card`) — Soporte dedicado, Acompañamiento 24/7, De 0 al lanzamiento, Un año de seguimiento, Imperios no proyectos. Cada card: icono mint + título + descripción corta.
-5. **Footer legal-strip** — email + privacidad + términos.
+2. **Mobile menu** (`<nav class="hud-mobile-menu" id="hud-menu">`) — sección Navegar (anchors al home largo), Redes, Preferencias, CTA hunter, CTA install.
+3. **§01 Hero** — eyebrow mono (`§ COTIZA TU SERVICIO · SIN COMPROMISO`), h1 grande con `.highlight` mint, sub, 2 CTAs (`Cotizar ahora →` → `quiz.html` y `Ya tengo agencia` → `no.html`).
+4. **§02 Cómo trabajamos** — 4 pasos numerados (cotizas online · WhatsApp · firmamos · construimos).
+5. **§03 Diferenciadores** — 5 hl-cards (Soporte dedicado, 24/7, De 0 al lanzamiento, Un año de seguimiento, Imperios no proyectos).
+6. **§04 Clientes** — logo wall + 6 cards placeholder con nombres reales (ProFutbol · Medical Mexicanna · SEM Endomap · Semillas Endémicas Mexicanna · DCI Península · Hidrosite). Logos reales pendientes.
+7. **§05 Sobre iBisne** — mini-bio + 4 tags (sin management fee · sin equity dilutivo · capital operativo · base GDL).
+8. **§06 FAQ** — 7 preguntas frecuentes (`<details>/<summary>` nativos · sin JS).
+9. **§07 CTA final** — bloque grande "Pon tu proyecto en marcha esta semana" + 2 CTAs.
+10. **§08 Footer extendido** — 4 cols (Brand · Sitio · Empezar · Legal) con sitemap visible + bottom row (copyright + versión).
 
-Home pensado para entrar **sin scroll en desktop** (hero + highlights en una sola vista, layout vertical centrado, `min-height: 100vh`). En mobile el grid baja a 2 columnas.
+Home scrolleable (no más "sin scroll" · v9.0). Anchors internos: `#hero`, `#como-trabajamos`, `#clientes`, `#sobre`, `#faq`, `#cta-final`.
 
-## Flujo del cotizador (`quiz.html`)
+## Flujo del cotizador (`quiz.html` · v9.0 adaptativo)
 
-Hash routing:
+Hash routing externo (sin cambios desde v8):
 ```
-#/catalog → #/servicio/<id> → #/subflow/<id> → #/confirm → #/datos → #/loading → #/resultado
+#/catalog → (subflow interno por step) → #/datos → #/loading → #/resultado
 ```
 
-- 4 megaCategorías (Web · Apps · Ecommerce · Auto) → 18 servicios visibles → subflows compactos (4-6 preguntas).
-- Sin step de contexto (eliminado v7.0.2). Sin "No sé" como opción.
-- Motor de precio: `base + Σ add, luego × muls`; `computeCart` aplica plazo×modo + IVA 16%.
-- Carrito persistente `localStorage` (`ibisne.cart.v6`). Leads `ibisne.leads`/`ibisne.lead.last`. Folio `ibisne.folio`.
-- Handover blindado al final → PayPal one-time (paypal.me/iBisne) o WhatsApp hunter (`+52 33 2957 5274`).
+Subflow interno (NUEVO en v9.0 · steps en `State.subflow.step`):
+```
+catalog → servicio → tipo → q (×6-9) → addons → confirm
+```
+
+- **4 megas** (Web · Apps · Ecommerce · **Plataformas & Automatización**) → 22 servicios visibles.
+- **Pregunta inicial `tipo`** (3-8 tipos por servicio · ej. web-sitio tiene 8: corporate-básico · portal-miembros · blog-magazine · etc.).
+- **Preguntas core adaptativas** según tipo elegido (`subflow.byType[tipoId]`) + shared (acabado, plazo).
+- **Sección add-ons** dedicada al final · 19 add-ons globales con `aplica:[serviciosIds]` (chatbot básico, calendario, idioma extra, dark/light, animaciones premium, multi-tenant, auditoría smart contract, etc.).
+- Motor de precio: `base + Σ add, luego × muls + Σ addOns`. Sin multiplicadores plazo/modo globales (esos son preguntas shared).
+- **Cart sin pills** Plazo/Modo. Cada item muestra tipo (mint) + add-ons inline con precio.
+- Carrito persistente `localStorage` (`ibisne.cart.v7`). Folio `ibisne.folio`. Leads en `ibisne.leads` / `ibisne.lead.last`.
+- Handover al final → PayPal con monto pre-fill (`paypal.me/iBisne/{monto}MXN`) + WhatsApp hunter (`+52 33 2957 5274`) con payload completo (folio + tipo + config + extras + totales).
 
 ## Cómo iterar
 
 - **Cambios de copy:** libres, no piden aprobación.
 - **Cambios de layout dentro del sistema:** libres si usan componentes existentes en `assets/quiz/styles.css` y tokens VAULT v2.
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
-- **Cambios de pricing/catálogo:** `data/pricing.js` es la fuente única.
+- **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v9.0.1`.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v9.0.2`.
 
 ## Voice & copy
 
