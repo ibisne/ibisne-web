@@ -132,6 +132,62 @@ window.IBISNE_ICONS = (function(){
     bolt:      { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 L5 13 L11 13 L9 21 L19 10 L13 10 Z"/></svg>' },
     check:     { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>' },
     'arrow-up-right': { line: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="18" x2="18" y2="6"/><polyline points="9 6 18 6 18 15"/></svg>' },
+
+    // ─── v10.1 · 24 ICONOS NUEVOS · uso en cotizador Apps ──────────
+    // Filosofía: SVG simples · paths/circles/rects · viewBox 24×24 · usan variant() para line+fill auto.
+
+    'help-circle':  variant('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5 a2.5 2.5 0 0 1 5 0 c0 1.5 -2.5 2 -2.5 4"/><circle cx="12" cy="17.5" r="0.7" fill="currentColor"/>'),
+
+    envelope:       variant('<rect x="3" y="5.5" width="18" height="13" rx="1.5"/><polyline points="3 7 12 14 21 7"/>'),
+
+    bell:           variant('<path d="M6 16 V11 a6 6 0 0 1 12 0 V16 L20 18 H4 Z"/><path d="M10 19.5 a2 2 0 0 0 4 0"/>'),
+
+    'bell-dot':     variant('<path d="M6 16 V11 a6 6 0 0 1 12 0 V16 L20 18 H4 Z"/><path d="M10 19.5 a2 2 0 0 0 4 0"/><circle cx="18.5" cy="5.5" r="2.3"/>',
+                            '<circle cx="18.5" cy="5.5" r="2.3" fill="currentColor"/>'),
+
+    'trending-up':  variant('<polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/>'),
+
+    flask:          variant('<line x1="9" y1="3.5" x2="15" y2="3.5"/><path d="M10 3.5 V8.5 L5 18 a1 1 0 0 0 1 1.5 H18 a1 1 0 0 0 1 -1.5 L14 8.5 V3.5"/>'),
+
+    heart:          variant('<path d="M12 20 C9 18 3 14 3 9.5 a4 4 0 0 1 8 -1 a4 4 0 0 1 8 1 c0 4.5 -6 8.5 -8 10.5 Z"/>'),
+
+    share:          variant('<circle cx="5" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><line x1="7.3" y1="11" x2="15.7" y2="7"/><line x1="7.3" y1="13" x2="15.7" y2="17"/>'),
+
+    sliders:        variant('<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="14" cy="7" r="2.2"/><circle cx="8" cy="12" r="2.2"/><circle cx="16" cy="17" r="2.2"/>',
+                            '<circle cx="14" cy="7" r="2.2" fill="currentColor"/><circle cx="8" cy="12" r="2.2" fill="currentColor"/><circle cx="16" cy="17" r="2.2" fill="currentColor"/>'),
+
+    'wifi-off':     variant('<path d="M5 9.5 a10 10 0 0 1 14 0"/><path d="M8.5 12.5 a5 5 0 0 1 7 0"/><circle cx="12" cy="16" r="1.3"/><line x1="4" y1="20" x2="20" y2="4"/>',
+                            '<circle cx="12" cy="16" r="1.3" fill="currentColor"/>'),
+
+    'hand-coin':    variant('<path d="M3 13 a3.5 3.5 0 0 1 3.5 -3.5 H13 a3.5 3.5 0 0 1 3.5 3.5 V21 H3 Z"/><circle cx="16" cy="6" r="3"/><line x1="16" y1="4" x2="16" y2="8"/>'),
+
+    history:        variant('<path d="M3 12 a9 9 0 1 0 3 -6.5"/><polyline points="3 4 3 8 7 8"/><polyline points="12 8 12 12 15 14"/>'),
+
+    'file-text':    variant('<path d="M5 3 H14 L19 8 V21 H5 Z"/><polyline points="14 3 14 8 19 8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15.5" x2="16" y2="15.5"/><line x1="8" y1="18.5" x2="13" y2="18.5"/>'),
+
+    users:          variant('<circle cx="9" cy="9" r="3"/><path d="M3 19.5 a6 6 0 0 1 12 0"/><circle cx="17" cy="10" r="2.3"/><path d="M14.5 19.5 a3 3 0 0 1 6.5 0"/>'),
+
+    'radio-live':   variant('<line x1="12" y1="11" x2="12" y2="21"/><line x1="9" y1="21" x2="15" y2="21"/><path d="M9 7 q3 -3 6 0"/><path d="M6 4.5 q6 -5 12 0"/><circle cx="12" cy="9" r="1.4"/>',
+                            '<circle cx="12" cy="9" r="1.4" fill="currentColor"/>'),
+
+    calendar:       variant('<rect x="3" y="5.5" width="18" height="15.5" rx="1.5"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7.5"/><line x1="16" y1="3" x2="16" y2="7.5"/><rect x="10.5" y="13" width="3" height="3"/>',
+                            '<rect x="10.5" y="13" width="3" height="3" fill="currentColor"/>'),
+
+    'shield-check': variant('<path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 8 a8 8 0 0 1 -8 -8 V6 Z"/><polyline points="8 12 11 15 16 9"/>'),
+
+    'map-pin':      variant('<path d="M12 22 c-4 -5 -7 -8 -7 -12 a7 7 0 0 1 14 0 c0 4 -3 7 -7 12 Z"/><circle cx="12" cy="10" r="2.8"/>'),
+
+    headphones:     variant('<path d="M4 14 v-1.5 a8 8 0 0 1 16 0 V14"/><rect x="3" y="13" width="4" height="6" rx="1"/><rect x="17" y="13" width="4" height="6" rx="1"/>'),
+
+    folder:         variant('<path d="M3 7.5 a1 1 0 0 1 1 -1 h5 l2 2 h9 a1 1 0 0 1 1 1 v9.5 a1 1 0 0 1 -1 1 H4 a1 1 0 0 1 -1 -1 Z"/>'),
+
+    'bar-chart':    variant('<rect x="4" y="12" width="4" height="8" rx="0.5"/><rect x="10" y="7" width="4" height="13" rx="0.5"/><rect x="16" y="14" width="4" height="6" rx="0.5"/>'),
+
+    'user-x':       variant('<circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5 a7 7 0 0 1 14 0"/><line x1="4.5" y1="4" x2="19.5" y2="20"/>'),
+
+    books:          variant('<rect x="4" y="5" width="3" height="14" rx="0.5"/><rect x="8.5" y="5" width="3" height="14" rx="0.5"/><path d="M13 7 L18.5 6 L20.5 17 L15 18 Z"/>'),
+
+    zap:            variant('<polygon points="13 3 5 14 11 14 9 21 19 9 13 9 15 3"/>'),
   };
 
   icons.get = function(id, v){
