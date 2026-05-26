@@ -2113,22 +2113,117 @@ window.IBISNE_PRICING_V9 = {
   modificadores: {},
 
   // ═══════════════════════════════════════════════════════════════════
-  // HELPERS (heredados de v8 · pendiente integrar en Fase 2)
+  // HELPERS · portados de v8 con ajustes para v9.
+  // - getSpeed: sin plazoMul/modoMul · esos ahora viven como preguntas
+  //   shared dentro del subflow y afectan total directamente.
+  // - getStack: STACK_MAP actualizado a IDs v9 (web-bio · plat-* · etc.)
   // ═══════════════════════════════════════════════════════════════════
-  helpers: {
-    /* en Fase 2 se migran funciones de cálculo de v8 a este formato */
+  getTier(total){
+    if (total <= 0)       return { id: 'empty',      label: '—'           };
+    if (total < 5000)     return { id: 'express',    label: 'EXPRESS'     };
+    if (total < 25000)    return { id: 'starter',    label: 'STARTER'     };
+    if (total < 80000)    return { id: 'standard',   label: 'STANDARD'    };
+    if (total < 200000)   return { id: 'pro',        label: 'PRO'         };
+    return                      { id: 'enterprise', label: 'ENTERPRISE'  };
+  },
+  getTeam(total, flags){
+    const team = ['KAM'];
+    if (total >= 1500)                                         team.push('Frontend');
+    if (total >= 15000 || (flags && flags.has('auth-or-api'))) team.push('Backend');
+    if (flags && flags.has('animacion-pro'))                   team.push('UX/UI');
+    if (total >= 40000)                                        team.push('PM');
+    if (flags && (flags.has('ia') || flags.has('blockchain'))) team.push('DevOps');
+    if (total >= 80000)                                        team.push('QA');
+    return team;
+  },
+  getSpeed(total, flags){
+    let score = 50;
+    if (total < 10000)        score = 25;
+    else if (total < 50000)   score = 45;
+    else if (total < 150000)  score = 65;
+    else                      score = 85;
+    if (flags && flags.has('animacion-pro'))                   score += 8;
+    if (flags && (flags.has('ia') || flags.has('blockchain'))) score += 10;
+    return Math.max(0, Math.min(100, score));
+  },
+  getSpeedText(speed){
+    if (speed < 35) return 'Tu proyecto apunta a entregables rápidos. Cero burocracia · iteramos en el camino.';
+    if (speed < 70) return 'Tu proyecto balancea alcance y pulido. Calidad de producción estándar.';
+    return 'Tu proyecto apunta a un producto premium · acabado de alta gama.';
+  },
+  getSpeedZone(speed){
+    if (speed < 35) return 'mvp';
+    if (speed < 70) return 'estandar';
+    return 'premium';
+  },
+  getStack(servicios){
+    if (!Array.isArray(servicios) || servicios.length === 0) {
+      return ['Stack a definir según alcance', 'Tecnología adecuada', 'Hosting confiable'];
+    }
+    const STACK_MAP = {
+      // Web (4) · IDs v9 (web-bio en vez de web-biolink)
+      'web-bio':            ['HTML + CSS · ultra ligero', 'Deploy en Vercel'],
+      'web-landing':        ['Astro / Next.js', 'TailwindCSS', 'Deploy en Vercel'],
+      'web-funnel':         ['Next.js + integraciones', 'Email automation', 'Analytics avanzado'],
+      'web-sitio':          ['Next.js / Astro', 'CMS (Sanity/Strapi)', 'Deploy en Vercel'],
+      // Apps (5)
+      'app-pwa':            ['React/Next.js PWA', 'Service Worker + Manifest'],
+      'app-android':        ['React Native / Flutter / Kotlin', 'Google Play Console'],
+      'app-ios':            ['React Native / Flutter / Swift', 'App Store Connect'],
+      'app-ambas':          ['React Native / Flutter', 'Google Play + App Store'],
+      'app-desktop':        ['Electron / Tauri', 'Auto-update'],
+      // Ecommerce (4)
+      'ec-mini':            ['Next.js / Astro single-page', 'Stripe / Mercado Pago', 'Deploy en Vercel'],
+      'ec-shopify':         ['Shopify + apps oficiales', 'Theme customization', 'Apps de terceros'],
+      'ec-tienda':          ['Next.js + headless CMS', 'Pasarela integrada', 'Deploy en Vercel + Railway'],
+      'ec-app':             ['React Native / Flutter', 'Firebase + pagos in-app', 'App Store + Google Play'],
+      // Plataformas heredados de Auto v8 (5) · IDs v9 (plat-* en vez de auto-*)
+      'plat-chatbot':       ['LLM (OpenAI/Anthropic) + n8n', 'WhatsApp Business API'],
+      'plat-agenda':        ['Cal.com / Calendly API + custom', 'Google Calendar sync'],
+      'plat-integraciones': ['Zapier / Make / n8n', 'APIs REST + webhooks'],
+      'plat-procesos':      ['n8n / scripts custom', 'Dashboards en Metabase/Retool'],
+      'plat-asesoria':      ['1-a-1 con Eduardo + equipo iBisne'],
+      // Plataformas nuevos v9 (4)
+      'plat-crm':           ['Next.js + Postgres', 'Auth + roles', 'API REST + webhooks'],
+      'plat-saas':          ['Next.js multi-tenant', 'Postgres + Redis', 'Stripe billing', 'Auth + SSO'],
+      'plat-erp':           ['Next.js + módulos', 'Postgres + ETL', 'Reportes + BI'],
+      'plat-blockchain':    ['Solidity / Rust', 'Ethereum / Polygon / Solana', 'Hardhat + Foundry', 'Auditoría'],
+    };
+    const unique = new Set();
+    for (const s of servicios) {
+      const tech = STACK_MAP[s.id];
+      if (tech) tech.forEach(t => unique.add(t));
+    }
+    if (unique.size === 0) return ['Stack adecuado al alcance', 'Tecnología según necesidad'];
+    return Array.from(unique).slice(0, 4);
+  },
+  getTime(servicios){
+    if (!Array.isArray(servicios) || servicios.length === 0) return '—';
+    let top = servicios[0];
+    for (const s of servicios) {
+      if ((s.calculatedPrice || s.base || 0) > (top.calculatedPrice || top.base || 0)) top = s;
+    }
+    return top.tiempo || '4-8 sem';
+  },
+
+  // v9 · helpers internos para add-ons
+  addOnsForService(servicioId){
+    return (this.addOns || []).filter(a => (a.aplica || []).includes(servicioId));
+  },
+  findAddOn(addOnId){
+    return (this.addOns || []).find(a => a.id === addOnId) || null;
   },
 
   // ═══════════════════════════════════════════════════════════════════
   // META · info para debug/tooling
   // ═══════════════════════════════════════════════════════════════════
   meta: {
-    version: '9.0.0-alpha',
-    schemaRev: 'tipos-adaptativos+addons-globales',
-    activatedInProd: false,
+    version: '9.0.0',
+    schemaRev: 'tipos-adaptativos+addons-globales+helpers-portados',
+    activatedInProd: true,                     // v9 ya cargado en quiz.html (Fase 2)
     serviciosCount: 22,
     addOnsCount: 19,
-    notes: 'pricing-v9.js coexiste con pricing.js (v8.6.1) hasta que Fase 2 active el switch en ui.js',
+    notes: 'Fase 2 activa · ui.js consume IBISNE_PRICING_V9 directamente · pricing.js v8 sigue en repo (pendiente eliminar en Fase 4).',
   },
 };
 

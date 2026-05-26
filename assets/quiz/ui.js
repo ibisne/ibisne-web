@@ -25,9 +25,15 @@
   'use strict';
 
   // ═══════════════════════════════════════════════════════════════════
-  // STATE
+  // STATE · v9.0 · pricing-v9 adaptativo
+  //   Cambios vs v6/v8:
+  //   - STORAGE_KEY bumpeado a v7 (nueva shape del cart · no carga el viejo)
+  //   - cart.modificadores ELIMINADO (plazo/modo viven como preguntas shared)
+  //   - servicios[] agrega tipoId y addOnIds (capturan elección de tipo + extras)
+  //   - subflow agrega tipoId, qFlow (cached array de preguntas adaptativas),
+  //     addOnIds (multi-select de add-ons), step ('tipo' | 'q' | 'addons' | 'confirm')
   // ═══════════════════════════════════════════════════════════════════
-  const STORAGE_KEY = 'ibisne.cart.v6';
+  const STORAGE_KEY = 'ibisne.cart.v7';
 
   const State = {
     // Datos del cliente (step datos)
@@ -35,13 +41,12 @@
 
     // Carrito (acumulado del catálogo)
     cart: {
-      servicios: [],              // [{ id, label, base, config, calculatedPrice }]
-      modificadores: { plazo: 'normal', modo: 'estandar' },
+      servicios: [],              // [{ id, label, base, tipoId, addOnIds, config, calculatedPrice }]
     },
 
-    // UI state · navegación jerárquica del catálogo (v6.0.2)
-    catalogPath: { mega: null, sub: null, service: null }, // navegación jerárquica
-    subflow: null,                // { servicioId, config, isEdit } · configuración activa
+    // UI state · navegación jerárquica del catálogo
+    catalogPath: { mega: null, sub: null, service: null },
+    subflow: null,                // { servicioId, tipoId, qFlow, addOnIds, config, isEdit, qIndex, step }
     folio: null,
 
     // Heurísticas (v5.2.0)
@@ -75,15 +80,17 @@
     } catch(_){}
   }
 
+  // v9 · helper centralizado para acceder al pricing (siempre v9 ahora)
+  function getPricing(){ return window.IBISNE_PRICING_V9 || window.IBISNE_PRICING; }
+
   // Helper: dado un service-id, encuentra el servicio en pricing.servicios
-  // (estructura plana indexada por ID en v6.0.2)
   function findServicio(servicioId){
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     if (!PRICING || !PRICING.servicios) return null;
     return PRICING.servicios[servicioId] || null;
   }
   function clearCart(){
-    State.cart = { servicios: [], modificadores: { plazo: 'normal', modo: 'estandar' } };
+    State.cart = { servicios: [] };
     persistCart();
   }
 
@@ -238,14 +245,19 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // COMPUTE CART
+  // COMPUTE CART · v9.0
+  //   Sin multiplicadores plazo/modo globales (esos ahora viven como
+  //   preguntas shared dentro del subflow y ya están en `calculatedPrice`
+  //   de cada servicio). Solo suma servicios → total → IVA.
+  //   Retorna: { subtotal, total, totalConIva, lineItems[],
+  //              flags, team, tier, speed, speedZone, speedText, stack, tiempo }
+  //   lineItem ahora incluye:
+  //     - tipoId · el tipo elegido del servicio (string)
+  //     - tipoLabel · label legible del tipo
+  //     - addOns · array [{id, label, price}] de extras elegidos
   // ═══════════════════════════════════════════════════════════════════
-  // Suma el carrito aplicando modificadores globales.
-  // Retorna: { subtotal, modPlazo, modPlazoLabel, modModo, modModoLabel,
-  //            total, totalConIva, lineItems, flags, team, tiempo, stack,
-  //            speed, speedZone, speedText, tier }
   function computeCart(){
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const cart = State.cart;
     let subtotal = 0;
     const flags = new Set();
@@ -254,13 +266,32 @@
     for (const s of cart.servicios) {
       const price = s.calculatedPrice || s.base || 0;
       subtotal += price;
+
+      // Hidratar add-ons desde IDs persistidos
+      const addOns = (s.addOnIds || []).map(id => {
+        const ao = PRICING.findAddOn ? PRICING.findAddOn(id) : null;
+        return ao ? { id: ao.id, label: ao.label, price: ao.price } : null;
+      }).filter(Boolean);
+
+      // Hidratar tipoLabel desde el catálogo
+      const svcDef = PRICING.servicios[s.id];
+      let tipoLabel = '';
+      if (svcDef && Array.isArray(svcDef.tipos) && s.tipoId) {
+        const t = svcDef.tipos.find(x => x.id === s.tipoId);
+        if (t) tipoLabel = t.label;
+      }
+
       lineItems.push({
         servicioId: s.id,
         label: s.label,
         price: price,
         config: s.config || {},
         icon: s.icon,
+        tipoId: s.tipoId || null,
+        tipoLabel: tipoLabel,
+        addOns: addOns,
       });
+
       // Flags propagadas desde config (algunas opciones añaden flags)
       if (s.config) {
         for (const qid of Object.keys(s.config)) {
@@ -274,27 +305,21 @@
       }
     }
 
-    // Modificadores globales
-    const plazoCfg = PRICING.modificadores.plazo[cart.modificadores.plazo] || PRICING.modificadores.plazo.normal;
-    const modoCfg  = PRICING.modificadores.modo[cart.modificadores.modo]   || PRICING.modificadores.modo.estandar;
-
-    const totalConPlazo = subtotal * plazoCfg.mul;
-    const total = totalConPlazo * modoCfg.mul;
+    // v9 · sin plazo/modo multiplicadores · total = subtotal directo
+    const total = subtotal;
     const totalConIva = total * 1.16;
 
-    // Tier / equipo / velocidad / stack / tiempo
-    const tier      = PRICING.getTier(total);
-    const team      = PRICING.getTeam(total, flags);
-    const speed     = PRICING.getSpeed(total, flags, plazoCfg.mul, modoCfg.mul);
-    const speedZone = PRICING.getSpeedZone(speed);
-    const speedText = PRICING.getSpeedText(speed);
-    const stack     = PRICING.getStack(cart.servicios);
-    const tiempo    = PRICING.getTime(cart.servicios);
+    // Tier / equipo / velocidad / stack / tiempo (helpers v9 · sin plazoMul/modoMul)
+    const tier      = PRICING.getTier ? PRICING.getTier(total) : { id: 'standard', label: 'STANDARD' };
+    const team      = PRICING.getTeam ? PRICING.getTeam(total, flags) : ['KAM'];
+    const speed     = PRICING.getSpeed ? PRICING.getSpeed(total, flags) : 50;
+    const speedZone = PRICING.getSpeedZone ? PRICING.getSpeedZone(speed) : 'estandar';
+    const speedText = PRICING.getSpeedText ? PRICING.getSpeedText(speed) : '';
+    const stack     = PRICING.getStack ? PRICING.getStack(cart.servicios) : [];
+    const tiempo    = PRICING.getTime ? PRICING.getTime(cart.servicios) : '4-8 sem';
 
     return {
       subtotal, total, totalConIva,
-      modPlazo: cart.modificadores.plazo, modPlazoLabel: plazoCfg.label, modPlazoMul: plazoCfg.mul, modPlazoSuffix: plazoCfg.metaSuffix,
-      modModo:  cart.modificadores.modo,  modModoLabel:  modoCfg.label,  modModoMul:  modoCfg.mul,  modModoSuffix:  modoCfg.metaSuffix,
       lineItems, flags, team, tier, speed, speedZone, speedText, stack, tiempo,
     };
   }
@@ -387,7 +412,7 @@
   // ═══════════════════════════════════════════════════════════════════
   function renderCatalog(){
     setProgress(15); // v7.0.2 · catálogo es el inicio (sin step contexto)
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const path = State.catalogPath || (State.catalogPath = { mega: null, sub: null, service: null });
 
     // Nivel 4 · sub-flow de un servicio (configuración · vista de cards)
@@ -417,7 +442,7 @@
 
   // ── Nivel 1 · 4 mega-categorías ──────────────────────────────────────
   function renderMegaGrid(){
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
     const cardsHtml = PRICING.megaCategorias.map(mega => {
@@ -522,7 +547,7 @@
     // Listar los servicios que incluye la categoría
     let subsHtml = '';
     if (mega && mega.serviciosIds) {
-      const PRICING = window.IBISNE_PRICING;
+      const PRICING = getPricing();
       subsHtml = `
         <div class="info-modal-subs">
           <div class="info-modal-subs-label">Incluye:</div>
@@ -560,7 +585,7 @@
 
   // ── Nivel 3 · lista de servicios (de una sub o de una mega sin subs) ─
   function renderServicesList(title, subtitle, icon, serviciosIds, mega, sub){
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const serviciosInCart = new Set(State.cart.servicios.map(s => s.id));
 
     // Orden: tier, luego precio
@@ -659,9 +684,10 @@
       if (bcLinks[0]) bcLinks[0].addEventListener('click', goToRoot);
     }
 
-    // v6.1.0 · La card entera es el área de click (sin botón redundante).
-    // Servicio nuevo con subflow → abre configuración. Sin subflow → agrega.
-    // Servicio ya en carrito · con subflow → editar. Sin subflow → quitar.
+    // v9 · La card entera es el área de click. TODOS los servicios v9
+    // tienen subflow (tipos + preguntas adaptativas + add-ons), así que
+    // siempre abrimos el subflow. Si ya está en carrito → editar con
+    // estado existente (tipoId+addOnIds+config). Si no → abrir limpio.
     $$('#wizard .service-card').forEach(card => {
       card.addEventListener('click', () => {
         const sid = card.dataset.serviceId;
@@ -669,23 +695,18 @@
         if (!servicio.label) return;
         const inCart = State.cart.servicios.find(s => s.id === sid);
         if (inCart) {
-          if (servicio.subflow) {
-            trackEditClick();
-            openSubflowModal(servicio, inCart.config);
-          } else {
-            removeFromCart(sid);
-            renderCatalog();
-          }
+          trackEditClick();
+          openSubflowModal(servicio, {
+            tipoId: inCart.tipoId || null,
+            addOnIds: inCart.addOnIds || [],
+            config: inCart.config || {},
+          });
         } else {
-          if (servicio.subflow) {
-            openSubflowModal(servicio, null);
-          } else {
-            addToCart(servicio, {});
-            renderCatalog();
-          }
+          openSubflowModal(servicio, null);
         }
       });
     });
+
     $('#cat-continue').addEventListener('click', () => {
       if (State.cart.servicios.length === 0) return;
       scheduleAdvance('#/datos', 80);
@@ -698,29 +719,53 @@
   // ═══════════════════════════════════════════════════════════════════
   // CART · agregar / editar / quitar
   // ═══════════════════════════════════════════════════════════════════
-  // v7.0.0 · Soporta `add` (suma fija) Y `mul` (factor en cascada).
-  // total = base + Σ add · luego × cada mul en orden de pregunta.
-  // Así "calidad/tipo/etapa" escalan proporcionalmente (no suma plana).
-  function calcSubflowPrice(servicio, config){
-    const PRICING = window.IBISNE_PRICING;
-    const sub = PRICING.subflow[servicio.id] || [];
+  // calcSubflowPrice · v9.0
+  //   Nuevo esquema adaptativo:
+  //     1. base del servicio
+  //     2. preguntas byType[tipoId] (específicas del tipo elegido)
+  //     3. preguntas shared (acabado/plazo/etc. comunes a todos los tipos)
+  //     4. add-ons globales (precio fijo cada uno)
+  //   Orden: total = (base + Σ add) × Π mul + Σ addOnsPrice
+  //   Los add-ons se suman al final (no se multiplican por mul de acabado/plazo)
+  //   porque son entregables independientes.
+  // ═══════════════════════════════════════════════════════════════════
+  function calcSubflowPrice(servicio, config, tipoId, addOnIds){
+    const PRICING = getPricing();
     let total = servicio.base || 0;
+
+    // 1+2. Preguntas del subflow (byType + shared)
+    const sf = PRICING.subflow ? PRICING.subflow[servicio.id] : null;
     const muls = [];
-    for (const q of sub) {
-      const ans = config[q.id];
-      if (!ans) continue;
-      const opts = Array.isArray(ans) ? ans : [ans];
-      for (const o of opts) {
-        if (typeof o.add === 'number')  total += o.add;
-        if (typeof o.mul === 'number')  muls.push(o.mul);
+    if (sf) {
+      const tipoQs = (sf.byType && tipoId) ? (sf.byType[tipoId] || []) : [];
+      const sharedQs = sf.shared || [];
+      const allQs = [...tipoQs, ...sharedQs];
+      for (const q of allQs) {
+        const ans = config[q.id];
+        if (!ans) continue;
+        const opts = Array.isArray(ans) ? ans : [ans];
+        for (const o of opts) {
+          if (typeof o.add === 'number')  total += o.add;
+          if (typeof o.mul === 'number')  muls.push(o.mul);
+        }
+      }
+      for (const m of muls) total *= m;
+    }
+
+    // 3. Add-ons (precio fijo · suma plana al final)
+    if (Array.isArray(addOnIds) && addOnIds.length) {
+      const addOnsList = PRICING.addOns || [];
+      for (const aid of addOnIds) {
+        const ao = addOnsList.find(a => a.id === aid);
+        if (ao && typeof ao.price === 'number') total += ao.price;
       }
     }
-    for (const m of muls) total *= m;
+
     return Math.round(total);
   }
 
-  function addToCart(servicio, config){
-    const price = calcSubflowPrice(servicio, config);
+  function addToCart(servicio, config, tipoId, addOnIds){
+    const price = calcSubflowPrice(servicio, config, tipoId, addOnIds);
     State.cart.servicios.push({
       id: servicio.id,
       label: servicio.label,
@@ -729,18 +774,23 @@
       tiempo: servicio.tiempo,
       icon: servicio.icon,
       subtitle: servicio.subtitle,
+      tipoId: tipoId || null,
+      addOnIds: Array.isArray(addOnIds) ? [...addOnIds] : [],
       config: config,
       calculatedPrice: price,
     });
     persistCart();
   }
-  function updateCart(servicioId, config){
+  function updateCart(servicioId, config, tipoId, addOnIds){
     const idx = State.cart.servicios.findIndex(s => s.id === servicioId);
     if (idx < 0) return;
     const servicio = findServicio(servicioId);
     if (!servicio) return;
     State.cart.servicios[idx].config = config;
-    State.cart.servicios[idx].calculatedPrice = calcSubflowPrice(servicio, config);
+    if (tipoId !== undefined) State.cart.servicios[idx].tipoId = tipoId;
+    if (addOnIds !== undefined) State.cart.servicios[idx].addOnIds = Array.isArray(addOnIds) ? [...addOnIds] : [];
+    const final = State.cart.servicios[idx];
+    State.cart.servicios[idx].calculatedPrice = calcSubflowPrice(servicio, config, final.tipoId, final.addOnIds);
     persistCart();
   }
   function removeFromCart(servicioId){
@@ -749,38 +799,76 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // SUB-FLOW · vista de cards integrada (NO modal · v6.0.5)
+  // SUB-FLOW · v9.0 · Flow adaptativo con steps
+  //   step 'tipo'    → renderTypeChooser  (cards de tipos del servicio)
+  //   step 'q'       → renderSubflowQ     (preguntas adaptativas del tipo + shared)
+  //   step 'addons'  → renderAddOnsSection (multi-select de extras globales)
+  //   step 'confirm' → renderServiceConfirm
+  //
+  //   sf.qFlow se cachea al elegir tipo: [...byType[tipoId], ...shared]
   // ═══════════════════════════════════════════════════════════════════
-  // Mantiene el ritmo de cards en TODA la experiencia. El sub-flow es un
-  // nivel más de navegación del wizard, no un overlay.
-  function openSubflowModal(servicio, existingConfig){
-    const PRICING = window.IBISNE_PRICING;
-    const questions = PRICING.subflow[servicio.id] || [];
+  function openSubflowModal(servicio, existingState){
+    // existingState (edit): { tipoId, addOnIds, config }
+    const ed = existingState || {};
+    const hasExisting = !!(ed.tipoId || ed.config);
     State.subflow = {
       servicioId: servicio.id,
-      config: existingConfig ? JSON.parse(JSON.stringify(existingConfig)) : {},
-      isEdit: !!existingConfig,
+      tipoId: ed.tipoId || null,
+      qFlow: null,                                                 // se calcula al elegir tipo
+      addOnIds: Array.isArray(ed.addOnIds) ? [...ed.addOnIds] : [],
+      config: ed.config ? JSON.parse(JSON.stringify(ed.config)) : {},
+      isEdit: hasExisting,
       qIndex: 0,
-      confirming: questions.length === 0, // sin preguntas → directo a confirmar
+      step: hasExisting ? 'q' : 'tipo',  // si edit, salta tipo
     };
+    if (hasExisting && ed.tipoId) {
+      State.subflow.qFlow = buildQFlow(servicio.id, ed.tipoId);
+    }
     State.catalogPath = Object.assign({}, State.catalogPath, { service: servicio.id });
     renderCatalog();
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // SUB-FLOW · v6.2.0 · UNA pregunta a la vez (wizard step-by-step)
-  // ═══════════════════════════════════════════════════════════════════
+  // v9 · construye el array de preguntas adaptativas: byType[tipoId] + shared
+  function buildQFlow(servicioId, tipoId){
+    const PRICING = getPricing();
+    const sf = PRICING.subflow ? PRICING.subflow[servicioId] : null;
+    if (!sf) return [];
+    const tipoQs = (sf.byType && tipoId) ? (sf.byType[tipoId] || []) : [];
+    const sharedQs = sf.shared || [];
+    return [...tipoQs, ...sharedQs];
+  }
+
+  // v9 · dispatcher según sf.step
   function renderSubflowView(){
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const sf = State.subflow;
     if (!sf) { State.catalogPath.service = null; return renderCatalog(); }
     const servicio = Object.assign({ id: sf.servicioId }, findServicio(sf.servicioId));
-    const questions = PRICING.subflow[sf.servicioId] || [];
+
+    if (sf.step === 'tipo')    return renderTypeChooser(servicio);
+    if (sf.step === 'addons')  return renderAddOnsSection(servicio);
+    if (sf.step === 'confirm') return renderServiceConfirm(servicio, sf.config);
+    // default: 'q' (preguntas)
+    return renderSubflowQ(servicio);
+  }
+
+  // v9 · render preguntas adaptativas · paralelo al renderSubflowView v8 pero usa qFlow
+  function renderSubflowQ(servicio){
+    const PRICING = getPricing();
+    const sf = State.subflow;
+    const questions = sf.qFlow || [];
     const config = sf.config;
 
-    // Si terminó las preguntas (o no tiene) → pantalla de confirmación
-    if (sf.confirming || sf.qIndex >= questions.length) {
-      return renderServiceConfirm(servicio, config);
+    // Si no hay preguntas (servicio sin subflow), saltar a addons
+    if (questions.length === 0) {
+      sf.step = 'addons';
+      return renderSubflowView();
+    }
+    // Si terminó las preguntas → siguiente step (addons)
+    if (sf.qIndex >= questions.length) {
+      sf.step = 'addons';
+      sf.qIndex = 0;
+      return renderSubflowView();
     }
 
     trackStepShown('subflow:' + sf.servicioId + ':q' + sf.qIndex);
@@ -815,7 +903,7 @@
         priceHtml = o.add ? `+ ${formatMxn(o.add)}` : (o.mul ? '×' + o.mul : 'Incluido');
       } else {
         const hypo = Object.assign({}, config, { [q.id]: o });
-        priceHtml = formatMxn(calcSubflowPrice(servicio, hypo));
+        priceHtml = formatMxn(calcSubflowPrice(servicio, hypo, sf.tipoId, sf.addOnIds));
       }
       const detalleHtml = o.detalle
         ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">${L('+ qué incluye')}</button>
@@ -848,7 +936,7 @@
     const backLabel = sf.qIndex > 0 ? 'pregunta anterior' : L(servicio.label);
 
     // v8.4.0 · Lookup mega para el breadcrumb del subflow
-    const PRICING_sf = window.IBISNE_PRICING;
+    const PRICING_sf = getPricing();
     const megaSf = PRICING_sf && PRICING_sf.megaCategorias
       ? PRICING_sf.megaCategorias.find(m => (m.serviciosIds || []).includes(sf.servicioId))
       : null;
@@ -882,22 +970,22 @@
       </div>
     `;
 
-    // ← Volver: pregunta anterior, o salir del subflow si es la primera
+    // ← Volver: pregunta anterior, o al step 'tipo' si es la primera
     $('#sf-back').addEventListener('click', () => {
       trackNavBack();
       if (sf.qIndex > 0) { sf.qIndex--; renderSubflowView(); }
       else {
-        State.subflow = null;
-        State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
-        renderCatalog();
+        // Volver al chooser de tipo (no salir del subflow)
+        sf.step = 'tipo';
+        renderSubflowView();
       }
     });
 
-    // Avanzar a la siguiente pregunta (o a confirmación)
+    // Avanzar: siguiente pregunta o pasar a addons
     const advance = () => {
       trackStepChange();
       if (sf.qIndex < total - 1) { sf.qIndex++; renderSubflowView(); }
-      else { sf.confirming = true; renderSubflowView(); }
+      else { sf.step = 'addons'; sf.qIndex = 0; renderSubflowView(); }
     };
 
     // v7.1.0 · Botón "+ qué incluye" expande el detalle · no selecciona
@@ -943,28 +1031,234 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // v6.2.0 · C · Pantalla de confirmación del servicio (multi guiado).
-  // El servicio se agrega/actualiza al carrito AQUÍ (único punto).
-  // Nunca suelta al usuario al catálogo sin contexto.
+  // v9 · TYPE CHOOSER · primer step del subflow
+  // El usuario elige el TIPO de servicio (linktree vs bento, lead-gen vs
+  // producto, etc.). Al seleccionar, se cachea sf.qFlow con las preguntas
+  // específicas del tipo + las shared, y avanza a step 'q'.
+  // ═══════════════════════════════════════════════════════════════════
+  function renderTypeChooser(servicio){
+    const PRICING = getPricing();
+    const sf = State.subflow;
+    trackStepShown('tipo:' + servicio.id);
+
+    const tipos = Array.isArray(servicio.tipos) ? servicio.tipos : [];
+
+    // Si el servicio no tiene tipos definidos, saltar este step directo a 'q'
+    if (tipos.length === 0) {
+      sf.tipoId = null;
+      sf.qFlow = buildQFlow(servicio.id, null);
+      sf.step = 'q';
+      return renderSubflowView();
+    }
+
+    const megaTC = PRICING.megaCategorias
+      ? PRICING.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id))
+      : null;
+
+    const cardsHtml = tipos.map(t => {
+      const isSel = sf.tipoId === t.id;
+      return `
+        <button class="type-card ${isSel ? 'is-selected' : ''}" data-tipo="${t.id}" type="button">
+          <div class="type-card-top">
+            <div class="type-card-icon">${iconHtml(servicio.icon || 'arrow', 'line')}</div>
+          </div>
+          <div class="type-card-label">${L(t.label)}</div>
+          ${t.summary ? `<div class="type-card-summary">${L(t.summary)}</div>` : ''}
+          <div class="type-card-foot">
+            ${isSel
+              ? `<span class="sf-card-state is-added">${L('seleccionado')}</span>`
+              : '<span class="sf-card-arrow">→</span>'}
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    $('#wizard').innerHTML = `
+      <div class="screen sf-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([
+            { label: 'Inicio', href: '#/catalog' },
+            { label: megaTC ? megaTC.label : 'Servicios', href: '#/catalog' },
+            { label: servicio.label }
+          ])}
+          <div class="sf-q-head">
+            <h2 class="sf-q-title screen-title">${L('¿Qué tipo de')} ${L(servicio.label).toLowerCase()}?</h2>
+            <p class="sf-q-help screen-subtitle">${L('Elige el que más se acerca · personalizamos las preguntas a tu caso.')}</p>
+          </div>
+        </div>
+        <div class="screen-body">
+          <div class="sf-grid type-grid">${cardsHtml}</div>
+        </div>
+        <div class="screen-actions">
+          <button class="wizard-back" id="sf-tipo-back" type="button">← ${L(servicio.label)}</button>
+          <span class="wizard-hint">${L('Elige un tipo para continuar')}</span>
+        </div>
+      </div>
+    `;
+
+    $('#sf-tipo-back').addEventListener('click', () => {
+      trackNavBack();
+      State.subflow = null;
+      State.catalogPath = Object.assign({}, State.catalogPath, { service: null });
+      renderCatalog();
+    });
+
+    $$('#wizard .type-card').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tid = btn.dataset.tipo;
+        sf.tipoId = tid;
+        sf.qFlow = buildQFlow(servicio.id, tid);
+        sf.qIndex = 0;
+        sf.step = 'q';
+        // Reset config si cambia el tipo (las preguntas son distintas)
+        sf.config = {};
+        $$('#wizard .type-card').forEach(c => c.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+        setTimeout(() => renderSubflowView(), 180);
+      });
+    });
+
+    refreshCart();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // v9 · ADD-ONS SECTION · paso después de las preguntas core
+  // Multi-select de capacidades extra del catálogo global PRICING.addOns
+  // filtrado por `aplica:[servicioId]`. Cada add-on tiene precio fijo
+  // que se suma al servicio en curso.
+  // ═══════════════════════════════════════════════════════════════════
+  function renderAddOnsSection(servicio){
+    const PRICING = getPricing();
+    const sf = State.subflow;
+    trackStepShown('addons:' + servicio.id);
+
+    const addOnsList = PRICING.addOnsForService
+      ? PRICING.addOnsForService(servicio.id)
+      : (PRICING.addOns || []).filter(a => (a.aplica || []).includes(servicio.id));
+
+    const selected = new Set(sf.addOnIds || []);
+
+    const megaAO = PRICING.megaCategorias
+      ? PRICING.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id))
+      : null;
+
+    const itemsHtml = addOnsList.length === 0
+      ? `<p class="wizard-hint">${L('Este servicio no tiene capacidades extra disponibles · continúa al resumen.')}</p>`
+      : addOnsList.map(a => {
+          const isSel = selected.has(a.id);
+          return `
+            <button class="addon-chip ${isSel ? 'is-selected' : ''}" data-addon="${a.id}" type="button">
+              <div class="addon-chip-icon">${iconHtml(a.icon || 'arrow', 'line')}</div>
+              <div class="addon-chip-info">
+                <div class="addon-chip-label">${L(a.label)}</div>
+                <div class="addon-chip-summary">${L(a.summary || '')}</div>
+              </div>
+              <div class="addon-chip-price">+ ${formatMxn(a.price)}</div>
+              <div class="addon-chip-check">${isSel ? '✓' : ''}</div>
+            </button>
+          `;
+        }).join('');
+
+    // Total preview con add-ons elegidos
+    const previewPrice = calcSubflowPrice(servicio, sf.config, sf.tipoId, sf.addOnIds);
+
+    $('#wizard').innerHTML = `
+      <div class="screen sf-screen sf-addons-screen">
+        <div class="screen-header">
+          ${renderBreadcrumb([
+            { label: 'Inicio', href: '#/catalog' },
+            { label: megaAO ? megaAO.label : 'Servicios', href: '#/catalog' },
+            { label: servicio.label }
+          ])}
+          <div class="sf-q-head">
+            <h2 class="sf-q-title screen-title">${L('Capacidades extra')}</h2>
+            <p class="sf-q-help screen-subtitle">${L('Agrega lo que necesites · puedes saltarlo y solo dejar lo esencial.')}</p>
+          </div>
+        </div>
+        <div class="screen-body">
+          <div class="addon-list">${itemsHtml}</div>
+          <div class="addon-preview-total">
+            <span class="addon-preview-label">${L('Total del servicio con extras')}</span>
+            <span class="addon-preview-amount">${formatMxn(previewPrice)}</span>
+          </div>
+        </div>
+        <div class="screen-actions">
+          <button class="wizard-back" id="addon-back" type="button">← ${L('pregunta anterior')}</button>
+          <button class="btn btn-primary" id="addon-next" type="button">${L('Continuar')} →</button>
+        </div>
+      </div>
+    `;
+
+    $('#addon-back').addEventListener('click', () => {
+      trackNavBack();
+      // Volver a la última pregunta
+      const qLen = (sf.qFlow || []).length;
+      if (qLen > 0) {
+        sf.step = 'q';
+        sf.qIndex = qLen - 1;
+        renderSubflowView();
+      } else {
+        sf.step = 'tipo';
+        renderSubflowView();
+      }
+    });
+
+    $('#addon-next').addEventListener('click', () => {
+      trackStepChange();
+      sf.step = 'confirm';
+      renderSubflowView();
+    });
+
+    $$('#wizard .addon-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const aid = chip.dataset.addon;
+        if (!sf.addOnIds) sf.addOnIds = [];
+        const exists = sf.addOnIds.includes(aid);
+        sf.addOnIds = exists
+          ? sf.addOnIds.filter(x => x !== aid)
+          : [...sf.addOnIds, aid];
+        renderAddOnsSection(servicio); // re-render para recalcular total
+      });
+    });
+
+    refreshCart();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // v9 · Pantalla de confirmación del servicio (post-addons).
+  // El servicio se agrega/actualiza al carrito AQUÍ (único punto) con
+  // tipoId + addOnIds capturados.
   // ═══════════════════════════════════════════════════════════════════
   function renderServiceConfirm(servicio, config){
     const sf = State.subflow;
     trackStepShown('confirm:' + servicio.id);
 
     // Un solo punto de verdad: agregar/actualizar el carrito aquí.
-    if (sf.isEdit) updateCart(servicio.id, config);
-    else if (!State.cart.servicios.find(s => s.id === servicio.id)) addToCart(servicio, config);
-    else updateCart(servicio.id, config); // re-confirmación del mismo
+    if (sf.isEdit) updateCart(servicio.id, config, sf.tipoId, sf.addOnIds);
+    else if (!State.cart.servicios.find(s => s.id === servicio.id)) addToCart(servicio, config, sf.tipoId, sf.addOnIds);
+    else updateCart(servicio.id, config, sf.tipoId, sf.addOnIds);
 
-    const price = calcSubflowPrice(servicio, config);
+    const price = calcSubflowPrice(servicio, config, sf.tipoId, sf.addOnIds);
     const cfg = renderConfigSummaryInline(config);
     const total = State.cart.servicios.length;
 
-    // v8.4.0 · Lookup mega para el breadcrumb de confirmación
-    const PRICING_confirm = window.IBISNE_PRICING;
+    // Lookup mega para el breadcrumb
+    const PRICING_confirm = getPricing();
     const megaConfirm = PRICING_confirm && PRICING_confirm.megaCategorias
       ? PRICING_confirm.megaCategorias.find(m => (m.serviciosIds || []).includes(servicio.id))
       : null;
+
+    // Resumen de tipo + addons
+    const tipoDef = (servicio.tipos || []).find(t => t.id === sf.tipoId);
+    const tipoLine = tipoDef ? `<p class="sf-confirm-tipo">${L('Tipo')}: <strong>${L(tipoDef.label)}</strong></p>` : '';
+
+    const addOnsList = PRICING_confirm.addOnsForService
+      ? PRICING_confirm.addOnsForService(servicio.id)
+      : (PRICING_confirm.addOns || []).filter(a => (a.aplica || []).includes(servicio.id));
+    const chosenAddOns = (sf.addOnIds || []).map(id => addOnsList.find(a => a.id === id)).filter(Boolean);
+    const addOnsLine = chosenAddOns.length
+      ? `<p class="sf-confirm-addons">${L('Extras')}: ${chosenAddOns.map(a => L(a.label)).join(' · ')}</p>`
+      : '';
 
     $('#wizard').innerHTML = `
       <div class="screen sf-confirm-screen">
@@ -974,33 +1268,33 @@
             { label: megaConfirm ? megaConfirm.label : 'Servicios', href: '#/catalog' },
             { label: servicio.label }
           ])}
-          <h2 class="screen-title">Servicio configurado</h2>
+          <h2 class="screen-title">${L('Servicio configurado')}</h2>
           <p class="screen-subtitle">${L(servicio.label)} ya está en tu carrito. ¿Qué sigue?</p>
         </div>
         <div class="screen-body">
           <div class="sf-confirm-check">${iconHtml('shield','line') || '✓'}</div>
+          ${tipoLine}
           ${cfg ? `<p class="sf-confirm-cfg">${cfg}</p>` : ''}
+          ${addOnsLine}
           <div class="sf-confirm-price">
-            <span class="sf-confirm-price-label">Precio de este servicio</span>
+            <span class="sf-confirm-price-label">${L('Precio de este servicio')}</span>
             <span class="sf-confirm-price-amount">${formatMxn(price)}</span>
           </div>
         </div>
         <div class="screen-actions">
-          <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← Ajustar este servicio</button>
+          <button class="wizard-back sf-confirm-edit" id="sf-edit" type="button">← ${L('Ajustar este servicio')}</button>
           <div class="sf-confirm-actions">
-            <button class="btn-line btn" id="sf-add-more" type="button">+ Agregar otro servicio</button>
-            <button class="btn btn-primary" id="sf-go-quote" type="button">Ver mi cotización →</button>
+            <button class="btn-line btn" id="sf-add-more" type="button">+ ${L('Agregar otro servicio')}</button>
+            <button class="btn btn-primary" id="sf-go-quote" type="button">${L('Ver mi cotización')} →</button>
           </div>
         </div>
       </div>
     `;
 
-    // Animación sutil: el servicio "vuela" al carrito
     flyToCart(servicio);
 
     $('#sf-add-more').addEventListener('click', () => {
       State.subflow = null;
-      // Vuelve al grid de categorías CON contexto (el carrito ya tiene N)
       State.catalogPath = { mega: null, sub: null, service: null };
       renderCatalog();
     });
@@ -1010,12 +1304,9 @@
       scheduleAdvance('#/datos', 80);
     });
     $('#sf-edit').addEventListener('click', () => {
-      // Volver a editar: regresa a la última pregunta
-      const PRICING = window.IBISNE_PRICING;
-      const qs = PRICING.subflow[servicio.id] || [];
-      sf.confirming = false;
-      sf.qIndex = Math.max(0, qs.length - 1);
-      sf.isEdit = true; // ya está en carrito → editar al re-confirmar
+      // Volver al step de addons (más util para ajustar) o a la última pregunta
+      sf.isEdit = true;
+      sf.step = 'addons';
       renderSubflowView();
     });
 
@@ -1262,10 +1553,9 @@
       </div>
     `).join('');
 
-    // WhatsApp message
-    // v8.6.1 · Fix A2 · incluir config DETALLADA de cada servicio (no sólo
-    // label+precio) · más plazo+modo legibles · ayuda al hunter a entrar
-    // con contexto completo desde el primer mensaje.
+    // WhatsApp message · v9
+    // Incluye: tipo elegido + config detallada + add-ons + IVA + total.
+    // Cero referencias a plazo/modo (esos ya están dentro de la config).
     function configToTextFull(cfg){
       if (!cfg) return '';
       const parts = [];
@@ -1281,12 +1571,15 @@
       return parts.join(' · ');
     }
     const itemsText = calc.lineItems.map(li => {
+      const tipoLine = li.tipoLabel ? `\n   ↳ ${L('Tipo')}: ${L(li.tipoLabel)}` : '';
       const cfgText = configToTextFull(li.config);
-      return `• ${li.label} · ${formatMxn(li.price)}${cfgText ? '\n   ↳ ' + cfgText : ''}`;
+      const cfgLine = cfgText ? `\n   ↳ ${cfgText}` : '';
+      const addOnsLine = (li.addOns && li.addOns.length)
+        ? `\n   ↳ ${L('Extras')}: ${li.addOns.map(a => L(a.label) + ' (+' + formatMxn(a.price) + ')').join(', ')}`
+        : '';
+      return `• ${li.label} · ${formatMxn(li.price)}${tipoLine}${cfgLine}${addOnsLine}`;
     }).join('\n');
-    const plazoLine = calc.modPlazoLabel ? `Plazo: ${L(calc.modPlazoLabel)}${calc.modPlazoSuffix ? ' (' + calc.modPlazoSuffix + ')' : ''}\n` : '';
-    const modoLine  = calc.modModoLabel  ? `Modo: ${L(calc.modModoLabel)}${calc.modModoSuffix ? ' (' + calc.modModoSuffix + ')' : ''}\n` : '';
-    const waMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\n${plazoLine}${modoLine}IVA 16%: ${formatMxn(calc.total * 0.16)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\nQuiero hablar para precisar el alcance.`;
+    const waMsg = `Hola, vengo del cotizador iBisne con folio #${folio}.\n\n${itemsText}\n\nSubtotal: ${formatMxn(calc.subtotal)}\nIVA 16%: ${formatMxn(calc.total * 0.16)}\nTotal con IVA: ${formatMxn(calc.totalConIva)}\n\nQuiero hablar para precisar el alcance.`;
     const waUrl = `https://wa.me/523329575274?text=${encodeURIComponent(waMsg)}`;
 
     $('#wizard').innerHTML = `
@@ -1343,8 +1636,6 @@
           <div class="rk-lines">${lineItemsHtml}</div>
           <div class="rk-totals">
             <div class="rk-total-row"><span>Subtotal</span><span>${formatMxn(calc.subtotal)}</span></div>
-            ${calc.modPlazoSuffix ? `<div class="rk-total-row"><span>${L(calc.modPlazoLabel)}</span><span>${calc.modPlazoSuffix}</span></div>` : ''}
-            ${calc.modModoSuffix ? `<div class="rk-total-row"><span>${L(calc.modModoLabel)}</span><span>${calc.modModoSuffix}</span></div>` : ''}
             <div class="rk-total-row"><span>IVA 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
             <div class="rk-total-row rk-total-final"><span>TOTAL MXN</span><span>${formatMxn(calc.totalConIva)}</span></div>
           </div>
@@ -1431,23 +1722,23 @@
 
   function renderCartContent(){
     const calc = computeCart();
-    const PRICING = window.IBISNE_PRICING;
+    const PRICING = getPricing();
     const datosOk = ['nombre','email','whatsapp'].every(k => State.cliente[k] && State.cliente[k].trim());
     const isResultado = parseHash().step === 'resultado';
 
-    // v6.1.0 · Servicio en construcción (carrito siempre vivo)
-    // v8.6.1 · Fix A1 · si ya estamos en confirm (servicio ya agregado al cart),
-    // no construir "building" para evitar doble visualización "1 + 1 configurando"
-    // (TOTAL ya estaba correcto, solo era UX confusa · ver auditoría v8.6.0).
+    // v9 · Servicio en construcción (carrito siempre vivo)
+    // No construir "building" si ya estamos en confirm (sf.step === 'confirm')
+    // porque el servicio ya está en cart.servicios y se mostraría duplicado.
     let building = null;
-    if (State.subflow && !State.subflow.confirming) {
-      const bServ = Object.assign({ id: State.subflow.servicioId }, findServicio(State.subflow.servicioId));
+    if (State.subflow && State.subflow.step !== 'confirm') {
+      const sfB = State.subflow;
+      const bServ = Object.assign({ id: sfB.servicioId }, findServicio(sfB.servicioId));
       if (bServ.label) {
         building = {
           servicio: bServ,
-          price: calcSubflowPrice(bServ, State.subflow.config),
-          cfg: renderConfigSummaryInline(State.subflow.config),
-          isEdit: !!State.subflow.isEdit,
+          price: calcSubflowPrice(bServ, sfB.config, sfB.tipoId, sfB.addOnIds),
+          cfg: renderConfigSummaryInline(sfB.config),
+          isEdit: !!sfB.isEdit,
         };
       }
     }
@@ -1469,6 +1760,24 @@
       `;
     }
 
+    // v9 · helper · renderiza add-ons hidratados para un servicio del cart
+    const renderItemAddOns = (s) => {
+      if (!s.addOnIds || s.addOnIds.length === 0) return '';
+      const addOns = s.addOnIds.map(id => {
+        const ao = PRICING.findAddOn ? PRICING.findAddOn(id) : null;
+        return ao ? `<li class="rk-cart-item-addon">${L(ao.label)} <small>+${formatMxn(ao.price)}</small></li>` : '';
+      }).filter(Boolean);
+      return addOns.length ? `<ul class="rk-cart-item-addons">${addOns.join('')}</ul>` : '';
+    };
+
+    // v9 · helper · renderiza el "tipo" del servicio si existe
+    const renderItemTipo = (s) => {
+      const svc = PRICING.servicios[s.id];
+      if (!svc || !Array.isArray(svc.tipos) || !s.tipoId) return '';
+      const t = svc.tipos.find(x => x.id === s.tipoId);
+      return t ? `<div class="rk-cart-item-tipo">${L(t.label)}</div>` : '';
+    };
+
     const itemsHtml = State.cart.servicios.map(s => {
       const cfg = renderConfigSummaryInline(s.config);
       // No mostrar como item normal el que está en edición ahora mismo
@@ -1478,7 +1787,9 @@
           <div class="rk-cart-item-icon">${iconHtml(s.icon, 'line')}</div>
           <div class="rk-cart-item-info">
             <div class="rk-cart-item-label">${L(s.label)}</div>
+            ${renderItemTipo(s)}
             ${cfg ? `<div class="rk-cart-item-config">${cfg}</div>` : ''}
+            ${renderItemAddOns(s)}
             <div class="rk-cart-item-price">${formatMxn(s.calculatedPrice || s.base)}</div>
           </div>
           <div class="rk-cart-item-actions">
@@ -1506,22 +1817,8 @@
       ? (itemCount > 0 ? `${itemCount} + 1 configurando` : '1 configurando')
       : `${itemCount} servicio${itemCount === 1 ? '' : 's'}`;
 
-    // v6.1.0 · Tiempo/Modo como PILLS (1 click · sin dropdown)
-    const plazoPills = Object.keys(PRICING.modificadores.plazo).map(k => {
-      const c = PRICING.modificadores.plazo[k];
-      const active = State.cart.modificadores.plazo === k;
-      return `<button class="rk-pill ${active ? 'is-active' : ''}" data-mod="plazo" data-val="${k}" type="button">${L(c.label).split(' · ')[0]}${c.metaSuffix ? ` <small>${c.metaSuffix}</small>` : ''}</button>`;
-    }).join('');
-    const modoPills = Object.keys(PRICING.modificadores.modo).map(k => {
-      const c = PRICING.modificadores.modo[k];
-      const active = State.cart.modificadores.modo === k;
-      return `<button class="rk-pill ${active ? 'is-active' : ''}" data-mod="modo" data-val="${k}" type="button">${L(c.label).split(' · ')[0]}${c.metaSuffix ? ` <small>${c.metaSuffix}</small>` : ''}</button>`;
-    }).join('');
-
-    // v6.1.0 · Pago: sin anticipo · pago en una sola exhibición (PayPal)
-    // v8.6.1 · Fix A3 · PayPal.me con monto pre-fill (formato /{amount}MXN
-    // soportado por PayPal) · el cliente abre la pantalla con el monto ya
-    // cargado · cero ambigüedad sobre cuánto cobrar.
+    // v9 · sin pills Plazo/Modo · esos ahora son preguntas dentro del subflow.
+    // PayPal con monto pre-fill (heredado de v8.6.1).
     const ctaLabel = isResultado
       ? 'Pagar proyecto · ' + formatMxn(calc.totalConIva)
       : (datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total');
@@ -1537,22 +1834,8 @@
 
         <ul class="rk-cart-items">${itemsHtml}${buildingHtml}</ul>
 
-        <div class="rk-cart-toggles">
-          <div class="rk-cart-toggle-label">— Ajusta tu cotización</div>
-          <div class="rk-cart-toggle">
-            <label>Tiempo</label>
-            <div class="rk-pill-group">${plazoPills}</div>
-          </div>
-          <div class="rk-cart-toggle">
-            <label>Modo</label>
-            <div class="rk-pill-group">${modoPills}</div>
-          </div>
-        </div>
-
         <div class="rk-cart-totals">
           <div class="rk-cart-total-line"><span>Subtotal</span><span>${formatMxn(calc.subtotal)}</span></div>
-          ${calc.modPlazoSuffix ? `<div class="rk-cart-total-line"><span>${L(calc.modPlazoLabel)}</span><span>${calc.modPlazoSuffix}</span></div>` : ''}
-          ${calc.modModoSuffix ? `<div class="rk-cart-total-line"><span>${L(calc.modModoLabel)}</span><span>${calc.modModoSuffix}</span></div>` : ''}
           <div class="rk-cart-total-line"><span>IVA 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
           <div class="rk-cart-total-line rk-cart-total-final"><span>TOTAL</span><span>${formatMxn(calc.totalConIva)} <small>MXN</small></span></div>
           ${building ? `<div class="rk-cart-total-line rk-cart-building-note"><span>+ configurando ahora</span><span>${formatMxn(building.price)}</span></div>` : ''}
@@ -1585,20 +1868,9 @@
   }
 
   function bindCart(){
-    // v6.1.0 · Modificadores como pills · 1 click cambia + recalcula
-    $$('#cart .rk-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        const mod = pill.dataset.mod;   // 'plazo' | 'modo'
-        const val = pill.dataset.val;
-        if (!mod || !val) return;
-        if (State.cart.modificadores[mod] === val) return; // ya activo
-        State.cart.modificadores[mod] = val;
-        persistCart();
-        refreshCart();
-      });
-    });
+    // v9 · sin pills Plazo/Modo · ese binding se eliminó
 
-    // Edit items
+    // Edit items · v9 pasa tipo+addons al openSubflowModal para hidratar estado
     $$('.rk-cart-edit').forEach(btn => {
       btn.addEventListener('click', () => {
         const sid = btn.dataset.serviceId;
@@ -1607,7 +1879,11 @@
         const existing = State.cart.servicios.find(s => s.id === sid);
         if (!existing) return;
         trackEditClick();
-        openSubflowModal(servicio, existing.config || {});
+        openSubflowModal(servicio, {
+          tipoId: existing.tipoId || null,
+          addOnIds: existing.addOnIds || [],
+          config: existing.config || {},
+        });
       });
     });
 
