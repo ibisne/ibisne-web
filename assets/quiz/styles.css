@@ -357,16 +357,13 @@ body.is-booting{ overflow:hidden; }
   position:relative;
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
-  padding:var(--sp-5);
-  /* v11.4 · HEIGHT FIJO · TODAS las cards verticales del wizard tienen
-   * exactamente la misma altura sin importar el contenido. Eduardo:
-   * "al cambiar las cards cambian de pantalla entre cada opción no
-   * tiene orden de diseño". Antes con min-height las service-cards
-   * crecían a 231px mientras las otras quedaban en 220 (diferencia
-   * perceptible). Ahora todas son idénticas · justify-content:
-   * space-between distribuye contenido top/bottom sin aire muerto.
-   * Clamp 240px mobile → 256px desktop · cubre el caso más alto. */
-  height:clamp(240px, 18vw, 256px);
+  padding:var(--sp-4);
+  /* v11.5 · HEIGHT FIJO más compacto · grid pasa a 4 columnas en desktop
+   * (era 2col) · cards más pequeñas para que más quepan por viewport.
+   * Eduardo: "es enorme valora si mejor trabajamos con grids 3x3 o 4x4".
+   * Antes: 240-256px alto · 2col desktop. Ahora: 180-200px alto · 4col.
+   * Padding interno baja de sp-5 a sp-4 para cards más estrechas. */
+  height:clamp(180px, 13vw, 200px);
   justify-content:space-between;
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
@@ -968,7 +965,8 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:768px){
   .quiz-main{ padding:var(--sp-5) var(--sp-5) calc(var(--ds-cart-peek) + var(--sp-6)); }
-  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
+  /* v11.5 · tablet 3 columnas (era 2) · escala progresiva mobile→tablet→desktop */
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-3); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .datos-fields{ grid-template-columns:repeat(2,1fr); }
   .sf-confirm-actions{ flex-direction:row; }
@@ -1017,12 +1015,12 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* v11.1 · type-grid incluida · gap se mantiene sp-4 (igual que tablet)
-   * para que NO cambie el espaciado entre cards al cruzar el breakpoint.
-   * Antes: sp-5 desktop · sp-4 tablet · ahora ambos sp-4 = layout estable. */
-  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
+  /* v11.5 · desktop 4 columnas (era 2) · cards más compactas · grid 4×N
+   * para que más cards quepan por viewport sin scroll. Eduardo: "valoralo
+   * si mejor trabajamos con grids 3x3 o 4x4". */
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(4,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
-  .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
+  .sf-grid.is-multi{ grid-template-columns:repeat(4,1fr); }
 }
 
 /* ──────────────────────────────────────────────────────────────────
@@ -1110,9 +1108,9 @@ body.is-handover .result-screen{ animation:none !important; }
   position:relative;
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
-  padding:var(--sp-5);
-  /* v11.4 · misma altura FIJA que mega/service/sf · layout idéntico */
-  height:clamp(240px, 18vw, 256px);
+  padding:var(--sp-4);
+  /* v11.5 · misma altura compacta + 4col que mega/service/sf */
+  height:clamp(180px, 13vw, 200px);
   justify-content:space-between;
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
@@ -1144,10 +1142,16 @@ body.is-handover .result-screen{ animation:none !important; }
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
 }
 .type-card-foot{
-  display:flex; align-items:flex-end; justify-content:flex-end; gap:var(--sp-2);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-2);
   margin-top:auto; padding-top:var(--sp-2);
   font-family:var(--font-mono); font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
+}
+/* v11.5 · precio "desde +$X" en type-card · consistente con service-price */
+.type-card-price{
+  font-family:var(--font-mono); font-size:var(--ds-fs-card-price);
+  color:var(--text-primary); font-weight:var(--fw-medium);
+  text-transform:none; letter-spacing:0;
 }
 
 /* v11.1 · .type-grid se unificó con .mega-grid/.service-grid/.sf-grid

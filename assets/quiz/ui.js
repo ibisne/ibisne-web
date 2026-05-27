@@ -1138,6 +1138,29 @@
   // producto, etc.). Al seleccionar, se cachea sf.qFlow con las preguntas
   // específicas del tipo + las shared, y avanza a step 'q'.
   // ═══════════════════════════════════════════════════════════════════
+  // v11.5 · Calcula el precio MÍNIMO del servicio si se elige este tipo.
+  // Toma base + primera opción (default) de cada pregunta byType[tipoId]
+  // que NO sea multi (las multi default = ninguna seleccionada, no suma).
+  // Aplica adds primero, luego muls. Se usa para mostrar "desde +$X" en
+  // las type-cards del chooser de tipos del subflow.
+  function calcTypeMinPrice(servicio, tipoId){
+    const PRICING = getPricing();
+    const sf = PRICING.subflow ? PRICING.subflow[servicio.id] : null;
+    let total = servicio.base || 0;
+    if (!sf) return total;
+    const tipoQs = (sf.byType && tipoId) ? (sf.byType[tipoId] || []) : [];
+    const muls = [];
+    for (const q of tipoQs) {
+      if (q.multi) continue;
+      const opt = q.opciones && q.opciones[0];
+      if (!opt) continue;
+      if (typeof opt.add === 'number') total += opt.add;
+      if (typeof opt.mul === 'number') muls.push(opt.mul);
+    }
+    for (const m of muls) total *= m;
+    return Math.round(total);
+  }
+
   function renderTypeChooser(servicio){
     const PRICING = getPricing();
     const sf = State.subflow;
@@ -1159,6 +1182,8 @@
 
     const cardsHtml = tipos.map(t => {
       const isSel = sf.tipoId === t.id;
+      // v11.5 · precio mínimo del tipo · consistente con service-cards "desde +$X"
+      const typeMinPrice = calcTypeMinPrice(servicio, t.id);
       return `
         <button class="type-card ${isSel ? 'is-selected' : ''}" data-tipo="${t.id}" type="button">
           <div class="type-card-top">
@@ -1167,6 +1192,7 @@
           <div class="type-card-label">${L(t.label)}</div>
           ${t.summary ? `<div class="type-card-summary">${L(t.summary)}</div>` : ''}
           <div class="type-card-foot">
+            <span class="type-card-price">${L('desde')} +${formatMxn(typeMinPrice)}</span>
             ${isSel
               ? `<span class="sf-card-state is-added">${L('seleccionado')}</span>`
               : '<span class="sf-card-arrow">→</span>'}
