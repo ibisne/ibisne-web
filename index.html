@@ -29,74 +29,28 @@
 <link rel="stylesheet" href="design-system-v2/tokens.css">
 <link rel="stylesheet" href="assets/quiz/styles.css">
 <style>
-  /* ───────────────────────────────────────────────────────────────────
-     v9.0 · Home expandido · 8 secciones scrolleables
-     §01 HERO · §02 Cómo trabajamos · §03 Highlights · §04 Clientes
-     §05 Sobre iBisne · §06 FAQ · §07 CTA final · §08 Footer extendido
-     ─────────────────────────────────────────────────────────────────── */
-  body{ display: flex; flex-direction: column; min-height: 100vh; }
+  /* v11.0 · Home minimalista · sin scroll · solo hero + highlights + footer mínimo */
+  html, body { height: 100%; }
+  body{ display: flex; flex-direction: column; }
   main{
-    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 32px 24px;
+    gap: 28px;
+    text-align: center;
+    position: relative; z-index: 3;
     max-width: 1240px;
     margin: 0 auto;
-    padding: 0 var(--sp-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-8);
-    position: relative; z-index: 3;
-  }
-  @media (min-width: 768px){
-    main{ padding: 0 var(--sp-5); gap: var(--sp-9); }
-  }
-
-  /* Section base · padding vertical generoso */
-  .home-section{
     width: 100%;
-    padding: var(--sp-7) 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--sp-4);
-    scroll-margin-top: calc(var(--hud-h) + 20px);
-  }
-  @media (min-width: 768px){
-    .home-section{ padding: var(--sp-8) 0; }
   }
 
-  .section-eyebrow{
-    font-family: var(--font-mono);
-    font-size: var(--fs-pico);
-    text-transform: uppercase;
-    letter-spacing: var(--ls-mono);
-    color: var(--accent-mint);
-  }
-  .section-title{
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(28px, 4vw, 48px);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    color: var(--text-primary);
-    max-width: 18ch;
-  }
-  .section-sub{
-    font-size: clamp(14px, 1.3vw, 17px);
-    color: var(--text-secondary);
-    max-width: 56ch;
-    line-height: 1.55;
-  }
-
-  /* ─── §01 HERO ──────────────────────────────────────────────────── */
   .hero-block{
     display: flex; flex-direction: column;
-    align-items: center; gap: var(--sp-4);
+    align-items: center; gap: 22px;
     max-width: 980px;
-    padding-top: var(--sp-7);
-    text-align: center;
-  }
-  @media (min-width: 768px){
-    .hero-block{ padding-top: var(--sp-8); gap: var(--sp-5); }
   }
   .hero-eyebrow{
     font-family: var(--font-mono);
@@ -121,11 +75,10 @@
     max-width: 580px;
     line-height: 1.55;
   }
+
   .cta-row{
-    display: flex; gap: var(--sp-3);
-    margin-top: var(--sp-1);
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex; gap: 16px;
+    margin-top: 4px;
   }
   .cta-big{
     font-family: var(--font-display);
@@ -150,54 +103,14 @@
   .cta-big.primary:hover{ background: var(--accent-mint); border-color: var(--accent-mint); }
   .cta-big.line:hover{ border-color: var(--accent-mint); color: var(--accent-mint); }
 
-  /* ─── §02 CÓMO TRABAJAMOS ──────────────────────────────────────── */
-  .steps-grid{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--sp-3);
-    width: 100%;
-    max-width: 1120px;
-    margin-top: var(--sp-3);
-    text-align: left;
-  }
-  @media (min-width: 768px){ .steps-grid{ grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); } }
-  @media (min-width: 1100px){ .steps-grid{ grid-template-columns: repeat(4, 1fr); } }
-  .step-card{
-    padding: var(--sp-5);
-    background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius);
-    display: flex; flex-direction: column; gap: var(--sp-2);
-    transition: border-color 0.22s ease;
-  }
-  .step-card:hover{ border-color: var(--text-muted); }
-  .step-num{
-    font-family: var(--font-mono);
-    font-size: var(--fs-micro);
-    letter-spacing: var(--ls-mono);
-    color: var(--accent-mint);
-  }
-  .step-title{
-    font-family: var(--font-display);
-    font-size: var(--fs-base);
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.25;
-  }
-  .step-desc{
-    font-size: var(--fs-small);
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-
-  /* ─── §03 HIGHLIGHTS · cards pequeñas en grid ─── */
+  /* ─── Highlights · cards pequeñas en grid ─── */
   .highlights{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     width: 100%;
     max-width: 1120px;
-    margin-top: var(--sp-3);
+    margin-top: 8px;
   }
   .hl-card{
     padding: 16px 14px;
@@ -239,261 +152,12 @@
     line-height: 1.4;
   }
 
-  /* ─── §04 CLIENTES ─────────────────────────────────────────────── */
-  .clientes-strip{
-    width: 100%; max-width: 1120px;
-    margin-top: var(--sp-3);
-  }
-  .clientes-grid{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--sp-3);
-    width: 100%;
-  }
-  @media (min-width: 768px){
-    .clientes-grid{ grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
-  }
-  @media (min-width: 1100px){
-    .clientes-grid{ grid-template-columns: repeat(6, 1fr); gap: var(--sp-3); }
-  }
-  .cliente-card{
-    aspect-ratio: 1 / 1;
-    padding: var(--sp-4);
-    background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    gap: var(--sp-2);
-    transition: border-color 0.22s ease, transform 0.18s ease;
-  }
-  .cliente-card:hover{
-    border-color: var(--accent-mint);
-    transform: translateY(-2px);
-  }
-  .cliente-logo-placeholder{
-    flex: 1;
-    width: 100%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--bg-deep);
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius-input);
-    font-family: var(--font-mono);
-    font-size: var(--fs-pico);
-    color: var(--text-muted);
-    letter-spacing: var(--ls-mono);
-  }
-  .cliente-label{
-    font-family: var(--font-display);
-    font-size: var(--fs-small);
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.2;
-  }
-  .cliente-tag{
-    font-family: var(--font-mono);
-    font-size: var(--fs-nano);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .clientes-note{
-    margin-top: var(--sp-4);
-    font-family: var(--font-mono);
-    font-size: var(--fs-pico);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  /* ─── §05 SOBRE iBISNE ─────────────────────────────────────────── */
-  .sobre-content{
-    max-width: 720px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-5);
-    align-items: center;
-  }
-  .sobre-body{
-    font-size: var(--fs-base);
-    color: var(--text-secondary);
-    line-height: 1.7;
-  }
-  .sobre-tags{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--sp-2);
-    margin-top: var(--sp-3);
-  }
-  .sobre-tag{
-    padding: 6px 14px;
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius-pill);
-    font-family: var(--font-mono);
-    font-size: var(--fs-micro);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--text-secondary);
-  }
-
-  /* ─── §06 FAQ ──────────────────────────────────────────────────── */
-  .faq-list{
-    width: 100%;
-    max-width: 760px;
-    margin-top: var(--sp-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-    text-align: left;
-  }
-  .faq-item{
-    padding: var(--sp-3) var(--sp-4);
-    background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius);
-    transition: border-color 0.22s ease;
-  }
-  .faq-item:hover{ border-color: var(--text-muted); }
-  .faq-item[open]{ border-color: var(--accent-mint); }
-  .faq-item summary{
-    cursor: pointer;
-    font-family: var(--font-display);
-    font-weight: 600;
-    color: var(--text-primary);
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-3);
-    padding: var(--sp-1) 0;
-  }
-  .faq-item summary::-webkit-details-marker{ display: none; }
-  .faq-item summary::after{
-    content: '+';
-    font-family: var(--font-mono);
-    font-size: var(--fs-base);
-    color: var(--accent-mint);
-    transition: transform 0.22s ease;
-    flex: none;
-  }
-  .faq-item[open] summary::after{ content: '−'; }
-  .faq-body{
-    margin-top: var(--sp-2);
-    font-size: var(--fs-small);
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-
-  /* ─── §07 CTA FINAL ────────────────────────────────────────────── */
-  .cta-final{
-    width: 100%;
-    padding: var(--sp-8) var(--sp-5);
-    background: var(--bg-paper);
-    border: 1px solid var(--bg-line);
-    border-radius: var(--radius);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-4);
-    text-align: center;
-  }
-  .cta-final-title{
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(28px, 4vw, 44px);
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    color: var(--text-primary);
-    max-width: 16ch;
-  }
-  .cta-final-title .highlight{ color: var(--accent-mint); }
-  .cta-final-sub{
-    font-size: var(--fs-base);
-    color: var(--text-secondary);
-    max-width: 48ch;
-    line-height: 1.6;
-  }
-
-  /* ─── §08 FOOTER EXTENDIDO ─────────────────────────────────────── */
-  .footer-extended{
-    margin-top: var(--sp-8);
-    padding: var(--sp-7) var(--sp-4) var(--sp-5);
-    border-top: 1px solid var(--bg-line);
-    background: var(--bg-deep);
-  }
-  .footer-inner{
-    max-width: 1240px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--sp-5);
-  }
-  @media (min-width: 768px){
-    .footer-inner{ grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--sp-6); }
-  }
-  .footer-brand{
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-3);
-  }
-  .footer-logo{ height: 28px; width: auto; }
-  .footer-tagline{
-    font-size: var(--fs-small);
-    color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 36ch;
-  }
-  .footer-col-label{
-    font-family: var(--font-mono);
-    font-size: var(--fs-pico);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: var(--sp-2);
-  }
-  .footer-col-links{
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-  }
-  .footer-col-links a{
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: var(--fs-small);
-    transition: color 0.22s ease;
-  }
-  .footer-col-links a:hover{ color: var(--accent-mint); }
-  .footer-bottom{
-    max-width: 1240px;
-    margin: var(--sp-6) auto 0;
-    padding-top: var(--sp-4);
-    border-top: 1px solid var(--bg-line);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-    align-items: center;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: var(--fs-pico);
-    letter-spacing: var(--ls-mono);
-    color: var(--text-muted);
-  }
-  @media (min-width: 768px){
-    .footer-bottom{ flex-direction: row; justify-content: space-between; text-align: left; }
-  }
-
-  /* ─── Mobile breakpoints ──────────────────────────────────────── */
   @media (max-width: 1100px){
     .highlights{ grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 768px){
-    main{ padding: 0 16px; gap: var(--sp-7); }
-    .hero-block{ gap: 16px; padding-top: var(--sp-5); }
+    main{ padding: 20px 16px 16px; gap: 20px; }
+    .hero-block{ gap: 16px; }
     .hero-q{ font-size: clamp(26px, 7vw, 44px); }
     .hero-sub{ font-size: 14px; }
     .cta-row{ flex-direction: row; gap: 10px; width: 100%; max-width: 420px; }
@@ -502,7 +166,6 @@
     .hl-card{ padding: 12px 10px; }
     .hl-title{ font-size: 12px; }
     .hl-desc{ font-size: 11px; }
-    .home-section{ padding: var(--sp-6) 0; }
   }
   @media (max-width: 420px){
     .highlights{ grid-template-columns: 1fr 1fr; }
@@ -510,8 +173,7 @@
     .hl-icon{ width: 22px; height: 22px; }
   }
 
-  /* Footer legal antiguo · ya no se usa en home (reemplazado por footer-extended)
-     pero se mantiene la regla por si lo carga otra página */
+  /* Footer simplificado */
   footer.legal-strip{ padding: 8px 18px; font-size: 11px; }
 </style>
 </head>
@@ -566,18 +228,8 @@
   <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="grid" aria-label="Abrir panel" aria-expanded="false"></button>
 </header>
 
-<!-- Mobile menu -->
+<!-- Mobile menu · v11.0 simplificado · sin sección Navegar -->
 <nav class="hud-mobile-menu" id="hud-menu" aria-label="Menú">
-  <div class="menu-section">
-    <div class="menu-label">Navegar</div>
-    <div class="menu-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-      <a href="#como-trabajamos" class="menu-cta" style="background:transparent;color:var(--text-primary);border:1px solid var(--bg-line);font-weight:500;justify-content:flex-start;">Cómo trabajamos</a>
-      <a href="#clientes" class="menu-cta" style="background:transparent;color:var(--text-primary);border:1px solid var(--bg-line);font-weight:500;justify-content:flex-start;">Clientes</a>
-      <a href="#sobre" class="menu-cta" style="background:transparent;color:var(--text-primary);border:1px solid var(--bg-line);font-weight:500;justify-content:flex-start;">Sobre iBisne</a>
-      <a href="#faq" class="menu-cta" style="background:transparent;color:var(--text-primary);border:1px solid var(--bg-line);font-weight:500;justify-content:flex-start;">Preguntas frecuentes</a>
-      <a href="quiz.html" class="menu-cta" style="background:var(--accent);color:var(--bg-deep);border-color:transparent;font-weight:700;justify-content:center;">Cotizar ahora →</a>
-    </div>
-  </div>
   <div class="menu-section">
     <div class="menu-label">Redes</div>
     <div class="menu-row">
@@ -607,9 +259,8 @@
   <button class="menu-cta menu-cta-install" id="hud-install-m" type="button" data-style="cta" data-icon="plus" hidden>Instalar app</button>
 </nav>
 
+<!-- HERO + HIGHLIGHTS · v11.0 sin scroll · todo en una vista -->
 <main>
-
-  <!-- §01 · HERO ─────────────────────────────────────────────────── -->
   <section class="hero-block" id="hero">
     <div class="hero-eyebrow">§ COTIZA TU SERVICIO · SIN COMPROMISO</div>
     <h1 class="hero-q">
@@ -622,244 +273,45 @@
     </div>
   </section>
 
-  <!-- §02 · CÓMO TRABAJAMOS ──────────────────────────────────────── -->
-  <section class="home-section" id="como-trabajamos">
-    <div class="section-eyebrow">§ 02 · CÓMO TRABAJAMOS</div>
-    <h2 class="section-title">De la cotización al lanzamiento</h2>
-    <p class="section-sub">Sin agencias intermedias. Sin proveedores externos. Tú hablas directo con el equipo que va a construir tu proyecto.</p>
-    <div class="steps-grid">
-      <article class="step-card">
-        <div class="step-num">01</div>
-        <h3 class="step-title">Cotizas online</h3>
-        <p class="step-desc">Eliges qué necesitas, qué tipo, con qué extras. En 3 minutos tienes precio cerrado y el primer brief.</p>
-      </article>
-      <article class="step-card">
-        <div class="step-num">02</div>
-        <h3 class="step-title">Hablamos por WhatsApp</h3>
-        <p class="step-desc">Tu KAM te contacta el mismo día para precisar alcance. Sin ventas push, sin reuniones interminables.</p>
-      </article>
-      <article class="step-card">
-        <div class="step-num">03</div>
-        <h3 class="step-title">Firmamos propuesta</h3>
-        <p class="step-desc">Discovery gratuito de alineación. Si no hay match, no hay cobro. Si lo hay, firmas con todo claro.</p>
-      </article>
-      <article class="step-card">
-        <div class="step-num">04</div>
-        <h3 class="step-title">Construimos contigo</h3>
-        <p class="step-desc">Sprints semanales con tu equipo. Demos por WhatsApp. De cero al lanzamiento sin que tengas que perseguirnos.</p>
-      </article>
-    </div>
+  <section class="highlights" aria-label="Lo que incluye trabajar con iBisne">
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="partnership"></span>
+      <h3 class="hl-title">Soporte dedicado</h3>
+      <p class="hl-desc">Una persona asignada a tu proyecto desde el día 1.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="shield"></span>
+      <h3 class="hl-title">Acompañamiento 24/7</h3>
+      <p class="hl-desc">Respuesta en horas, no en días. Por WhatsApp directo.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="arrow"></span>
+      <h3 class="hl-title">De 0 al lanzamiento</h3>
+      <p class="hl-desc">Discovery, diseño, código, deploy. Sin proveedores externos.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="clock"></span>
+      <h3 class="hl-title">Un año de seguimiento</h3>
+      <p class="hl-desc">Ajustes incluidos. No vendemos y desaparecemos.</p>
+    </article>
+    <article class="hl-card">
+      <span class="hl-icon" data-icon="star"></span>
+      <h3 class="hl-title">Imperios, no proyectos</h3>
+      <p class="hl-desc">Pensamos en tu negocio a 5 años. No en cerrar la venta.</p>
+    </article>
   </section>
-
-  <!-- §03 · HIGHLIGHTS · cards existentes ────────────────────────── -->
-  <section class="home-section" id="diferenciadores">
-    <div class="section-eyebrow">§ 03 · LO QUE INCLUYE</div>
-    <h2 class="section-title">Lo que nos diferencia</h2>
-    <div class="highlights" aria-label="Lo que incluye trabajar con iBisne">
-      <article class="hl-card">
-        <span class="hl-icon" data-icon="partnership"></span>
-        <h3 class="hl-title">Soporte dedicado</h3>
-        <p class="hl-desc">Una persona asignada a tu proyecto desde el día 1.</p>
-      </article>
-      <article class="hl-card">
-        <span class="hl-icon" data-icon="shield"></span>
-        <h3 class="hl-title">Acompañamiento 24/7</h3>
-        <p class="hl-desc">Respuesta en horas, no en días. Por WhatsApp directo.</p>
-      </article>
-      <article class="hl-card">
-        <span class="hl-icon" data-icon="arrow"></span>
-        <h3 class="hl-title">De 0 al lanzamiento</h3>
-        <p class="hl-desc">Discovery, diseño, código, deploy. Sin proveedores externos.</p>
-      </article>
-      <article class="hl-card">
-        <span class="hl-icon" data-icon="clock"></span>
-        <h3 class="hl-title">Un año de seguimiento</h3>
-        <p class="hl-desc">Ajustes incluidos. No vendemos y desaparecemos.</p>
-      </article>
-      <article class="hl-card">
-        <span class="hl-icon" data-icon="star"></span>
-        <h3 class="hl-title">Imperios, no proyectos</h3>
-        <p class="hl-desc">Pensamos en tu negocio a 5 años. No en cerrar la venta.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- §04 · CLIENTES ─────────────────────────────────────────────── -->
-  <section class="home-section" id="clientes">
-    <div class="section-eyebrow">§ 04 · TRABAJAMOS CON</div>
-    <h2 class="section-title">Marcas que ya construyen con nosotros</h2>
-    <p class="section-sub">Una selección de proyectos en operación. Casos de éxito detallados llegan pronto.</p>
-    <div class="clientes-strip">
-      <div class="clientes-grid">
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">ProFutbol</div>
-            <div class="cliente-tag">Sports tech</div>
-          </div>
-        </article>
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">Medical Mexicanna</div>
-            <div class="cliente-tag">Salud</div>
-          </div>
-        </article>
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">SEM Endomap</div>
-            <div class="cliente-tag">Mapping</div>
-          </div>
-        </article>
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">Semillas Endémicas Mexicanna</div>
-            <div class="cliente-tag">Agro</div>
-          </div>
-        </article>
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">DCI de la Península</div>
-            <div class="cliente-tag">Construcción</div>
-          </div>
-        </article>
-        <article class="cliente-card">
-          <div class="cliente-logo-placeholder">[ LOGO ]</div>
-          <div>
-            <div class="cliente-label">Hidrosite</div>
-            <div class="cliente-tag">Hídrico</div>
-          </div>
-        </article>
-      </div>
-      <p class="clientes-note">— Casos de éxito con métricas en preparación</p>
-    </div>
-  </section>
-
-  <!-- §05 · SOBRE iBISNE ─────────────────────────────────────────── -->
-  <section class="home-section" id="sobre">
-    <div class="section-eyebrow">§ 05 · SOBRE iBISNE</div>
-    <h2 class="section-title">Holding LATAM con mentalidad operadora</h2>
-    <div class="sobre-content">
-      <p class="sobre-body">
-        iBisne no es agencia ni fondo VC tradicional. Operamos como holding desde Guadalajara con capital propio y un equipo interno que construye. Nuestra apuesta es simple: si funciona, lo operamos contigo · si no, no aceptamos el proyecto.
-      </p>
-      <div class="sobre-tags">
-        <span class="sobre-tag">Sin management fee</span>
-        <span class="sobre-tag">Sin equity dilutivo</span>
-        <span class="sobre-tag">Capital operativo</span>
-        <span class="sobre-tag">Base GDL · cobertura LATAM</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- §06 · FAQ ──────────────────────────────────────────────────── -->
-  <section class="home-section" id="faq">
-    <div class="section-eyebrow">§ 06 · PREGUNTAS FRECUENTES</div>
-    <h2 class="section-title">Lo que todos preguntan antes de cotizar</h2>
-    <div class="faq-list">
-      <details class="faq-item">
-        <summary>¿Cuánto cuesta empezar?</summary>
-        <div class="faq-body">
-          Cero. La cotización online es gratis e indicativa por 30 días. El primer cobro es al firmar propuesta · 50% al arrancar, 50% al entregar. Sin cuotas ocultas.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Cómo pago?</summary>
-        <div class="faq-body">
-          Transferencia bancaria (SPEI), tarjeta vía Stripe, o PayPal para clientes internacionales. Facturamos con CFDI. Para proyectos &gt;$100k MXN aceptamos meses sin intereses con tarjeta.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Cuánto tarda un proyecto?</summary>
-        <div class="faq-body">
-          Depende del alcance. Una landing en 1-2 semanas. Un sitio completo 3-8 semanas. Una app móvil 6-16 semanas. Un ERP o SaaS de 8-20 semanas. El cotizador te da el rango exacto al final.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Qué pasa después de cotizar?</summary>
-        <div class="faq-body">
-          Tu KAM te contacta el mismo día por WhatsApp para alinear scope. Si todo cuadra, agendamos discovery (1.5h gratis) y firmamos propuesta. Si no hay match · sin compromiso, sin costo.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Hacen revisiones o ajustes?</summary>
-        <div class="faq-body">
-          Sí. Cada proyecto incluye 3 rondas de ajustes sin cobro durante construcción y 1 año de mantenimiento (correcciones, micro-ajustes, soporte WhatsApp). Cambios mayores post-firma se cotizan aparte con tu aprobación.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Quién es el dueño del código y los assets?</summary>
-        <div class="faq-body">
-          Tú. Al cierre del proyecto entregamos repositorio Git, credenciales de hosting, archivos editables de diseño y toda la propiedad intelectual. Sin licencias atadas a iBisne.
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>¿Mis datos están seguros?</summary>
-        <div class="faq-body">
-          Sí. El cotizador no envía nada hasta que tú lo aprueblas en el último paso. Lo que captamos lo usamos sólo para preparar tu propuesta. Cumplimos con la LFPDPPP. Más detalle en nuestro <a href="legal/privacidad.html" style="color:var(--accent-mint);">Aviso de privacidad</a>.
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <!-- §07 · CTA FINAL ────────────────────────────────────────────── -->
-  <section class="home-section" id="cta-final" style="padding-bottom:var(--sp-7);">
-    <div class="cta-final">
-      <div class="section-eyebrow">§ 07 · TU PRÓXIMA JUGADA</div>
-      <h2 class="cta-final-title">Pon tu proyecto en marcha <span class="highlight">esta semana.</span></h2>
-      <p class="cta-final-sub">3 minutos para cotizar. 24 horas para hablar con tu KAM. Sin compromiso hasta que tú decidas.</p>
-      <div class="cta-row">
-        <a href="quiz.html" class="cta-big primary">Cotizar ahora →</a>
-        <a href="https://wa.me/523329575274?text=Hola%2C%20quiero%20hablar%20con%20un%20hunter%20de%20iBisne" target="_blank" rel="noopener" class="cta-big line">WhatsApp directo</a>
-      </div>
-    </div>
-  </section>
-
 </main>
 
-<!-- §08 · FOOTER EXTENDIDO con sitemap visible ─────────────────────── -->
-<footer class="footer-extended">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <img class="footer-logo" src="brand/iBisne_blanco.png" alt="iBisne">
-      <p class="footer-tagline">Holding LATAM con vocación operativa. Capital + ejecución para founders que construyen imperios.</p>
-    </div>
-    <div>
-      <div class="footer-col-label">Sitio</div>
-      <div class="footer-col-links">
-        <a href="#hero">Inicio</a>
-        <a href="#como-trabajamos">Cómo trabajamos</a>
-        <a href="#clientes">Clientes</a>
-        <a href="#sobre">Sobre iBisne</a>
-        <a href="#faq">FAQ</a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-col-label">Empezar</div>
-      <div class="footer-col-links">
-        <a href="quiz.html">Cotizar online</a>
-        <a href="https://wa.me/523329575274?text=Hola%2C%20quiero%20hablar%20con%20un%20hunter%20de%20iBisne" target="_blank" rel="noopener">Hablar con un hunter</a>
-        <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-col-label">Legal</div>
-      <div class="footer-col-links">
-        <a href="legal/privacidad.html">Aviso de privacidad</a>
-        <a href="legal/terminos.html">Términos y condiciones</a>
-        <a href="legal/contrato.html">Modelo de contrato</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2026 iBisne SAS de CV · Guadalajara, México</span>
-    <span>v9.0 · Construido con cero providers externos</span>
+<!-- Footer mínimo · solo email + legal -->
+<footer class="legal-strip">
+  <div class="right">
+    <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
+    <a href="legal/privacidad.html">Aviso de privacidad</a>
+    <a href="legal/terminos.html">Términos</a>
   </div>
 </footer>
 
+<script src="assets/home/clientes-data.js"></script>
 <script src="assets/quiz/loader.js"></script>
 <script src="assets/quiz/prefs.js"></script>
 <script src="assets/quiz/i18n.js"></script>
