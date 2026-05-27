@@ -358,12 +358,16 @@ body.is-booting{ overflow:hidden; }
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
   padding:var(--sp-5);
-  /* v11.2 · min-height fijo · garantiza altura visual base consistente
-   * entre catálogo/servicios/tipos/subflow · Eduardo: "no existe
-   * consistencia clara". Clamp fluido 200px mobile → 220px desktop.
-   * Cards con más contenido natural (service-card foot rico) crecen
-   * hasta ~231px; las más simples quedan parejas en 220px. */
-  min-height:clamp(200px, 16vw, 220px);
+  /* v11.4 · HEIGHT FIJO · TODAS las cards verticales del wizard tienen
+   * exactamente la misma altura sin importar el contenido. Eduardo:
+   * "al cambiar las cards cambian de pantalla entre cada opción no
+   * tiene orden de diseño". Antes con min-height las service-cards
+   * crecían a 231px mientras las otras quedaban en 220 (diferencia
+   * perceptible). Ahora todas son idénticas · justify-content:
+   * space-between distribuye contenido top/bottom sin aire muerto.
+   * Clamp 240px mobile → 256px desktop · cubre el caso más alto. */
+  height:clamp(240px, 18vw, 256px);
+  justify-content:space-between;
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
   border-radius:var(--radius);
@@ -787,16 +791,49 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 .rk-cart{ display:flex; flex-direction:column; height:100%; }
 .rk-cart-header{
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);
   min-height:var(--ds-cart-peek); padding:0 var(--sp-4); flex:none;
   cursor:pointer;
 }
 .rk-cart-header::after{
-  content:'▴'; margin-left:auto; color:var(--text-muted); font-size:var(--fs-small);
+  content:'▴'; color:var(--text-muted); font-size:var(--fs-small);
   transition:transform var(--dur-fast) var(--ease-out-quart);
+  flex:none;
 }
 .rk-right#cart.is-expanded .rk-cart-header::after{ transform:rotate(180deg); }
+.rk-cart-header-left{
+  display:flex; flex-direction:column; gap:2px; min-width:0;
+}
 .rk-cart-count{ color:var(--text-secondary); }
+
+/* v11.4 · TOTAL siempre visible en el header del cart bar (colapsado o expandido)
+ * para que el usuario vea las cifras subir en tiempo real sin tener que
+ * abrir el cart. Eduardo: "no se ve cuando sumas cantidades de nuevas
+ * selecciones". */
+.rk-cart-header-total{
+  display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+  margin-left:auto; flex:none;
+}
+.rk-cart-header-total-label{
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  color:var(--text-muted);
+}
+.rk-cart-header-total-amount{
+  font-family:var(--font-mono); font-size:var(--fs-base);
+  font-weight:var(--fw-medium); color:var(--accent);
+  white-space:nowrap;
+}
+.rk-cart-header-total-amount small{
+  font-size:var(--fs-pico); color:var(--text-muted);
+  margin-left:2px;
+}
+.rk-cart-header-total-amount.flash-up{
+  animation: flashUp 380ms var(--ease-out-quart);
+}
+.rk-cart-header-total-amount.flash-down{
+  animation: flashDown 380ms var(--ease-out-quart);
+}
 
 .rk-cart-empty{
   display:flex; flex-direction:column; align-items:center; text-align:center;
@@ -1074,8 +1111,9 @@ body.is-handover .result-screen{ animation:none !important; }
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
   padding:var(--sp-5);
-  /* v11.2 · misma min-height que mega/service/sf · layout estable */
-  min-height:clamp(200px, 16vw, 220px);
+  /* v11.4 · misma altura FIJA que mega/service/sf · layout idéntico */
+  height:clamp(240px, 18vw, 256px);
+  justify-content:space-between;
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
   border-radius:var(--radius);

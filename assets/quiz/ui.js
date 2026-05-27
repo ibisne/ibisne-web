@@ -1860,6 +1860,32 @@
 
     // Calcular nuevo · animar diferencias
     const cur = computeCart();
+
+    // v11.4 · Animar el TOTAL del header del cart bar (siempre visible,
+    // incluso colapsado). Usuario ve subir/bajar la cifra sin tener que
+    // abrir el cart.
+    const headerAmount = cartEl.querySelector('.rk-cart-header-total-amount');
+    if (headerAmount) {
+      const startVal = prev.totalConIva;
+      const endVal = cur.totalConIva;
+      if (startVal !== endVal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const start = performance.now();
+        const ease = (t) => 1 - Math.pow(1 - t, 4);
+        function stepH(now){
+          const t = Math.min(1, (now - start) / 380);
+          const v = startVal + (endVal - startVal) * ease(t);
+          headerAmount.innerHTML = formatMxn(v) + ' <small>MXN</small>';
+          if (t < 1) requestAnimationFrame(stepH);
+        }
+        requestAnimationFrame(stepH);
+      }
+      // Flash visual (mismo patrón que rk-cart-total-final)
+      headerAmount.classList.remove('flash-up', 'flash-down');
+      void headerAmount.offsetWidth;
+      if (cur.totalConIva > prev.totalConIva) headerAmount.classList.add('flash-up');
+      else if (cur.totalConIva < prev.totalConIva) headerAmount.classList.add('flash-down');
+    }
+
     const totals = cartEl.querySelectorAll('.rk-cart-total-line');
     if (totals.length >= 3) {
       // Subtotal · IVA · TOTAL (sin tocar building note si existe)
@@ -1936,7 +1962,14 @@
       return `
         <div class="rk-cart">
           <div class="rk-cart-header">
-            <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
+            <div class="rk-cart-header-left">
+              <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
+              <span class="rk-cart-count">0 servicios</span>
+            </div>
+            <div class="rk-cart-header-total" aria-label="Total estimado">
+              <span class="rk-cart-header-total-label">TOTAL</span>
+              <span class="rk-cart-header-total-amount">${formatMxn(0)} <small>MXN</small></span>
+            </div>
           </div>
           <div class="rk-cart-empty">
             <div class="rk-cart-empty-icon">${iconHtml('ecommerce','line')}</div>
@@ -2069,8 +2102,14 @@
     return `
       <div class="rk-cart">
         <div class="rk-cart-header">
-          <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
-          <span class="rk-cart-count">${countLabel}</span>
+          <div class="rk-cart-header-left">
+            <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
+            <span class="rk-cart-count">${countLabel}</span>
+          </div>
+          <div class="rk-cart-header-total" aria-label="Total estimado">
+            <span class="rk-cart-header-total-label">TOTAL</span>
+            <span class="rk-cart-header-total-amount">${formatMxn(calc.totalConIva)} <small>MXN</small></span>
+          </div>
         </div>
 
         <ul class="rk-cart-items">${itemsHtml}${buildingHtml}</ul>
