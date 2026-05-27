@@ -932,19 +932,19 @@
       }
     }
 
-    // v10.1 · Precio por opción (no total acumulado) en Apps · feedback Eduardo
-    // Detectar si el servicio pertenece a la mega 'apps' para aplicar la lógica delta.
-    // Otros megas (Web/Ecom/Plat) siguen mostrando total acumulado hasta su migración.
-    const isAppsMega = (() => {
+    // v10.2 · Precio por opción (delta) en Apps + Web · feedback Eduardo
+    // Detectar si el servicio pertenece a una mega con lógica delta (apps · web).
+    // Ecom/Plat siguen mostrando total acumulado hasta su migración.
+    const isDeltaMega = (() => {
       const P = getPricing();
       const m = P && P.megaCategorias
         ? P.megaCategorias.find(mc => (mc.serviciosIds || []).includes(servicio.id))
         : null;
-      return !!(m && m.id === 'apps');
+      return !!(m && (m.id === 'apps' || m.id === 'web'));
     })();
 
     // v7.1.0 · Cada card: título + descripción + PRECIO a simple vista.
-    // Multi → "+ $X" · Single (Apps) → delta por opción · Single (otros) → total acumulado.
+    // Multi → "+ $X" · Single (Apps/Web) → delta por opción · Single (otros) → total acumulado.
     // Si la opción tiene `detalle`, botón +/- para expandir.
     const opcionesHtml = q.opciones.map(o => {
       const isSel = selIds.has(o.id);
@@ -952,8 +952,8 @@
       let priceHtml;
       if (isMulti) {
         priceHtml = o.add ? `+ ${formatMxn(o.add)}` : (o.mul ? '×' + o.mul : 'Incluido');
-      } else if (isAppsMega) {
-        // v10.1 Apps · delta por opción (estilo cuantocuestamiapp)
+      } else if (isDeltaMega) {
+        // v10.2 Apps + Web · delta por opción (estilo cuantocuestamiapp)
         if (typeof o.add === 'number' && o.add > 0) priceHtml = `+ ${formatMxn(o.add)}`;
         else if (typeof o.add === 'number' && o.add === 0) priceHtml = 'Incluido';
         else if (typeof o.mul === 'number' && o.mul !== 1.0) {
