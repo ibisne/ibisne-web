@@ -171,10 +171,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '1-4 sem', icon: 'chatbot', megaId: 'plat',
       subtitle: 'WhatsApp/web/redes · reglas o IA · conectado a tus sistemas',
       tipos: [
-        { id: 'faq',         label: 'FAQ',               summary: 'Responde preguntas frecuentes 24/7' },
-        { id: 'leads',       label: 'Captura leads',     summary: 'Pre-califica + handoff a humano' },
-        { id: 'postventa',   label: 'Atención postventa', summary: 'Tracking · devoluciones · soporte' },
-        { id: 'asistente-ia', label: 'Asistente IA',     summary: 'LLM conectado a tu base · conversacional' },
+        { id: 'faq',          icon: 'help-circle', label: 'Preguntas frecuentes',     summary: 'Responde dudas 24/7 · como chatbot de soporte de cualquier banco' },
+        { id: 'leads',        icon: 'leads',       label: 'Captura de leads',          summary: 'Pre-califica visitantes y los pasa a humano · ideal para B2B' },
+        { id: 'postventa',    icon: 'shield',      label: 'Atención post-venta',       summary: 'Tracking · devoluciones · soporte · como Amazon' },
+        { id: 'asistente-ia', icon: 'chatbot',     label: 'Asistente con IA',          summary: 'Conectado a tu base de datos · responde como humano · como ChatGPT pero para tu negocio' },
       ],
     },
     'plat-agenda': {
@@ -182,10 +182,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '1-2 sem', icon: 'edit', megaId: 'plat',
       subtitle: 'Cliente reserva solo · recordatorios · sincronizado',
       tipos: [
-        { id: '1-a-1',      label: '1 a 1',           summary: 'Un profesional · horario fijo' },
-        { id: 'equipo',     label: 'Equipo',          summary: 'Varios profesionales · routing' },
-        { id: 'multi-sede', label: 'Multi-sede',      summary: 'Sucursales · staff por ubicación' },
-        { id: 'con-pagos',  label: 'Con pagos',       summary: 'Reserva = pago anticipado' },
+        { id: '1-a-1',      icon: 'login',       label: '1 a 1',                 summary: 'Un profesional · 1 calendario · como Calendly personal' },
+        { id: 'equipo',     icon: 'users',       label: 'Equipo',                summary: 'Varios profesionales · cada uno con agenda · routing automático' },
+        { id: 'multi-sede', icon: 'map-pin',     label: 'Multi-sede',            summary: 'Varias sucursales · staff por ubicación · como cadenas de clínicas' },
+        { id: 'con-pagos',  icon: 'wallet',      label: 'Con pagos al reservar', summary: 'Reserva = pago anticipado · evita no-shows' },
       ],
     },
     'plat-integraciones': {
@@ -193,10 +193,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '1-3 sem', icon: 'partnership', megaId: 'plat',
       subtitle: 'Que tus sistemas se hablen · sin copy-paste manual',
       tipos: [
-        { id: '2-sistemas',   label: '2 sistemas',       summary: 'A↔B · uni o bidireccional' },
-        { id: 'hub-multi',    label: 'Hub multi',        summary: '3+ sistemas · routing centralizado' },
-        { id: 'etl-batch',    label: 'ETL batch',        summary: 'Movimientos programados · grandes volúmenes' },
-        { id: 'tiempo-real',  label: 'Tiempo real',      summary: 'Webhooks · sub-segundo · push' },
+        { id: '2-sistemas',  icon: 'partnership', label: 'Conectar 2 sistemas',         summary: 'Ej. CRM ↔ Mailchimp · datos sincronizados sin copy-paste' },
+        { id: 'hub-multi',   icon: 'serverapp',   label: 'Hub centralizado',            summary: '3+ sistemas conectados desde un punto · como Zapier interno' },
+        { id: 'etl-batch',   icon: 'history',     label: 'Movimientos programados',     summary: 'Procesar grandes volúmenes en horario nocturno' },
+        { id: 'tiempo-real', icon: 'zap',         label: 'Tiempo real',                 summary: 'Webhooks · sub-segundo · ideal cuando una acción dispara otra' },
       ],
     },
     'plat-procesos': {
@@ -204,10 +204,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '2-5 sem', icon: 'serverapp', megaId: 'plat',
       subtitle: 'Operación interna sin clicks · workflow + reglas',
       tipos: [
-        { id: 'aprobaciones', label: 'Aprobaciones',     summary: 'Multi-step · notificaciones · audit log' },
-        { id: 'reportes',     label: 'Reportes',         summary: 'Generación automática · email · dashboard' },
-        { id: 'extraccion',   label: 'Extracción datos', summary: 'PDFs/emails/forms → tabla estructurada' },
-        { id: 'multi-paso',   label: 'Multi-paso',       summary: 'Workflow complejo · ramas condicionales' },
+        { id: 'aprobaciones', icon: 'shield-check', label: 'Aprobaciones internas',      summary: 'Gastos · vacaciones · contratos · con notificaciones y audit log' },
+        { id: 'reportes',     icon: 'bar-chart',    label: 'Reportes automáticos',       summary: 'Generación + email + dashboard · ahorras horas de trabajo manual' },
+        { id: 'extraccion',   icon: 'file-text',    label: 'Extracción de datos',        summary: 'De PDFs/emails/forms a tabla estructurada · ideal facturas o recibos' },
+        { id: 'multi-paso',   icon: 'serverapp',    label: 'Workflow complejo',          summary: 'Multi-paso con ramas condicionales · como onboarding de clientes' },
       ],
     },
     'plat-asesoria': {
@@ -215,10 +215,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: 'agendable', icon: 'partnership', megaId: 'plat',
       subtitle: 'Tu equipo aprende · nosotros enseñamos · 1 sesión o serie',
       tipos: [
-        { id: 'estrategia',      label: 'Estrategia',        summary: 'Roadmap tech para tu negocio' },
-        { id: 'ia',              label: 'IA',                summary: 'Cómo aplicar IA en tu operación' },
-        { id: 'ecommerce',       label: 'Ecommerce',         summary: 'Cómo escalar tu tienda · funnels' },
-        { id: 'formacion-equipo', label: 'Formación equipo', summary: 'Capacitación técnica a tu staff' },
+        { id: 'estrategia',       icon: 'partnership', label: 'Estrategia tech',        summary: 'Roadmap a 12 meses · qué construir · qué stack elegir' },
+        { id: 'ia',               icon: 'star',        label: 'IA aplicada',            summary: 'Cómo usar IA en tu operación · qué automatizar primero' },
+        { id: 'ecommerce',        icon: 'ecommerce',   label: 'Ecommerce / funnels',    summary: 'Cómo escalar tu tienda · funnels · retención' },
+        { id: 'formacion-equipo', icon: 'users',       label: 'Formación de equipo',    summary: 'Capacitación técnica a tu staff · workshops · mentoring' },
       ],
     },
     // 4 nuevos · blockchain SIEMPRE el más alto (decisión Eduardo)
@@ -227,10 +227,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '4-10 sem', icon: 'partnership', megaId: 'plat',
       subtitle: 'Pipeline · contactos · automatizaciones · sin pagar por usuario',
       tipos: [
-        { id: 'ventas',                  label: 'Ventas',                  summary: 'Pipeline · deals · forecasting' },
-        { id: 'atencion-cliente',        label: 'Atención cliente',        summary: 'Tickets · SLA · base de conocimiento' },
-        { id: 'inmobiliaria',            label: 'Inmobiliaria',            summary: 'Propiedades · matching · agentes' },
-        { id: 'servicios-profesionales', label: 'Servicios profesionales', summary: 'Casos · horas · facturación' },
+        { id: 'ventas',                  icon: 'trending-up', label: 'CRM de ventas',                summary: 'Pipeline · deals · forecasting · como HubSpot Sales o Pipedrive' },
+        { id: 'atencion-cliente',        icon: 'service',     label: 'Atención al cliente',          summary: 'Tickets · SLA · base de conocimiento · como Zendesk' },
+        { id: 'inmobiliaria',            icon: 'map-pin',     label: 'Inmobiliaria',                 summary: 'Propiedades · matching · agentes · como CRMs especializados de bienes raíces' },
+        { id: 'servicios-profesionales', icon: 'partnership', label: 'Servicios profesionales',      summary: 'Casos · horas · facturación · como bufete legal o consultoría' },
       ],
     },
     'plat-saas': {
@@ -238,10 +238,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '6-16 sem', icon: 'app', megaId: 'plat',
       subtitle: 'Tu producto digital · multi-tenant · suscripciones',
       tipos: [
-        { id: 'vertical-niche',  label: 'Vertical de nicho', summary: 'Para industria específica · profundo' },
-        { id: 'horizontal-tool', label: 'Horizontal',        summary: 'Cross-industry · una capacidad clara' },
-        { id: 'marketplace',     label: 'Marketplace 2-sided', summary: 'Oferta + demanda · matching' },
-        { id: 'b2b-internal',    label: 'B2B interna',       summary: 'Para clientes empresa · enterprise' },
+        { id: 'vertical-niche',  icon: 'service',      label: 'SaaS para una industria',     summary: 'Para nicho específico · profundo · como Toast (restaurantes) o Procore (construcción)' },
+        { id: 'horizontal-tool', icon: 'wrench',       label: 'SaaS horizontal',             summary: 'Cross-industry · una capacidad clara · como Slack o Notion' },
+        { id: 'marketplace',     icon: 'marketplace',  label: 'Marketplace 2-sided',         summary: 'Oferta + demanda · como Uber, Airbnb, Etsy' },
+        { id: 'b2b-internal',    icon: 'shield',       label: 'B2B / enterprise',            summary: 'Para empresas grandes · SSO · seguridad enterprise' },
       ],
     },
     'plat-erp': {
@@ -249,10 +249,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '8-20 sem', icon: 'serverapp', megaId: 'plat',
       subtitle: 'Operación end-to-end · módulos integrados · reemplaza Excel',
       tipos: [
-        { id: 'manufactura',    label: 'Manufactura',    summary: 'Producción · inventario · BOM · planta' },
-        { id: 'retail',         label: 'Retail',         summary: 'POS · stock · multi-sucursal · proveedores' },
-        { id: 'servicios',      label: 'Servicios',      summary: 'Proyectos · horas · facturación · recursos' },
-        { id: 'multi-vertical', label: 'Multi-vertical', summary: 'Holding · varias unidades de negocio' },
+        { id: 'manufactura',    icon: 'serverapp',   label: 'ERP para manufactura',        summary: 'Producción · inventario · listas de materiales · control de planta' },
+        { id: 'retail',         icon: 'ecommerce',   label: 'ERP para retail',             summary: 'POS · stock · multi-sucursal · proveedores · como Oxxo internamente' },
+        { id: 'servicios',      icon: 'partnership', label: 'ERP para servicios',          summary: 'Proyectos · horas · facturación · recursos · agencia o consultora' },
+        { id: 'multi-vertical', icon: 'grid',        label: 'ERP multi-vertical',          summary: 'Holding · varias unidades de negocio · consolidación financiera' },
       ],
     },
     'plat-blockchain': {
@@ -260,10 +260,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '6-16 sem', icon: 'serverapp', megaId: 'plat',
       subtitle: 'Solidity / Rust · auditable · Ethereum, Polygon, Solana',
       tipos: [
-        { id: 'token-utility',   label: 'Token utility',          summary: 'ERC-20 · pagos · governance' },
-        { id: 'nft-collection',  label: 'NFT coleccionable',      summary: 'ERC-721/1155 · drop · marketplace' },
-        { id: 'defi-basico',     label: 'DeFi básico',            summary: 'Staking · swap · vault simple' },
-        { id: 'smart-contract-biz', label: 'Smart contract negocio', summary: 'Lógica B2B onchain · audit-grade' },
+        { id: 'token-utility',      icon: 'coin',        label: 'Token utility',              summary: 'ERC-20 · pagos · governance · como tokens de DAOs' },
+        { id: 'nft-collection',     icon: 'palette',     label: 'NFT coleccionable',          summary: 'ERC-721/1155 · drop · marketplace · como Bored Apes' },
+        { id: 'defi-basico',        icon: 'wallet',      label: 'DeFi básico',                summary: 'Staking · swap · vault simple · como Uniswap minimal' },
+        { id: 'smart-contract-biz', icon: 'shield-check', label: 'Smart contract de negocio', summary: 'Lógica B2B onchain · audit-grade · escrow · royalties' },
       ],
     },
   },
@@ -2243,10 +2243,10 @@ window.IBISNE_PRICING_V9 = {
     { id: 'generico',         icon: 'help-circle',        label: 'No estoy seguro · ayúdame a decidir', summary: 'Te mostramos las preguntas más comunes y vemos juntos qué encaja con tu idea' },
   ];
   const EC_TIPOS = [
-    { id: 'fisico',  label: 'Producto físico',  summary: 'Te lo enviamos al cliente' },
-    { id: 'digital', label: 'Producto digital', summary: 'Descarga · curso · ebook' },
-    { id: 'servicio', label: 'Servicio',        summary: 'Booking · suscripción · sesión' },
-    { id: 'mixto',   label: 'Mixto',            summary: 'Físico + digital + servicio combinados' },
+    { id: 'fisico',  icon: 'ecommerce', label: 'Producto físico',  summary: 'Te lo enviamos al cliente · como Amazon o Mercado Libre' },
+    { id: 'digital', icon: 'file-text', label: 'Producto digital', summary: 'Descarga · curso · ebook · como Udemy o Hotmart' },
+    { id: 'servicio', icon: 'calendar', label: 'Servicio',         summary: 'Booking · suscripción · sesión · como Calendly o Doctoralia' },
+    { id: 'mixto',   icon: 'partnership', label: 'Mixto',          summary: 'Físico + digital + servicio combinados · como Apple Store' },
   ];
 
   // ── Subflow Apps · v10 · lenguaje de negocio + iconos por opción ──
@@ -2791,6 +2791,36 @@ window.IBISNE_PRICING_V9 = {
     ]},
   ];
 
+  // v10.3 · EC_PRESHARED y PLAT_PRESHARED · mismo patrón vibe para Ecom + Plataformas
+  // Se inyecta a cada subflow de ec-* y plat-* en el loop final.
+  const EC_PRESHARED = [
+    { id: 'vibe', label: '¿Qué vibe tiene tu tienda online?',
+      help: 'Esto nos ayuda a recomendar opciones acordes · podrás cambiar de idea en cualquier momento.', opciones: [
+      { id: 'mvp',      icon: 'leads',       label: 'MVP / Económico',
+        subtitle: 'Salir a vender rápido · lo esencial · iterar con primeros clientes',                            mul: 0.80 },
+      { id: 'balance',  icon: 'palette',     label: 'Balance',
+        subtitle: 'Tienda sólida con buen UX · sin sobre-engineering · lista para escalar',                        mul: 1.00 },
+      { id: 'premium',  icon: 'star',        label: 'Premium · marca fuerte',
+        subtitle: 'Animaciones · UX impecable · marca de lujo · listo para campañas grandes',                      mul: 1.35, flag: 'animacion-pro' },
+      { id: 'help',     icon: 'help-circle', label: 'No estoy seguro · ayúdenme',
+        subtitle: 'Marcamos tu cotización para discovery · el hunter te llama y define contigo',                   mul: 1.00, flag: 'needs-discovery' },
+    ]},
+  ];
+
+  const PLAT_PRESHARED = [
+    { id: 'vibe', label: '¿Qué vibe tiene tu plataforma interna?',
+      help: 'Plataformas operativas (CRM, ERP, SaaS, automatización) requieren claridad de alcance.', opciones: [
+      { id: 'mvp',      icon: 'leads',       label: 'MVP / Económico',
+        subtitle: 'Validar la idea · funcionalidad mínima · usuarios beta',                                        mul: 0.80 },
+      { id: 'balance',  icon: 'palette',     label: 'Balance',
+        subtitle: 'Plataforma productiva para uso real · sin sobre-engineering',                                   mul: 1.00 },
+      { id: 'premium',  icon: 'star',        label: 'Premium · enterprise',
+        subtitle: 'Arquitectura para escalar · seguridad enterprise · SSO · audit logs',                           mul: 1.35, flag: 'animacion-pro' },
+      { id: 'help',     icon: 'help-circle', label: 'No estoy seguro · ayúdenme',
+        subtitle: 'Marcamos tu cotización para discovery · el hunter te llama y define contigo',                   mul: 1.00, flag: 'needs-discovery' },
+    ]},
+  ];
+
   // ── Expansión final · sustituir markers por contenido real ───────
   const S = window.IBISNE_PRICING_V9.servicios;
   for (const id of Object.keys(S)) {
@@ -2801,9 +2831,16 @@ window.IBISNE_PRICING_V9 = {
   for (const id of Object.keys(SF)) {
     if (SF[id] === 'APP_SUBFLOW_V9_MARKER') SF[id] = APP_SUBFLOW_V9;
     if (SF[id] === 'EC_SUBFLOW_V9_MARKER')  SF[id] = EC_SUBFLOW_V9;
-    // v10.2 · Inyectar vibe a los 4 servicios web (web-bio, web-landing, web-funnel, web-sitio)
+    // v10.2 · Inyectar vibe a los 4 servicios web
     if (id.startsWith('web-') && typeof SF[id] === 'object' && !SF[id].preShared) {
       SF[id].preShared = WEB_PRESHARED;
+    }
+    // v10.3 · Inyectar vibe a los 4 servicios ec-* y 9 servicios plat-*
+    if (id.startsWith('ec-') && typeof SF[id] === 'object' && !SF[id].preShared) {
+      SF[id].preShared = EC_PRESHARED;
+    }
+    if (id.startsWith('plat-') && typeof SF[id] === 'object' && !SF[id].preShared) {
+      SF[id].preShared = PLAT_PRESHARED;
     }
   }
 })();

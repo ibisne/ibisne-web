@@ -932,15 +932,14 @@
       }
     }
 
-    // v10.2 · Precio por opción (delta) en Apps + Web · feedback Eduardo
-    // Detectar si el servicio pertenece a una mega con lógica delta (apps · web).
-    // Ecom/Plat siguen mostrando total acumulado hasta su migración.
+    // v10.3 · Precio por opción (delta) en TODAS las megas · feedback Eduardo
+    // Apps · Web · Ecom · Plataformas ahora muestran delta en single (no total acumulado).
     const isDeltaMega = (() => {
       const P = getPricing();
       const m = P && P.megaCategorias
         ? P.megaCategorias.find(mc => (mc.serviciosIds || []).includes(servicio.id))
         : null;
-      return !!(m && (m.id === 'apps' || m.id === 'web'));
+      return !!(m && ['apps','web','ecommerce','plat'].includes(m.id));
     })();
 
     // v7.1.0 · Cada card: título + descripción + PRECIO a simple vista.
