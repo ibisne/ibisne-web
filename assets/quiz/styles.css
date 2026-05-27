@@ -491,12 +491,16 @@ body.is-booting{ overflow:hidden; }
 }
 
 /* ───────────────────────────────────────────────────────────────────
-   § 10 · GRID ÚNICO (mobile 1col · ≥768 2col · ≥1100 2col)
+   § 10 · GRID ÚNICO DEL WIZARD · v11.1
+   Mismo grid (1col mobile · 2col ≥768 · 2col ≥1100) y mismo gap
+   en TODAS las pantallas con cards verticales del wizard.
+   Solo cambia la cantidad de cards entre pantallas, jamás el tamaño.
+   .type-grid incluida aquí (antes iba a 3col en desktop · v11.0).
    ─────────────────────────────────────────────────────────────────── */
-.mega-grid,.service-grid,.sf-grid,.bp-grid,.rk-project-meta{
+.mega-grid,.service-grid,.sf-grid,.type-grid,.bp-grid,.rk-project-meta{
   display:grid; grid-template-columns:1fr; gap:var(--sp-3);
 }
-.mega-grid,.service-grid,.sf-grid{ margin-top:var(--sp-4); }
+.mega-grid,.service-grid,.sf-grid,.type-grid{ margin-top:var(--sp-4); }
 
 /* ───────────────────────────────────────────────────────────────────
    § 11 · CATÁLOGO (mega · sub · servicios)
@@ -921,7 +925,7 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:768px){
   .quiz-main{ padding:var(--sp-5) var(--sp-5) calc(var(--ds-cart-peek) + var(--sp-6)); }
-  .mega-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .datos-fields{ grid-template-columns:repeat(2,1fr); }
   .sf-confirm-actions{ flex-direction:row; }
@@ -970,7 +974,10 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  .mega-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-5); }
+  /* v11.1 · type-grid incluida · gap se mantiene sp-4 (igual que tablet)
+   * para que NO cambie el espaciado entre cards al cruzar el breakpoint.
+   * Antes: sp-5 desktop · sp-4 tablet · ahora ambos sp-4 = layout estable. */
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
 }
@@ -1097,14 +1104,16 @@ body.is-handover .result-screen{ animation:none !important; }
   letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
 }
 
-.type-grid{ display:grid; grid-template-columns:1fr; gap:var(--sp-3); margin-top:var(--sp-4); }
-@media (min-width:768px){ .type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); } }
-@media (min-width:1100px){ .type-grid{ grid-template-columns:repeat(3,1fr); } }
+/* v11.1 · .type-grid se unificó con .mega-grid/.service-grid/.sf-grid
+ * en §10 / §20 / §21 · ya no requiere reglas propias.
+ * Mantiene su clase semántica (la usa ui.js · renderSubflowTipo). */
 
 /* ── ADDON CHIP · horizontal compact card con label + price + check ── */
 .addon-list{
   display:flex; flex-direction:column; gap:var(--sp-2);
-  margin-top:var(--sp-3);
+  /* v11.1 · margin-top sp-4 (antes sp-3) para alinear con
+   * .mega-grid/.service-grid/.sf-grid/.type-grid · grid arranca en mismo Y */
+  margin-top:var(--sp-4);
 }
 .addon-chip{
   display:flex; align-items:center; gap:var(--sp-3);
@@ -1156,6 +1165,7 @@ body.is-handover .result-screen{ animation:none !important; }
 
 .addon-preview-total{
   display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
+  /* v11.1 · sp-4 ya estaba bien · queda como está · documentado */
   margin-top:var(--sp-4); padding:var(--sp-3) var(--sp-4);
   background:var(--bg-paper); border:1px solid var(--bg-line); border-radius:var(--radius);
   font-family:var(--font-mono); font-size:var(--fs-small);

@@ -6,7 +6,9 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v11.0.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v11.1.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v11.1 · layout estable entre pantallas del wizard.** Grids unificados: `.mega-grid/.service-grid/.sf-grid/.type-grid` comparten misma anatomía (1col mobile · 2col ≥768 · 2col ≥1100, gap `sp-4` desktop/tablet, gap `sp-3` mobile). Type-grid ya no salta a 3col en desktop. `.addon-list` alinea `margin-top: sp-4` con el resto. Resultado: entre catálogo → servicios → tipo → preguntas → addons → confirm, las cards mantienen mismo ancho/padding/gap; solo varía la cantidad.
 
 ## El design system OFICIAL es **VAULT (v2)** — `/design-system-v2/`
 
@@ -53,7 +55,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v11.0.0)
+## Estructura del repo (actual · v11.1.0)
 
 ```
 /
@@ -143,7 +145,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.0.0`.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.1.0`.
 
 ## Voice & copy
 
