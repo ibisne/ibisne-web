@@ -949,20 +949,28 @@
       const isSel = selIds.has(o.id);
       const isRec = recommendedIds.has(o.id);
       let priceHtml;
+      // v10.4 · Eduardo: 'no puedes dejar ningún servicio a costo incluido o $0.00 en ninguna parte'.
+      // Cuando una opción no añade costo extra, mostramos el PRECIO TOTAL ACUMULADO
+      // si eliges esa opción (base + lo que ya configuraste). Cero 'Incluido' / cero '$0'.
+      const totalIfPicked = () => {
+        const hypo = Object.assign({}, config, { [q.id]: o });
+        return formatMxn(calcSubflowPrice(servicio, hypo, sf.tipoId, sf.addOnIds));
+      };
       if (isMulti) {
-        priceHtml = o.add ? `+ ${formatMxn(o.add)}` : (o.mul ? '×' + o.mul : 'Incluido');
-      } else if (isDeltaMega) {
-        // v10.2 Apps + Web · delta por opción (estilo cuantocuestamiapp)
+        // Multi · "+ $X" cuando add>0, "×N" cuando mul, sino total acumulado
         if (typeof o.add === 'number' && o.add > 0) priceHtml = `+ ${formatMxn(o.add)}`;
-        else if (typeof o.add === 'number' && o.add === 0) priceHtml = 'Incluido';
+        else if (typeof o.mul === 'number' && o.mul !== 1.0) priceHtml = '×' + o.mul;
+        else priceHtml = totalIfPicked();
+      } else if (isDeltaMega) {
+        // Single (Apps/Web/Ecom/Plat) · delta cuando add>0 o mul!=1 · total acumulado en cero/neutro
+        if (typeof o.add === 'number' && o.add > 0) priceHtml = `+ ${formatMxn(o.add)}`;
         else if (typeof o.mul === 'number' && o.mul !== 1.0) {
           const pct = Math.round((o.mul - 1) * 100);
           priceHtml = pct > 0 ? `+${pct}%` : `${pct}%`;
-        } else priceHtml = 'Incluido';
+        } else priceHtml = totalIfPicked();
       } else {
-        // Web/Ecom/Plat · comportamiento legacy · total acumulado
-        const hypo = Object.assign({}, config, { [q.id]: o });
-        priceHtml = formatMxn(calcSubflowPrice(servicio, hypo, sf.tipoId, sf.addOnIds));
+        // Legacy (servicios sin mega delta) · siempre total acumulado
+        priceHtml = totalIfPicked();
       }
       const detalleHtml = o.detalle
         ? `<button class="sf-card-more" data-more type="button" aria-label="Más información">${L('+ qué incluye')}</button>
