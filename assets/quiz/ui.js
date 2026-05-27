@@ -1021,6 +1021,7 @@
             <div class="sf-progress-rail"><div class="sf-progress-fill" style="width:${pct}%"></div></div>
           </div>
           <div class="sf-q-head">
+            ${q.icon ? `<div class="sf-q-icon">${iconHtml(q.icon, 'line')}</div>` : ''}
             <h2 class="sf-q-title screen-title">${L(q.label)}</h2>
             ${q.help ? `<p class="sf-q-help screen-subtitle">${L(q.help)}</p>` : ''}
             ${isMulti ? `<p class="sf-q-multi">${L('Marca todas las que apliquen.')}</p>` : ''}
@@ -1794,11 +1795,88 @@
   // ═══════════════════════════════════════════════════════════════════
   // CARRITO STICKY (lado derecho permanente)
   // ═══════════════════════════════════════════════════════════════════
+  // v11 · animateNumber · interpola valor con RAF + easeOutQuart
+  // Usado por refreshCart para animar los totales del cart cuando cambian.
+  function animateNumber(el, from, to, duration, formatter){
+    if (!el) return;
+    duration = duration || 350;
+    formatter = formatter || formatMxn;
+    if (from === to) { el.textContent = formatter(to); return; }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = formatter(to);
+      return;
+    }
+    const start = performance.now();
+    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+    function step(now){
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / duration);
+      const value = from + (to - from) * easeOutQuart(t);
+      el.textContent = formatter(value);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // v11 · refreshCart con animación de cifras
+  // Captura totales antes del re-render · después anima los nuevos elementos del valor anterior al nuevo.
+  let _prevCartCalc = null;
   function refreshCart(){
     const cartEl = $('#cart');
     if (!cartEl) return;
+    // Snapshot del cálculo antes de re-render
+    const prev = _prevCartCalc || { subtotal: 0, total: 0, totalConIva: 0 };
+
     cartEl.innerHTML = renderCartContent();
     bindCart();
+
+    // Calcular nuevo · animar diferencias
+    const cur = computeCart();
+    const totals = cartEl.querySelectorAll('.rk-cart-total-line');
+    if (totals.length >= 3) {
+      // Subtotal · IVA · TOTAL (sin tocar building note si existe)
+      const subtotalSpan = totals[0]?.querySelector('span:last-child');
+      const ivaSpan      = totals[1]?.querySelector('span:last-child');
+      const totalSpan    = totals[2]?.querySelector('span:last-child');
+      if (subtotalSpan) animateNumber(subtotalSpan, prev.subtotal, cur.subtotal);
+      if (ivaSpan)      animateNumber(ivaSpan, prev.total * 0.16, cur.total * 0.16);
+      // El total trae "<span> $ X <small>MXN</small></span>" · animamos solo el número antes del small
+      if (totalSpan) {
+        const small = totalSpan.querySelector('small');
+        animateNumber(totalSpan, prev.totalConIva, cur.totalConIva, 380, (v) => {
+          return formatMxn(v) + (small ? ' <small>MXN</small>' : '');
+        });
+        // Reemplazo es innerHTML porque hay <small> dentro
+        // Caso: si small existe, usamos innerHTML; sino textContent.
+        // animateNumber escribe a textContent por default · sobrescribimos:
+        if (small) {
+          const startVal = prev.totalConIva, endVal = cur.totalConIva;
+          if (startVal !== endVal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const start = performance.now();
+            const ease = (t) => 1 - Math.pow(1 - t, 4);
+            function step(now){
+              const t = Math.min(1, (now - start) / 380);
+              const v = startVal + (endVal - startVal) * ease(t);
+              totalSpan.innerHTML = formatMxn(v) + ' <small>MXN</small>';
+              if (t < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          } else {
+            totalSpan.innerHTML = formatMxn(endVal) + ' <small>MXN</small>';
+          }
+        }
+        // Flash visual al subir/bajar el total final
+        const totalLine = totals[2];
+        if (totalLine) {
+          totalLine.classList.remove('flash-up', 'flash-down');
+          // force reflow para reiniciar la animación
+          void totalLine.offsetWidth;
+          if (cur.totalConIva > prev.totalConIva) totalLine.classList.add('flash-up');
+          else if (cur.totalConIva < prev.totalConIva) totalLine.classList.add('flash-down');
+        }
+      }
+    }
+    _prevCartCalc = cur;
   }
 
   function renderCartContent(){
@@ -2086,11 +2164,10 @@
       navigate('#/loading');
     });
 
-    // Mobile/tablet: toggle expand del carrito (bottom-sheet).
-    // v8.0.0 · alineado al breakpoint desktop del CSS (1100): debajo de
-    // 1100 el carrito es bottom-sheet con peek → necesita el toggle.
+    // v11 · Cart bottom-bar full-width en TODOS los viewports.
+    // Header siempre clickable para expand/collapse.
     const header = document.querySelector('#cart .rk-cart-header');
-    if (header && window.matchMedia('(max-width: 1099px)').matches) {
+    if (header) {
       header.addEventListener('click', () => {
         const cartEl = $('#cart');
         cartEl.classList.toggle('is-expanded');

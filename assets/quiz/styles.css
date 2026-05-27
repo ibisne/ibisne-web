@@ -35,7 +35,7 @@
 :root{
   --hud-h: 60px;                           /* alto del HUD superior */
   --ds-cart-w: 400px;                      /* ancho sidebar carrito (desktop) */
-  --ds-cart-peek: 72px;                    /* alto visible del bottom-sheet (móvil) */
+  --ds-cart-peek: 80px;                    /* v11 · alto del bottom-bar full-width (todos los viewports) */
   --ds-tap: 44px;                          /* touch target mínimo */
 
   /* Títulos/sub fluidos mobile→desktop (capa propia · VAULT no tiene
@@ -930,14 +930,14 @@ body.is-handover .result-screen{ animation:none !important; }
 }
 
 /* ───────────────────────────────────────────────────────────────────
-   § 21 · DESKTOP ≥1100px — carrito sidebar sticky (sin bottom-sheet)
+   § 21 · DESKTOP ≥1100px — v11.0 · carrito bottom-bar full-width
+   (ya no sidebar) · libera el ancho completo de la pantalla para el wizard
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:1100px){
   .hud{ padding:0 var(--sp-5); gap:var(--sp-3); }
   .hud-logo{ height:24px; }
   .hud-group-social,.hud-group-pref,.hud-group-ui{ display:flex; }
   .hud-divider{ display:block; }
-  /* v8.6.1 · en desktop re-mostramos los CTAs del HUD top */
   .hud-cta{ display:inline-flex; }
   .hud-install-cta:not([hidden]){ display:inline-flex; }
   .hud-mobile-toggle{ display:none; }
@@ -945,44 +945,31 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .quiz-main{
     max-width:1440px;
-    padding:var(--sp-6) var(--sp-6) var(--sp-8);
+    padding:var(--sp-6) var(--sp-6) calc(var(--ds-cart-peek) + var(--sp-6));
     min-height:calc(100vh - var(--hud-h));
     display:flex;
     flex-direction:column;
   }
-  .rk-grid{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) var(--ds-cart-w);
-    gap:var(--sp-5); align-items:start;
-    flex:1;
-    min-height:0;
-  }
-  .rk-left{
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-  }
-  .rk-left > .screen{
-    flex:1;
-  }
-  .rk-right#cart{
-    position:sticky; inset:auto;
-    top:calc(var(--hud-h) + var(--sp-4));
-    max-height:calc(100vh - var(--hud-h) - var(--sp-6));
-    overflow-y:auto;
-    background:var(--bg-paper);
-    border:1px solid var(--bg-line);
-    border-radius:var(--radius);
-  }
-  .rk-right#cart.is-expanded{ max-height:calc(100vh - var(--hud-h) - var(--sp-6)); }
+  /* v11.0 · rk-grid sigue siendo 1-col (no sidebar) */
+  .rk-grid{ display:block; flex:1; min-height:0; }
+  .rk-left{ width:100%; min-width:0; }
 
-  .rk-cart-header{ min-height:auto; padding:var(--sp-4) var(--sp-4) var(--sp-3); cursor:default; }
-  .rk-cart-header::after{ display:none; }              /* sin toggle en desktop */
-  .rk-cart-items{ max-height:38vh; }
+  /* Cart sigue siendo fixed bottom · ahora con padding más cómodo en desktop */
+  .rk-right#cart{
+    position:fixed; left:0; right:0; bottom:0; z-index:var(--z-nav);
+    max-height:var(--ds-cart-peek);
+    background:var(--bg-paper); border-top:1px solid var(--bg-line);
+    overflow:hidden;
+    transition:max-height var(--dur-reg) var(--ease-out-expo);
+  }
+  .rk-right#cart.is-expanded{ max-height:88vh; overflow-y:auto; }
+
+  /* Header del cart bottom-bar · siempre clickable para expand/collapse */
+  .rk-cart-header{ cursor:pointer; padding:var(--sp-3) var(--sp-5); }
+  .rk-cart-items{ max-height:50vh; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* Grids del wizard: 2 columnas grandes en desktop · v8.5.0 (era repeat(3,1fr)) */
   .mega-grid,.service-grid,.sf-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-5); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
   .sf-grid.is-multi{ grid-template-columns:repeat(2,1fr); }
@@ -1195,6 +1182,36 @@ body.is-handover .result-screen{ animation:none !important; }
   font-size:var(--fs-micro); color:var(--text-secondary);
 }
 .rk-cart-item-addon small{ color:var(--text-muted); margin-left:var(--sp-1); }
+
+/* ───────────────────────────────────────────────────────────────────
+   § 32 · v11.0 · Flash visual al subir/bajar el total del cart
+   ─────────────────────────────────────────────────────────────────── */
+.rk-cart-total-final.flash-up{
+  animation: flashUp 380ms var(--ease-out-quart);
+}
+.rk-cart-total-final.flash-down{
+  animation: flashDown 380ms var(--ease-out-quart);
+}
+@keyframes flashUp{
+  0%,100%{ color:inherit; }
+  35%    { color:var(--accent-mint); }
+}
+@keyframes flashDown{
+  0%,100%{ color:inherit; }
+  35%    { color:var(--text-muted); }
+}
+
+/* v11.0 · Icono por pregunta en subflow */
+.sf-q-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; flex:none;
+  background:var(--bg-paper);
+  border:1px solid var(--bg-line);
+  border-radius:var(--radius-input);
+  color:var(--accent-mint);
+  margin-bottom:var(--sp-2);
+}
+.sf-q-icon svg{ width:20px; height:20px; }
 
 /* ───────────────────────────────────────────────────────────────────
    § 31 · v10.1 · Cart payment plan + código descuento (cuando isResultado)
