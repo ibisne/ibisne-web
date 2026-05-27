@@ -46,11 +46,39 @@
     state.deferredPrompt = e;
   });
 
-  // ── SW registration ──────────────────────────────────────────
+  // ── SW registration + auto-reload al detectar nueva versión ────
+  // v11.3 · Cuando el SW activa una versión nueva (después de un bump del
+  // CACHE en sw.js), recargamos la página automáticamente para que el
+  // usuario vea los cambios sin tener que hacer hard reload manual.
+  // Política: solo recargar 1 vez por sesión (anti-loop · si el reload
+  // dispara otro controllerchange por alguna razón, no entramos en bucle).
   if ('serviceWorker' in navigator) {
+    var hasReloaded = false;
+
+    // (1) Cuando el SW nuevo toma control de los clients existentes
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (hasReloaded) return;
+      hasReloaded = true;
+      // Pequeño delay para permitir que el SW termine activate y claim antes del reload
+      setTimeout(function () { window.location.reload(); }, 100);
+    });
+
+    // (2) Mensaje explícito desde el SW (activate → matchAll → postMessage)
+    // Cinturón + tirantes: por si controllerchange no se dispara en algún browser
+    navigator.serviceWorker.addEventListener('message', function (event) {
+      if (event.data && event.data.type === 'SW_NEW_VERSION') {
+        if (hasReloaded) return;
+        hasReloaded = true;
+        setTimeout(function () { window.location.reload(); }, 100);
+      }
+    });
+
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').then(function () {
+      navigator.serviceWorker.register('/sw.js').then(function (reg) {
         state.swRegistered = true;
+        // Forzar check de updates al cargar · ayuda a que browsers viejos
+        // descubran cambios sin esperar al heartbeat de 24h del browser.
+        try { reg.update(); } catch (_) {}
       }).catch(function () { /* noop */ });
     });
   }
