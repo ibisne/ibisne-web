@@ -59,24 +59,24 @@ window.IBISNE_PRICING_V9 = {
     // ── WEB (4 servicios) ────────────────────────────────────────────
     'web-bio': {
       label: 'Bio link / Página de enlaces', base: 6250, tier: 'micro',
-      tiempo: '3-7 días', icon: 'sitio', megaId: 'web',
+      tiempo: '3-7 días', icon: 'biolink', megaId: 'web',
       subtitle: 'Tu IG en una sola liga · redes, productos, WhatsApp',
       tipos: [
-        { id: 'linktree',       label: 'Linktree-style',  summary: 'Enlaces simples · 1 columna' },
-        { id: 'bento',          label: 'Bento',           summary: 'Cards con preview · grid 2-col' },
-        { id: 'mini-portfolio', label: 'Mini-portfolio',  summary: '1-page + galería de trabajos' },
+        { id: 'linktree',       icon: 'biolink', label: 'Linktree-style',  summary: 'Enlaces simples en 1 columna · como Linktree clásico' },
+        { id: 'bento',          icon: 'grid',    label: 'Bento',           summary: 'Cards con preview · grid visual · como muchas bios de Twitter' },
+        { id: 'mini-portfolio', icon: 'palette', label: 'Mini-portfolio',  summary: 'Galería de trabajos · 1-page · como portfolio de diseñador en Behance' },
       ],
     },
     'web-landing': {
       label: 'Landing page', base: 20000, tier: 'medio',
-      tiempo: '1-2 sem', icon: 'sitio', megaId: 'web',
+      tiempo: '1-2 sem', icon: 'landing', megaId: 'web',
       subtitle: 'Una página que convence y convierte',
       tipos: [
-        { id: 'lead-gen',       label: 'Lead-gen',         summary: 'Captura email/teléfono · scoring básico' },
-        { id: 'producto',       label: 'Producto',         summary: 'Vender 1 producto · CTA al checkout' },
-        { id: 'evento',         label: 'Evento',           summary: 'Registro + agenda + recordatorios' },
-        { id: 'pre-lanzamiento', label: 'Pre-lanzamiento', summary: 'Waitlist + countdown · expectativa' },
-        { id: 'venta-servicios', label: 'Venta de servicios', summary: 'Consultor / freelance / agencia' },
+        { id: 'lead-gen',        icon: 'leads',     label: 'Captura de leads',      summary: 'Email/teléfono a cambio de un magnet · como descarga de ebook' },
+        { id: 'producto',        icon: 'ecommerce', label: 'Vender 1 producto',     summary: 'Una página enfocada a un solo producto · como Apple lanzando un iPhone' },
+        { id: 'evento',          icon: 'calendar',  label: 'Registro a evento',     summary: 'Como Eventbrite · agenda + recordatorios + RSVP' },
+        { id: 'pre-lanzamiento', icon: 'flask',     label: 'Pre-lanzamiento',       summary: 'Waitlist + countdown · expectativa antes de salir · como Tesla con Cybertruck' },
+        { id: 'venta-servicios', icon: 'service',   label: 'Vender servicios',      summary: 'Consultor · freelance · agencia · como landing de coach o estudio' },
       ],
     },
     'web-funnel': {
@@ -84,10 +84,10 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '2-4 sem', icon: 'leads', megaId: 'web',
       subtitle: 'Multi-paso · convierte mejor que una landing',
       tipos: [
-        { id: 'venta-directa', label: 'Venta directa',     summary: '1 producto · checkout integrado' },
-        { id: 'captura-leads', label: 'Captura de leads',  summary: 'Form + nurturing email' },
-        { id: 'upsell',        label: 'Upsell',            summary: 'Orden bump + 1-click upsell' },
-        { id: 'webinar',       label: 'Seminario web',     summary: 'Registro + recordatorios + replay' },
+        { id: 'venta-directa', icon: 'ecommerce',  label: 'Venta directa',         summary: '1 producto + checkout integrado · ideal para infoproductos · como ClickFunnels' },
+        { id: 'captura-leads', icon: 'leads',      label: 'Captura + nurturing',   summary: 'Lead magnet + secuencia de emails · educar antes de vender' },
+        { id: 'upsell',        icon: 'trending-up', label: 'Upsell · order bump',  summary: 'Producto principal + ofertas en checkout · maximiza ticket promedio' },
+        { id: 'webinar',       icon: 'radio-live', label: 'Webinar / seminario',   summary: 'Registro + recordatorios + grabación · como webinar evergreen' },
       ],
     },
     'web-sitio': {
@@ -95,14 +95,14 @@ window.IBISNE_PRICING_V9 = {
       tiempo: '3-8 sem', icon: 'sitio', megaId: 'web',
       subtitle: 'Tu casa digital completa · CMS opcional · multi-idioma',
       tipos: [
-        { id: 'corporate-basico',    label: 'Corporate básico',     summary: '5-10 secciones · sin CMS' },
-        { id: 'corporate-completo',  label: 'Corporate completo',   summary: '10+ secciones · CMS · blog' },
-        { id: 'portal-miembros',     label: 'Portal de miembros',   summary: 'Login + área privada + niveles' },
-        { id: 'blog-magazine',       label: 'Blog / magazine',      summary: 'CMS de artículos · categorías · autores' },
-        { id: 'catalogo-no-tx',      label: 'Catálogo no-tx',       summary: 'Productos sin checkout · contacto' },
-        { id: 'docs-wiki',           label: 'Docs / wiki',          summary: 'Documentación · búsqueda · versiones' },
-        { id: 'multi-idioma-serio',  label: 'Multi-idioma serio',   summary: '3+ idiomas · CMS multilingüe' },
-        { id: 'editorial-story',     label: 'Editorial storytelling', summary: 'Long-form · animaciones scroll' },
+        { id: 'corporate-basico',    icon: 'sitio',     label: 'Web institucional simple',   summary: '5-10 secciones · tu negocio en web · como agencia chica o consultora' },
+        { id: 'corporate-completo',  icon: 'serverapp', label: 'Web institucional completa', summary: '10+ secciones · panel para editar contenido · como empresa establecida' },
+        { id: 'portal-miembros',     icon: 'shield',    label: 'Portal de miembros',         summary: 'Login + área privada + niveles · como Mighty Networks o Patreon' },
+        { id: 'blog-magazine',       icon: 'file-text', label: 'Blog / revista digital',     summary: 'CMS de artículos · categorías · autores · como Medium o un blog corporativo' },
+        { id: 'catalogo-no-tx',      icon: 'folder',    label: 'Catálogo sin venta directa', summary: 'Mostrar productos · cliente pide cotización · como catálogo B2B' },
+        { id: 'docs-wiki',           icon: 'books',     label: 'Documentación · wiki',       summary: 'Manuales · búsqueda · versiones · como las docs de Stripe o Notion' },
+        { id: 'multi-idioma-serio',  icon: 'partnership', label: 'Sitio multi-idioma',       summary: '3+ idiomas con CMS multilingüe · como sitio global de empresa' },
+        { id: 'editorial-story',     icon: 'star',      label: 'Sitio editorial · narrativa',  summary: 'Animaciones scroll · cuento largo · como reportajes del NYT o Apple' },
       ],
     },
 
@@ -287,87 +287,86 @@ window.IBISNE_PRICING_V9 = {
     'web-bio': {
       byType: {
         'linktree': [
-          { id: 'enlaces', label: '¿Cuántos enlaces?', opciones: [
-            { id: 'pocos',    label: 'Pocos · 3 a 5',     add: 0 },
-            { id: 'medianos', label: 'Medianos · 6 a 12', add: 3750 },
-            { id: 'muchos',   label: 'Muchos · 13+',      add: 8750 },
+          { id: 'enlaces', label: '¿Cuántos enlaces tendrá?', opciones: [
+            { id: 'pocos',    icon: 'biolink',  label: 'Pocos · 3 a 5',     subtitle: 'Lo esencial · directo y limpio',           add: 0 },
+            { id: 'medianos', icon: 'grid',     label: 'Medianos · 6 a 12', subtitle: 'Múltiples redes y un par de productos',   add: 3750 },
+            { id: 'muchos',   icon: 'folder',   label: 'Muchos · 13+',      subtitle: 'Catálogo completo de enlaces · agrupados', add: 8750 },
           ]},
-          { id: 'redes', label: '¿Iconos de redes?', multi: true, help: 'Sugerimos máximo 5 para no saturar.', opciones: [
-            { id: 'ig',       label: 'Instagram',  add: 500 },
-            { id: 'tiktok',   label: 'TikTok',     add: 500 },
-            { id: 'x',        label: 'X / Twitter', add: 500 },
-            { id: 'linkedin', label: 'LinkedIn',   add: 500 },
-            { id: 'youtube',  label: 'YouTube',    add: 500 },
-            { id: 'spotify',  label: 'Spotify',    add: 750 },
+          { id: 'redes', label: '¿Qué iconos de redes incluir?', multi: true, help: 'Sugerimos máximo 5 para no saturar.', opciones: [
+            { id: 'ig',       icon: 'instagram', label: 'Instagram',   add: 500 },
+            { id: 'tiktok',   icon: 'play',      label: 'TikTok',      add: 500 },
+            { id: 'x',        icon: 'x',         label: 'X / Twitter', add: 500 },
+            { id: 'linkedin', icon: 'linkedin',  label: 'LinkedIn',    add: 500 },
+            { id: 'youtube',  icon: 'play',      label: 'YouTube',     add: 500 },
+            { id: 'spotify',  icon: 'headphones', label: 'Spotify',    add: 750 },
           ]},
-          { id: 'whatsapp', label: '¿WhatsApp directo?', opciones: [
-            { id: 'no',       label: 'No',                            add: 0 },
-            { id: 'directo',  label: 'Sí · mensaje genérico',         add: 1250 },
-            { id: 'plantillas', label: 'Sí · con plantillas de venta', add: 3000 },
+          { id: 'whatsapp', label: '¿Quieres botón directo de WhatsApp?', opciones: [
+            { id: 'no',         icon: 'app',     label: 'No',                            subtitle: 'Solo redes sociales · sin contacto directo',  add: 0 },
+            { id: 'directo',    icon: 'whatsapp', label: 'Sí · mensaje genérico',         subtitle: 'Botón que abre WhatsApp con saludo simple',   add: 1250 },
+            { id: 'plantillas', icon: 'whatsapp', label: 'Sí · con plantillas de venta',  subtitle: 'Mensaje pre-fillado por cada producto',       add: 3000 },
           ]},
-          { id: 'tracking', label: '¿Tracking de clicks?', opciones: [
-            { id: 'no',       label: 'No',                  add: 0 },
-            { id: 'analytics', label: 'Sí · GA4',            add: 2500 },
-            { id: 'pixel',    label: 'Sí · GA4 + Meta pixel', add: 4000 },
+          { id: 'tracking', label: '¿Quieres saber cuántos clicks recibes?', opciones: [
+            { id: 'no',        icon: 'app',     label: 'No · no lo necesito ahora',      add: 0 },
+            { id: 'analytics', icon: 'bar-chart', label: 'Sí · Google Analytics (GA4)', subtitle: 'Cuántos visitantes y de dónde vienen',          add: 2500 },
+            { id: 'pixel',     icon: 'leads',   label: 'Sí · GA4 + pixel de Meta',       subtitle: 'Además remarketing en Facebook/Instagram',      add: 4000 },
           ]},
         ],
         'bento': [
-          { id: 'cards', label: '¿Cuántas cards?', opciones: [
-            { id: 'pocas',    label: '4-6 cards · grid 2x2 o 2x3', add: 0 },
-            { id: 'medianas', label: '7-12 cards · grid amplio',   add: 5000 },
-            { id: 'muchas',   label: '13+ cards · scroll vertical', add: 12500 },
+          { id: 'cards', label: '¿Cuántas cards tendrá tu bento?', opciones: [
+            { id: 'pocas',    icon: 'grid',     label: '4-6 cards',  subtitle: 'Grid 2x2 o 2x3 · vista compacta',          add: 0 },
+            { id: 'medianas', icon: 'grid',     label: '7-12 cards', subtitle: 'Grid amplio · variedad sin saturar',       add: 5000 },
+            { id: 'muchas',   icon: 'serverapp', label: '13+ cards', subtitle: 'Scroll vertical · catálogo completo',      add: 12500 },
           ]},
-          { id: 'preview', label: '¿Preview en cards?', help: 'Imagen, video o embed dentro de cada card.', opciones: [
-            { id: 'estatica', label: 'Imagen estática',                        add: 0 },
-            { id: 'embed',    label: 'Embed dinámico · IG/YT/Spotify',          add: 7500 },
-            { id: 'mixto',    label: 'Mixto · estática + embed selectivo',      add: 4500 },
+          { id: 'preview', label: '¿Cómo se ve cada card por dentro?', help: 'Imagen, video o embed dentro de cada card.', opciones: [
+            { id: 'estatica', icon: 'palette',  label: 'Imagen estática',           subtitle: 'Foto fija · más rápido de cargar',                  add: 0 },
+            { id: 'embed',    icon: 'play',     label: 'Embed dinámico',            subtitle: 'IG/YouTube/Spotify funcionando dentro de la card',  add: 7500 },
+            { id: 'mixto',    icon: 'hybrid',   label: 'Mixto · estática + embed',  subtitle: 'Estática por default · embed donde aporte',         add: 4500 },
           ]},
-          { id: 'cta', label: '¿CTA principal?', opciones: [
-            { id: 'whatsapp', label: 'WhatsApp · botón flotante',        add: 1500 },
-            { id: 'form',     label: 'Form de captura · email/teléfono',  add: 3000 },
-            { id: 'both',     label: 'Ambos',                              add: 4000 },
+          { id: 'cta', label: '¿Cuál es la acción principal que esperas?', opciones: [
+            { id: 'whatsapp', icon: 'whatsapp',    label: 'WhatsApp · botón flotante', subtitle: 'Visible siempre · 1 tap para chat',     add: 1500 },
+            { id: 'form',     icon: 'leads',       label: 'Form de captura',           subtitle: 'Email/teléfono · útil para vender',     add: 3000 },
+            { id: 'both',     icon: 'partnership', label: 'Ambos',                     subtitle: 'El usuario elige cómo contactarte',     add: 4000 },
           ]},
-          { id: 'tracking', label: '¿Tracking de clicks?', opciones: [
-            { id: 'no',        label: 'No',                  add: 0 },
-            { id: 'analytics', label: 'Sí · GA4',            add: 2500 },
-            { id: 'pixel',     label: 'Sí · GA4 + Meta pixel', add: 4000 },
+          { id: 'tracking', label: '¿Quieres saber cuántos clicks recibes?', opciones: [
+            { id: 'no',        icon: 'app',      label: 'No',                          add: 0 },
+            { id: 'analytics', icon: 'bar-chart', label: 'Sí · GA4',                   subtitle: 'Cuántos visitantes y de dónde vienen',          add: 2500 },
+            { id: 'pixel',     icon: 'leads',    label: 'Sí · GA4 + pixel de Meta',    subtitle: 'Además remarketing en Facebook/Instagram',      add: 4000 },
           ]},
         ],
         'mini-portfolio': [
-          { id: 'galeria', label: '¿Tamaño de galería?', opciones: [
-            { id: 'pequena', label: 'Pequeña · 6-12 piezas',  add: 5000 },
-            { id: 'media',   label: 'Media · 13-30 piezas',   add: 12500 },
-            { id: 'grande',  label: 'Grande · 31+ piezas',    add: 22500 },
+          { id: 'galeria', label: '¿Cuántas piezas/trabajos vas a mostrar?', opciones: [
+            { id: 'pequena', icon: 'palette',  label: 'Pequeña · 6-12 piezas',  subtitle: 'Tu top · lo mejor de lo mejor',         add: 5000 },
+            { id: 'media',   icon: 'grid',     label: 'Media · 13-30 piezas',   subtitle: 'Variedad · con categorías',             add: 12500 },
+            { id: 'grande',  icon: 'serverapp', label: 'Grande · 31+ piezas',   subtitle: 'Portafolio completo · multi-página',    add: 22500 },
           ]},
-          { id: 'detalle', label: '¿Detalle por pieza?', opciones: [
-            { id: 'overlay',     label: 'Overlay · título + tag',            add: 0 },
-            { id: 'lightbox',    label: 'Lightbox · descripción + multi-img', add: 5000 },
-            { id: 'caso-corto',  label: 'Caso corto · 1-2 párrafos por pieza', add: 10000 },
+          { id: 'detalle', label: '¿Qué tan a fondo se ve cada pieza?', opciones: [
+            { id: 'overlay',    icon: 'palette',  label: 'Overlay · título + tag',         subtitle: 'Al hover/tap aparece info · mínimo',     add: 0 },
+            { id: 'lightbox',   icon: 'star',     label: 'Lightbox · multi-imagen',        subtitle: 'Click abre galería con varias fotos',   add: 5000 },
+            { id: 'caso-corto', icon: 'file-text', label: 'Caso corto · 1-2 párrafos',     subtitle: 'Contexto del proyecto + cliente',       add: 10000 },
           ]},
-          { id: 'sobre-ti', label: '¿Sección "sobre ti"?', opciones: [
-            { id: 'no',     label: 'No · solo galería + contacto',     add: 0 },
-            { id: 'breve',  label: 'Breve · 1 párrafo + foto',         add: 2500 },
-            { id: 'amplia', label: 'Amplia · bio + servicios + cliente', add: 6000 },
+          { id: 'sobre-ti', label: '¿Necesitas una sección "sobre ti"?', opciones: [
+            { id: 'no',     icon: 'app',         label: 'No · solo galería + contacto',     subtitle: 'Directo al trabajo · sin distracciones', add: 0 },
+            { id: 'breve',  icon: 'login',       label: 'Breve · 1 párrafo + foto',         subtitle: 'Te presentas en una línea',              add: 2500 },
+            { id: 'amplia', icon: 'partnership', label: 'Amplia · bio + servicios + cliente', subtitle: 'Caso completo · como una mini-empresa', add: 6000 },
           ]},
-          { id: 'contacto', label: '¿Cómo te contactan?', opciones: [
-            { id: 'whatsapp',  label: 'WhatsApp directo',                add: 1500 },
-            { id: 'form',      label: 'Form de contacto',                add: 3000 },
-            { id: 'agenda',    label: 'Agenda · reservar llamada',       add: 6500 },
-            { id: 'all',       label: 'Todos los anteriores',            add: 9000 },
+          { id: 'contacto', label: '¿Cómo te contactan los clientes potenciales?', opciones: [
+            { id: 'whatsapp', icon: 'whatsapp',    label: 'WhatsApp directo',                add: 1500 },
+            { id: 'form',     icon: 'envelope',    label: 'Form de contacto',                add: 3000 },
+            { id: 'agenda',   icon: 'calendar',    label: 'Agenda · reservar llamada',       subtitle: 'Como Calendly · cliente elige horario', add: 6500 },
+            { id: 'all',      icon: 'partnership', label: 'Todos los anteriores',            subtitle: 'El cliente elige cómo prefiere',        add: 9000 },
           ]},
         ],
       },
       shared: [
-        // Acabado SHARED · todos los tipos de bio terminan con esta pregunta
         { id: 'acabado', label: '¿Acabado del diseño?', opciones: [
-          { id: 'funcional', label: 'Funcional · directo al grano',          mul: 0.85 },
-          { id: 'balance',   label: 'Balance · calidad/precio óptimo',       mul: 1.0 },
-          { id: 'premium',   label: 'Premium · animaciones + pulido máximo', mul: 1.35, flag: 'animacion-pro' },
+          { id: 'funcional', icon: 'wrench',  label: 'Funcional · directo al grano',          subtitle: 'Lo esencial · rápido y limpio',           mul: 0.85 },
+          { id: 'balance',   icon: 'palette', label: 'Balance · calidad/precio óptimo',       subtitle: 'Lo más común · buena relación precio',    mul: 1.0 },
+          { id: 'premium',   icon: 'star',    label: 'Premium · animaciones + pulido máximo', subtitle: 'Para impresionar · marca fuerte',         mul: 1.35, flag: 'animacion-pro' },
         ]},
-        { id: 'plazo', label: '¿Plazo deseado?', help: 'Express duplica el equipo · cuesta más pero entrega antes.', opciones: [
-          { id: 'flexible', label: 'Flexible · cuando salga',  mul: 0.95 },
-          { id: 'normal',   label: 'Normal · plazo estándar',  mul: 1.0 },
-          { id: 'express',  label: 'Express · más rápido',     mul: 1.5 },
+        { id: 'plazo', label: '¿Cuándo lo necesitas listo?', help: 'Express duplica el equipo · cuesta más pero entrega antes.', opciones: [
+          { id: 'flexible', icon: 'clock', label: 'Flexible · cuando salga',  subtitle: 'Sin prisa · más barato',                                 mul: 0.95 },
+          { id: 'normal',   icon: 'app',   label: 'Normal · plazo estándar',  subtitle: 'Ritmo cómodo · 1-2 semanas según tipo',                  mul: 1.0 },
+          { id: 'express',  icon: 'zap',   label: 'Express · más rápido',     subtitle: 'Equipo dedicado · sprints diarios · cuesta 50% más',     mul: 1.5 },
         ]},
       ],
     },
@@ -2775,6 +2774,23 @@ window.IBISNE_PRICING_V9 = {
     ],
   };
 
+  // v10.2 · WEB_PRESHARED · pregunta vibe global para los 4 servicios web
+  // Mismo patrón que Apps (mul base afecta precio). Se inyecta como preShared
+  // en cada subflow de web-* en el loop final · sin duplicar la definición.
+  const WEB_PRESHARED = [
+    { id: 'vibe', label: '¿Qué vibe tiene tu proyecto web?',
+      help: 'Esto nos ayuda a recomendar opciones acordes · podrás cambiar de idea en cualquier momento.', opciones: [
+      { id: 'mvp',      icon: 'leads',       label: 'MVP / Económico',
+        subtitle: 'Salir rápido al mercado · lo esencial · iteras después con datos',                              mul: 0.80 },
+      { id: 'balance',  icon: 'palette',     label: 'Balance',
+        subtitle: 'Producto sólido de mercado · sin sobre-engineering · listo para crecer',                        mul: 1.00 },
+      { id: 'premium',  icon: 'star',        label: 'Premium · escalable',
+        subtitle: 'Pulido máximo · animaciones · arquitectura para escalar · marca fuerte',                        mul: 1.35, flag: 'animacion-pro' },
+      { id: 'help',     icon: 'help-circle', label: 'No estoy seguro · ayúdenme',
+        subtitle: 'Marcamos tu cotización para discovery · el hunter te llama y define contigo',                   mul: 1.00, flag: 'needs-discovery' },
+    ]},
+  ];
+
   // ── Expansión final · sustituir markers por contenido real ───────
   const S = window.IBISNE_PRICING_V9.servicios;
   for (const id of Object.keys(S)) {
@@ -2785,5 +2801,9 @@ window.IBISNE_PRICING_V9 = {
   for (const id of Object.keys(SF)) {
     if (SF[id] === 'APP_SUBFLOW_V9_MARKER') SF[id] = APP_SUBFLOW_V9;
     if (SF[id] === 'EC_SUBFLOW_V9_MARKER')  SF[id] = EC_SUBFLOW_V9;
+    // v10.2 · Inyectar vibe a los 4 servicios web (web-bio, web-landing, web-funnel, web-sitio)
+    if (id.startsWith('web-') && typeof SF[id] === 'object' && !SF[id].preShared) {
+      SF[id].preShared = WEB_PRESHARED;
+    }
   }
 })();
