@@ -358,6 +358,12 @@ body.is-booting{ overflow:hidden; }
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
   padding:var(--sp-5);
+  /* v11.2 · min-height fijo · garantiza altura visual base consistente
+   * entre catálogo/servicios/tipos/subflow · Eduardo: "no existe
+   * consistencia clara". Clamp fluido 200px mobile → 220px desktop.
+   * Cards con más contenido natural (service-card foot rico) crecen
+   * hasta ~231px; las más simples quedan parejas en 220px. */
+  min-height:clamp(200px, 16vw, 220px);
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
   border-radius:var(--radius);
@@ -1068,6 +1074,8 @@ body.is-handover .result-screen{ animation:none !important; }
   display:flex; flex-direction:column; gap:var(--sp-2);
   width:100%; text-align:left;
   padding:var(--sp-5);
+  /* v11.2 · misma min-height que mega/service/sf · layout estable */
+  min-height:clamp(200px, 16vw, 220px);
   background:var(--bg-paper);
   border:1px solid var(--bg-line);
   border-radius:var(--radius);

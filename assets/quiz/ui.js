@@ -298,6 +298,34 @@
     const flags = new Set();
     const lineItems = [];
 
+    // v11.2 · Si hay un servicio "en configuración" (State.subflow activo)
+    // que NO esté siendo editado (porque al editar ya existe en cart.servicios),
+    // se suma su precio actual al subtotal · cart total refleja la cifra real
+    // desde el primer click en cualquier servicio.
+    const buildingId = (State.subflow && State.subflow.step !== 'confirm' && !State.subflow.isEdit)
+      ? State.subflow.servicioId
+      : null;
+    if (buildingId) {
+      const bServDef = (PRICING.servicios && PRICING.servicios[buildingId]) || null;
+      if (bServDef) {
+        const bServ = Object.assign({ id: buildingId }, bServDef);
+        const sf = State.subflow;
+        const buildingPrice = calcSubflowPrice(bServ, sf.config || {}, sf.tipoId, sf.addOnIds);
+        subtotal += buildingPrice;
+        lineItems.push({
+          servicioId: buildingId,
+          label: bServ.label,
+          price: buildingPrice,
+          config: sf.config || {},
+          icon: bServ.icon,
+          tipoId: sf.tipoId || null,
+          tipoLabel: '',
+          addOns: [],
+          isBuilding: true,
+        });
+      }
+    }
+
     for (const s of cart.servicios) {
       const price = s.calculatedPrice || s.base || 0;
       subtotal += price;
@@ -648,7 +676,7 @@
           ${s.subtitle ? `<div class="service-card-subtitle">${L(s.subtitle)}</div>` : ''}
           <div class="service-card-foot">
             <div class="service-card-meta">
-              <span class="service-price">desde ${formatMxn(s.base)}</span>
+              <span class="service-price">${L('desde')} +${formatMxn(s.base)}</span>
               <span class="service-time">${L(s.tiempo)}</span>
             </div>
             <span class="service-card-state ${inCart ? 'is-added' : ''}">${inCart ? '✓ Agregado · editar' : 'Agregar →'}</span>
