@@ -288,37 +288,37 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'linktree': [
           { id: 'enlaces', icon: 'biolink', label: '¿Cuántos enlaces tendrá?', opciones: [
-            { id: 'pocos',    icon: 'biolink',  label: 'Pocos · 3 a 5',     subtitle: 'Lo esencial · directo y limpio',           add: 500 },
+            { id: 'pocos',    icon: 'biolink',  label: 'Pocos · 3 a 5',     subtitle: 'Lo esencial · directo y limpio',           add: 1000 },
             { id: 'medianos', icon: 'grid',     label: 'Medianos · 6 a 12', subtitle: 'Múltiples redes y un par de productos',   add: 3750 },
             { id: 'muchos',   icon: 'folder',   label: 'Muchos · 13+',      subtitle: 'Catálogo completo de enlaces · agrupados', add: 8750 },
           ]},
           { id: 'redes', icon: 'help-circle', label: '¿Qué iconos de redes incluir?', multi: true, help: 'Sugerimos máximo 5 para no saturar.', opciones: [
-            { id: 'ig',       icon: 'instagram', label: 'Instagram',   add: 500 },
-            { id: 'tiktok',   icon: 'play',      label: 'TikTok',      add: 500 },
-            { id: 'x',        icon: 'x',         label: 'X / Twitter', add: 500 },
-            { id: 'linkedin', icon: 'linkedin',  label: 'LinkedIn',    add: 500 },
-            { id: 'youtube',  icon: 'play',      label: 'YouTube',     add: 500 },
+            { id: 'ig',       icon: 'instagram', label: 'Instagram',   add: 1000 },
+            { id: 'tiktok',   icon: 'play',      label: 'TikTok',      add: 1000 },
+            { id: 'x',        icon: 'x',         label: 'X / Twitter', add: 1000 },
+            { id: 'linkedin', icon: 'linkedin',  label: 'LinkedIn',    add: 1000 },
+            { id: 'youtube',  icon: 'play',      label: 'YouTube',     add: 1000 },
             { id: 'spotify',  icon: 'headphones', label: 'Spotify',    add: 750 },
           ]},
           { id: 'whatsapp', icon: 'whatsapp', label: '¿Quieres botón directo de WhatsApp?', opciones: [
-            { id: 'no',         icon: 'app',     label: 'No',                            subtitle: 'Solo redes sociales · sin contacto directo',  add: 500 },
+            { id: 'no',         icon: 'app',     label: 'No',                            subtitle: 'Solo redes sociales · sin contacto directo',  add: 1000 },
             { id: 'directo',    icon: 'whatsapp', label: 'Sí · mensaje genérico',         subtitle: 'Botón que abre WhatsApp con saludo simple',   add: 1250 },
             { id: 'plantillas', icon: 'whatsapp', label: 'Sí · con plantillas de venta',  subtitle: 'Mensaje pre-fillado por cada producto',       add: 3000 },
           ]},
           { id: 'tracking', icon: 'bar-chart', label: '¿Quieres saber cuántos clicks recibes?', opciones: [
-            { id: 'no',        icon: 'app',     label: 'No · no lo necesito ahora',      add: 500 },
+            { id: 'no',        icon: 'app',     label: 'No · no lo necesito ahora',      add: 1000 },
             { id: 'analytics', icon: 'bar-chart', label: 'Sí · Google Analytics (GA4)', subtitle: 'Cuántos visitantes y de dónde vienen',          add: 2500 },
             { id: 'pixel',     icon: 'leads',   label: 'Sí · GA4 + pixel de Meta',       subtitle: 'Además remarketing en Facebook/Instagram',      add: 4000 },
           ]},
         ],
         'bento': [
           { id: 'cards', icon: 'grid', label: '¿Cuántas cards tendrá tu bento?', opciones: [
-            { id: 'pocas',    icon: 'grid',     label: '4-6 cards',  subtitle: 'Grid 2x2 o 2x3 · vista compacta',          add: 500 },
+            { id: 'pocas',    icon: 'grid',     label: '4-6 cards',  subtitle: 'Grid 2x2 o 2x3 · vista compacta',          add: 1000 },
             { id: 'medianas', icon: 'grid',     label: '7-12 cards', subtitle: 'Grid amplio · variedad sin saturar',       add: 5000 },
             { id: 'muchas',   icon: 'serverapp', label: '13+ cards', subtitle: 'Scroll vertical · catálogo completo',      add: 12500 },
           ]},
           { id: 'preview', icon: 'palette', label: '¿Cómo se ve cada card por dentro?', help: 'Imagen, video o embed dentro de cada card.', opciones: [
-            { id: 'estatica', icon: 'palette',  label: 'Imagen estática',           subtitle: 'Foto fija · más rápido de cargar',                  add: 500 },
+            { id: 'estatica', icon: 'palette',  label: 'Imagen estática',           subtitle: 'Foto fija · más rápido de cargar',                  add: 1000 },
             { id: 'embed',    icon: 'play',     label: 'Embed dinámico',            subtitle: 'IG/YouTube/Spotify funcionando dentro de la card',  add: 7500 },
             { id: 'mixto',    icon: 'hybrid',   label: 'Mixto · estática + embed',  subtitle: 'Estática por default · embed donde aporte',         add: 4500 },
           ]},
@@ -328,7 +328,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'both',     icon: 'partnership', label: 'Ambos',                     subtitle: 'El usuario elige cómo contactarte',     add: 4000 },
           ]},
           { id: 'tracking', icon: 'bar-chart', label: '¿Quieres saber cuántos clicks recibes?', opciones: [
-            { id: 'no',        icon: 'app',      label: 'No',                          add: 500 },
+            { id: 'no',        icon: 'app',      label: 'No',                          add: 1000 },
             { id: 'analytics', icon: 'bar-chart', label: 'Sí · GA4',                   subtitle: 'Cuántos visitantes y de dónde vienen',          add: 2500 },
             { id: 'pixel',     icon: 'leads',    label: 'Sí · GA4 + pixel de Meta',    subtitle: 'Además remarketing en Facebook/Instagram',      add: 4000 },
           ]},
@@ -340,12 +340,12 @@ window.IBISNE_PRICING_V9 = {
             { id: 'grande',  icon: 'serverapp', label: 'Grande · 31+ piezas',   subtitle: 'Portafolio completo · multi-página',    add: 22500 },
           ]},
           { id: 'detalle', icon: 'star', label: '¿Qué tan a fondo se ve cada pieza?', opciones: [
-            { id: 'overlay',    icon: 'palette',  label: 'Overlay · título + tag',         subtitle: 'Al hover/tap aparece info · mínimo',     add: 500 },
+            { id: 'overlay',    icon: 'palette',  label: 'Overlay · título + tag',         subtitle: 'Al hover/tap aparece info · mínimo',     add: 1000 },
             { id: 'lightbox',   icon: 'star',     label: 'Lightbox · multi-imagen',        subtitle: 'Click abre galería con varias fotos',   add: 5000 },
             { id: 'caso-corto', icon: 'file-text', label: 'Caso corto · 1-2 párrafos',     subtitle: 'Contexto del proyecto + cliente',       add: 10000 },
           ]},
           { id: 'sobre-ti', icon: 'help-circle', label: '¿Necesitas una sección "sobre ti"?', opciones: [
-            { id: 'no',     icon: 'app',         label: 'No · solo galería + contacto',     subtitle: 'Directo al trabajo · sin distracciones', add: 500 },
+            { id: 'no',     icon: 'app',         label: 'No · solo galería + contacto',     subtitle: 'Directo al trabajo · sin distracciones', add: 1000 },
             { id: 'breve',  icon: 'login',       label: 'Breve · 1 párrafo + foto',         subtitle: 'Te presentas en una línea',              add: 2500 },
             { id: 'amplia', icon: 'partnership', label: 'Amplia · bio + servicios + cliente', subtitle: 'Caso completo · como una mini-empresa', add: 6000 },
           ]},
@@ -376,23 +376,23 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'lead-gen': [
           { id: 'magnet', icon: 'leads', label: '¿Qué ofreces a cambio del lead?', opciones: [
-            { id: 'pdf',       label: 'PDF / ebook descargable',              add: 500 },
+            { id: 'pdf',       label: 'PDF / ebook descargable',              add: 1500 },
             { id: 'webinar',   label: 'Acceso a webinar grabado',             add: 3000 },
             { id: 'consulta',  label: 'Consulta/diagnóstico gratuito',        add: 5000 },
             { id: 'descuento', label: 'Cupón de descuento',                   add: 2500 },
           ]},
           { id: 'form-len', icon: 'leads', label: '¿Tamaño del formulario?', opciones: [
-            { id: 'corto', label: 'Corto · solo email',          add: 500 },
+            { id: 'corto', label: 'Corto · solo email',          add: 1500 },
             { id: 'medio', label: 'Medio · 3-5 campos',          add: 3500 },
             { id: 'largo', label: 'Largo · 6+ campos · scoring', add: 8500 },
           ]},
           { id: 'thank-you', icon: 'leads', label: '¿Página de gracias?', opciones: [
-            { id: 'simple',     label: 'Simple · "gracias, revisa tu email"',     add: 500 },
+            { id: 'simple',     label: 'Simple · "gracias, revisa tu email"',     add: 1500 },
             { id: 'upsell',     label: 'Con upsell · oferta inmediata',           add: 7500 },
             { id: 'video',      label: 'Con video · onboarding',                  add: 5000 },
           ]},
           { id: 'auto-email', icon: 'envelope', label: '¿Email de confirmación?', opciones: [
-            { id: 'no',        label: 'No · sólo notificación interna',           add: 500 },
+            { id: 'no',        label: 'No · sólo notificación interna',           add: 1500 },
             { id: 'simple',    label: 'Sí · email genérico',                      add: 2000 },
             { id: 'secuencia', label: 'Sí · secuencia de 3-5 emails (nurture)',   add: 10000 },
           ]},
@@ -405,8 +405,8 @@ window.IBISNE_PRICING_V9 = {
         ],
         'producto': [
           { id: 'producto-tipo', icon: 'ecommerce', label: '¿Tipo de producto?', opciones: [
-            { id: 'fisico',  label: 'Físico · envío',           add: 500 },
-            { id: 'digital', label: 'Digital · descarga',       add: 500 },
+            { id: 'fisico',  label: 'Físico · envío',           add: 1500 },
+            { id: 'digital', label: 'Digital · descarga',       add: 1500 },
             { id: 'servicio', label: 'Servicio · agenda',       add: 2500 },
           ]},
           { id: 'pasarela-principal', icon: 'phonepay', label: '¿Cómo cobras?', opciones: [
@@ -415,7 +415,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'completo',  label: 'Multi-pasarela · tarjeta + SPEI + PayPal', add: 12500 },
           ]},
           { id: 'video-hero', icon: 'play', label: '¿Video en el hero?', opciones: [
-            { id: 'no',        label: 'No · solo imagen',                  add: 500 },
+            { id: 'no',        label: 'No · solo imagen',                  add: 1500 },
             { id: 'embed',     label: 'Sí · embed YouTube/Vimeo',          add: 2000 },
             { id: 'produccion', label: 'Sí · producción incluida (1-2 min)', add: 25000 },
           ]},
@@ -434,21 +434,21 @@ window.IBISNE_PRICING_V9 = {
         'evento': [
           { id: 'modalidad', icon: 'help-circle', label: '¿Modalidad del evento?', opciones: [
             { id: 'presencial', label: 'Presencial · sede física', add: 2500 },
-            { id: 'online',     label: 'Online · streaming/Zoom',  add: 500 },
+            { id: 'online',     label: 'Online · streaming/Zoom',  add: 1500 },
             { id: 'hibrido',    label: 'Híbrido · ambos',          add: 5000 },
           ]},
           { id: 'duracion', icon: 'clock', label: '¿Duración del evento?', opciones: [
-            { id: 'horas',  label: 'Pocas horas · masterclass/workshop', add: 500 },
+            { id: 'horas',  label: 'Pocas horas · masterclass/workshop', add: 1500 },
             { id: 'dia',    label: '1 día completo',                      add: 2500 },
             { id: 'multi',  label: 'Multi-día · conferencia/festival',    add: 7500 },
           ]},
           { id: 'agenda', icon: 'calendar', label: '¿Agenda del evento?', opciones: [
-            { id: 'simple', label: 'Simple · lista de horarios',          add: 500 },
+            { id: 'simple', label: 'Simple · lista de horarios',          add: 1500 },
             { id: 'tracks', label: 'Tracks paralelos · filtros',          add: 5000 },
             { id: 'app',    label: 'Mini app · favoritos + recordatorios', add: 12500 },
           ]},
           { id: 'tickets', icon: 'wallet', label: '¿Tickets / RSVP?', opciones: [
-            { id: 'rsvp-gratis', label: 'RSVP gratis · sólo registro',     add: 500 },
+            { id: 'rsvp-gratis', label: 'RSVP gratis · sólo registro',     add: 1500 },
             { id: 'una-tier',    label: 'Pago · 1 tipo de ticket',         add: 6000 },
             { id: 'multi-tier',  label: 'Pago · múltiples tiers (early/VIP/general)', add: 12500 },
           ]},
@@ -461,46 +461,46 @@ window.IBISNE_PRICING_V9 = {
         ],
         'pre-lanzamiento': [
           { id: 'goal-leads', icon: 'trending-up', label: '¿Cuántos leads esperas captar?', opciones: [
-            { id: 'pocos', label: 'Pocos · <500',     add: 500 },
+            { id: 'pocos', label: 'Pocos · <500',     add: 1500 },
             { id: 'medio', label: 'Medio · 500-5000', add: 3000 },
             { id: 'mucho', label: 'Mucho · 5000+',    add: 7500 },
           ]},
           { id: 'countdown', icon: 'clock', label: '¿Countdown visible?', opciones: [
-            { id: 'no',     label: 'No · sólo "próximamente"',          add: 500 },
+            { id: 'no',     label: 'No · sólo "próximamente"',          add: 1500 },
             { id: 'fecha',  label: 'Sí · con fecha exacta',              add: 2000 },
             { id: 'gamif',  label: 'Sí · con micro-recompensas por compartir', add: 6500 },
           ]},
           { id: 'referidos', icon: 'share', label: '¿Sistema de referidos?', opciones: [
-            { id: 'no',         label: 'No · solo waitlist',              add: 500 },
+            { id: 'no',         label: 'No · solo waitlist',              add: 1500 },
             { id: 'simple',     label: 'Sí · link único · ranking',       add: 8500 },
             { id: 'recompensas', label: 'Sí · con recompensas por hito',  add: 15000 },
           ]},
           { id: 'preview', icon: 'palette', label: '¿Preview del producto?', opciones: [
-            { id: 'no',        label: 'No · solo descripción',           add: 500 },
+            { id: 'no',        label: 'No · solo descripción',           add: 1500 },
             { id: 'imagenes',  label: 'Imágenes / mockups',              add: 3000 },
             { id: 'video',     label: 'Video teaser',                    add: 7500 },
             { id: 'demo',      label: 'Demo interactivo / preview limitado', add: 17500 },
           ]},
           { id: 'launch-email', icon: 'envelope', label: '¿Email de lanzamiento?', opciones: [
-            { id: 'no',     label: 'No · solo nos avisas tú',             add: 500 },
+            { id: 'no',     label: 'No · solo nos avisas tú',             add: 1500 },
             { id: 'simple', label: 'Sí · 1 email de "ya disponible"',     add: 2000 },
             { id: 'serie',  label: 'Sí · serie pre-launch (3-5 emails)',  add: 8500 },
           ]},
         ],
         'venta-servicios': [
           { id: 'tipo-servicio', icon: 'help-circle', label: '¿Tipo de servicio?', opciones: [
-            { id: 'consultoria', label: 'Consultoría / coaching',        add: 500 },
+            { id: 'consultoria', label: 'Consultoría / coaching',        add: 1500 },
             { id: 'agencia',     label: 'Agencia / equipo',              add: 3500 },
-            { id: 'freelance',   label: 'Freelance / 1 persona',         add: 500 },
+            { id: 'freelance',   label: 'Freelance / 1 persona',         add: 1500 },
             { id: 'estudio',     label: 'Estudio creativo · portafolio fuerte', add: 7500 },
           ]},
           { id: 'paquetes', icon: 'grid', label: '¿Tienes paquetes/tiers?', opciones: [
-            { id: 'uno',   label: '1 servicio único',         add: 500 },
+            { id: 'uno',   label: '1 servicio único',         add: 1500 },
             { id: 'tres',  label: '2-3 paquetes (tier table)', add: 4500 },
             { id: 'custom', label: 'Custom · cotización por proyecto', add: 2000 },
           ]},
           { id: 'casos', icon: 'star', label: '¿Casos de éxito?', opciones: [
-            { id: 'no',         label: 'No tengo aún',                       add: 500 },
+            { id: 'no',         label: 'No tengo aún',                       add: 1500 },
             { id: 'logos',      label: 'Sólo logos de clientes',             add: 1500 },
             { id: 'cards',      label: 'Cards con métricas',                 add: 5000 },
             { id: 'pages',      label: 'Página por caso · detalle completo', add: 12500 },
@@ -512,7 +512,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'todos',     label: 'Los 3 · usuario elige',                add: 9000 },
           ]},
           { id: 'proceso', icon: 'help-circle', label: '¿Sección "cómo trabajamos"?', opciones: [
-            { id: 'no',       label: 'No · directo al CTA',                  add: 500 },
+            { id: 'no',       label: 'No · directo al CTA',                  add: 1500 },
             { id: 'pasos',    label: 'Sí · 3-5 pasos numerados',             add: 2500 },
             { id: 'timeline', label: 'Sí · timeline con duración por fase',   add: 5500 },
           ]},
@@ -537,17 +537,17 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'venta-directa': [
           { id: 'producto-precio', icon: 'wallet', label: '¿Rango de precio?', opciones: [
-            { id: 'bajo',  label: 'Bajo · <$500 · impulso',           add: 500 },
+            { id: 'bajo',  label: 'Bajo · <$500 · impulso',           add: 2500 },
             { id: 'medio', label: 'Medio · $500-$3,000 · considerado', add: 5000 },
             { id: 'alto',  label: 'Alto · $3,000+ · investigado',     add: 12500 },
           ]},
           { id: 'pasos', icon: 'help-circle', label: '¿Cuántos pasos en el funnel?', opciones: [
-            { id: 'corto', label: '2-3 pasos · landing → checkout', add: 500 },
+            { id: 'corto', label: '2-3 pasos · landing → checkout', add: 2500 },
             { id: 'medio', label: '4-6 pasos · educación + objeciones', add: 12500 },
             { id: 'largo', label: '7+ pasos · multi-touch',         add: 32500 },
           ]},
           { id: 'video-vsl', icon: 'play', label: '¿Video de ventas (VSL)?', opciones: [
-            { id: 'no',          label: 'No · solo texto + imágenes',           add: 500 },
+            { id: 'no',          label: 'No · solo texto + imágenes',           add: 2500 },
             { id: 'embed',       label: 'Sí · embed (tú lo grabas)',            add: 3500 },
             { id: 'produccion',  label: 'Sí · producción incluida (5-15 min)',  add: 45000 },
           ]},
@@ -557,20 +557,20 @@ window.IBISNE_PRICING_V9 = {
             { id: 'crypto',   label: 'Multi + crypto · USDT/BTC',            add: 22500 },
           ]},
           { id: 'reportes', icon: 'bar-chart', label: '¿Analítica del funnel?', opciones: [
-            { id: 'basico',     label: 'Básico · GA4 + Meta pixel',          add: 500 },
+            { id: 'basico',     label: 'Básico · GA4 + Meta pixel',          add: 2500 },
             { id: 'dashboard',  label: 'Dashboard · conversión por paso',    add: 10000 },
             { id: 'multitouch', label: 'Atribución multi-touch · UTM tagging', add: 22500 },
           ]},
         ],
         'captura-leads': [
           { id: 'magnet', icon: 'leads', label: '¿Lead magnet?', opciones: [
-            { id: 'pdf',      label: 'PDF / ebook',                          add: 500 },
+            { id: 'pdf',      label: 'PDF / ebook',                          add: 2500 },
             { id: 'webinar',  label: 'Webinar evergreen',                    add: 5000 },
             { id: 'mini-curso', label: 'Mini-curso por email (5-7 días)',    add: 12500 },
             { id: 'calculator', label: 'Calculadora / quiz interactivo',     add: 17500 },
           ]},
           { id: 'paginas', icon: 'sitio', label: '¿Cuántas páginas en el funnel?', opciones: [
-            { id: 'tres', label: '3 páginas · opt-in + gracias + entrega',     add: 500 },
+            { id: 'tres', label: '3 páginas · opt-in + gracias + entrega',     add: 2500 },
             { id: 'cinco', label: '5 páginas · + tripwire + upsell',           add: 12500 },
             { id: 'siete', label: '7+ páginas · multi-step nurture',           add: 25000 },
           ]},
@@ -585,19 +585,19 @@ window.IBISNE_PRICING_V9 = {
             { id: 'custom',     label: 'CRM custom · API propia', add: 25000 },
           ]},
           { id: 'tripwire', icon: 'help-circle', label: '¿Oferta tripwire (low-ticket)?', opciones: [
-            { id: 'no',     label: 'No · solo lead magnet',                  add: 500 },
+            { id: 'no',     label: 'No · solo lead magnet',                  add: 2500 },
             { id: 'simple', label: 'Sí · 1 oferta low-ticket post opt-in',   add: 6500 },
             { id: 'stack',  label: 'Sí · stack de ofertas (tripwire + OTO)', add: 15000 },
           ]},
         ],
         'upsell': [
           { id: 'oferta-principal', icon: 'wallet', label: '¿Precio oferta principal?', opciones: [
-            { id: 'bajo',  label: '<$500',         add: 500 },
+            { id: 'bajo',  label: '<$500',         add: 2500 },
             { id: 'medio', label: '$500-$3000',    add: 5000 },
             { id: 'alto',  label: '$3000+',        add: 15000 },
           ]},
           { id: 'orden-bump', icon: 'shield', label: '¿Order bump?', opciones: [
-            { id: 'no',    label: 'No · solo upsell post-compra',       add: 500 },
+            { id: 'no',    label: 'No · solo upsell post-compra',       add: 2500 },
             { id: 'uno',   label: 'Sí · 1 bump en checkout',            add: 5000 },
             { id: 'multi', label: 'Sí · múltiples bumps · checkbox',    add: 10000 },
           ]},
@@ -607,18 +607,18 @@ window.IBISNE_PRICING_V9 = {
             { id: 'tres', label: '3+ upsells · cadena completa',           add: 37500 },
           ]},
           { id: '1-click', icon: 'zap', label: '¿1-click checkout para upsells?', opciones: [
-            { id: 'no',  label: 'No · reintroducir tarjeta',             add: 500 },
+            { id: 'no',  label: 'No · reintroducir tarjeta',             add: 2500 },
             { id: 'si',  label: 'Sí · tarjeta guardada · 1 click',       add: 17500, flag: 'auth-or-api' },
           ]},
           { id: 'split-test', icon: 'help-circle', label: '¿Setup para split-test?', opciones: [
-            { id: 'no',       label: 'No · 1 versión fija',                add: 500 },
+            { id: 'no',       label: 'No · 1 versión fija',                add: 2500 },
             { id: 'manual',   label: 'Sí · A/B con plataforma externa',    add: 5000 },
             { id: 'integrado', label: 'Sí · A/B nativo · sin extra tool',  add: 15000 },
           ]},
         ],
         'webinar': [
           { id: 'tipo-webinar', icon: 'radio-live', label: '¿Live o evergreen?', opciones: [
-            { id: 'evergreen', label: 'Evergreen · pre-grabado on-demand', add: 500 },
+            { id: 'evergreen', label: 'Evergreen · pre-grabado on-demand', add: 2500 },
             { id: 'live',      label: 'Live · fechas programadas',         add: 7500 },
             { id: 'hibrido',   label: 'Híbrido · live + replay automático', add: 12500 },
           ]},
@@ -635,13 +635,13 @@ window.IBISNE_PRICING_V9 = {
             { id: 'sms',         label: 'SMS 15 min antes',      add: 3500 },
           ]},
           { id: 'oferta-cierre', icon: 'star', label: '¿Oferta de cierre durante el webinar?', opciones: [
-            { id: 'no',       label: 'No · solo educación',                       add: 500 },
+            { id: 'no',       label: 'No · solo educación',                       add: 2500 },
             { id: 'soft',     label: 'Soft sell · CTA al final',                  add: 2500 },
             { id: 'fast-action', label: 'Fast-action · bono por compra inmediata', add: 7500 },
             { id: 'stack',    label: 'Stack completo · bonos + countdown',         add: 12500 },
           ]},
           { id: 'replay', icon: 'history', label: '¿Replay?', opciones: [
-            { id: 'no',         label: 'No · sólo live',                          add: 500 },
+            { id: 'no',         label: 'No · sólo live',                          add: 2500 },
             { id: '24h',        label: 'Sí · 24h con countdown',                   add: 5000 },
             { id: 'permanente', label: 'Sí · disponible permanente',               add: 2500 },
           ]},
@@ -666,17 +666,17 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'corporate-basico': [
           { id: 'secciones', icon: 'grid', label: '¿Cuántas secciones?', opciones: [
-            { id: 'cinco', label: '5 secciones · esencial',           add: 500 },
+            { id: 'cinco', label: '5 secciones · esencial',           add: 3500 },
             { id: 'ocho',  label: '8 secciones · estándar',           add: 15000 },
             { id: 'diez',  label: '10 secciones · amplio',            add: 32500 },
           ]},
           { id: 'casos', icon: 'star', label: '¿Sección de casos/proyectos?', opciones: [
-            { id: 'no',    label: 'No · sólo presentación',           add: 500 },
+            { id: 'no',    label: 'No · sólo presentación',           add: 3500 },
             { id: 'grid',  label: 'Sí · grid simple (logos + nombre)', add: 5000 },
             { id: 'cards', label: 'Sí · cards con detalle por caso',   add: 12500 },
           ]},
           { id: 'equipo', icon: 'users', label: '¿Sección equipo?', opciones: [
-            { id: 'no',     label: 'No',                                 add: 500 },
+            { id: 'no',     label: 'No',                                 add: 3500 },
             { id: 'simple', label: 'Sí · fotos + nombres + cargo',       add: 3500 },
             { id: 'rich',   label: 'Sí · bio + redes + responsabilidades', add: 7500 },
           ]},
@@ -686,7 +686,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'calendar', label: 'Form + Calendly embebido',         add: 8500 },
           ]},
           { id: 'blog-lite', icon: 'sitio', label: '¿Blog ligero?', opciones: [
-            { id: 'no',      label: 'No',                                add: 500 },
+            { id: 'no',      label: 'No',                                add: 3500 },
             { id: 'estatico', label: 'Estático · markdown manual',       add: 7500 },
           ]},
         ],
@@ -702,17 +702,17 @@ window.IBISNE_PRICING_V9 = {
             { id: 'strapi',   label: 'Strapi · headless self-hosted',    add: 32500 },
           ]},
           { id: 'roles-cms', icon: 'shield', label: '¿Cuántos roles editores?', opciones: [
-            { id: 'uno',  label: '1 editor · todos los permisos',         add: 500 },
+            { id: 'uno',  label: '1 editor · todos los permisos',         add: 3500 },
             { id: 'tres', label: '2-3 roles (admin/editor/lectura)',      add: 5000 },
             { id: 'multi', label: '4+ roles · permisos granulares',       add: 12500 },
           ]},
           { id: 'blog', icon: 'help-circle', label: '¿Blog completo?', opciones: [
-            { id: 'no',    label: 'No · sólo páginas',                    add: 500 },
+            { id: 'no',    label: 'No · sólo páginas',                    add: 3500 },
             { id: 'basico', label: 'Sí · básico · listado + post',        add: 12500 },
             { id: 'avanz',  label: 'Sí · avanzado · categorías + autores + relacionados', add: 22500 },
           ]},
           { id: 'sub-sitios', icon: 'sitio', label: '¿Sub-sitios por unidad de negocio?', opciones: [
-            { id: 'no',    label: 'No · 1 sitio único',                   add: 500 },
+            { id: 'no',    label: 'No · 1 sitio único',                   add: 3500 },
             { id: 'dos',   label: 'Sí · 2-3 sub-sitios',                  add: 25000 },
             { id: 'multi', label: 'Sí · 4+ sub-sitios · template compartido', add: 50000 },
           ]},
@@ -735,7 +735,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'custom', label: 'Custom · biometría / magic link', add: 22500 },
           ]},
           { id: 'pagos', icon: 'wallet', label: '¿Pagos recurrentes?', opciones: [
-            { id: 'no',         label: 'No · sólo invitación manual',   add: 500 },
+            { id: 'no',         label: 'No · sólo invitación manual',   add: 3500 },
             { id: 'stripe',     label: 'Stripe · una pasarela',         add: 12500 },
             { id: 'mercadopago', label: 'Mercado Pago · LATAM',         add: 12500 },
             { id: 'multi',       label: 'Multi-pasarela · Stripe + MP', add: 22500 },
@@ -748,40 +748,40 @@ window.IBISNE_PRICING_V9 = {
             { id: 'documentos', label: 'Documentos · wiki/manuales',    add: 10000 },
           ]},
           { id: 'interaccion', icon: 'chatbot', label: '¿Interacción social?', opciones: [
-            { id: 'no',     label: 'No',                                 add: 500 },
+            { id: 'no',     label: 'No',                                 add: 3500 },
             { id: 'basico', label: 'Básico · comentarios',               add: 5000 },
             { id: 'forum',  label: 'Foro · threads + replies',           add: 22500 },
             { id: 'dm',     label: 'DMs entre miembros',                 add: 27500 },
           ]},
           { id: 'progreso', icon: 'history', label: '¿Tracking de progreso?', opciones: [
-            { id: 'no',         label: 'No',                              add: 500 },
+            { id: 'no',         label: 'No',                              add: 3500 },
             { id: 'completado', label: 'Sí · marca por contenido',        add: 5000 },
             { id: 'gamif',      label: 'Sí · puntos + badges + ranking',  add: 17500 },
           ]},
         ],
         'blog-magazine': [
           { id: 'frecuencia', icon: 'clock', label: '¿Frecuencia de publicación?', opciones: [
-            { id: 'baja',  label: 'Baja · 1-2 posts/mes',                add: 500 },
+            { id: 'baja',  label: 'Baja · 1-2 posts/mes',                add: 3500 },
             { id: 'media', label: 'Media · 1-2 posts/semana',            add: 5000 },
             { id: 'alta',  label: 'Alta · diario · sala de redacción',   add: 15000 },
           ]},
           { id: 'autores', icon: 'users', label: '¿Cuántos autores?', opciones: [
-            { id: 'uno',  label: '1 autor · personal',                   add: 500 },
+            { id: 'uno',  label: '1 autor · personal',                   add: 3500 },
             { id: 'pocos', label: '2-5 autores · firmas',                add: 5000 },
             { id: 'multi', label: '6+ autores · perfil público',         add: 12500 },
           ]},
           { id: 'taxonomia', icon: 'folder', label: '¿Taxonomía?', opciones: [
-            { id: 'tags',    label: 'Sólo tags',                          add: 500 },
+            { id: 'tags',    label: 'Sólo tags',                          add: 3500 },
             { id: 'cats',    label: 'Categorías + tags',                  add: 3500 },
             { id: 'series',  label: 'Categorías + tags + series',         add: 8500 },
           ]},
           { id: 'busqueda', icon: 'explore', label: '¿Buscador?', opciones: [
-            { id: 'no',       label: 'No · sólo nav',                     add: 500 },
+            { id: 'no',       label: 'No · sólo nav',                     add: 3500 },
             { id: 'nativo',   label: 'Sí · nativo · keyword match',        add: 5000 },
             { id: 'algolia',  label: 'Sí · Algolia · instant search',     add: 15000 },
           ]},
           { id: 'newsletter', icon: 'envelope', label: '¿Newsletter?', opciones: [
-            { id: 'no',     label: 'No',                                  add: 500 },
+            { id: 'no',     label: 'No',                                  add: 3500 },
             { id: 'basico', label: 'Sí · form + envío manual',            add: 3500 },
             { id: 'auto',   label: 'Sí · digest automático semanal',      add: 12500 },
           ]},
@@ -793,17 +793,17 @@ window.IBISNE_PRICING_V9 = {
         ],
         'catalogo-no-tx': [
           { id: 'productos', icon: 'ecommerce', label: '¿Tamaño del catálogo?', opciones: [
-            { id: 'pocos',   label: 'Pocos · <50 productos',              add: 500 },
+            { id: 'pocos',   label: 'Pocos · <50 productos',              add: 3500 },
             { id: 'medio',   label: 'Medio · 50-300',                     add: 15000 },
             { id: 'grande',  label: 'Grande · 300+',                      add: 37500 },
           ]},
           { id: 'filtros', icon: 'sliders', label: '¿Filtros y búsqueda?', opciones: [
-            { id: 'simple',  label: 'Simple · categorías + tags',         add: 500 },
+            { id: 'simple',  label: 'Simple · categorías + tags',         add: 3500 },
             { id: 'avanzado', label: 'Avanzado · multi-atributo',         add: 10000 },
             { id: 'facet',   label: 'Faceted · Algolia/ElasticSearch',    add: 25000 },
           ]},
           { id: 'detalle', icon: 'star', label: '¿Detalle por producto?', opciones: [
-            { id: 'simple', label: 'Simple · imagen + descripción',       add: 500 },
+            { id: 'simple', label: 'Simple · imagen + descripción',       add: 3500 },
             { id: 'galeria', label: 'Galería + specs estructurados',      add: 7500 },
             { id: '360',     label: 'Galería + 360° + descarga PDF',      add: 17500 },
           ]},
@@ -820,12 +820,12 @@ window.IBISNE_PRICING_V9 = {
         ],
         'docs-wiki': [
           { id: 'volumen', icon: 'bar-chart', label: '¿Volumen de contenido?', opciones: [
-            { id: 'pequeno', label: 'Pequeño · 20-50 docs',               add: 500 },
+            { id: 'pequeno', label: 'Pequeño · 20-50 docs',               add: 3500 },
             { id: 'medio',   label: 'Medio · 50-200 docs',                add: 12500 },
             { id: 'grande',  label: 'Grande · 200+ docs',                 add: 30000 },
           ]},
           { id: 'estructura', icon: 'help-circle', label: '¿Estructura?', opciones: [
-            { id: 'plana',   label: 'Plana · 1 nivel de categorías',      add: 500 },
+            { id: 'plana',   label: 'Plana · 1 nivel de categorías',      add: 3500 },
             { id: 'jerarq',  label: 'Jerárquica · multi-nivel',           add: 7500 },
             { id: 'tags',    label: 'Jerárquica + tags + relacionados',   add: 15000 },
           ]},
@@ -834,7 +834,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'algolia', label: 'Algolia · instant + sugerencias',    add: 17500 },
           ]},
           { id: 'versionado', icon: 'history', label: '¿Versionado?', opciones: [
-            { id: 'no',  label: 'No · versión única',                     add: 500 },
+            { id: 'no',  label: 'No · versión única',                     add: 3500 },
             { id: 'rama', label: 'Sí · ramas por versión (v1/v2)',        add: 12500 },
             { id: 'git',  label: 'Sí · git-backed · histórico completo',  add: 27500 },
           ]},
@@ -856,7 +856,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'wpml',   label: 'WordPress + WPML',                    add: 17500 },
           ]},
           { id: 'auto-trans', icon: 'help-circle', label: '¿Auto-traducción IA?', opciones: [
-            { id: 'no',     label: 'No · sólo traductor humano',          add: 500 },
+            { id: 'no',     label: 'No · sólo traductor humano',          add: 3500 },
             { id: 'gpt',    label: 'Sí · GPT/DeepL como draft',           add: 12500 },
             { id: 'edit',   label: 'Sí · auto + editor humano review',    add: 25000 },
           ]},
@@ -873,7 +873,7 @@ window.IBISNE_PRICING_V9 = {
         ],
         'editorial-story': [
           { id: 'piezas', icon: 'star', label: '¿Cuántas piezas long-form?', opciones: [
-            { id: 'pocas',   label: 'Pocas · 3-8 piezas',                 add: 500 },
+            { id: 'pocas',   label: 'Pocas · 3-8 piezas',                 add: 3500 },
             { id: 'medio',   label: 'Medio · 9-20 piezas',                add: 15000 },
             { id: 'mucho',   label: 'Mucho · 20+ piezas',                 add: 35000 },
           ]},
@@ -889,7 +889,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'interactive',  label: 'Componentes interactivos',      add: 25000 },
           ]},
           { id: 'reading-flow', icon: 'sitio', label: '¿UX de lectura?', opciones: [
-            { id: 'basico',    label: 'Básico · texto + media',           add: 500 },
+            { id: 'basico',    label: 'Básico · texto + media',           add: 3500 },
             { id: 'progress',  label: 'Con progress bar + estimated time', add: 5000 },
             { id: 'chapters',  label: 'Chapters · nav lateral activa',    add: 12500 },
           ]},
@@ -902,7 +902,7 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'idiomas-base', icon: 'partnership', label: '¿Idiomas base del sitio?', help: 'Para sitios serios multi-idioma, considera el tipo "multi-idioma serio". Aquí es para casos simples.', opciones: [
-          { id: 'uno',   label: 'Un solo idioma',                         add: 500 },
+          { id: 'uno',   label: 'Un solo idioma',                         add: 3500 },
           { id: 'dos',   label: 'Dos idiomas',                            add: 27500 },
         ]},
         { id: 'acabado', icon: 'palette', label: '¿Acabado del diseño?', opciones: [
@@ -945,7 +945,7 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'faq': [
           { id: 'volumen', icon: 'bar-chart', label: '¿Volumen de preguntas?', opciones: [
-            { id: 'bajo',  label: 'Bajo · <500/mes',          add: 500 },
+            { id: 'bajo',  label: 'Bajo · <500/mes',          add: 1500 },
             { id: 'medio', label: 'Medio · 500-5000/mes',     add: 5000 },
             { id: 'alto',  label: 'Alto · 5000+/mes',         add: 15000 },
           ]},
@@ -956,20 +956,20 @@ window.IBISNE_PRICING_V9 = {
             { id: 'sheets',   label: 'Google Sheets / Excel',       add: 3500 },
           ]},
           { id: 'fallback', icon: 'shield', label: '¿Fallback a humano?', opciones: [
-            { id: 'no',       label: 'No · sólo bot',                add: 500 },
+            { id: 'no',       label: 'No · sólo bot',                add: 1500 },
             { id: 'email',    label: 'Sí · escala por email',        add: 3500 },
             { id: 'whatsapp', label: 'Sí · escala a WhatsApp humano', add: 7500 },
             { id: 'live',     label: 'Sí · chat en vivo handoff',    add: 15000 },
           ]},
           { id: 'idiomas', icon: 'partnership', label: '¿Multi-idioma?', opciones: [
-            { id: 'es',    label: 'Solo español',                  add: 500 },
+            { id: 'es',    label: 'Solo español',                  add: 1500 },
             { id: 'es-en', label: 'Español + inglés',              add: 5000 },
             { id: 'multi', label: '3+ idiomas',                    add: 12500 },
           ]},
         ],
         'leads': [
           { id: 'calificacion', icon: 'shield-check', label: '¿Pre-calificación?', opciones: [
-            { id: 'basico',   label: 'Básico · 3-4 preguntas',         add: 500 },
+            { id: 'basico',   label: 'Básico · 3-4 preguntas',         add: 1500 },
             { id: 'scoring',  label: 'Scoring · puntuación automática', add: 8500 },
             { id: 'avanzado', label: 'Avanzado · scoring + branching',  add: 17500 },
           ]},
@@ -980,12 +980,12 @@ window.IBISNE_PRICING_V9 = {
             { id: 'whatsapp', label: 'WhatsApp del vendedor',           add: 5000 },
           ]},
           { id: 'agenda', icon: 'calendar', label: '¿Agenda de cita?', opciones: [
-            { id: 'no',       label: 'No · sólo captura',               add: 500 },
+            { id: 'no',       label: 'No · sólo captura',               add: 1500 },
             { id: 'simple',   label: 'Sí · link a Calendly',            add: 3500 },
             { id: 'integrado', label: 'Sí · agenda dentro del chatbot', add: 12500 },
           ]},
           { id: 'follow-up', icon: 'partnership', label: '¿Follow-up automático?', opciones: [
-            { id: 'no',     label: 'No',                               add: 500 },
+            { id: 'no',     label: 'No',                               add: 1500 },
             { id: 'email',  label: 'Sí · email a 24h sin respuesta',    add: 5000 },
             { id: 'multi',  label: 'Sí · secuencia 3-5 touches',        add: 12500 },
           ]},
@@ -1001,28 +1001,28 @@ window.IBISNE_PRICING_V9 = {
             { id: 'shopify',   label: 'Shopify · API directa',          add: 12500 },
             { id: 'wooc',      label: 'WooCommerce',                    add: 10000 },
             { id: 'custom',    label: 'Tienda custom · API propia',     add: 22500 },
-            { id: 'no',        label: 'No · sólo manual',               add: 500 },
+            { id: 'no',        label: 'No · sólo manual',               add: 1500 },
           ]},
           { id: 'sla', icon: 'clock', label: '¿Tiempo de respuesta esperado?', opciones: [
-            { id: 'instantaneo', label: 'Instantáneo · 100% bot',       add: 500 },
+            { id: 'instantaneo', label: 'Instantáneo · 100% bot',       add: 1500 },
             { id: 'humano-2h',   label: 'Humano fallback en 2h',         add: 12500 },
             { id: 'humano-15m',  label: 'Humano fallback en 15 min',     add: 25000 },
           ]},
           { id: 'csat', icon: 'star', label: '¿Medir satisfacción?', opciones: [
-            { id: 'no',     label: 'No',                                add: 500 },
+            { id: 'no',     label: 'No',                                add: 1500 },
             { id: 'simple', label: 'Sí · thumbs up/down post-conversación', add: 3500 },
             { id: 'csat',   label: 'Sí · CSAT 1-5 + comentario',        add: 7500 },
           ]},
         ],
         'asistente-ia': [
           { id: 'modelo', icon: 'star', label: '¿Modelo de IA?', opciones: [
-            { id: 'openai',     label: 'OpenAI · GPT-4 turbo',          add: 500 },
-            { id: 'anthropic',  label: 'Anthropic · Claude',            add: 500 },
-            { id: 'gemini',     label: 'Google · Gemini',               add: 500 },
+            { id: 'openai',     label: 'OpenAI · GPT-4 turbo',          add: 1500 },
+            { id: 'anthropic',  label: 'Anthropic · Claude',            add: 1500 },
+            { id: 'gemini',     label: 'Google · Gemini',               add: 1500 },
             { id: 'local',      label: 'Modelo local · privacidad',     add: 35000 },
           ]},
           { id: 'memoria', icon: 'history', label: '¿Memoria de conversación?', opciones: [
-            { id: 'no',         label: 'No · cada conversación es nueva', add: 500 },
+            { id: 'no',         label: 'No · cada conversación es nueva', add: 1500 },
             { id: 'sesion',     label: 'Sí · dentro de la sesión',       add: 5000 },
             { id: 'persistente', label: 'Sí · persistente por usuario',   add: 17500 },
           ]},
@@ -1041,7 +1041,7 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'canales', icon: 'chatbot', label: '¿Dónde vive el chatbot?', multi: true, help: 'Cada canal extra suma · puedes elegir múltiples.', opciones: [
-          { id: 'web',      label: 'Sitio web · widget',                add: 500 },
+          { id: 'web',      label: 'Sitio web · widget',                add: 1500 },
           { id: 'whatsapp', label: 'WhatsApp Business',                 add: 7500 },
           { id: 'messenger', label: 'Facebook Messenger',               add: 5000 },
           { id: 'instagram', label: 'Instagram DM',                     add: 5000 },
@@ -1059,22 +1059,22 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         '1-a-1': [
           { id: 'duraciones', icon: 'clock', label: '¿Tipos de cita?', opciones: [
-            { id: 'una',  label: '1 duración · 30 min o 1h',           add: 500 },
+            { id: 'una',  label: '1 duración · 30 min o 1h',           add: 1000 },
             { id: 'dos',  label: '2-3 duraciones',                     add: 2500 },
             { id: 'multi', label: '4+ duraciones con precios distintos', add: 6500 },
           ]},
           { id: 'volumen', icon: 'bar-chart', label: '¿Volumen de citas/mes?', opciones: [
-            { id: 'bajo',  label: 'Bajo · <20',                        add: 500 },
+            { id: 'bajo',  label: 'Bajo · <20',                        add: 1000 },
             { id: 'medio', label: 'Medio · 20-100',                    add: 3500 },
             { id: 'alto',  label: 'Alto · 100+',                       add: 8500 },
           ]},
           { id: 'buffer', icon: 'clock', label: '¿Buffer entre citas?', opciones: [
-            { id: 'no',     label: 'No · back-to-back OK',             add: 500 },
+            { id: 'no',     label: 'No · back-to-back OK',             add: 1000 },
             { id: 'fijo',   label: 'Sí · buffer fijo',                  add: 1500 },
             { id: 'flex',   label: 'Sí · buffer variable por tipo',     add: 4500 },
           ]},
           { id: 'cancel', icon: 'history', label: '¿Política de cancelación?', opciones: [
-            { id: 'libre',     label: 'Libre · sin restricciones',     add: 500 },
+            { id: 'libre',     label: 'Libre · sin restricciones',     add: 1000 },
             { id: 'plazo',     label: 'Sólo hasta X horas antes',      add: 2500 },
             { id: 'penalty',   label: 'Cobra fee por cancelación tardía', add: 5500 },
           ]},
@@ -1086,17 +1086,17 @@ window.IBISNE_PRICING_V9 = {
             { id: 'grande', label: 'Grande · 16+',                      add: 27500 },
           ]},
           { id: 'routing', icon: 'help-circle', label: '¿Cómo se asigna?', opciones: [
-            { id: 'eligible', label: 'Cliente elige profesional',       add: 500 },
+            { id: 'eligible', label: 'Cliente elige profesional',       add: 1000 },
             { id: 'auto',     label: 'Auto · round-robin',              add: 5000 },
             { id: 'skill',    label: 'Auto · por skill/disponibilidad', add: 12500 },
           ]},
           { id: 'compartido', icon: 'users', label: '¿Calendario compartido?', opciones: [
-            { id: 'no',       label: 'No · cada uno el suyo',            add: 500 },
+            { id: 'no',       label: 'No · cada uno el suyo',            add: 1000 },
             { id: 'admin',    label: 'Sí · admin ve todo',                add: 5000 },
             { id: 'cross',    label: 'Sí · cross-staff visible',          add: 10000 },
           ]},
           { id: 'permisos', icon: 'shield', label: '¿Permisos por staff?', opciones: [
-            { id: 'iguales',   label: 'Todos iguales',                   add: 500 },
+            { id: 'iguales',   label: 'Todos iguales',                   add: 1000 },
             { id: 'roles',     label: 'Roles · admin/staff/lectura',     add: 7500 },
           ]},
         ],
@@ -1107,16 +1107,16 @@ window.IBISNE_PRICING_V9 = {
             { id: 'multi',  label: 'Multi · 16+',                       add: 45000 },
           ]},
           { id: 'staff-por-sede', icon: 'users', label: '¿Staff por sede?', opciones: [
-            { id: 'fijo',     label: 'Staff fijo por sede',              add: 500 },
+            { id: 'fijo',     label: 'Staff fijo por sede',              add: 1000 },
             { id: 'rotativo', label: 'Staff rotativo entre sedes',       add: 10000 },
           ]},
           { id: 'inventario', icon: 'ecommerce', label: '¿Recursos por sede (salas/equipos)?', opciones: [
-            { id: 'no',       label: 'No · sólo staff',                  add: 500 },
+            { id: 'no',       label: 'No · sólo staff',                  add: 1000 },
             { id: 'salas',    label: 'Sí · salas/cubículos',             add: 7500 },
             { id: 'equipos',  label: 'Sí · salas + equipos especializados', add: 17500 },
           ]},
           { id: 'reportes-sede', icon: 'bar-chart', label: '¿Reportes por sede?', opciones: [
-            { id: 'no',       label: 'No · agregado total',              add: 500 },
+            { id: 'no',       label: 'No · agregado total',              add: 1000 },
             { id: 'basico',   label: 'Sí · ocupación por sede',          add: 5000 },
             { id: 'completo', label: 'Sí · revenue + utilización + staff', add: 15000 },
           ]},
@@ -1128,17 +1128,17 @@ window.IBISNE_PRICING_V9 = {
             { id: 'multi',      label: 'Multi · Stripe + MP + PayPal',    add: 15000 },
           ]},
           { id: 'momento', icon: 'clock', label: '¿Cuándo cobra?', opciones: [
-            { id: 'reserva',  label: 'Al reservar · 100%',               add: 500 },
+            { id: 'reserva',  label: 'Al reservar · 100%',               add: 1000 },
             { id: 'anticipo', label: 'Al reservar · anticipo + resto post-cita', add: 5000 },
             { id: 'post',     label: 'Post-cita · habilitas cobro luego',  add: 2500 },
           ]},
           { id: 'cancel-refund', icon: 'history', label: '¿Política de reembolso?', opciones: [
-            { id: 'no-refund', label: 'No-refund',                       add: 500 },
+            { id: 'no-refund', label: 'No-refund',                       add: 1000 },
             { id: 'plazo',     label: 'Refund automático si cancela con X horas', add: 5000 },
             { id: 'manual',    label: 'Refund manual · revisión caso a caso', add: 7500 },
           ]},
           { id: 'facturacion', icon: 'help-circle', label: '¿Facturación CFDI?', opciones: [
-            { id: 'no',       label: 'No · sólo recibo',                  add: 500 },
+            { id: 'no',       label: 'No · sólo recibo',                  add: 1000 },
             { id: 'manual',   label: 'Sí · manual por staff',             add: 5000 },
             { id: 'auto',     label: 'Sí · automática post-pago',         add: 17500 },
           ]},
@@ -1167,25 +1167,25 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         '2-sistemas': [
           { id: 'sistemas', icon: 'partnership', label: '¿Qué sistemas conectas?', multi: true, opciones: [
-            { id: 'crm',     label: 'CRM (HubSpot/Salesforce)',           add: 500 },
+            { id: 'crm',     label: 'CRM (HubSpot/Salesforce)',           add: 1500 },
             { id: 'erp',     label: 'ERP (SAP/NetSuite)',                 add: 10000 },
-            { id: 'ecommerce', label: 'Ecommerce (Shopify/WooC)',         add: 500 },
+            { id: 'ecommerce', label: 'Ecommerce (Shopify/WooC)',         add: 1500 },
             { id: 'contab',  label: 'Contabilidad (CONTPAQi/Aspel)',      add: 7500 },
-            { id: 'google',  label: 'Google Workspace · Sheets/Drive',    add: 500 },
+            { id: 'google',  label: 'Google Workspace · Sheets/Drive',    add: 1500 },
             { id: 'otro',    label: 'Sistema propio · API REST',          add: 5000 },
           ]},
           { id: 'direccion', icon: 'help-circle', label: '¿Dirección del flujo?', opciones: [
-            { id: 'una',  label: 'A → B · una dirección',                 add: 500 },
+            { id: 'una',  label: 'A → B · una dirección',                 add: 1500 },
             { id: 'bi',   label: 'A ↔ B · bidireccional',                 add: 7500 },
           ]},
           { id: 'frecuencia', icon: 'clock', label: '¿Frecuencia?', opciones: [
-            { id: 'manual', label: 'Manual · trigger por usuario',         add: 500 },
+            { id: 'manual', label: 'Manual · trigger por usuario',         add: 1500 },
             { id: 'hora',   label: 'Cada hora',                            add: 2500 },
             { id: 'minuto', label: 'Cada minuto',                          add: 5000 },
             { id: 'real',   label: 'Tiempo real · webhook',                add: 10000 },
           ]},
           { id: 'transformacion', icon: 'wrench', label: '¿Transformación de datos?', opciones: [
-            { id: 'no',      label: 'No · pasa tal cual',                 add: 500 },
+            { id: 'no',      label: 'No · pasa tal cual',                 add: 1500 },
             { id: 'mapping', label: 'Mapping de campos',                   add: 3500 },
             { id: 'logica',  label: 'Lógica condicional · reglas',         add: 12500 },
           ]},
@@ -1197,7 +1197,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'multi',  label: '6+ sistemas',                         add: 27500 },
           ]},
           { id: 'orquestacion', icon: 'partnership', label: '¿Cómo orquesta el hub?', opciones: [
-            { id: 'star',     label: 'Star · hub central · cada sistema una ruta', add: 500 },
+            { id: 'star',     label: 'Star · hub central · cada sistema una ruta', add: 1500 },
             { id: 'pipeline', label: 'Pipeline · ramas y branches',       add: 12500 },
             { id: 'event-bus', label: 'Event bus · pub/sub',              add: 27500 },
           ]},
@@ -1207,20 +1207,20 @@ window.IBISNE_PRICING_V9 = {
             { id: 'oncall',    label: 'Dashboard + on-call WhatsApp 24/7', add: 27500 },
           ]},
           { id: 'reintentos', icon: 'history', label: '¿Política de reintentos?', opciones: [
-            { id: 'manual', label: 'Manual',                              add: 500 },
+            { id: 'manual', label: 'Manual',                              add: 1500 },
             { id: 'simple', label: 'Auto · 3 reintentos exponencial',     add: 5000 },
             { id: 'queue',  label: 'Auto · dead letter queue',            add: 12500 },
           ]},
         ],
         'etl-batch': [
           { id: 'volumen', icon: 'bar-chart', label: '¿Volumen por batch?', opciones: [
-            { id: 'chico',  label: 'Chico · <10k registros',              add: 500 },
+            { id: 'chico',  label: 'Chico · <10k registros',              add: 1500 },
             { id: 'medio',  label: 'Medio · 10k-100k',                    add: 7500 },
             { id: 'grande', label: 'Grande · 100k-1M',                    add: 17500 },
             { id: 'big',    label: 'Big · 1M+',                           add: 37500 },
           ]},
           { id: 'frecuencia-batch', icon: 'clock', label: '¿Cuándo corre?', opciones: [
-            { id: 'diario',   label: 'Diario · nocturno',                  add: 500 },
+            { id: 'diario',   label: 'Diario · nocturno',                  add: 1500 },
             { id: 'horario',  label: 'Cada hora',                          add: 5000 },
             { id: 'on-demand', label: 'On-demand · trigger manual',        add: 3500 },
           ]},
@@ -1237,17 +1237,17 @@ window.IBISNE_PRICING_V9 = {
         ],
         'tiempo-real': [
           { id: 'latencia', icon: 'zap', label: '¿Latencia objetivo?', opciones: [
-            { id: 'segundos', label: '<5 segundos',                       add: 500 },
+            { id: 'segundos', label: '<5 segundos',                       add: 1500 },
             { id: 'sub-seg',  label: '<1 segundo',                        add: 12500 },
             { id: 'milisec',  label: '<100ms · ultra low',                add: 27500 },
           ]},
           { id: 'volumen-rt', icon: 'bar-chart', label: '¿Eventos por segundo?', opciones: [
-            { id: 'bajo',  label: 'Bajo · <100/s',                        add: 500 },
+            { id: 'bajo',  label: 'Bajo · <100/s',                        add: 1500 },
             { id: 'medio', label: 'Medio · 100-1k/s',                     add: 10000 },
             { id: 'alto',  label: 'Alto · 1k+/s',                         add: 22500 },
           ]},
           { id: 'transporte', icon: 'partnership', label: '¿Tecnología de transporte?', opciones: [
-            { id: 'webhook',   label: 'Webhooks HTTP',                    add: 500 },
+            { id: 'webhook',   label: 'Webhooks HTTP',                    add: 1500 },
             { id: 'pubsub',    label: 'Pub/sub · Google Pub/Sub o SNS',   add: 10000 },
             { id: 'kafka',     label: 'Kafka · streams',                  add: 22500 },
           ]},
@@ -1260,7 +1260,7 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'auth', icon: 'login', label: '¿Autenticación entre sistemas?', opciones: [
-          { id: 'api-key',  label: 'API keys',                            add: 500 },
+          { id: 'api-key',  label: 'API keys',                            add: 1500 },
           { id: 'oauth',    label: 'OAuth 2.0',                            add: 5000 },
           { id: 'mtls',     label: 'mTLS · certificados',                  add: 12500 },
         ]},
@@ -1276,19 +1276,19 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'aprobaciones': [
           { id: 'tipo-aprob', icon: 'shield-check', label: '¿Qué se aprueba?', multi: true, opciones: [
-            { id: 'gastos',    label: 'Gastos / requisiciones',           add: 500 },
+            { id: 'gastos',    label: 'Gastos / requisiciones',           add: 2000 },
             { id: 'vacaciones', label: 'Vacaciones / permisos',           add: 5000 },
             { id: 'contratos', label: 'Contratos',                        add: 10000 },
             { id: 'compras',   label: 'Órdenes de compra',                add: 7500 },
             { id: 'otro',      label: 'Otro · custom',                    add: 5000 },
           ]},
           { id: 'niveles', icon: 'shield', label: '¿Niveles de aprobación?', opciones: [
-            { id: 'uno',  label: '1 nivel · jefe directo',                add: 500 },
+            { id: 'uno',  label: '1 nivel · jefe directo',                add: 2000 },
             { id: 'dos',  label: '2 niveles · jefe + área',               add: 5000 },
             { id: 'multi', label: '3+ niveles · matriz por monto',        add: 12500 },
           ]},
           { id: 'condicional', icon: 'wrench', label: '¿Reglas condicionales?', opciones: [
-            { id: 'no',     label: 'No · flujo lineal fijo',              add: 500 },
+            { id: 'no',     label: 'No · flujo lineal fijo',              add: 2000 },
             { id: 'monto',  label: 'Sí · escala según monto',             add: 7500 },
             { id: 'multi',  label: 'Sí · multi-variable (monto+tipo+area)', add: 17500 },
           ]},
@@ -1299,18 +1299,18 @@ window.IBISNE_PRICING_V9 = {
         ],
         'reportes': [
           { id: 'cantidad', icon: 'grid', label: '¿Cuántos reportes?', opciones: [
-            { id: 'pocos',  label: '1-3 reportes',                        add: 500 },
+            { id: 'pocos',  label: '1-3 reportes',                        add: 2000 },
             { id: 'medio',  label: '4-10 reportes',                       add: 7500 },
             { id: 'multi',  label: '11+ reportes',                        add: 17500 },
           ]},
           { id: 'frecuencia-rep', icon: 'clock', label: '¿Frecuencia?', opciones: [
-            { id: 'mensual',  label: 'Mensual',                           add: 500 },
+            { id: 'mensual',  label: 'Mensual',                           add: 2000 },
             { id: 'semanal',  label: 'Semanal',                           add: 2500 },
             { id: 'diario',   label: 'Diario',                            add: 5000 },
             { id: 'on-demand', label: 'On-demand · usuario gatilla',      add: 3500 },
           ]},
           { id: 'fuentes-rep', icon: 'help-circle', label: '¿Fuentes de datos?', multi: true, opciones: [
-            { id: 'db',       label: 'Base de datos interna',             add: 500 },
+            { id: 'db',       label: 'Base de datos interna',             add: 2000 },
             { id: 'sheets',   label: 'Google Sheets / Excel',             add: 3500 },
             { id: 'apis',     label: 'APIs externas (ads/analytics)',     add: 10000 },
             { id: 'warehouse', label: 'Data warehouse',                   add: 7500 },
@@ -1330,12 +1330,12 @@ window.IBISNE_PRICING_V9 = {
             { id: 'imagenes', label: 'Imágenes · OCR',                    add: 17500 },
           ]},
           { id: 'volumen-ext', icon: 'bar-chart', label: '¿Volumen?', opciones: [
-            { id: 'bajo',  label: 'Bajo · <100/mes',                      add: 500 },
+            { id: 'bajo',  label: 'Bajo · <100/mes',                      add: 2000 },
             { id: 'medio', label: 'Medio · 100-1000/mes',                 add: 7500 },
             { id: 'alto',  label: 'Alto · 1000+/mes',                     add: 17500 },
           ]},
           { id: 'precision', icon: 'shield-check', label: '¿Nivel de precisión?', opciones: [
-            { id: 'best',  label: 'Best-effort · 80%+ OK',                add: 500 },
+            { id: 'best',  label: 'Best-effort · 80%+ OK',                add: 2000 },
             { id: 'alta',  label: 'Alta · 95%+ con validación humana',    add: 12500 },
             { id: 'critica', label: 'Crítica · 99%+ · double-check',      add: 27500 },
           ]},
@@ -1348,22 +1348,22 @@ window.IBISNE_PRICING_V9 = {
         ],
         'multi-paso': [
           { id: 'pasos', icon: 'help-circle', label: '¿Cuántos pasos en el workflow?', opciones: [
-            { id: 'pocos',  label: 'Pocos · 3-5 pasos',                   add: 500 },
+            { id: 'pocos',  label: 'Pocos · 3-5 pasos',                   add: 2000 },
             { id: 'medio',  label: 'Medio · 6-12 pasos',                  add: 12500 },
             { id: 'multi',  label: 'Multi · 13+ pasos',                   add: 27500 },
           ]},
           { id: 'branches', icon: 'wrench', label: '¿Branches condicionales?', opciones: [
-            { id: 'no',     label: 'No · workflow lineal',                add: 500 },
+            { id: 'no',     label: 'No · workflow lineal',                add: 2000 },
             { id: 'pocas',  label: 'Pocas · 2-3 ramas',                   add: 7500 },
             { id: 'muchas', label: 'Muchas · árbol de decisiones',        add: 22500 },
           ]},
           { id: 'humanos', icon: 'users', label: '¿Pasos con humano-en-loop?', opciones: [
-            { id: 'no',     label: 'No · 100% automático',                add: 500 },
+            { id: 'no',     label: 'No · 100% automático',                add: 2000 },
             { id: 'simple', label: 'Sí · 1-2 puntos de revisión humana',  add: 5000 },
             { id: 'multi',  label: 'Sí · múltiples revisiones',           add: 12500 },
           ]},
           { id: 'errores', icon: 'shield', label: '¿Manejo de errores?', opciones: [
-            { id: 'log',     label: 'Log · revisión manual',              add: 500 },
+            { id: 'log',     label: 'Log · revisión manual',              add: 2000 },
             { id: 'retry',   label: 'Auto-retry · 3 intentos',            add: 5000 },
             { id: 'rollback', label: 'Auto-retry + rollback parcial',     add: 15000 },
           ]},
@@ -1371,7 +1371,7 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'usuarios', icon: 'users', label: '¿Cuántos usuarios?', opciones: [
-          { id: 'micro', label: '1-5',                                    add: 500 },
+          { id: 'micro', label: '1-5',                                    add: 2000 },
           { id: 'pyme',  label: '6-25',                                   add: 5000 },
           { id: 'media', label: '26-100',                                 add: 15000 },
           { id: 'enterp', label: '100+',                                  add: 35000 },
@@ -1491,17 +1491,17 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'ventas': [
           { id: 'pipeline', icon: 'trending-up', label: '¿Etapas del pipeline?', opciones: [
-            { id: 'simple',  label: '3-5 etapas · estándar',              add: 500 },
+            { id: 'simple',  label: '3-5 etapas · estándar',              add: 3500 },
             { id: 'medio',   label: '6-10 etapas · con sub-etapas',       add: 7500 },
             { id: 'multi',   label: 'Múltiples pipelines por equipo/producto', add: 17500 },
           ]},
           { id: 'forecasting', icon: 'bar-chart', label: '¿Forecasting?', opciones: [
-            { id: 'no',         label: 'No',                              add: 500 },
+            { id: 'no',         label: 'No',                              add: 3500 },
             { id: 'simple',     label: 'Sí · weighted pipeline',          add: 7500 },
             { id: 'avanzado',   label: 'Sí · con ML predictivo',          add: 27500 },
           ]},
           { id: 'comisiones', icon: 'wallet', label: '¿Comisiones?', opciones: [
-            { id: 'no',     label: 'No',                                  add: 500 },
+            { id: 'no',     label: 'No',                                  add: 3500 },
             { id: 'flat',   label: 'Sí · % flat sobre venta',             add: 5000 },
             { id: 'tiers',  label: 'Sí · tiers + bonos',                  add: 12500 },
             { id: 'multi',  label: 'Sí · multi-variable (volumen+margen+tipo)', add: 22500 },
@@ -1515,68 +1515,68 @@ window.IBISNE_PRICING_V9 = {
         ],
         'atencion-cliente': [
           { id: 'canales-cs', icon: 'chatbot', label: '¿Canales de entrada?', multi: true, opciones: [
-            { id: 'email',     label: 'Email',                            add: 500 },
+            { id: 'email',     label: 'Email',                            add: 3500 },
             { id: 'whatsapp',  label: 'WhatsApp',                         add: 7500 },
             { id: 'chat-web',  label: 'Chat web',                         add: 5000 },
             { id: 'redes',     label: 'Redes sociales · IG/FB',           add: 5000 },
             { id: 'tel',       label: 'Teléfono · logging manual',        add: 2500 },
           ]},
           { id: 'sla', icon: 'clock', label: '¿SLA?', opciones: [
-            { id: 'no',       label: 'No · best-effort',                  add: 500 },
+            { id: 'no',       label: 'No · best-effort',                  add: 3500 },
             { id: 'basico',   label: 'Sí · 1 tier · respuesta en Xh',     add: 5000 },
             { id: 'multi',    label: 'Sí · multi-tier por prioridad',     add: 15000 },
           ]},
           { id: 'kb', icon: 'chatbot', label: '¿Base de conocimiento?', opciones: [
-            { id: 'no',     label: 'No',                                  add: 500 },
+            { id: 'no',     label: 'No',                                  add: 3500 },
             { id: 'simple', label: 'Sí · interna para staff',             add: 7500 },
             { id: 'public', label: 'Sí · pública con búsqueda',           add: 17500 },
           ]},
           { id: 'csat-cs', icon: 'star', label: '¿Encuestas CSAT?', opciones: [
-            { id: 'no',      label: 'No',                                 add: 500 },
+            { id: 'no',      label: 'No',                                 add: 3500 },
             { id: 'auto',    label: 'Sí · auto post-resolución',          add: 5000 },
             { id: 'nps',     label: 'Sí · CSAT + NPS trimestral',         add: 10000 },
           ]},
         ],
         'inmobiliaria': [
           { id: 'propiedades', icon: 'help-circle', label: '¿Inventario de propiedades?', opciones: [
-            { id: 'chico',   label: 'Chico · <100 props',                 add: 500 },
+            { id: 'chico',   label: 'Chico · <100 props',                 add: 3500 },
             { id: 'medio',   label: 'Medio · 100-1000',                   add: 12500 },
             { id: 'grande',  label: 'Grande · 1000+',                     add: 32500 },
           ]},
           { id: 'matching', icon: 'partnership', label: '¿Matching cliente-propiedad?', opciones: [
-            { id: 'manual',  label: 'Manual',                             add: 500 },
+            { id: 'manual',  label: 'Manual',                             add: 3500 },
             { id: 'reglas',  label: 'Auto · reglas (precio/zona/recámaras)', add: 10000 },
             { id: 'ml',      label: 'Auto · ML · comportamiento del lead', add: 27500 },
           ]},
           { id: 'agentes', icon: 'users', label: '¿Asignación de agentes?', opciones: [
-            { id: 'manual',   label: 'Manual',                            add: 500 },
+            { id: 'manual',   label: 'Manual',                            add: 3500 },
             { id: 'rr',       label: 'Round-robin',                        add: 5000 },
             { id: 'territorio', label: 'Por territorio/zona',              add: 10000 },
           ]},
           { id: 'documentos', icon: 'help-circle', label: '¿Gestión documental?', opciones: [
-            { id: 'no',      label: 'No · solo links externos',           add: 500 },
+            { id: 'no',      label: 'No · solo links externos',           add: 3500 },
             { id: 'storage', label: 'Sí · storage por propiedad',         add: 7500 },
             { id: 'firma',   label: 'Sí · storage + firma electrónica',   add: 22500 },
           ]},
         ],
         'servicios-profesionales': [
           { id: 'casos', icon: 'star', label: '¿Estructura de trabajo?', opciones: [
-            { id: 'proyectos', label: 'Proyectos · timeline + entregables', add: 500 },
+            { id: 'proyectos', label: 'Proyectos · timeline + entregables', add: 3500 },
             { id: 'casos',     label: 'Casos · legal/contable',           add: 5000 },
             { id: 'retainers', label: 'Retainers · horas mensuales',      add: 7500 },
           ]},
           { id: 'horas', icon: 'clock', label: '¿Tracking de horas?', opciones: [
-            { id: 'no',      label: 'No · facturación fija',              add: 500 },
+            { id: 'no',      label: 'No · facturación fija',              add: 3500 },
             { id: 'timer',   label: 'Sí · timer integrado',                add: 7500 },
             { id: 'reportes', label: 'Sí · timer + reportes de utilización', add: 17500 },
           ]},
           { id: 'facturacion-sp', icon: 'help-circle', label: '¿Facturación?', opciones: [
-            { id: 'externa',  label: 'Externa · sin integración',          add: 500 },
+            { id: 'externa',  label: 'Externa · sin integración',          add: 3500 },
             { id: 'manual',   label: 'Generar PDF · enviar manual',        add: 5000 },
             { id: 'cfdi',     label: 'CFDI automática · SAT',              add: 22500 },
           ]},
           { id: 'gastos', icon: 'wallet', label: '¿Gastos por proyecto?', opciones: [
-            { id: 'no',     label: 'No',                                  add: 500 },
+            { id: 'no',     label: 'No',                                  add: 3500 },
             { id: 'manual', label: 'Sí · captura manual',                 add: 5000 },
             { id: 'ocr',    label: 'Sí · captura foto recibo + OCR',      add: 17500 },
           ]},
@@ -1584,13 +1584,13 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'usuarios-crm', icon: 'users', label: '¿Cuántos usuarios?', opciones: [
-          { id: 'micro', label: '1-5',                                    add: 500 },
+          { id: 'micro', label: '1-5',                                    add: 3500 },
           { id: 'pyme',  label: '6-25',                                   add: 7500 },
           { id: 'media', label: '26-100',                                 add: 22500 },
           { id: 'enterp', label: '100+',                                  add: 50000 },
         ]},
         { id: 'permisos-crm', icon: 'shield', label: '¿Sistema de permisos?', opciones: [
-          { id: 'iguales', label: 'Todos iguales',                        add: 500 },
+          { id: 'iguales', label: 'Todos iguales',                        add: 3500 },
           { id: 'roles',   label: 'Roles (admin/sales/lectura)',          add: 5000 },
           { id: 'granular', label: 'Granular · permisos por field',        add: 15000 },
         ]},
@@ -1609,8 +1609,8 @@ window.IBISNE_PRICING_V9 = {
             { id: 'salud',    label: 'Salud',                             add: 5000 },
             { id: 'legal',    label: 'Legal',                             add: 5000 },
             { id: 'inmob',    label: 'Inmobiliaria',                      add: 2500 },
-            { id: 'educ',     label: 'Educación',                         add: 500 },
-            { id: 'fitness',  label: 'Fitness / wellness',                add: 500 },
+            { id: 'educ',     label: 'Educación',                         add: 4000 },
+            { id: 'fitness',  label: 'Fitness / wellness',                add: 4000 },
             { id: 'otro',     label: 'Otro · custom',                     add: 2500 },
           ]},
           { id: 'funciones-core', icon: 'star', label: '¿Funciones core?', multi: true, opciones: [
@@ -1629,7 +1629,7 @@ window.IBISNE_PRICING_V9 = {
         ],
         'horizontal-tool': [
           { id: 'capacidad', icon: 'help-circle', label: '¿Qué capacidad central?', opciones: [
-            { id: 'productividad', label: 'Productividad · tasks/notes/docs', add: 500 },
+            { id: 'productividad', label: 'Productividad · tasks/notes/docs', add: 4000 },
             { id: 'colaboracion',  label: 'Colaboración · chat/whiteboard',    add: 7500 },
             { id: 'datos',         label: 'Datos / analytics',                 add: 12500 },
             { id: 'automation',    label: 'Automatización / workflows',        add: 17500 },
@@ -1640,24 +1640,24 @@ window.IBISNE_PRICING_V9 = {
             { id: 'multi',  label: 'Multi · 20+ (marketplace)',          add: 50000 },
           ]},
           { id: 'colaboracion-multi', icon: 'users', label: '¿Multi-usuario simultáneo?', opciones: [
-            { id: 'no',     label: 'No · 1 usuario por sesión',           add: 500 },
+            { id: 'no',     label: 'No · 1 usuario por sesión',           add: 4000 },
             { id: 'comments', label: 'Sí · comentarios async',            add: 5000 },
             { id: 'realtime', label: 'Sí · realtime · presencia + cursores', add: 32500 },
           ]},
         ],
         'marketplace': [
           { id: 'sides', icon: 'partnership', label: '¿Tipo de marketplace?', opciones: [
-            { id: 'p2p',     label: 'P2P · usuario↔usuario',              add: 500 },
+            { id: 'p2p',     label: 'P2P · usuario↔usuario',              add: 4000 },
             { id: 'b2c',     label: 'B2C · vendedores verificados ↔ consumidor', add: 5000 },
             { id: 'b2b',     label: 'B2B · empresas ↔ empresas',          add: 12500 },
           ]},
           { id: 'inventario-mp', icon: 'ecommerce', label: '¿Inventario?', opciones: [
-            { id: 'servicios', label: 'Servicios · sin stock',            add: 500 },
+            { id: 'servicios', label: 'Servicios · sin stock',            add: 4000 },
             { id: 'productos', label: 'Productos · stock por vendedor',   add: 17500 },
             { id: 'mixto',     label: 'Mixto · servicios + productos',    add: 22500 },
           ]},
           { id: 'pagos-mp', icon: 'wallet', label: '¿Modelo de pagos?', opciones: [
-            { id: 'directo',  label: 'Directo · vendedor cobra',          add: 500 },
+            { id: 'directo',  label: 'Directo · vendedor cobra',          add: 4000 },
             { id: 'split',    label: 'Split · comisión a plataforma',     add: 22500 },
             { id: 'escrow',   label: 'Escrow · liberación condicionada',  add: 47500 },
           ]},
@@ -1675,17 +1675,17 @@ window.IBISNE_PRICING_V9 = {
         ],
         'b2b-internal': [
           { id: 'tipo-cliente', icon: 'users', label: '¿Tipo de cliente B2B?', opciones: [
-            { id: 'pyme',    label: 'PYMEs · self-serve',                 add: 500 },
+            { id: 'pyme',    label: 'PYMEs · self-serve',                 add: 4000 },
             { id: 'media',   label: 'Empresa media · onboarding light',   add: 7500 },
             { id: 'enterp',  label: 'Enterprise · onboarding white-glove', add: 22500 },
           ]},
           { id: 'sso', icon: 'login', label: '¿SSO?', opciones: [
-            { id: 'no',      label: 'No · email/password',                add: 500 },
+            { id: 'no',      label: 'No · email/password',                add: 4000 },
             { id: 'google',  label: 'Google Workspace',                   add: 7500 },
             { id: 'sso-multi', label: 'SSO multi (Okta/Azure/Auth0)',     add: 22500 },
           ]},
           { id: 'permisos-saas', icon: 'shield', label: '¿Sistema de permisos?', opciones: [
-            { id: 'simple', label: 'Simple · admin/user',                 add: 500 },
+            { id: 'simple', label: 'Simple · admin/user',                 add: 4000 },
             { id: 'rbac',   label: 'RBAC · roles configurables',          add: 12500 },
             { id: 'abac',   label: 'ABAC · atributos · granular',         add: 32500 },
           ]},
@@ -1698,13 +1698,13 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'billing-saas', icon: 'wallet', label: '¿Modelo de billing?', opciones: [
-          { id: 'flat',     label: 'Flat · 1 plan único',                add: 500 },
+          { id: 'flat',     label: 'Flat · 1 plan único',                add: 4000 },
           { id: 'tiers',    label: 'Tiers · free + pro + enterprise',    add: 17500 },
           { id: 'usage',    label: 'Usage-based · pago por consumo',     add: 27500 },
           { id: 'hybrid',   label: 'Híbrido · tiers + usage',            add: 37500 },
         ]},
         { id: 'multi-tenant-saas', icon: 'shield', label: '¿Multi-tenant?', opciones: [
-          { id: 'no',       label: 'No · single-tenant',                  add: 500 },
+          { id: 'no',       label: 'No · single-tenant',                  add: 4000 },
           { id: 'shared',   label: 'Shared · 1 DB · tenant_id',           add: 17500 },
           { id: 'isolated', label: 'Isolated · DB por tenant',            add: 47500 },
         ]},
@@ -1720,7 +1720,7 @@ window.IBISNE_PRICING_V9 = {
       byType: {
         'manufactura': [
           { id: 'produccion', icon: 'help-circle', label: '¿Cómo es tu producción?', opciones: [
-            { id: 'discreta',  label: 'Discreta · piezas',                add: 500 },
+            { id: 'discreta',  label: 'Discreta · piezas',                add: 6500 },
             { id: 'continua',  label: 'Continua · process/química',       add: 17500 },
             { id: 'mixta',     label: 'Mixta · ambas',                    add: 27500 },
           ]},
@@ -1742,7 +1742,7 @@ window.IBISNE_PRICING_V9 = {
         ],
         'retail': [
           { id: 'sucursales', icon: 'map-pin', label: '¿Cuántas sucursales?', opciones: [
-            { id: 'una',    label: '1 sucursal',                          add: 500 },
+            { id: 'una',    label: '1 sucursal',                          add: 6500 },
             { id: 'pocas',  label: '2-5',                                  add: 15000 },
             { id: 'medio',  label: '6-20',                                add: 37500 },
             { id: 'multi',  label: '20+',                                 add: 75000 },
@@ -1753,7 +1753,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'tablet',  label: 'POS app · iPad/Android',              add: 42500 },
           ]},
           { id: 'inventario-retail', icon: 'ecommerce', label: '¿Manejo de inventario?', opciones: [
-            { id: 'simple',     label: 'Simple · total por SKU',           add: 500 },
+            { id: 'simple',     label: 'Simple · total por SKU',           add: 6500 },
             { id: 'por-sucursal', label: 'Por sucursal',                   add: 12500 },
             { id: 'transferencias', label: 'Por sucursal + transferencias', add: 27500 },
           ]},
@@ -1765,7 +1765,7 @@ window.IBISNE_PRICING_V9 = {
         ],
         'servicios': [
           { id: 'proyectos-erp', icon: 'help-circle', label: '¿Estructura de proyectos?', opciones: [
-            { id: 'simples', label: 'Simples · 1 nivel',                  add: 500 },
+            { id: 'simples', label: 'Simples · 1 nivel',                  add: 6500 },
             { id: 'wbs',     label: 'WBS · multi-nivel',                  add: 17500 },
             { id: 'metodo',  label: 'Metodologías (waterfall/agile/scrum)', add: 27500 },
           ]},
@@ -1781,7 +1781,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'cfdi',     label: 'CFDI integrada · SAT',                add: 22500 },
           ]},
           { id: 'rentabilidad', icon: 'bar-chart', label: '¿Análisis de rentabilidad?', opciones: [
-            { id: 'no',       label: 'No',                                add: 500 },
+            { id: 'no',       label: 'No',                                add: 6500 },
             { id: 'basico',   label: 'Sí · costo vs ingreso por proyecto', add: 10000 },
             { id: 'avanzado', label: 'Sí · margen + utilización + forecast', add: 27500 },
           ]},
@@ -1793,12 +1793,12 @@ window.IBISNE_PRICING_V9 = {
             { id: 'multi', label: '8+',                                   add: 95000 },
           ]},
           { id: 'consolidacion', icon: 'bar-chart', label: '¿Consolidación financiera?', opciones: [
-            { id: 'manual',     label: 'Manual · exporta a Excel',        add: 500 },
+            { id: 'manual',     label: 'Manual · exporta a Excel',        add: 6500 },
             { id: 'automatica', label: 'Automática · multi-empresa',      add: 32500 },
             { id: 'multi-moneda', label: 'Auto + multi-moneda',           add: 47500 },
           ]},
           { id: 'intercompany', icon: 'partnership', label: '¿Operaciones intercompañía?', opciones: [
-            { id: 'no',       label: 'No · cada UN aislada',              add: 500 },
+            { id: 'no',       label: 'No · cada UN aislada',              add: 6500 },
             { id: 'simple',   label: 'Sí · transferencias básicas',       add: 17500 },
             { id: 'avanzado', label: 'Sí · netting + transfer pricing',   add: 47500 },
           ]},
@@ -1830,13 +1830,13 @@ window.IBISNE_PRICING_V9 = {
         'token-utility': [
           { id: 'red', icon: 'help-circle', label: '¿Red blockchain?', opciones: [
             { id: 'ethereum', label: 'Ethereum · mainnet',                add: 17500 },
-            { id: 'polygon',  label: 'Polygon · gas barato',              add: 500 },
+            { id: 'polygon',  label: 'Polygon · gas barato',              add: 7500 },
             { id: 'arbitrum', label: 'Arbitrum · L2',                     add: 5000 },
             { id: 'solana',   label: 'Solana · alto throughput',          add: 12500 },
-            { id: 'bsc',      label: 'BNB Chain',                          add: 500 },
+            { id: 'bsc',      label: 'BNB Chain',                          add: 7500 },
           ]},
           { id: 'supply', icon: 'wallet', label: '¿Supply del token?', opciones: [
-            { id: 'fijo',     label: 'Fijo · max supply al deploy',       add: 500 },
+            { id: 'fijo',     label: 'Fijo · max supply al deploy',       add: 7500 },
             { id: 'mintable', label: 'Mintable · owner puede crear más',  add: 5000 },
             { id: 'algoritmo', label: 'Algorítmico · reglas de emisión',  add: 17500 },
           ]},
@@ -1856,17 +1856,17 @@ window.IBISNE_PRICING_V9 = {
         ],
         'nft-collection': [
           { id: 'estandar-nft', icon: 'palette', label: '¿Estándar?', opciones: [
-            { id: '721',  label: 'ERC-721 · pieza única',                  add: 500 },
+            { id: '721',  label: 'ERC-721 · pieza única',                  add: 7500 },
             { id: '1155', label: 'ERC-1155 · ediciones múltiples',         add: 7500 },
             { id: 'metaplex', label: 'Metaplex (Solana)',                  add: 5000 },
           ]},
           { id: 'tamano-coleccion', icon: 'bar-chart', label: '¿Tamaño?', opciones: [
-            { id: 'small',   label: 'Pequeña · 100-1000 piezas',           add: 500 },
+            { id: 'small',   label: 'Pequeña · 100-1000 piezas',           add: 7500 },
             { id: 'medio',   label: 'Media · 1k-10k piezas',               add: 12500 },
             { id: 'pfp',     label: 'PFP · 10k+ piezas algorítmicas',      add: 32500 },
           ]},
           { id: 'metadata', icon: 'help-circle', label: '¿Metadata storage?', opciones: [
-            { id: 'centralizado', label: 'Centralizado · S3/Cloudflare',  add: 500 },
+            { id: 'centralizado', label: 'Centralizado · S3/Cloudflare',  add: 7500 },
             { id: 'ipfs',         label: 'IPFS · descentralizado',         add: 10000 },
             { id: 'arweave',      label: 'Arweave · permanente onchain',   add: 22500 },
           ]},
@@ -1876,7 +1876,7 @@ window.IBISNE_PRICING_V9 = {
             { id: 'dutch',      label: 'Dutch auction · precio decreciente', add: 27500 },
           ]},
           { id: 'royalties', icon: 'wallet', label: '¿Royalties?', opciones: [
-            { id: 'no',     label: 'No · 0%',                              add: 500 },
+            { id: 'no',     label: 'No · 0%',                              add: 7500 },
             { id: 'flat',   label: 'Flat · %  fijo en cada venta secundaria', add: 7500 },
           ]},
         ],
@@ -1888,17 +1888,17 @@ window.IBISNE_PRICING_V9 = {
             { id: 'vault',    label: 'Vault · yield aggregator',          add: 47500 },
           ]},
           { id: 'tokens-soportados', icon: 'coin', label: '¿Tokens soportados?', opciones: [
-            { id: 'pocos',  label: 'Pocos · 3-5',                         add: 500 },
+            { id: 'pocos',  label: 'Pocos · 3-5',                         add: 7500 },
             { id: 'medio',  label: 'Medio · 10-20',                       add: 12500 },
             { id: 'multi',  label: 'Multi · permissionless',              add: 32500 },
           ]},
           { id: 'fees-defi', icon: 'wallet', label: '¿Estructura de fees?', opciones: [
-            { id: 'flat',     label: 'Flat · % fijo por tx',              add: 500 },
+            { id: 'flat',     label: 'Flat · % fijo por tx',              add: 7500 },
             { id: 'tiered',   label: 'Tiered · descuento por volumen',    add: 17500 },
             { id: 'dinamico', label: 'Dinámico · según liquidez',         add: 32500 },
           ]},
           { id: 'governance-defi', icon: 'shield', label: '¿Governance?', opciones: [
-            { id: 'no',       label: 'No · params fijos por owner',       add: 500 },
+            { id: 'no',       label: 'No · params fijos por owner',       add: 7500 },
             { id: 'multisig', label: 'Multisig · 3-5 firmantes',          add: 17500 },
             { id: 'dao',      label: 'DAO · token holders votan',         add: 47500 },
           ]},
@@ -1912,17 +1912,17 @@ window.IBISNE_PRICING_V9 = {
             { id: 'custom',     label: 'Custom · lógica B2B específica',  add: 42500 },
           ]},
           { id: 'integracion-offchain', icon: 'help-circle', label: '¿Integración off-chain?', opciones: [
-            { id: 'no',       label: 'No · 100% onchain',                 add: 500 },
+            { id: 'no',       label: 'No · 100% onchain',                 add: 7500 },
             { id: 'webhook',  label: 'Webhook · backend tradicional',     add: 12500 },
             { id: 'oraculo',  label: 'Oráculo · datos externos onchain',  add: 27500 },
           ]},
           { id: 'gas-management', icon: 'wallet', label: '¿Manejo de gas?', opciones: [
-            { id: 'user',     label: 'Usuario paga gas',                  add: 500 },
+            { id: 'user',     label: 'Usuario paga gas',                  add: 7500 },
             { id: 'sponsor',  label: 'Plataforma sponsorea (meta-tx)',    add: 27500 },
             { id: 'optimizado', label: 'Optimización extrema · batch',    add: 17500 },
           ]},
           { id: 'multi-chain', icon: 'help-circle', label: '¿Multi-chain?', opciones: [
-            { id: 'uno',  label: '1 chain',                               add: 500 },
+            { id: 'uno',  label: '1 chain',                               add: 7500 },
             { id: 'dos',  label: '2 chains · puente simple',              add: 32500 },
             { id: 'multi', label: '3+ chains',                            add: 75000 },
           ]},
@@ -1930,12 +1930,12 @@ window.IBISNE_PRICING_V9 = {
       },
       shared: [
         { id: 'frontend-bc', icon: 'shield', label: '¿Frontend?', opciones: [
-          { id: 'no',         label: 'Solo contracts · sin UI',            add: 500 },
+          { id: 'no',         label: 'Solo contracts · sin UI',            add: 7500 },
           { id: 'basico',     label: 'UI básica · conectar wallet + acción', add: 22500 },
           { id: 'completo',   label: 'UI completa · dashboards + analítica', add: 65000 },
         ]},
         { id: 'auditoria-base', icon: 'shield-check', label: '¿Auditoría?', opciones: [
-          { id: 'interna',  label: 'Solo interna · tests exhaustivos',    add: 500 },
+          { id: 'interna',  label: 'Solo interna · tests exhaustivos',    add: 7500 },
           { id: 'firma',    label: 'Auditoría con firma de auditor',      add: 32500 },
           { id: 'completa', label: 'Auditoría completa + bug bounty',     add: 87500 },
         ]},
@@ -2275,7 +2275,7 @@ window.IBISNE_PRICING_V9 = {
       'catalogo': [
         { id: 'estructura-cat', icon: 'grid', label: '¿Cuántos productos o servicios mostrarás?', opciones: [
           { id: 'pocos',   icon: 'app',         label: 'Pocos · menos de 100',
-            subtitle: 'Boutique digital · catálogo curado',                                                          add: 500 },
+            subtitle: 'Boutique digital · catálogo curado',                                                          add: 7500 },
           { id: 'medio',   icon: 'grid',        label: 'Medio · 100 a 1,000',
             subtitle: 'Tienda mediana · catálogo amplio',                                                            add: 12500 },
           { id: 'grande',  icon: 'serverapp',   label: 'Mucho · más de 1,000',
@@ -2285,7 +2285,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'busqueda-cat', icon: 'explore', label: '¿Cómo encontrarán los usuarios lo que buscan?', opciones: [
           { id: 'categorias', icon: 'folder',   label: 'Lista con categorías',
-            subtitle: 'Como un catálogo impreso digital · navegar por secciones',                                    add: 500 },
+            subtitle: 'Como un catálogo impreso digital · navegar por secciones',                                    add: 7500 },
           { id: 'filtros',    icon: 'sliders',  label: 'Filtros avanzados',
             subtitle: 'Como Amazon · filtrar por precio, marca, características',                                    add: 12500 },
           { id: 'busqueda',   icon: 'explore',  label: 'Búsqueda inteligente',
@@ -2295,7 +2295,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'detalle-cat', icon: 'star', label: '¿Cómo se ve cada producto/servicio?', opciones: [
           { id: 'simple',   icon: 'landing',    label: 'Imagen + descripción',
-            subtitle: 'Lo básico · suficiente para presentar',                                                       add: 500 },
+            subtitle: 'Lo básico · suficiente para presentar',                                                       add: 7500 },
           { id: 'galeria',  icon: 'palette',    label: 'Galería + ficha técnica',
             subtitle: 'Varias fotos · especificaciones detalladas · como una ficha de producto',                     add: 7500 },
           { id: 'rich',     icon: 'star',       label: 'Video + 360° + reseñas',
@@ -2338,7 +2338,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'feed-contenido', icon: 'sitio', label: '¿Cómo descubren contenido los usuarios?', opciones: [
           { id: 'cronologico', icon: 'clock',   label: 'Cronológico',
-            subtitle: 'Los más recientes arriba · simple y predecible',                                              add: 500 },
+            subtitle: 'Los más recientes arriba · simple y predecible',                                              add: 7500 },
           { id: 'tematico',    icon: 'grid',    label: 'Por categorías',
             subtitle: 'El usuario sigue temas que le interesan',                                                     add: 7500 },
           { id: 'ml-feed',     icon: 'shield',  label: 'Recomendaciones personalizadas',
@@ -2358,7 +2358,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'monetizacion-contenido', icon: 'wallet', label: '¿Cómo ganas dinero?', opciones: [
           { id: 'gratis',      icon: 'leads',   label: 'Gratis con publicidad',
-            subtitle: 'Como YouTube gratis · ads patrocinados',                                                       add: 500 },
+            subtitle: 'Como YouTube gratis · ads patrocinados',                                                       add: 7500 },
           { id: 'suscripcion', icon: 'shield',  label: 'Suscripción mensual',
             subtitle: 'Como Netflix · paywall · acceso a todo el catálogo',                                          add: 22500 },
           { id: 'pago-x-item', icon: 'ecommerce', label: 'Pago por contenido',
@@ -2370,7 +2370,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'offline-contenido', icon: 'wifi-off', label: '¿Pueden descargar para ver offline?', opciones: [
           { id: 'no',  icon: 'app',     label: 'No · solo online',
-            subtitle: 'El usuario siempre necesita internet',                                                        add: 500 },
+            subtitle: 'El usuario siempre necesita internet',                                                        add: 7500 },
           { id: 'si',  icon: 'wifi-off', label: 'Sí · descarga local',
             subtitle: 'Como Netflix offline · útil en aviones y zonas sin señal · más caro por protección',          add: 17500 },
         ]},
@@ -2404,7 +2404,7 @@ window.IBISNE_PRICING_V9 = {
         { id: 'verificacion-tx', icon: 'shield-check', label: '¿Verificas que el usuario es quien dice ser?',
           help: 'Esto se conoce como KYC (Know Your Customer) · obligatorio en algunos sectores financieros.', opciones: [
           { id: 'no',     icon: 'app',     label: 'No · solo email basta',
-            subtitle: 'Para servicios de bajo riesgo',                                                                add: 500 },
+            subtitle: 'Para servicios de bajo riesgo',                                                                add: 7500 },
           { id: 'basico', icon: 'shield-check', label: 'Verificación básica',
             subtitle: 'Pides CURP/RFC + selfie con INE · suficiente para la mayoría',                                 add: 17500 },
           { id: 'pro',    icon: 'serverapp', label: 'Verificación profesional',
@@ -2423,7 +2423,7 @@ window.IBISNE_PRICING_V9 = {
         { id: 'limites-tx', icon: 'shield-check', label: '¿Hay límites o alertas de seguridad?',
           help: 'Importante si manejas dinero · previene fraude.', opciones: [
           { id: 'no',       icon: 'app',     label: 'No · sin límites',
-            subtitle: 'Para servicios donde no hay riesgo financiero',                                                add: 500 },
+            subtitle: 'Para servicios donde no hay riesgo financiero',                                                add: 7500 },
           { id: 'limites',  icon: 'shield-check', label: 'Límites por usuario / día',
             subtitle: 'Tope de monto diario · evita fraude masivo',                                                   add: 7500 },
           { id: 'aml',      icon: 'shield-check', label: 'Alertas de movimientos sospechosos',
@@ -2450,7 +2450,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'colaboracion-prod', icon: 'users', label: '¿Pueden varios usar la app al mismo tiempo?', opciones: [
           { id: 'no',        icon: 'app',       label: 'Uno a la vez',
-            subtitle: 'Cada usuario trabaja por separado',                                                            add: 500 },
+            subtitle: 'Cada usuario trabaja por separado',                                                            add: 7500 },
           { id: 'async',     icon: 'chatbot',   label: 'Sí · con comentarios',
             subtitle: 'Pueden dejar comentarios y reaccionar · pero no editan al mismo tiempo',                       add: 5000 },
           { id: 'realtime',  icon: 'partnership', label: 'Sí · edición simultánea',
@@ -2458,7 +2458,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'integraciones-prod', icon: 'partnership', label: '¿Conectar con apps que tu equipo ya usa?', opciones: [
           { id: 'ninguna',  icon: 'app',       label: 'Ninguna por ahora',
-            subtitle: 'Solo nuestras funciones internas',                                                              add: 500 },
+            subtitle: 'Solo nuestras funciones internas',                                                              add: 7500 },
           { id: 'google',   icon: 'partnership', label: 'Google Workspace',
             subtitle: 'Gmail, Drive, Calendar, Sheets',                                                                add: 7500 },
           { id: 'office',   icon: 'partnership', label: 'Microsoft 365',
@@ -2468,7 +2468,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'permisos-prod', icon: 'shield', label: '¿Todos los usuarios ven y hacen lo mismo?', opciones: [
           { id: 'iguales',  icon: 'app',       label: 'Sí · todos iguales',
-            subtitle: 'Sin niveles · simple y rápido',                                                                add: 500 },
+            subtitle: 'Sin niveles · simple y rápido',                                                                add: 7500 },
           { id: 'roles',    icon: 'partnership', label: 'Roles · admin / editor / solo lectura',
             subtitle: 'Lo más común · el admin controla todo',                                                        add: 5000 },
           { id: 'granular', icon: 'shield',    label: 'Permisos específicos',
@@ -2476,7 +2476,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'reportes-prod', icon: 'bar-chart', label: '¿Necesitas dashboards o reportes?', opciones: [
           { id: 'no',      icon: 'app',       label: 'No por ahora',
-            subtitle: 'Las funciones básicas son suficientes',                                                        add: 500 },
+            subtitle: 'Las funciones básicas son suficientes',                                                        add: 7500 },
           { id: 'basico',  icon: 'landing',   label: 'Básico',
             subtitle: 'Contar tareas, ver estados, métricas simples',                                                 add: 5000 },
           { id: 'custom',  icon: 'serverapp', label: 'Dashboards configurables',
@@ -2488,7 +2488,7 @@ window.IBISNE_PRICING_V9 = {
       'social-comunidad': [
         { id: 'estructura-social', icon: 'grid', label: '¿Cómo se organiza tu comunidad?', opciones: [
           { id: 'feed',   icon: 'landing',     label: 'Feed plano',
-            subtitle: 'Como Twitter/Instagram · todos ven todo · sin grupos',                                         add: 500 },
+            subtitle: 'Como Twitter/Instagram · todos ven todo · sin grupos',                                         add: 7500 },
           { id: 'grupos', icon: 'users',       label: 'Grupos / canales',
             subtitle: 'Como Discord · cada usuario se une a comunidades específicas',                                add: 17500 },
           { id: 'multi',  icon: 'serverapp',   label: 'Grupos con subgrupos y roles',
@@ -2496,7 +2496,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'tipos-post', icon: 'palette', label: '¿Qué pueden publicar los usuarios?', multi: true, opciones: [
           { id: 'texto',   icon: 'sitio',      label: 'Texto + imagen',
-            subtitle: 'Como Twitter o Facebook básico',                                                                add: 500 },
+            subtitle: 'Como Twitter o Facebook básico',                                                                add: 7500 },
           { id: 'video',   icon: 'info_app',   label: 'Video corto',
             subtitle: 'Como TikTok o Reels · infra de video pesada',                                                  add: 27500 },
           { id: 'audio',   icon: 'chatbot',    label: 'Audio',
@@ -2508,7 +2508,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'moderacion-social', icon: 'shield-check', label: '¿Quién modera el contenido?', opciones: [
           { id: 'sin',     icon: 'app',        label: 'Solo reportes de usuarios',
-            subtitle: 'Si alguien reporta, alguien revisa manualmente',                                              add: 500 },
+            subtitle: 'Si alguien reporta, alguien revisa manualmente',                                              add: 7500 },
           { id: 'mods',    icon: 'partnership', label: 'Moderadores manuales',
             subtitle: 'Personas tuyas revisan todo lo reportado · más control',                                       add: 7500 },
           { id: 'auto-ai', icon: 'shield-check', label: 'IA + revisión humana',
@@ -2516,7 +2516,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'mensajes-dm', icon: 'chatbot', label: '¿Pueden mandarse mensajes privados entre usuarios?', opciones: [
           { id: 'no',        icon: 'app',     label: 'No · solo público',
-            subtitle: 'Toda interacción es visible',                                                                  add: 500 },
+            subtitle: 'Toda interacción es visible',                                                                  add: 7500 },
           { id: 'dm',        icon: 'chatbot', label: 'Mensajes 1-a-1',
             subtitle: 'Conversaciones privadas entre 2 personas',                                                     add: 12500 },
           { id: 'grupos-dm', icon: 'users',       label: 'Mensajes + grupos privados',
@@ -2536,7 +2536,7 @@ window.IBISNE_PRICING_V9 = {
       'servicios-citas': [
         { id: 'profesionales', icon: 'users', label: '¿Cuántas personas atienden citas?', opciones: [
           { id: 'uno',         icon: 'login',        label: '1 profesional',
-            subtitle: 'Solo tú · 1 calendario · 1 lista de servicios',                                                add: 500 },
+            subtitle: 'Solo tú · 1 calendario · 1 lista de servicios',                                                add: 7500 },
           { id: 'equipo',      icon: 'users',        label: 'Equipo (2 a 10)',
             subtitle: 'Varios profesionales · cada uno con su agenda y servicios',                                    add: 7500 },
           { id: 'marketplace', icon: 'marketplace', label: 'Marketplace (11+)',
@@ -2544,7 +2544,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'modalidad-cita', icon: 'help-circle', label: '¿Cómo es la cita?', opciones: [
           { id: 'presencial', icon: 'map-pin',   label: 'Presencial',
-            subtitle: 'Cliente va al consultorio/oficina · agendamos lugar y hora',                                  add: 500 },
+            subtitle: 'Cliente va al consultorio/oficina · agendamos lugar y hora',                                  add: 7500 },
           { id: 'online',     icon: 'chatbot',   label: 'Online · videollamada in-app',
             subtitle: 'Como Doctoralia online · sin necesidad de Zoom externo',                                       add: 17500 },
           { id: 'hibrido',    icon: 'hybrid',    label: 'Híbrido · cliente elige',
@@ -2554,7 +2554,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'pagos-cita', icon: 'wallet', label: '¿Cobras por las citas?', opciones: [
           { id: 'no',          icon: 'app',       label: 'No · gratis o cobras fuera',
-            subtitle: 'Servicio sin costo · o cobras por otro lado',                                                  add: 500 },
+            subtitle: 'Servicio sin costo · o cobras por otro lado',                                                  add: 7500 },
           { id: 'reserva',     icon: 'wallet',    label: 'Al reservar (100%)',
             subtitle: 'Cliente paga todo al hacer cita · si no llega, ya pagó',                                       add: 12500 },
           { id: 'anticipo',    icon: 'ecommerce', label: 'Anticipo + resto post-cita',
@@ -2598,7 +2598,7 @@ window.IBISNE_PRICING_V9 = {
         ]},
         { id: 'cuanto-tiene', icon: 'bar-chart', label: '¿Qué tan grande es la app que imaginas?', opciones: [
           { id: 'mvp',    icon: 'leads',  label: 'Lo más simple posible',
-            subtitle: '5-7 pantallas · validar la idea',                                                              add: 500, flag: 'needs-discovery' },
+            subtitle: '5-7 pantallas · validar la idea',                                                              add: 7500, flag: 'needs-discovery' },
           { id: 'medio',  icon: 'app',    label: 'Algo robusto pero no enorme',
             subtitle: '10-20 pantallas · funciones core completas',                                                  add: 15000, flag: 'needs-discovery' },
           { id: 'grande', icon: 'star',   label: 'Una app completa',
@@ -2607,7 +2607,7 @@ window.IBISNE_PRICING_V9 = {
         { id: 'help-cta', icon: 'help-circle', label: '¿Continuamos con un hunter por WhatsApp?',
           help: 'Marcamos tu cotización para que el hunter te llame y precisemos juntos qué necesitas.', opciones: [
           { id: 'si',  icon: 'chatbot', label: 'Sí · que me contacten',
-            subtitle: 'Te buscan en menos de 24 horas',                                                                add: 500, flag: 'needs-discovery' },
+            subtitle: 'Te buscan en menos de 24 horas',                                                                add: 7500, flag: 'needs-discovery' },
         ]},
       ],
     },
@@ -2617,9 +2617,9 @@ window.IBISNE_PRICING_V9 = {
       { id: 'usuarios-y1', icon: 'users', label: '¿Cuántos usuarios esperas el primer año?',
         help: 'Nos ayuda a dimensionar infraestructura · si crece más rápido, escalamos.', opciones: [
         { id: 'probando',  icon: 'flask',       label: 'Probando',
-          subtitle: 'Menos de 100 usuarios · validar idea con early adopters',                                       add: 500 },
+          subtitle: 'Menos de 100 usuarios · validar idea con early adopters',                                       add: 7500 },
         { id: 'chico',     icon: 'app',         label: 'Negocio chico',
-          subtitle: '100 a 1,000 usuarios · clientes locales · arranque controlado',                                 add: 500 },
+          subtitle: '100 a 1,000 usuarios · clientes locales · arranque controlado',                                 add: 7500 },
         { id: 'creciendo', icon: 'trending-up', label: 'Negocio creciendo',
           subtitle: '1,000 a 10,000 usuarios · escalar tras validación',                                             add: 15000 },
         { id: 'medio',     icon: 'partnership', label: 'Escala media',
@@ -2632,7 +2632,7 @@ window.IBISNE_PRICING_V9 = {
 
       { id: 'login-app', icon: 'login', label: '¿Cómo entran tus usuarios a la app?', opciones: [
         { id: 'no',       icon: 'user-x',     label: 'Sin login',
-          subtitle: 'Cualquiera puede usar la app · sin crear cuenta',                                                add: 500 },
+          subtitle: 'Cualquiera puede usar la app · sin crear cuenta',                                                add: 7500 },
         { id: 'email',    icon: 'login',      label: 'Email + contraseña',
           subtitle: 'Lo clásico · el usuario crea cuenta tradicional',                                                add: 12500 },
         { id: 'redes',    icon: 'partnership', label: 'Email + Google/Apple (1-click)',
@@ -2645,7 +2645,7 @@ window.IBISNE_PRICING_V9 = {
 
       { id: 'idiomas-app', icon: 'partnership', label: '¿En cuántos idiomas estará la app?', opciones: [
         { id: 'uno',   icon: 'app',         label: 'Solo español',
-          subtitle: 'Mercado MX/LATAM · sin complicaciones',                                                          add: 500 },
+          subtitle: 'Mercado MX/LATAM · sin complicaciones',                                                          add: 7500 },
         { id: 'dos',   icon: 'partnership', label: 'Español + inglés',
           subtitle: 'Para clientes internacionales o mercado USA',                                                    add: 12500 },
         { id: 'multi', icon: 'star',        label: '3 o más idiomas',
@@ -2669,12 +2669,12 @@ window.IBISNE_PRICING_V9 = {
     byType: {
       'fisico': [
         { id: 'catalogo-fisico', icon: 'ecommerce', label: '¿Tamaño del catálogo?', opciones: [
-          { id: 'chico',  label: '1-25 productos',                          add: 500 },
+          { id: 'chico',  label: '1-25 productos',                          add: 7500 },
           { id: 'medio',  label: '26-200 productos',                        add: 15000 },
           { id: 'grande', label: '200+ productos',                          add: 35000 },
         ]},
         { id: 'envios', icon: 'ecommerce', label: '¿Logística de envíos?', opciones: [
-          { id: 'manual',  label: 'Manual · imprimes guías',                add: 500 },
+          { id: 'manual',  label: 'Manual · imprimes guías',                add: 7500 },
           { id: 'integrado', label: 'Integrado · DHL/Estafeta/FedEx',       add: 12500 },
           { id: 'multi',    label: 'Multi-courier + cotizador automático',  add: 22500 },
         ]},
@@ -2684,14 +2684,14 @@ window.IBISNE_PRICING_V9 = {
           { id: 'erp',      label: 'Conectado a ERP existente',              add: 22500 },
         ]},
         { id: 'devoluciones', icon: 'help-circle', label: '¿Sistema de devoluciones?', opciones: [
-          { id: 'no',       label: 'No · solo email manual',                 add: 500 },
+          { id: 'no',       label: 'No · solo email manual',                 add: 7500 },
           { id: 'simple',   label: 'Simple · form + autorización manual',    add: 7500 },
           { id: 'auto',     label: 'Automatizado · guía de retorno + refund', add: 17500 },
         ]},
       ],
       'digital': [
         { id: 'tipo-digital', icon: 'help-circle', label: '¿Tipo de producto digital?', opciones: [
-          { id: 'descarga',  label: 'Descarga · ebook/template/PDF',         add: 500 },
+          { id: 'descarga',  label: 'Descarga · ebook/template/PDF',         add: 7500 },
           { id: 'curso',     label: 'Curso · video + módulos',               add: 17500 },
           { id: 'software',  label: 'Software · licencia',                   add: 22500 },
           { id: 'membresia', label: 'Membresía · acceso recurrente',         add: 12500 },
@@ -2702,12 +2702,12 @@ window.IBISNE_PRICING_V9 = {
           { id: 'streaming', label: 'Streaming · player propio · DRM básico', add: 22500 },
         ]},
         { id: 'drm', icon: 'shield-check', label: '¿Protección?', opciones: [
-          { id: 'no',     label: 'No · descarga libre',                       add: 500 },
+          { id: 'no',     label: 'No · descarga libre',                       add: 7500 },
           { id: 'token',  label: 'Link con token · expiración',                add: 5000 },
           { id: 'fingerprint', label: 'Watermark / fingerprint',              add: 12500 },
         ]},
         { id: 'actualizaciones', icon: 'history', label: '¿Actualizaciones del producto?', opciones: [
-          { id: 'no',     label: 'No · versión única',                        add: 500 },
+          { id: 'no',     label: 'No · versión única',                        add: 7500 },
           { id: 'free',   label: 'Updates gratis · de por vida',              add: 5000 },
           { id: 'paid',   label: 'Updates pagados · per version',             add: 12500 },
         ]},
@@ -2728,7 +2728,7 @@ window.IBISNE_PRICING_V9 = {
           { id: 'sms',      label: 'SMS',                                     add: 3500 },
         ]},
         { id: 'gestion-clientes', icon: 'users', label: '¿Historial del cliente?', opciones: [
-          { id: 'no',         label: 'No · solo notificaciones',              add: 500 },
+          { id: 'no',         label: 'No · solo notificaciones',              add: 7500 },
           { id: 'basico',     label: 'Básico · citas pasadas',                add: 5000 },
           { id: 'expediente', label: 'Expediente · notas + archivos',         add: 15000 },
         ]},
@@ -2739,7 +2739,7 @@ window.IBISNE_PRICING_V9 = {
           { id: 'tres', label: 'Tres · físico + digital + servicio',          add: 12500 },
         ]},
         { id: 'bundles', icon: 'star', label: '¿Bundles cross-categoría?', opciones: [
-          { id: 'no',     label: 'No · venta separada',                       add: 500 },
+          { id: 'no',     label: 'No · venta separada',                       add: 7500 },
           { id: 'manual', label: 'Sí · bundles manuales',                     add: 7500 },
           { id: 'config', label: 'Sí · configurador · cliente arma bundle',   add: 17500 },
         ]},
@@ -2748,7 +2748,7 @@ window.IBISNE_PRICING_V9 = {
           { id: 'agendada',  label: 'Agendada · una sola entrega coordinada',  add: 15000 },
         ]},
         { id: 'pricing-mixto', icon: 'wallet', label: '¿Pricing dinámico?', opciones: [
-          { id: 'fijo',     label: 'Fijo · precio cerrado',                   add: 500 },
+          { id: 'fijo',     label: 'Fijo · precio cerrado',                   add: 7500 },
           { id: 'descuento', label: 'Descuento por bundle (10-20%)',           add: 5000 },
           { id: 'config',    label: 'Configurador con precio dinámico',        add: 15000 },
         ]},

@@ -399,14 +399,22 @@ body.is-booting{ overflow:hidden; }
 }
 .mega-card-icon svg,.service-card-icon svg,.sf-card-icon svg{ width:20px; height:20px; }
 
-/* Títulos / subtítulos de card · jerarquía consistente · v8.5.0 */
+/* Títulos / subtítulos de card · jerarquía consistente · v8.5.0
+ * v11.6 · line-clamp 1 (label) + 2 (subtitle) · garantiza que el HEIGHT
+ * fijo de las cards no se rompa cuando un label es de 2 líneas (ej. "Bio
+ * link / Página de enlaces"). Texto largo → ellipsis ··· · cards visualmente
+ * idénticas en altura. */
 .mega-card-label,.service-card-label,.sf-card-label{
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
   font-weight:var(--fw-medium); line-height:var(--lh-tight);
   letter-spacing:var(--ls-body); color:var(--text-primary);
+  display:-webkit-box; -webkit-line-clamp:1; line-clamp:1;
+  -webkit-box-orient:vertical; overflow:hidden;
 }
 .mega-card-summary,.service-card-subtitle,.sf-card-subtitle{
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
+  display:-webkit-box; -webkit-line-clamp:2; line-clamp:2;
+  -webkit-box-orient:vertical; overflow:hidden;
 }
 
 /* Pie de card · meta mono + indicador
@@ -832,6 +840,17 @@ body.is-handover .result-screen{ animation:none !important; }
   animation: flashDown 380ms var(--ease-out-quart);
 }
 
+/* v11.6 · CTA visible cuando el cart está vacío · en lugar del em dash
+ * "TOTAL · — MXN" (que era casi invisible). Invita a empezar. */
+.rk-cart-header-empty{
+  flex-direction:row; align-items:center;
+}
+.rk-cart-header-empty-cta{
+  font-family:var(--font-mono); font-size:var(--fs-pico);
+  letter-spacing:var(--ls-mono); text-transform:uppercase;
+  color:var(--accent-mint); white-space:nowrap;
+}
+
 .rk-cart-empty{
   display:flex; flex-direction:column; align-items:center; text-align:center;
   gap:var(--sp-2); padding:var(--sp-6) var(--sp-4);
@@ -965,8 +984,8 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:768px){
   .quiz-main{ padding:var(--sp-5) var(--sp-5) calc(var(--ds-cart-peek) + var(--sp-6)); }
-  /* v11.5 · tablet 3 columnas (era 2) · escala progresiva mobile→tablet→desktop */
-  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-3); }
+  /* v11.6 · tablet 2 columnas · escala progresiva mobile (1) → tablet (2) → desktop (3) */
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .datos-fields{ grid-template-columns:repeat(2,1fr); }
   .sf-confirm-actions{ flex-direction:row; }
@@ -1015,12 +1034,13 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .legal-strip{ padding:var(--sp-6); }
 
-  /* v11.5 · desktop 4 columnas (era 2) · cards más compactas · grid 4×N
-   * para que más cards quepan por viewport sin scroll. Eduardo: "valoralo
-   * si mejor trabajamos con grids 3x3 o 4x4". */
-  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(4,1fr); gap:var(--sp-4); }
+  /* v11.6 · desktop 3 columnas · Eduardo: "creo que estaba cards 3x3".
+   * Plataformas con 9 servicios → 3×3 perfecto sin huérfanas. Web/Ecom
+   * con 4 cards → 3+1 (acepta huérfana). Mejor balance que 4col que
+   * dejaba huérfanas en Plataformas (4+4+1). */
+  .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(4,1fr); }
-  .sf-grid.is-multi{ grid-template-columns:repeat(4,1fr); }
+  .sf-grid.is-multi{ grid-template-columns:repeat(3,1fr); }
 }
 
 /* ──────────────────────────────────────────────────────────────────
@@ -1137,9 +1157,14 @@ body.is-handover .result-screen{ animation:none !important; }
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
   font-weight:var(--fw-medium); line-height:var(--lh-tight);
   letter-spacing:var(--ls-body); color:var(--text-primary);
+  /* v11.6 · line-clamp 1 · igual que mega/service/sf · evita rompimiento de height */
+  display:-webkit-box; -webkit-line-clamp:1; line-clamp:1;
+  -webkit-box-orient:vertical; overflow:hidden;
 }
 .type-card-summary{
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
+  display:-webkit-box; -webkit-line-clamp:2; line-clamp:2;
+  -webkit-box-orient:vertical; overflow:hidden;
 }
 .type-card-foot{
   display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-2);
