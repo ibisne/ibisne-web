@@ -6,12 +6,16 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v11.5.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v11.6.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
 
-**v11.5 · Grid 4-col desktop + cards compactas + type-cards con precio.**
-1. Desktop ≥1100 pasa de 2 columnas a **4 columnas** · tablet ≥768 pasa a **3 columnas** · escala progresiva mobile→tablet→desktop (1→3→4). Eduardo: "es enorme, valora si mejor trabajamos con grids 3x3 o 4x4".
-2. Cards verticales `height: clamp(180px, 13vw, 200px)` (era 240-256px) · padding interno `sp-4` (era `sp-5`) · más cards por viewport sin scroll.
-3. Type-cards (chooser de tipo del servicio) muestran "desde +$X" calculado vía `calcTypeMinPrice(servicio, tipoId)` · suma base + primera opción default de cada pregunta `byType[tipoId]` · consistente con service-cards.
+**v11.6 · Pricing escalado + cart bar CTA cuando vacío + line-clamp + grid 3-col.**
+1. **Pricing**: 212 opciones con `add: 500` reasignadas a valor proporcional al base del servicio (web-bio +1000 · landing +1500 · funnel +2500 · sitio +3500 · apps +2500-6500 · ecom +1500-5500 · plat +1000-7500). Cada opción se siente como compromiso real, no "casi gratis".
+2. **Cart bar copy**: cuando cart está vacío, el header muestra "Configura tu cotización ↑" en accent-mint en lugar del em dash "TOTAL · — MXN" (que era casi invisible). Cuando hay items, TOTAL animado normal.
+3. **line-clamp 1 en labels** + **line-clamp 2 en subtitles** de cards (mega/service/sf/type). Garantiza que el `height` fijo no se rompa con labels de 2 líneas (ej. "Bio link / Página de enlaces"). Texto largo → ellipsis ···.
+4. **Grid escala progresiva** mobile(1) → tablet(2) → desktop(3). Eduardo prefirió 3×3 sobre 4×4. Plataformas con 9 servicios queda 3×3 perfecto sin huérfanas.
+
+**v11.5 · Grid 4-col desktop + cards compactas + type-cards con precio.** (superseded by v11.6)
+1. Type-cards (chooser de tipo del servicio) muestran "desde +$X" calculado vía `calcTypeMinPrice(servicio, tipoId)` · suma base + primera opción default de cada pregunta `byType[tipoId]` · consistente con service-cards.
 
 **v11.4 · Cards altura FIJA + cart bar muestra TOTAL siempre visible.**
 1. `.mega-card/.service-card/.sf-card/.type-card` con `height: clamp(240px, 18vw, 256px)` (height fijo, no min-height) + `justify-content: space-between` · TODAS las cards verticales del wizard tienen EXACTAMENTE la misma altura sin importar contenido · cero variación visual entre pantallas.
@@ -71,7 +75,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v11.5.0)
+## Estructura del repo (actual · v11.6.0)
 
 ```
 /
@@ -161,7 +165,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.5.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.6.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 

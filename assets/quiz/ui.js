@@ -1990,17 +1990,16 @@
           <div class="rk-cart-header">
             <div class="rk-cart-header-left">
               <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
-              <span class="rk-cart-count">0 servicios</span>
+              <span class="rk-cart-count">${L('0 servicios')}</span>
             </div>
-            <div class="rk-cart-header-total" aria-label="Total estimado">
-              <span class="rk-cart-header-total-label">TOTAL</span>
-              <span class="rk-cart-header-total-amount">${formatMxn(0)} <small>MXN</small></span>
+            <div class="rk-cart-header-total rk-cart-header-empty" aria-label="Empieza tu cotización">
+              <span class="rk-cart-header-empty-cta">${L('Configura tu cotización')} ↑</span>
             </div>
           </div>
           <div class="rk-cart-empty">
             <div class="rk-cart-empty-icon">${iconHtml('ecommerce','line')}</div>
-            <p class="rk-cart-empty-title">Tu carrito está vacío</p>
-            <p class="rk-cart-empty-sub">Empieza eligiendo qué necesitas en el catálogo →</p>
+            <p class="rk-cart-empty-title">${L('Tu carrito está vacío')}</p>
+            <p class="rk-cart-empty-sub">${L('Empieza eligiendo qué necesitas en el catálogo →')}</p>
           </div>
         </div>
       `;
