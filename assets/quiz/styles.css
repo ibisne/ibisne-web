@@ -400,16 +400,18 @@ body.is-booting{ overflow:hidden; }
 .mega-card-icon svg,.service-card-icon svg,.sf-card-icon svg{ width:20px; height:20px; }
 
 /* Títulos / subtítulos de card · jerarquía consistente · v8.5.0
- * v11.6 · line-clamp 1 (label) + 2 (subtitle) · garantiza que el HEIGHT
- * fijo de las cards no se rompa cuando un label es de 2 líneas (ej. "Bio
- * link / Página de enlaces"). Texto largo → ellipsis ··· · cards visualmente
- * idénticas en altura. */
+ * v11.7 · BUGFIX · Labels usan white-space:nowrap + text-overflow:ellipsis
+ * (no line-clamp). Razón: line-clamp:1 con line-height:tight + overflow:hidden
+ * corta las descenders (g, p, y, j) porque el box model calcula altura =
+ * line-height × 1, sin reservar espacio para descenders. Resultado visible
+ * en producción v11.6: "Web app (PWA)" se veía "Web ann (PWA)" — la p
+ * decapitada. nowrap+ellipsis respeta la altura natural de la fuente.
+ * Subtitles SÍ usan line-clamp:2 porque ahí necesitamos 2 líneas máximo. */
 .mega-card-label,.service-card-label,.sf-card-label{
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
   font-weight:var(--fw-medium); line-height:var(--lh-tight);
   letter-spacing:var(--ls-body); color:var(--text-primary);
-  display:-webkit-box; -webkit-line-clamp:1; line-clamp:1;
-  -webkit-box-orient:vertical; overflow:hidden;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .mega-card-summary,.service-card-subtitle,.sf-card-subtitle{
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
@@ -1157,9 +1159,8 @@ body.is-handover .result-screen{ animation:none !important; }
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
   font-weight:var(--fw-medium); line-height:var(--lh-tight);
   letter-spacing:var(--ls-body); color:var(--text-primary);
-  /* v11.6 · line-clamp 1 · igual que mega/service/sf · evita rompimiento de height */
-  display:-webkit-box; -webkit-line-clamp:1; line-clamp:1;
-  -webkit-box-orient:vertical; overflow:hidden;
+  /* v11.7 · BUGFIX · nowrap+ellipsis (no line-clamp) para preservar descenders */
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .type-card-summary{
   font-size:var(--fs-base); line-height:var(--lh-body); color:var(--text-secondary);
