@@ -1446,33 +1446,7 @@
   // v6.2.0 · D · Animación "vuela al carrito" · chip del servicio se
   // desplaza del centro hacia el #cart con scale+fade. Respeta
   // prefers-reduced-motion.
-  function flyToCart(servicio){
-    try {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const cartEl = document.getElementById('cart');
-      if (!cartEl) return;
-      const cartRect = cartEl.getBoundingClientRect();
-      const chip = document.createElement('div');
-      chip.className = 'fly-to-cart';
-      chip.innerHTML = '<span class="fly-icon">' + (iconHtml(servicio.icon, 'line') || '✓') + '</span><span class="fly-label">' + L(servicio.label) + '</span>';
-      document.body.appendChild(chip);
-      const startX = window.innerWidth * 0.40;
-      const startY = window.innerHeight * 0.45;
-      chip.style.left = startX + 'px';
-      chip.style.top = startY + 'px';
-      const dx = (cartRect.left + cartRect.width / 2) - startX;
-      const dy = (cartRect.top + 60) - startY;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          chip.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.35)';
-          chip.style.opacity = '0';
-        });
-      });
-      cartEl.classList.add('cart-pulse');
-      setTimeout(() => { try { chip.remove(); } catch(_){} }, 600);
-      setTimeout(() => cartEl.classList.remove('cart-pulse'), 650);
-    } catch(_){}
-  }
+  // v11.8 · flyToCart eliminado · sin cart bar no hay destino para el chip.
 
   // ═══════════════════════════════════════════════════════════════════
   // STEP 3 · renderDatos
@@ -1527,9 +1501,6 @@
       const ok = ['nombre','email','whatsapp'].every(k => State.cliente[k] && State.cliente[k].trim());
       const btn = $('#datos-continue');
       if (btn) btn.disabled = !ok;
-      // Sincronizar también el CTA del carrito
-      const cartCta = $('#rk-cart-pay');
-      if (cartCta) cartCta.disabled = !ok;
     }
 
     $$('#wizard input').forEach(input => input.addEventListener('input', e => {
@@ -1542,8 +1513,7 @@
 
     $('#datos-continue').addEventListener('click', () => scheduleAdvance('#/loading', 80));
     $('[data-prev]').addEventListener('click', () => { trackNavBack(); navigate('#/catalog'); });
-
-    refreshCart();
+    // v11.8 · refreshCart eliminado · cart bar ya no existe
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -1819,6 +1789,10 @@
           </details>
         </article>
 
+        <article class="rk-card rk-payment-inline" id="rk-payment-block">
+          ${renderPaymentPlanInline(calc)}
+        </article>
+
         <article class="rk-card rk-aux">
           <a href="${waUrl}" target="_blank" rel="noopener" class="btn-ghost btn rk-aux-wa">${iconHtml('whatsapp','line')} Hablar con un hunter sobre esta cotización</a>
         </article>
@@ -1827,7 +1801,105 @@
       </div>
     `;
 
-    refreshCart();
+    bindResultadoPayment();
+  }
+
+  // v11.8 · renderPaymentPlanInline · payment plan + descuento + CTA principal
+  // Se renderiza INLINE como sección del wizard en #/resultado (no más cart bar).
+  // Reusa applyPaymentPlan() para calcular los montos según plan y código.
+  function renderPaymentPlanInline(calc){
+    const pay = applyPaymentPlan(calc.totalConIva);
+    const folio = State.folio || '';
+    const planRadios = [
+      { id: 'contado', icon: 'zap',    title: 'Contado · -20% descuento', sub: `Pago en una exhibición · ahorra ${formatMxn(calc.totalConIva * 0.20)}`, amountLabel: pay ? formatMxn(pay.plan === 'contado' ? pay.finalTotal : calc.totalConIva * 0.80) : '' },
+      { id: 'msi-3',   icon: 'wallet', title: '3 meses sin intereses',    sub: 'Pago mensual cómodo',  amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 3)}/mes` : '' },
+      { id: 'msi-6',   icon: 'wallet', title: '6 meses sin intereses',    sub: 'Pago mensual cómodo',  amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 6)}/mes` : '' },
+      { id: 'msi-9',   icon: 'wallet', title: '9 meses sin intereses',    sub: 'Pago mensual cómodo',  amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 9)}/mes` : '' },
+      { id: 'msi-12',  icon: 'wallet', title: '12 meses sin intereses',   sub: 'Pago mensual mínimo',  amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 12)}/mes` : '' },
+    ];
+
+    let ctaLabel, ctaHref;
+    if (pay.plan === 'contado') {
+      ctaLabel = `Pagar contado · ${formatMxn(pay.finalTotal)}`;
+      ctaHref = `https://paypal.me/iBisne/${Math.round(pay.finalTotal)}MXN`;
+    } else {
+      ctaLabel = `Apartar 1ra mensualidad · ${formatMxn(pay.monthlyAmount)}/mes`;
+      const waText = `Hola, quiero pagar mi cotización #${folio} a ${pay.monthsCount} meses sin intereses.\n` +
+        `Mensualidad: ${formatMxn(pay.monthlyAmount)} MXN.\n` +
+        `Total con plan: ${formatMxn(pay.finalTotal)} MXN.\n` +
+        (pay.codeApplied ? `Código aplicado: ${pay.code} (-40%)\n` : '') +
+        `¿Cómo procedemos?`;
+      ctaHref = `https://wa.me/523329575274?text=${encodeURIComponent(waText)}`;
+    }
+
+    return `
+      <div class="rk-card-eyebrow">${L('— ¿CÓMO QUIERES PAGAR?')}</div>
+      <div class="rk-payment-plan-options">
+        ${planRadios.map(r => `
+          <label class="payment-opt ${pay.plan === r.id ? 'is-active' : ''}" data-plan="${r.id}">
+            <input type="radio" name="payment-plan" value="${r.id}" ${pay.plan === r.id ? 'checked' : ''}>
+            <span class="payment-opt-icon">${iconHtml(r.icon,'line')}</span>
+            <span class="payment-opt-info">
+              <span class="payment-opt-title">${L(r.title)}</span>
+              <span class="payment-opt-sub">${L(r.sub)}</span>
+            </span>
+            <span class="payment-opt-amount">${r.amountLabel}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="rk-payment-discount">
+        <input type="text" class="rk-payment-discount-input" id="rk-discount-input"
+               placeholder="¿Código de descuento?"
+               value="${(State.cart.discountCode || '').replace(/"/g,'')}">
+        <button class="rk-payment-discount-apply" id="rk-discount-apply" type="button">Aplicar</button>
+      </div>
+      ${pay.codeApplied ? `<div class="rk-payment-discount-success">✓ Código <strong>${pay.code}</strong> aplicado · -40%</div>` : ''}
+      <div class="rk-payment-cta">
+        <a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-payment-pay" id="rk-payment-pay">${ctaLabel} →</a>
+        <div class="rk-payment-pay-note">${pay.plan === 'contado'
+          ? 'Pago en una sola exhibición · -20% descuento aplicado'
+          : 'Tu hunter te confirma el link de pago a meses por WhatsApp · cero compromiso hasta aprobar'}</div>
+      </div>
+    `;
+  }
+
+  // v11.8 · bindResultadoPayment · engancha eventos del payment plan inline.
+  // Cuando user cambia plan o aplica descuento, re-renderiza solo el bloque
+  // de payment dentro de #rk-payment-block (no toda la pantalla).
+  function bindResultadoPayment(){
+    const refreshPaymentBlock = () => {
+      const block = document.getElementById('rk-payment-block');
+      if (!block) return;
+      const calc = computeCart();
+      block.innerHTML = renderPaymentPlanInline(calc);
+      bindResultadoPayment(); // re-engancha eventos en el HTML nuevo
+    };
+
+    document.querySelectorAll('#rk-payment-block .payment-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        const plan = opt.dataset.plan;
+        if (!plan || State.cart.paymentPlan === plan) return;
+        State.cart.paymentPlan = plan;
+        persistCart();
+        refreshPaymentBlock();
+      });
+    });
+
+    const discInput = document.getElementById('rk-discount-input');
+    const discApply = document.getElementById('rk-discount-apply');
+    const applyDiscount = () => {
+      if (!discInput) return;
+      const val = (discInput.value || '').trim();
+      if (val === (State.cart.discountCode || '')) return;
+      State.cart.discountCode = val;
+      persistCart();
+      refreshPaymentBlock();
+    };
+    if (discApply) discApply.addEventListener('click', applyDiscount);
+    if (discInput) discInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }
+    });
   }
 
   function renderConfigSummary(config){
@@ -1872,295 +1944,14 @@
     requestAnimationFrame(step);
   }
 
-  // v11 · refreshCart con animación de cifras
-  // Captura totales antes del re-render · después anima los nuevos elementos del valor anterior al nuevo.
-  let _prevCartCalc = null;
-  function refreshCart(){
-    const cartEl = $('#cart');
-    if (!cartEl) return;
-    // Snapshot del cálculo antes de re-render
-    const prev = _prevCartCalc || { subtotal: 0, total: 0, totalConIva: 0 };
+  // v11.8 · refreshCart como no-op · cart bottom-bar eliminado.
+  // Los 15+ call sites siguen funcionando sin error · payment plan vive
+  // ahora inline en renderResultado (ver renderPaymentPlanInline más abajo).
+  // Si el usuario está en #/resultado y hace cambios al plan/descuento,
+  // renderResultado se re-llama directamente.
+  function refreshCart(){ /* noop · v11.8 */ }
 
-    cartEl.innerHTML = renderCartContent();
-    bindCart();
-
-    // Calcular nuevo · animar diferencias
-    const cur = computeCart();
-
-    // v11.4 · Animar el TOTAL del header del cart bar (siempre visible,
-    // incluso colapsado). Usuario ve subir/bajar la cifra sin tener que
-    // abrir el cart.
-    const headerAmount = cartEl.querySelector('.rk-cart-header-total-amount');
-    if (headerAmount) {
-      const startVal = prev.totalConIva;
-      const endVal = cur.totalConIva;
-      if (startVal !== endVal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const start = performance.now();
-        const ease = (t) => 1 - Math.pow(1 - t, 4);
-        function stepH(now){
-          const t = Math.min(1, (now - start) / 380);
-          const v = startVal + (endVal - startVal) * ease(t);
-          headerAmount.innerHTML = formatMxn(v) + ' <small>MXN</small>';
-          if (t < 1) requestAnimationFrame(stepH);
-        }
-        requestAnimationFrame(stepH);
-      }
-      // Flash visual (mismo patrón que rk-cart-total-final)
-      headerAmount.classList.remove('flash-up', 'flash-down');
-      void headerAmount.offsetWidth;
-      if (cur.totalConIva > prev.totalConIva) headerAmount.classList.add('flash-up');
-      else if (cur.totalConIva < prev.totalConIva) headerAmount.classList.add('flash-down');
-    }
-
-    const totals = cartEl.querySelectorAll('.rk-cart-total-line');
-    if (totals.length >= 3) {
-      // Subtotal · IVA · TOTAL (sin tocar building note si existe)
-      const subtotalSpan = totals[0]?.querySelector('span:last-child');
-      const ivaSpan      = totals[1]?.querySelector('span:last-child');
-      const totalSpan    = totals[2]?.querySelector('span:last-child');
-      if (subtotalSpan) animateNumber(subtotalSpan, prev.subtotal, cur.subtotal);
-      if (ivaSpan)      animateNumber(ivaSpan, prev.total * 0.16, cur.total * 0.16);
-      // El total trae "<span> $ X <small>MXN</small></span>" · animamos solo el número antes del small
-      if (totalSpan) {
-        const small = totalSpan.querySelector('small');
-        animateNumber(totalSpan, prev.totalConIva, cur.totalConIva, 380, (v) => {
-          return formatMxn(v) + (small ? ' <small>MXN</small>' : '');
-        });
-        // Reemplazo es innerHTML porque hay <small> dentro
-        // Caso: si small existe, usamos innerHTML; sino textContent.
-        // animateNumber escribe a textContent por default · sobrescribimos:
-        if (small) {
-          const startVal = prev.totalConIva, endVal = cur.totalConIva;
-          if (startVal !== endVal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            const start = performance.now();
-            const ease = (t) => 1 - Math.pow(1 - t, 4);
-            function step(now){
-              const t = Math.min(1, (now - start) / 380);
-              const v = startVal + (endVal - startVal) * ease(t);
-              totalSpan.innerHTML = formatMxn(v) + ' <small>MXN</small>';
-              if (t < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-          } else {
-            totalSpan.innerHTML = formatMxn(endVal) + ' <small>MXN</small>';
-          }
-        }
-        // Flash visual al subir/bajar el total final
-        const totalLine = totals[2];
-        if (totalLine) {
-          totalLine.classList.remove('flash-up', 'flash-down');
-          // force reflow para reiniciar la animación
-          void totalLine.offsetWidth;
-          if (cur.totalConIva > prev.totalConIva) totalLine.classList.add('flash-up');
-          else if (cur.totalConIva < prev.totalConIva) totalLine.classList.add('flash-down');
-        }
-      }
-    }
-    _prevCartCalc = cur;
-  }
-
-  function renderCartContent(){
-    const calc = computeCart();
-    const PRICING = getPricing();
-    const datosOk = ['nombre','email','whatsapp'].every(k => State.cliente[k] && State.cliente[k].trim());
-    const isResultado = parseHash().step === 'resultado';
-
-    // v9 · Servicio en construcción (carrito siempre vivo)
-    // No construir "building" si ya estamos en confirm (sf.step === 'confirm')
-    // porque el servicio ya está en cart.servicios y se mostraría duplicado.
-    let building = null;
-    if (State.subflow && State.subflow.step !== 'confirm') {
-      const sfB = State.subflow;
-      const bServ = Object.assign({ id: sfB.servicioId }, findServicio(sfB.servicioId));
-      if (bServ.label) {
-        building = {
-          servicio: bServ,
-          price: calcSubflowPrice(bServ, sfB.config, sfB.tipoId, sfB.addOnIds),
-          cfg: renderConfigSummaryInline(sfB.config),
-          isEdit: !!sfB.isEdit,
-        };
-      }
-    }
-
-    const empty = State.cart.servicios.length === 0 && !building;
-
-    if (empty) {
-      return `
-        <div class="rk-cart">
-          <div class="rk-cart-header">
-            <div class="rk-cart-header-left">
-              <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
-              <span class="rk-cart-count">${L('0 servicios')}</span>
-            </div>
-            <div class="rk-cart-header-total rk-cart-header-empty" aria-label="Empieza tu cotización">
-              <span class="rk-cart-header-empty-cta">${L('Configura tu cotización')} ↑</span>
-            </div>
-          </div>
-          <div class="rk-cart-empty">
-            <div class="rk-cart-empty-icon">${iconHtml('ecommerce','line')}</div>
-            <p class="rk-cart-empty-title">${L('Tu carrito está vacío')}</p>
-            <p class="rk-cart-empty-sub">${L('Empieza eligiendo qué necesitas en el catálogo →')}</p>
-          </div>
-        </div>
-      `;
-    }
-
-    // v9 · helper · renderiza add-ons hidratados para un servicio del cart
-    const renderItemAddOns = (s) => {
-      if (!s.addOnIds || s.addOnIds.length === 0) return '';
-      const addOns = s.addOnIds.map(id => {
-        const ao = PRICING.findAddOn ? PRICING.findAddOn(id) : null;
-        return ao ? `<li class="rk-cart-item-addon">${L(ao.label)} <small>+${formatMxn(ao.price)}</small></li>` : '';
-      }).filter(Boolean);
-      return addOns.length ? `<ul class="rk-cart-item-addons">${addOns.join('')}</ul>` : '';
-    };
-
-    // v9 · helper · renderiza el "tipo" del servicio si existe
-    const renderItemTipo = (s) => {
-      const svc = PRICING.servicios[s.id];
-      if (!svc || !Array.isArray(svc.tipos) || !s.tipoId) return '';
-      const t = svc.tipos.find(x => x.id === s.tipoId);
-      return t ? `<div class="rk-cart-item-tipo">${L(t.label)}</div>` : '';
-    };
-
-    const itemsHtml = State.cart.servicios.map(s => {
-      const cfg = renderConfigSummaryInline(s.config);
-      // No mostrar como item normal el que está en edición ahora mismo
-      if (building && building.isEdit && building.servicio.id === s.id) return '';
-      return `
-        <li class="rk-cart-item" data-service-id="${s.id}">
-          <div class="rk-cart-item-icon">${iconHtml(s.icon, 'line')}</div>
-          <div class="rk-cart-item-info">
-            <div class="rk-cart-item-label">${L(s.label)}</div>
-            ${renderItemTipo(s)}
-            ${cfg ? `<div class="rk-cart-item-config">${cfg}</div>` : ''}
-            ${renderItemAddOns(s)}
-            <div class="rk-cart-item-price">${formatMxn(s.calculatedPrice || s.base)}</div>
-          </div>
-          <div class="rk-cart-item-actions">
-            <button class="rk-cart-edit" data-service-id="${s.id}" type="button" aria-label="Editar">${iconHtml('edit','line') || '✎'}</button>
-            <button class="rk-cart-remove" data-service-id="${s.id}" type="button" aria-label="Quitar">×</button>
-          </div>
-        </li>
-      `;
-    }).join('');
-
-    // Item "en construcción" · se actualiza en vivo con cada selección
-    const buildingHtml = building ? `
-      <li class="rk-cart-item rk-cart-item-building" data-service-id="${building.servicio.id}">
-        <div class="rk-cart-item-icon">${iconHtml(building.servicio.icon, 'line')}</div>
-        <div class="rk-cart-item-info">
-          <div class="rk-cart-item-label">${L(building.servicio.label)} <span class="rk-cart-building-tag">configurando…</span></div>
-          ${building.cfg ? `<div class="rk-cart-item-config">${building.cfg}</div>` : ''}
-          <div class="rk-cart-item-price">${formatMxn(building.price)}</div>
-        </div>
-      </li>
-    ` : '';
-
-    const itemCount = State.cart.servicios.length;
-    const countLabel = building
-      ? (itemCount > 0 ? `${itemCount} + 1 configurando` : '1 configurando')
-      : `${itemCount} servicio${itemCount === 1 ? '' : 's'}`;
-
-    // v10.1 · Payment plan + descuento (sólo cuando isResultado)
-    // applyPaymentPlan calcula finalTotal según plan + código de descuento.
-    const pay = isResultado ? applyPaymentPlan(calc.totalConIva) : null;
-    const folio = State.folio || '';
-
-    // CTA principal:
-    //  · contado → PayPal con monto descontado
-    //  · MSI-N → WhatsApp con plan pre-fillado al hunter
-    let ctaLabel, ctaHref;
-    const ctaDisabled = !isResultado && !datosOk;
-    if (isResultado) {
-      if (pay.plan === 'contado') {
-        ctaLabel = `Pagar contado · ${formatMxn(pay.finalTotal)}`;
-        ctaHref = `https://paypal.me/iBisne/${Math.round(pay.finalTotal)}MXN`;
-      } else {
-        ctaLabel = `Apartar 1ra mensualidad · ${formatMxn(pay.monthlyAmount)}/mes`;
-        const waText = `Hola, quiero pagar mi cotización #${folio} a ${pay.monthsCount} meses sin intereses.\n` +
-          `Mensualidad: ${formatMxn(pay.monthlyAmount)} MXN.\n` +
-          `Total con plan: ${formatMxn(pay.finalTotal)} MXN.\n` +
-          (pay.codeApplied ? `Código aplicado: ${pay.code} (-40%)\n` : '') +
-          `¿Cómo procedemos?`;
-        ctaHref = `https://wa.me/523329575274?text=${encodeURIComponent(waText)}`;
-      }
-    } else {
-      ctaLabel = datosOk ? 'Ver mi cotización →' : 'Continúa para ver el total';
-      ctaHref = '';
-    }
-
-    // Sección payment plan: 5 radio opciones
-    const planRadios = [
-      { id: 'contado', icon: 'zap',           title: 'Contado · -20% descuento', sub: `Pago en una exhibición · ahorra ${formatMxn(calc.totalConIva * 0.20)}`, amountLabel: pay ? formatMxn(pay.plan === 'contado' ? pay.finalTotal : calc.totalConIva * 0.80) : '' },
-      { id: 'msi-3',   icon: 'wallet',        title: '3 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 3)}/mes` : '' },
-      { id: 'msi-6',   icon: 'wallet',        title: '6 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 6)}/mes` : '' },
-      { id: 'msi-9',   icon: 'wallet',        title: '9 meses sin intereses',   sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 9)}/mes` : '' },
-      { id: 'msi-12',  icon: 'wallet',        title: '12 meses sin intereses',  sub: `Pago mensual cómodo`, amountLabel: pay ? `${formatMxn((pay.codeApplied ? calc.totalConIva*0.60 : calc.totalConIva) / 12)}/mes` : '' },
-    ];
-    const planHtml = isResultado ? `
-      <div class="rk-cart-payment-plan">
-        <div class="rk-cart-payment-label">— ¿Cómo quieres pagar?</div>
-        <div class="rk-cart-payment-options">
-          ${planRadios.map(r => `
-            <label class="payment-opt ${pay.plan === r.id ? 'is-active' : ''}" data-plan="${r.id}">
-              <input type="radio" name="payment-plan" value="${r.id}" ${pay.plan === r.id ? 'checked' : ''}>
-              <span class="payment-opt-icon">${iconHtml(r.icon,'line')}</span>
-              <span class="payment-opt-info">
-                <span class="payment-opt-title">${L(r.title)}</span>
-                <span class="payment-opt-sub">${L(r.sub)}</span>
-              </span>
-              <span class="payment-opt-amount">${r.amountLabel}</span>
-            </label>
-          `).join('')}
-        </div>
-        <div class="rk-cart-discount">
-          <input type="text" class="rk-cart-discount-input" id="rk-cart-discount-input"
-                 placeholder="¿Código de descuento?"
-                 value="${(State.cart.discountCode || '').replace(/"/g,'')}">
-          <button class="rk-cart-discount-apply" id="rk-cart-discount-apply" type="button">Aplicar</button>
-        </div>
-        ${pay.codeApplied ? `<div class="rk-cart-discount-success">✓ Código <strong>${pay.code}</strong> aplicado · -40%</div>` : ''}
-      </div>
-    ` : '';
-
-    return `
-      <div class="rk-cart">
-        <div class="rk-cart-header">
-          <div class="rk-cart-header-left">
-            <span class="rk-cart-eyebrow">${L('— TU CARRITO')}</span>
-            <span class="rk-cart-count">${countLabel}</span>
-          </div>
-          <div class="rk-cart-header-total" aria-label="Total estimado">
-            <span class="rk-cart-header-total-label">TOTAL</span>
-            <span class="rk-cart-header-total-amount">${formatMxn(calc.totalConIva)} <small>MXN</small></span>
-          </div>
-        </div>
-
-        <ul class="rk-cart-items">${itemsHtml}${buildingHtml}</ul>
-
-        <div class="rk-cart-totals">
-          <div class="rk-cart-total-line"><span>Subtotal</span><span>${formatMxn(calc.subtotal)}</span></div>
-          <div class="rk-cart-total-line"><span>IVA 16%</span><span>${formatMxn(calc.total * 0.16)}</span></div>
-          <div class="rk-cart-total-line rk-cart-total-final"><span>TOTAL</span><span>${formatMxn(calc.totalConIva)} <small>MXN</small></span></div>
-          ${building ? `<div class="rk-cart-total-line rk-cart-building-note"><span>+ configurando ahora</span><span>${formatMxn(building.price)}</span></div>` : ''}
-        </div>
-
-        ${planHtml}
-
-        <div class="rk-cart-ctas">
-          ${isResultado
-            ? `<a href="${ctaHref}" target="_blank" rel="noopener" class="btn btn-primary rk-cart-pay">${ctaLabel} →</a>
-               <div class="rk-cart-pay-note">${pay.plan === 'contado'
-                 ? 'Pago en una sola exhibición · -20% descuento aplicado'
-                 : 'Tu hunter te confirma el link de pago a meses por WhatsApp · cero compromiso hasta aprobar'}</div>`
-            : `<button class="btn btn-primary rk-cart-pay" id="rk-cart-pay" type="button" ${ctaDisabled ? 'disabled' : ''}>${ctaLabel}</button>`
-          }
-          <button class="btn-ghost btn rk-cart-clear" id="rk-cart-clear" type="button">Vaciar carrito</button>
-        </div>
-      </div>
-    `;
-  }
+  // v11.8 · renderCartContent eliminado · payment plan vive inline en renderResultado
 
   function renderConfigSummaryInline(config){
     if (!config) return '';
@@ -2177,95 +1968,7 @@
     return parts.slice(0, 3).join(' · ');
   }
 
-  function bindCart(){
-    // v10.1 · Payment plan radio · cambia plan + recalcula
-    $$('#cart .payment-opt').forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        // Evitar doble-trigger del input radio interno
-        if (e.target.tagName === 'INPUT') return;
-        const plan = opt.dataset.plan;
-        if (!plan || State.cart.paymentPlan === plan) return;
-        State.cart.paymentPlan = plan;
-        persistCart();
-        refreshCart();
-      });
-    });
-
-    // v10.1 · Aplicar código de descuento
-    const discInput = $('#rk-cart-discount-input');
-    const discApply = $('#rk-cart-discount-apply');
-    const applyDiscount = () => {
-      if (!discInput) return;
-      const val = (discInput.value || '').trim();
-      if (val === (State.cart.discountCode || '')) return;
-      State.cart.discountCode = val;
-      persistCart();
-      refreshCart();
-    };
-    if (discApply) discApply.addEventListener('click', applyDiscount);
-    if (discInput) discInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }
-    });
-
-    // Edit items · v9 pasa tipo+addons al openSubflowModal para hidratar estado
-    $$('.rk-cart-edit').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sid = btn.dataset.serviceId;
-        const servicio = Object.assign({ id: sid }, findServicio(sid));
-        if (!servicio.label) return;
-        const existing = State.cart.servicios.find(s => s.id === sid);
-        if (!existing) return;
-        trackEditClick();
-        openSubflowModal(servicio, {
-          tipoId: existing.tipoId || null,
-          addOnIds: existing.addOnIds || [],
-          config: existing.config || {},
-        });
-      });
-    });
-
-    // Remove items
-    $$('.rk-cart-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sid = btn.dataset.serviceId;
-        removeFromCart(sid);
-        refreshCart();
-        // Si estamos en catálogo, re-render para sync de "+/✓"
-        if (parseHash().step === 'catalog') renderCatalog();
-      });
-    });
-
-    // Clear cart
-    const clearBtn = $('#rk-cart-clear');
-    if (clearBtn) clearBtn.addEventListener('click', () => {
-      if (!confirm(L('¿Vaciar el carrito? Perderás los servicios agregados.'))) return;
-      clearCart();
-      State.folio = null;
-      refreshCart();
-      if (parseHash().step === 'catalog') renderCatalog();
-    });
-
-    // CTA principal del carrito (cuando no es resultado)
-    const cta = $('#rk-cart-pay');
-    if (cta) cta.addEventListener('click', () => {
-      const datosOk = ['nombre','email','whatsapp'].every(k => State.cliente[k] && State.cliente[k].trim());
-      if (!datosOk) {
-        navigate('#/datos');
-        return;
-      }
-      navigate('#/loading');
-    });
-
-    // v11 · Cart bottom-bar full-width en TODOS los viewports.
-    // Header siempre clickable para expand/collapse.
-    const header = document.querySelector('#cart .rk-cart-header');
-    if (header) {
-      header.addEventListener('click', () => {
-        const cartEl = $('#cart');
-        cartEl.classList.toggle('is-expanded');
-      });
-    }
-  }
+  // v11.8 · bindCart eliminado · payment plan vive inline en renderResultado · ver bindResultadoPayment
 
   // ═══════════════════════════════════════════════════════════════════
   // INIT
@@ -2276,12 +1979,8 @@
     // Si el quiz.html aún tiene #main pero no #wizard/#cart, inyectamos
     const main = document.getElementById('main');
     if (main && !document.getElementById('wizard')) {
-      main.innerHTML = `
-        <div class="rk-grid">
-          <div class="rk-left" id="wizard"></div>
-          <aside class="rk-right" id="cart"></aside>
-        </div>
-      `;
+      // v11.8 · cart bottom-bar eliminado · wizard ocupa el ancho completo
+      main.innerHTML = `<div id="wizard"></div>`;
     }
     render();
   });
@@ -2289,12 +1988,8 @@
   if (document.readyState !== 'loading') {
     const main = document.getElementById('main');
     if (main && !document.getElementById('wizard')) {
-      main.innerHTML = `
-        <div class="rk-grid">
-          <div class="rk-left" id="wizard"></div>
-          <aside class="rk-right" id="cart"></aside>
-        </div>
-      `;
+      // v11.8 · cart bottom-bar eliminado · wizard ocupa el ancho completo
+      main.innerHTML = `<div id="wizard"></div>`;
     }
     render();
   }
