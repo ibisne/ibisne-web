@@ -396,7 +396,15 @@ body.is-booting{ overflow:hidden; }
  * Subtitles SÍ usan line-clamp:2 porque ahí necesitamos 2 líneas máximo. */
 .mega-card-label,.service-card-label,.sf-card-label{
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
-  font-weight:var(--fw-medium); line-height:var(--lh-tight);
+  font-weight:var(--fw-medium);
+  /* v11.9 · BUGFIX · line-height 1.25 (era --lh-tight = 1.05).
+   * 1.05 calcula altura de línea exactamente igual a font-size sin
+   * reservar espacio para descenders (g, p, y, j). Por eso "Bio link /
+   * Página de enlaces" mostraba la 'p' decapitada y "Funnel" la 'F' OK
+   * pero "ventas" con la 'v' cortada. 1.25 reserva ~20% extra para
+   * descenders + ascenders · letras enteras visibles · cards no crecen
+   * porque siguen siendo 1 línea (nowrap). */
+  line-height:1.25;
   letter-spacing:var(--ls-body); color:var(--text-primary);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
@@ -973,9 +981,10 @@ body.is-handover .result-screen{ animation:none !important; }
 .type-card-icon svg{ width:20px; height:20px; }
 .type-card-label{
   font-family:var(--font-display); font-size:var(--ds-fs-card-label);
-  font-weight:var(--fw-medium); line-height:var(--lh-tight);
+  font-weight:var(--fw-medium);
+  /* v11.9 · line-height 1.25 (era tight 1.05) · preserva descenders */
+  line-height:1.25;
   letter-spacing:var(--ls-body); color:var(--text-primary);
-  /* v11.7 · BUGFIX · nowrap+ellipsis (no line-clamp) para preservar descenders */
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .type-card-summary{
