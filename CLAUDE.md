@@ -6,7 +6,11 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v11.6.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v11.8.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v11.8 · Cart bottom-bar ELIMINADO · pagos inline en #/resultado.** El cart bottom-bar fijo abajo (de v11.0-v11.7) se eliminó por completo. El wizard ahora ocupa el ancho completo del viewport sin barra inferior persistente. Payment plan + código descuento + CTAs PayPal/WhatsApp se renderizan inline como sección `<article class="rk-card rk-payment-inline">` dentro de la pantalla `#/resultado`. Funciones `renderCartContent`, `bindCart`, `flyToCart` eliminadas (~390 líneas). `refreshCart` queda no-op para no romper call sites legacy. Funciones nuevas: `renderPaymentPlanInline(calc)` + `bindResultadoPayment()`. CSS §17 (~150 líneas) y §19 (fly-to-cart) eliminados. Tokens `--ds-cart-w` y `--ds-cart-peek` removidos del cotizador. Trade-off: no hay TOTAL en tiempo real durante subflow (Eduardo lo aceptó).
+
+**v11.7 · fix labels cortados (descenders).** `line-clamp:1` cortaba descenders (g, p, y) por overflow:hidden con line-height tight. Cambio a `white-space:nowrap + text-overflow:ellipsis` que respeta altura natural de la fuente.
 
 **v11.6 · Pricing escalado + cart bar CTA cuando vacío + line-clamp + grid 3-col.**
 1. **Pricing**: 212 opciones con `add: 500` reasignadas a valor proporcional al base del servicio (web-bio +1000 · landing +1500 · funnel +2500 · sitio +3500 · apps +2500-6500 · ecom +1500-5500 · plat +1000-7500). Cada opción se siente como compromiso real, no "casi gratis".
@@ -75,7 +79,7 @@ Indicadores de código v1 que NO debe vivir en v2:
 - Clases con scanlines, glow, neon
 - 7 botones (en v1) — en v2 son 4
 
-## Estructura del repo (actual · v11.6.0)
+## Estructura del repo (actual · v11.8.0)
 
 ```
 /
@@ -165,7 +169,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.6.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.8.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 

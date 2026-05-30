@@ -34,9 +34,8 @@
    ─────────────────────────────────────────────────────────────────── */
 :root{
   --hud-h: 60px;                           /* alto del HUD superior */
-  --ds-cart-w: 400px;                      /* ancho sidebar carrito (desktop) */
-  --ds-cart-peek: 80px;                    /* v11 · alto del bottom-bar full-width (todos los viewports) */
   --ds-tap: 44px;                          /* touch target mínimo */
+  /* v11.8 · cart bottom-bar eliminado · tokens --ds-cart-w y --ds-cart-peek removidos */
 
   /* Títulos/sub fluidos mobile→desktop (capa propia · VAULT no tiene
      un paso intermedio para títulos de wizard) · v8.5.0 premium */
@@ -241,27 +240,15 @@ body.is-booting{ overflow:hidden; }
 .quiz-layout{ width:100%; }
 .quiz-main{
   width:100%; max-width:1280px; margin:0 auto;
-  padding:var(--sp-4) var(--sp-3) calc(var(--ds-cart-peek) + var(--sp-5));
+  padding:var(--sp-4) var(--sp-3) var(--sp-6);
 }
-.rk-grid{ display:block; }
-.rk-left{ width:100%; min-width:0; }
+/* v11.8 · .rk-grid y .rk-left obsoletos · wizard inyecta solo #wizard directo */
 
-.rk-right#cart{
-  position:fixed; left:0; right:0; bottom:0; z-index:var(--z-nav);
-  max-height:var(--ds-cart-peek);
-  background:var(--bg-paper); border-top:1px solid var(--bg-line);
-  overflow:hidden;
-  transition:max-height var(--dur-reg) var(--ease-out-expo);
-}
-.rk-right#cart.is-expanded{ max-height:88vh; overflow-y:auto; }
-.rk-right#cart.cart-pulse{ animation:cartPulse 600ms var(--ease-out-quart); }
-@keyframes cartPulse{
-  0%,100%{ border-top-color:var(--bg-line); }
-  35%    { border-top-color:var(--accent); }
+35%    { border-top-color:var(--accent); }
 }
 
 .legal-strip{
-  padding:var(--sp-5) var(--sp-3) calc(var(--ds-cart-peek) + var(--sp-4));
+  padding:var(--sp-5) var(--sp-3) var(--sp-6);
   border-top:1px solid var(--bg-line);
 }
 .legal-strip .right{
@@ -274,7 +261,7 @@ body.is-booting{ overflow:hidden; }
    § 07 · TIPOGRAFÍA DE PANTALLA (tokenizada · fluida)
    ─────────────────────────────────────────────────────────────────── */
 .eyebrow,.rk-folio,.rk-card-eyebrow,
-.rk-cart-eyebrow,.rk-cart-count,.info-modal-eyebrow,.menu-label{
+.info-modal-eyebrow,.menu-label{
   font-family:var(--font-mono);
   font-size:var(--fs-nano);
   letter-spacing:var(--ls-mono);
@@ -793,147 +780,7 @@ body.is-handover .result-screen{ animation:none !important; }
 .rk-aux{ padding:0; background:none; border:none; }
 .rk-aux-wa{ width:100%; }
 
-/* ───────────────────────────────────────────────────────────────────
-   § 17 · CARRITO (bottom-sheet móvil · sidebar desktop)
-   ─────────────────────────────────────────────────────────────────── */
-.rk-cart{ display:flex; flex-direction:column; height:100%; }
-.rk-cart-header{
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);
-  min-height:var(--ds-cart-peek); padding:0 var(--sp-4); flex:none;
-  cursor:pointer;
-}
-.rk-cart-header::after{
-  content:'▴'; color:var(--text-muted); font-size:var(--fs-small);
-  transition:transform var(--dur-fast) var(--ease-out-quart);
-  flex:none;
-}
-.rk-right#cart.is-expanded .rk-cart-header::after{ transform:rotate(180deg); }
-.rk-cart-header-left{
-  display:flex; flex-direction:column; gap:2px; min-width:0;
-}
-.rk-cart-count{ color:var(--text-secondary); }
-
-/* v11.4 · TOTAL siempre visible en el header del cart bar (colapsado o expandido)
- * para que el usuario vea las cifras subir en tiempo real sin tener que
- * abrir el cart. Eduardo: "no se ve cuando sumas cantidades de nuevas
- * selecciones". */
-.rk-cart-header-total{
-  display:flex; flex-direction:column; align-items:flex-end; gap:2px;
-  margin-left:auto; flex:none;
-}
-.rk-cart-header-total-label{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase;
-  color:var(--text-muted);
-}
-.rk-cart-header-total-amount{
-  font-family:var(--font-mono); font-size:var(--fs-base);
-  font-weight:var(--fw-medium); color:var(--accent);
-  white-space:nowrap;
-}
-.rk-cart-header-total-amount small{
-  font-size:var(--fs-pico); color:var(--text-muted);
-  margin-left:2px;
-}
-.rk-cart-header-total-amount.flash-up{
-  animation: flashUp 380ms var(--ease-out-quart);
-}
-.rk-cart-header-total-amount.flash-down{
-  animation: flashDown 380ms var(--ease-out-quart);
-}
-
-/* v11.6 · CTA visible cuando el cart está vacío · en lugar del em dash
- * "TOTAL · — MXN" (que era casi invisible). Invita a empezar. */
-.rk-cart-header-empty{
-  flex-direction:row; align-items:center;
-}
-.rk-cart-header-empty-cta{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase;
-  color:var(--accent-mint); white-space:nowrap;
-}
-
-.rk-cart-empty{
-  display:flex; flex-direction:column; align-items:center; text-align:center;
-  gap:var(--sp-2); padding:var(--sp-6) var(--sp-4);
-}
-.rk-cart-empty-icon{ color:var(--text-muted); }
-.rk-cart-empty-icon svg{ width:32px; height:32px; }
-.rk-cart-empty-title{ font-weight:var(--fw-medium); color:var(--text-primary); }
-.rk-cart-empty-sub{ font-size:var(--fs-small); color:var(--text-secondary); }
-
-.rk-cart-items{
-  display:flex; flex-direction:column;
-  padding:0 var(--sp-4); overflow-y:auto;
-}
-.rk-cart-item{
-  display:flex; align-items:flex-start; gap:var(--sp-2);
-  padding:var(--sp-3) 0; border-bottom:1px solid var(--bg-line);
-}
-.rk-cart-item:last-child{ border-bottom:none; }
-.rk-cart-item-icon{ display:inline-flex; color:var(--text-secondary); flex:none; }
-.rk-cart-item-icon svg{ width:18px; height:18px; }
-.rk-cart-item-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
-.rk-cart-item-label{ font-size:var(--fs-small); font-weight:var(--fw-medium); color:var(--text-primary); }
-.rk-cart-item-config{ font-size:var(--fs-micro); color:var(--text-muted); }
-.rk-cart-item-price{ font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-primary); }
-.rk-cart-item-actions{ display:flex; gap:4px; flex:none; }
-.rk-cart-edit,.rk-cart-remove{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:30px; height:30px; color:var(--text-muted); border-radius:var(--radius-input);
-}
-.rk-cart-edit:hover,.rk-cart-remove:hover{ color:var(--text-primary); background:var(--bg); }
-.rk-cart-edit svg{ width:15px; height:15px; }
-.rk-cart-item-building{ opacity:.85; }
-.rk-cart-building-tag{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
-}
-
-.rk-cart-toggles{ padding:var(--sp-3) var(--sp-4); border-top:1px solid var(--bg-line); display:flex; flex-direction:column; gap:var(--sp-3); }
-.rk-cart-toggle-label{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-muted);
-}
-.rk-cart-toggle{ display:flex; flex-direction:column; gap:var(--sp-1); }
-.rk-cart-toggle > label{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase; color:var(--text-secondary);
-}
-.rk-pill-group{ display:flex; gap:var(--sp-1); flex-wrap:wrap; }
-.rk-pill{
-  flex:1; min-width:max-content;
-  padding:var(--sp-2); font-size:var(--fs-micro); text-align:center;
-  color:var(--text-secondary);
-  border:1px solid var(--bg-line); border-radius:var(--radius-input);
-  transition:border-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart);
-}
-.rk-pill:hover{ border-color:var(--text-muted); color:var(--text-primary); }
-.rk-pill small{ display:block; font-family:var(--font-mono); font-size:var(--fs-pico); opacity:.7; }
-.rk-pill.is-active{                                          /* (c) verde estado */
-  color:var(--accent); border-color:var(--accent); background:var(--accent-soft);
-}
-
-.rk-cart-totals{ padding:var(--sp-3) var(--sp-4); border-top:1px solid var(--bg-line); display:flex; flex-direction:column; gap:var(--sp-1); }
-.rk-cart-total-line{
-  display:flex; justify-content:space-between; gap:var(--sp-3);
-  font-size:var(--fs-small); color:var(--text-secondary);
-}
-.rk-cart-total-line span:last-child{ font-family:var(--font-mono); color:var(--text-primary); }
-.rk-cart-total-final{
-  margin-top:var(--sp-1); padding-top:var(--sp-2); border-top:1px solid var(--bg-line);
-  font-family:var(--font-display); font-size:var(--fs-card-title); font-weight:var(--fw-medium);
-}
-.rk-cart-total-final span{ color:var(--text-primary); }
-.rk-cart-total-final span:last-child{ color:var(--accent); }   /* (b) TOTAL verde */
-.rk-cart-total-final small{ font-family:var(--font-mono); font-size:var(--fs-pico); color:var(--text-muted); }
-.rk-cart-building-note{ color:var(--text-muted); }
-.rk-cart-building-note span:last-child{ color:var(--text-secondary); }
-
-.rk-cart-ctas{ padding:var(--sp-4); display:flex; flex-direction:column; gap:var(--sp-2); }
-.rk-cart-pay{ width:100%; }
-.rk-cart-pay-note{ font-size:var(--fs-pico); color:var(--text-muted); text-align:center; line-height:var(--lh-body); }
-.rk-cart-clear{ width:100%; }
+/* v11.8 · §17 CARRITO eliminado · cart bottom-bar removido del cotizador */
 
 /* ───────────────────────────────────────────────────────────────────
    § 18 · MODAL DE INFO
@@ -966,26 +813,13 @@ body.is-handover .result-screen{ animation:none !important; }
 .info-modal-subs li strong{ color:var(--text-primary); }
 .info-modal-cta{ width:100%; margin-top:var(--sp-2); }
 
-/* ───────────────────────────────────────────────────────────────────
-   § 19 · ANIMACIÓN "VUELA AL CARRITO"
-   ─────────────────────────────────────────────────────────────────── */
-.fly-to-cart{
-  position:fixed; z-index:var(--z-cursor);
-  display:inline-flex; align-items:center; gap:var(--sp-1);
-  padding:var(--sp-2) var(--sp-3);
-  background:var(--bg-paper); border:1px solid var(--accent); border-radius:var(--radius-btn);
-  font-size:var(--fs-small); color:var(--text-primary); pointer-events:none;
-  transition:transform 580ms var(--ease-out-expo), opacity 580ms var(--ease-out-quart);
-}
-.fly-icon{ display:inline-flex; color:var(--accent); }
-.fly-icon svg{ width:16px; height:16px; }
-.fly-label{ white-space:nowrap; max-width:160px; overflow:hidden; text-overflow:ellipsis; }
+/* v11.8 · §19 FLY-TO-CART eliminado · sin destino cart bar */
 
 /* ───────────────────────────────────────────────────────────────────
    § 20 · TABLET ≥768px
    ─────────────────────────────────────────────────────────────────── */
 @media (min-width:768px){
-  .quiz-main{ padding:var(--sp-5) var(--sp-5) calc(var(--ds-cart-peek) + var(--sp-6)); }
+  .quiz-main{ padding:var(--sp-5) var(--sp-5) var(--sp-6); }
   /* v11.6 · tablet 2 columnas · escala progresiva mobile (1) → tablet (2) → desktop (3) */
   .mega-grid,.service-grid,.sf-grid,.type-grid{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
   .bp-grid,.rk-project-meta{ grid-template-columns:repeat(2,1fr); gap:var(--sp-4); }
@@ -1011,28 +845,11 @@ body.is-handover .result-screen{ animation:none !important; }
 
   .quiz-main{
     max-width:1440px;
-    padding:var(--sp-6) var(--sp-6) calc(var(--ds-cart-peek) + var(--sp-6));
+    padding:var(--sp-6) var(--sp-6) var(--sp-6);
     min-height:calc(100vh - var(--hud-h));
     display:flex;
     flex-direction:column;
   }
-  /* v11.0 · rk-grid sigue siendo 1-col (no sidebar) */
-  .rk-grid{ display:block; flex:1; min-height:0; }
-  .rk-left{ width:100%; min-width:0; }
-
-  /* Cart sigue siendo fixed bottom · ahora con padding más cómodo en desktop */
-  .rk-right#cart{
-    position:fixed; left:0; right:0; bottom:0; z-index:var(--z-nav);
-    max-height:var(--ds-cart-peek);
-    background:var(--bg-paper); border-top:1px solid var(--bg-line);
-    overflow:hidden;
-    transition:max-height var(--dur-reg) var(--ease-out-expo);
-  }
-  .rk-right#cart.is-expanded{ max-height:88vh; overflow-y:auto; }
-
-  /* Header del cart bottom-bar · siempre clickable para expand/collapse */
-  .rk-cart-header{ cursor:pointer; padding:var(--sp-3) var(--sp-5); }
-  .rk-cart-items{ max-height:50vh; }
 
   .legal-strip{ padding:var(--sp-6); }
 
@@ -1092,7 +909,6 @@ body.is-handover .result-screen{ animation:none !important; }
     transition-duration:.01ms !important; scroll-behavior:auto !important;
   }
   .ambient-dots .dot{ animation:none; }
-  .fly-to-cart{ display:none; }
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1114,7 +930,7 @@ body.is-handover .result-screen{ animation:none !important; }
    ─────────────────────────────────────────────────────────────────── */
 @media print{
   .hud,.hud-mobile-menu,.ambient-dots,.ambient-scan,.progress-rail,
-  .legal-strip,.rk-right#cart,.wizard-actions,.screen-actions,.rk-aux,.boot-loader{ display:none !important; }
+  .legal-strip,.wizard-actions,.screen-actions,.rk-aux,.boot-loader{ display:none !important; }
   body{ background:#fff; color:#000; }
   .quiz-main{ padding:0; max-width:none; }
   .rk-card{ border:1px solid #ccc; background:#fff; break-inside:avoid; }
@@ -1256,26 +1072,14 @@ body.is-handover .result-screen{ animation:none !important; }
 }
 .sf-confirm-tipo strong{ color:var(--text-primary); }
 
-/* ── Cart item · tipo + add-ons inline sub-líneas (v9) ── */
-.rk-cart-item-tipo{
-  font-family:var(--font-mono); font-size:var(--fs-pico);
-  letter-spacing:var(--ls-mono); text-transform:uppercase;
-  color:var(--accent-mint); margin-top:2px;
-}
-.rk-cart-item-addons{
-  display:flex; flex-direction:column; gap:2px;
-  margin:var(--sp-2) 0 0; padding:0; list-style:none;
-  font-size:var(--fs-micro); color:var(--text-secondary);
-}
-.rk-cart-item-addon small{ color:var(--text-muted); margin-left:var(--sp-1); }
 
 /* ───────────────────────────────────────────────────────────────────
    § 32 · v11.0 · Flash visual al subir/bajar el total del cart
    ─────────────────────────────────────────────────────────────────── */
-.rk-cart-total-final.flash-up{
+.rk-total-final.flash-up, .rk-payment-pay.flash-up{
   animation: flashUp 380ms var(--ease-out-quart);
 }
-.rk-cart-total-final.flash-down{
+.rk-total-final.flash-down, .rk-payment-pay.flash-down{
   animation: flashDown 380ms var(--ease-out-quart);
 }
 @keyframes flashUp{
@@ -1300,21 +1104,31 @@ body.is-handover .result-screen{ animation:none !important; }
 .sf-q-icon svg{ width:20px; height:20px; }
 
 /* ───────────────────────────────────────────────────────────────────
-   § 31 · v10.1 · Cart payment plan + código descuento (cuando isResultado)
+   § 31 · v11.8 · Payment plan INLINE en #/resultado (era cart panel v10.1)
    - 5 opciones de pago como radio-cards (contado / 3 / 6 / 9 / 12 meses)
    - input de código de descuento (demo IBISNE40 = -40%)
+   - CTA principal PayPal/WhatsApp inline (sin sidebar)
    ─────────────────────────────────────────────────────────────────── */
-.rk-cart-payment-plan{
-  padding:var(--sp-3) var(--sp-4);
-  border-top:1px solid var(--bg-line);
+.rk-payment-inline{
   display:flex; flex-direction:column; gap:var(--sp-3);
 }
-.rk-cart-payment-label{
+.rk-payment-cta{
+  display:flex; flex-direction:column; gap:var(--sp-2);
+  margin-top:var(--sp-3);
+}
+.rk-payment-pay{
+  width:100%; min-height:48px; font-size:var(--fs-base);
+}
+.rk-payment-pay-note{
+  font-size:var(--fs-micro); color:var(--text-muted);
+  text-align:center; line-height:var(--lh-body);
+}
+.rk-payment-inline-label{
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase;
   color:var(--text-muted);
 }
-.rk-cart-payment-options{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.rk-payment-plan-options{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .payment-opt{
   display:flex; align-items:center; gap:var(--sp-2);
   padding:var(--sp-2) var(--sp-3);
@@ -1352,20 +1166,20 @@ body.is-handover .result-screen{ animation:none !important; }
 }
 .payment-opt.is-active .payment-opt-amount{ color:var(--accent); }
 
-.rk-cart-discount{
+.rk-payment-discount{
   display:flex; gap:var(--sp-2); align-items:center;
   margin-top:var(--sp-2);
 }
-.rk-cart-discount-input{
+.rk-payment-discount-input{
   flex:1; height:36px; padding:0 var(--sp-3);
   background:var(--bg); border:1px solid var(--bg-line); border-radius:var(--radius-input);
   color:var(--text-primary);
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase;
 }
-.rk-cart-discount-input:focus{ outline:none; border-color:var(--accent-mint); }
-.rk-cart-discount-input::placeholder{ color:var(--text-muted); }
-.rk-cart-discount-apply{
+.rk-payment-discount-input:focus{ outline:none; border-color:var(--accent-mint); }
+.rk-payment-discount-input::placeholder{ color:var(--text-muted); }
+.rk-payment-discount-apply{
   height:36px; padding:0 var(--sp-3);
   background:transparent; border:1px solid var(--bg-line); border-radius:var(--radius-input);
   color:var(--text-primary);
@@ -1374,8 +1188,8 @@ body.is-handover .result-screen{ animation:none !important; }
   cursor:pointer;
   transition:border-color var(--dur-fast) var(--ease-out-quart);
 }
-.rk-cart-discount-apply:hover{ border-color:var(--text-secondary); }
-.rk-cart-discount-success{
+.rk-payment-discount-apply:hover{ border-color:var(--text-secondary); }
+.rk-payment-discount-success{
   margin-top:var(--sp-2);
   font-family:var(--font-mono); font-size:var(--fs-pico);
   letter-spacing:var(--ls-mono); text-transform:uppercase;
