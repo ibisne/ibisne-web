@@ -1417,6 +1417,120 @@
     </div>
   </section>
 
+  <!-- ─── v12 · COMPONENTES NUEVOS ───────────────────────────────── -->
+
+  <section id="toggle-switch" class="section kit-section" data-bg="base">
+    <div class="container">
+      <span class="section-num">§29</span>
+      <span class="eyebrow">Toggle switch (iOS)</span>
+      <h2 class="t-h2">Switch on/off</h2>
+      <p class="t-body" style="max-width: 60ch; color: var(--text-secondary);">
+        Variante de toggle binaria con track + thumb. Para activaciones tipo
+        powerup, dark/light, opt-in. Usar <code>.pill</code> (sección §24)
+        cuando hay 2 valores con texto (ES/EN).
+      </p>
+      <div style="display: flex; flex-direction: column; gap: var(--sp-4); margin-top: var(--sp-5); max-width: 320px;">
+        <label class="toggle-switch">
+          <input type="checkbox" class="toggle-switch-input">
+          <span class="toggle-switch-track"></span>
+          <span class="toggle-switch-label">Animaciones premium</span>
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" class="toggle-switch-input" checked>
+          <span class="toggle-switch-track"></span>
+          <span class="toggle-switch-label">Multi-idioma (activo)</span>
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" class="toggle-switch-input" disabled>
+          <span class="toggle-switch-track"></span>
+          <span class="toggle-switch-label">Multi-moneda (disabled)</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section id="search-field" class="section kit-section bg-paper" data-bg="paper">
+    <div class="container">
+      <span class="section-num">§30</span>
+      <span class="eyebrow">Search field</span>
+      <h2 class="t-h2">Búsqueda inline</h2>
+      <p class="t-body" style="max-width: 60ch; color: var(--text-secondary);">
+        Input con icono SVG a la derecha. Variante de <code>.field</code>
+        sin label flotante porque vive en headers/topbars.
+      </p>
+      <div style="margin-top: var(--sp-5); max-width: 360px;">
+        <div class="search-field">
+          <input type="search" class="search-field-input" placeholder="Buscar servicio, cliente, FAQ…">
+          <button class="search-field-icon" aria-label="Buscar" type="button">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="modal" class="section kit-section" data-bg="base">
+    <div class="container">
+      <span class="section-num">§31</span>
+      <span class="eyebrow">Modal dialog</span>
+      <h2 class="t-h2">Modal centrado</h2>
+      <p class="t-body" style="max-width: 60ch; color: var(--text-secondary);">
+        Overlay full-screen con backdrop blur + card centrada. Para "Hablar
+        con asesor", confirmaciones, info detallada. ESC cierra · click
+        backdrop cierra · focus trap mientras abierto.
+      </p>
+      <div style="margin-top: var(--sp-5);">
+        <button class="btn btn-line" data-modal-open="dialog-demo">
+          <span class="btn-label" data-text="Abrir modal"><span>Abrir modal</span></span>
+        </button>
+      </div>
+
+      <div class="modal-dialog" id="dialog-demo" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="dialog-demo-title">
+        <div class="modal-dialog-panel">
+          <button class="modal-dialog-close" aria-label="Cerrar" type="button">×</button>
+          <div class="modal-dialog-eyebrow">— HABLA CON UN HUNTER</div>
+          <h3 class="modal-dialog-title" id="dialog-demo-title">¿Con quién quieres hablar?</h3>
+          <div class="modal-dialog-body">
+            <p>Tu hunter responde en menos de 1 hora hábil.</p>
+            <ul style="margin-top: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); list-style: none; padding: 0;">
+              <li><strong>Eduardo</strong> · proyectos@ibisne.com · <a href="tel:+523329575274" class="link">+52 33 2957 5274</a></li>
+              <li><strong>Willy</strong> · willy@ibisne.com · tel pendiente</li>
+              <li><strong>Lizette</strong> · lizette@ibisne.com · tel pendiente</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tabs" class="section kit-section bg-paper" data-bg="paper">
+    <div class="container">
+      <span class="section-num">§32</span>
+      <span class="eyebrow">Tabs</span>
+      <h2 class="t-h2">Segmented panels</h2>
+      <p class="t-body" style="max-width: 60ch; color: var(--text-secondary);">
+        Triggers inline con underline mint en activo. Cambia panel sin
+        recargar. Para alternar vistas dentro de una página.
+      </p>
+      <div class="tabs" style="margin-top: var(--sp-5);">
+        <div class="tabs-list" role="tablist" aria-label="Demo tabs">
+          <button class="tab-trigger is-active" role="tab" aria-controls="demo-tab-1" aria-selected="true" type="button">CRM</button>
+          <button class="tab-trigger" role="tab" aria-controls="demo-tab-2" aria-selected="false" type="button">ERP</button>
+          <button class="tab-trigger" role="tab" aria-controls="demo-tab-3" aria-selected="false" type="button">SaaS</button>
+        </div>
+        <div class="tab-panel is-active" id="demo-tab-1" role="tabpanel">
+          <p class="t-body">Panel CRM · gestión de clientes y pipeline de ventas.</p>
+        </div>
+        <div class="tab-panel" id="demo-tab-2" role="tabpanel" hidden>
+          <p class="t-body">Panel ERP · operación, inventarios, finanzas integradas.</p>
+        </div>
+        <div class="tab-panel" id="demo-tab-3" role="tabpanel" hidden>
+          <p class="t-body">Panel SaaS · plataforma multi-tenant a la medida.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script src="motion.js?v=3.1.0"></script>
