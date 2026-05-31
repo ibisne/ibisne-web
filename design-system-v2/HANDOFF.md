@@ -1,265 +1,265 @@
 # VAULT · iBisne Design System — Handoff doc
 
-> **VAULT (v2) es el sistema de diseño OFICIAL de iBisne.**
-> El otro sistema (`/design-system/` "Operator Grid" v1) es legacy y queda solo en `pages/index.html`. Todo nuevo trabajo de UI debe consumir VAULT.
+> **VAULT (v3 · Apple-like) es el sistema de diseño OFICIAL de iBisne.**
+> Vive en `/design-system-v2/`. El "v2" del path es histórico; el sistema interno está en **v13.2** alineado con la versión del sitio.
 
-Si abres un chat nuevo para iterar este sistema, lee este archivo completo antes de tocar código. No infieras nada del v1; los dos sistemas son intencionalmente antitéticos.
+Si abres un chat nuevo para iterar este sistema, lee este archivo completo antes de tocar código. **No infieras nada del v2 dark editorial original** — ese fue reemplazado por v13 Apple-like en 2026-05.
 
-Versión actual: **v2.3.6** · Última iteración real: la mega-card del nav desktop con padding 24/22px y min-height 180px.
-
----
-
-## 1. Contexto de proyecto y de usuario
-
-- **Empresa**: iBisne — holding LATAM con **4 verticales operativas** (no es un fondo VC tradicional). Capital + ejecución, mentalidad operadora, base en Guadalajara.
-- **Usuario**: Eduardo Carriola, CEO. Español mexicano directo. Sin corporativismo. Le molestan los rodeos. Cuando dice "no funciona" o "se ve feo" tiene razón el 99% del tiempo — el bug es real, no perceptual.
-- **Las 4 verticales** (sitemap canónico, no inventar):
-  1. **Commerce Growth Partner** — rev share 12 meses, sin fees, sin equity dilutivo
-  2. **Smart Capital** — vehículo de inversión 0% fee, tickets $25K · $100K · $250K USD
-  3. **Emergente** — marketplace anti-monopolio, comisión regresiva 1–30%, pre-launch
-  4. **Venture Lab** — idea-stage builder, equity 15–30% + capital $50–200K USD
-- **Sitemap real del sitio** (vive ya construido en `/pages/index.html` v1, debe replicarse en v2 cuando se construyan páginas):
-  `Home · Verticales · Portafolio · Nosotros · Blog · Contacto`
-  No inventar otros (Manifiesto, Tesis, Equipo, Notas — esos NO son del sitio real, son nombres del UI Kit como demos).
+**Versión actual: v13.2** (alineada con sitio · ver `?v=3.2.0` en `<link>` y `<script>` del UI Kit).
 
 ---
 
-## 2. Filosofía VAULT
+## 1. Contexto
 
-**Antítesis** de Operator Grid v1 (cyberpunk-tech denso, cyan/violet, scanlines, glow). VAULT es **editorial, escaso, premium** — socio en penthouse, no operador en trinchera.
+- **Empresa**: iBisne — holding LATAM con vocación operativa (no fondo VC tradicional). Capital + ejecución.
+- **Sitio actual (v12)**: multipágina con categorías web/apps/shopify/software/clientes/cotizador/contacto. La página `webs.html` es el primer slice production-ready; el resto se construye sobre el mismo VAULT.
+- **Cotizador (`quiz.html`)** vive aislado en `assets/quiz/*` y consume tokens VAULT pero tiene una capa propia mínima. NO se toca al iterar el design system.
+- **Usuario**: Eduardo Carriola, CEO. Español mexicano directo. Cuando dice "se ve feo" o "no funciona" tiene razón el 99% del tiempo — diagnosticar primero cache/specificity, después percepción.
+
+---
+
+## 2. Filosofía v13.2
+
+**Apple-like, light-first, casi monocromático.** El sitio debe sentirse "producto SaaS premium", no "terminal cyberpunk" (que era v2) ni "panel admin" (que era v1).
 
 ### Reglas duras (no negociables)
 
-1. **Dark only.** Hasta nuevo aviso.
-2. **Hairlines 1px solamente.** Nada de bordes gruesos, nada de box-shadows decorativos, nada de gradientes (excepción justificada: `.scroll-indicator .line` linear-gradient porque comunica fade del tick, no decoración).
-3. **Tipografía masiva neo-grotesk hace el trabajo.** Inter Tight (Google Fonts) + JetBrains Mono. Söhne queda como aspiracional cuando exista licencia (Klim Type Foundry).
-4. **Espacio negativo es la decoración.** Padding seccional 160px desktop / 80px mobile. Escala 8px estricta.
-5. **Sin emojis. Sin iconos de librería externa** (Lucide, Heroicons, FontAwesome, Material). Solo el set propio en `icons-reference.html` (16 iconos stroke 1px `currentColor`).
-6. **Sin scale/magnet/jiggle en buttons.** Hover sobrio (split-flap label + cambio de color/border).
-7. **Cero parallax decorativo en imágenes.** La tipografía y los fondos cargan el ritmo.
-8. **Cursor blob obligatorio** (vive en `motion.js`, desactivado en `pointer: coarse`).
-9. **Imágenes en `grayscale(1)` por default** → color en hover. Placeholders editoriales: cuadros sólidos `#14191F` con label monospace `[ FOTO · 16:9 · OFICINA CDMX ]`. Nunca generar imágenes random.
+1. **Light por default.** `[data-theme="dark"]` existe como override opcional pero la experiencia canónica del producto es light Apple (`#FFFFFF` fondo, `#1D1D1F` texto). El UI Kit incluye toggle Light/Dark para previsualizar ambos.
+2. **Paleta monocromática + 2 acentos limitados:**
+   - Negro `#1D1D1F` + blanco `#FFFFFF` + grises Apple (`#F5F5F7`, `#E5E5EA`, `#86868B`) cubren el 90% del sistema.
+   - **Azul Apple `#0071E3`** — exclusivo para focus visible, hover de links, CTA de plan recomendado, toggles iOS-style activos. Ningún uso decorativo.
+   - **Rojo `#E5484D`** — exclusivo para errores, status indicators críticos.
+   - **Cero verde.** Cero phosphor. Cero mint. Cualquier `--accent-mint` que sobreviva en código es alias-legacy a gris `#86868B` por compatibilidad.
+3. **Hairlines 1px solamente.** Cero box-shadows decorativos. Cero glow. Cero scanlines. Cero gradientes (excepción justificada única: `.scroll-indicator .line` que comunica fade del tick).
+4. **Tipografía Inter Tight sentence case.** Mono uppercase (JetBrains Mono) está RESERVADO a numéricos (`.metric .num .unit`, `.sc-num`, `.h-panel-num`, `.h-progress-num`, `.scroll-indicator`, `.editorial-card .ec-num`, `.tag`, `.placeholder`) + la utility `.t-mono` cuando se invoca explícitamente. El resto del sistema usa Inter Tight con tracking apretado `-0.005em`.
+5. **Sin emojis** en UI a menos que Eduardo lo pida explícito.
+6. **Sin iconos de librerías externas** (Lucide, Heroicons, FontAwesome, Material). Solo el set propio en `icons-reference.html` + `assets/quiz/icons.js`.
+7. **4 botones nada más**: `.btn-primary`, `.btn-line`, `.btn-ghost`, `.btn-accent` + modificador `.btn-sm` + estados (`[disabled]`, `.is-loading`, con icon `.btn-icon`). El componente pricing extiende con `.btn-dark`, `.btn-blue`, `.btn-ghost-light` que son variantes de mismo skeleton (botones Apple negro/azul/línea light). No crear más sin defenderlo.
+8. **Sin animaciones decorativas.** Si una animación no comunica un estado, dato o feedback, no va. El cursor custom blob, el grain shuffler, el scroll-stack editorial y el horizontal verticales fueron eliminados en v13.2 (motion.js de 717 → ~460 líneas).
+9. **Mobile-first compactness.** Las cards no superan altura cómoda en móvil; las listas usan interlineado 1.35 (no editorial 1.6); el padding seccional baja a `var(--sp-6)` en `≤767px` desde `var(--sp-9)` desktop.
+10. **Markers de sección**: `§ NN.NN` (numeración) y `—` (em dash). **NUNCA `//`** — eso fue del v1 Operator Grid.
 
-### Markers de sección
+### Política del color (v13.2)
 
-- `§ NN.NN` — numeración (`§ 04.5 · Building blocks`). En mono micro, color mint.
-- `—` (em dash) seguido de label — usado en eyebrows internos del overlay móvil (`— Sitemap` antes; ahora se quitaron porque eran ruido) y en numeración secundaria (`— Regla 01`).
-- **NUNCA usar `//`**. Es marker del v1 Operator Grid. Si lo ves, es bug.
+| Categoría | Donde aparece | Token |
+|---|---|---|
+| **Primario texto/borde** | Headings, body, `.btn-primary` bg, card recomendada border, banner "Más popular" | `--text-primary` (`#1D1D1F`) |
+| **Secundario texto** | Subheaders, párrafos secundarios, descripciones | `--text-secondary` (`#424245`) |
+| **Muted texto** | Eyebrows, meta, hints, placeholders | `--text-muted` (`#86868B`) |
+| **Bg subtle** | Cards tenues sobre fondo blanco (pricing cards, mantenimiento cards) | `--bg-subtle` (`#F5F5F7`) |
+| **Bg paper** | Secciones que necesitan ligero contraste vs base | `--bg-paper` |
+| **Hairline** | Líneas 1px en cards, separadores | `--bg-line` (border-color suave) |
+| **Azul Apple** | Focus visible, link hover/active, CTA recomendado bg, toggle iOS on, tab activo underline, status indicators positivos | `--accent-blue` (`#0071E3`) |
+| **Rojo Apple** | Error states, status indicators críticos | `--danger` (`#E5484D`) |
 
-### Comunicación con Eduardo
-
-- **No hablar con corporativismo.** Frases cortas.
-- **Aceptar errores rápido** y arreglarlos sin explicación elaborada cuando el bug es real (ha pasado: cache, specificity wars, padding ignorado).
-- **Antes de inventar copy o sitemap, verificar en el v1.** El v1 tiene la verdad de iBisne.
-- **Las propuestas con tradeoffs** (más accent vs menos, full-width vs inline, etc.) — exponer el tradeoff y preguntar, no decidir solo.
+**Regla de oro**: si una decoración no es texto o estructura, primero ver si se puede expresar con espacio blanco + jerarquía. El color es la última herramienta, no la primera.
 
 ---
 
-## 3. Sistema de color (3 tiers de verde)
+## 3. Sistema de color v13.2 (extracto de tokens.css)
 
 ```css
---bg-deep:    #0A0E13;   /* abismo — hero, CTA final, manifesto, mega-panel */
---bg:         #0D1117;   /* base — la mayoría */
---bg-paper:   #14191F;   /* elevado — data sections, hovers de cards */
---bg-line:    #1E242B;   /* hairlines 1px */
+/* Light · base */
+--bg:             #FFFFFF;
+--bg-subtle:      #F5F5F7;        /* gris Apple sutil · cards */
+--bg-paper:       #FAFAFA;
+--bg-deep:        #1D1D1F;        /* inverso · usado en .bg-deep secciones */
+--bg-line:        rgba(0,0,0,0.08);
+--bg-line-strong: rgba(0,0,0,0.18);
 
---text-primary:   #F2F2F2;   /* nunca #FFF puro */
---text-secondary: #8B9099;
---text-muted:     #4A5058;
+--text-primary:   #1D1D1F;        /* negro Apple, no #000 */
+--text-secondary: #424245;
+--text-muted:     #86868B;
 
---accent:       #3DFF7F;   /* PHOSPHOR (decisivo) — CTAs accent, métrica clave, blink cursor, progress active */
---accent-mint:  #AEFFC8;   /* MINT (informacional) — eyebrows, section-nums, hover de links, arrows */
---accent-glow:  rgba(61, 255, 127, 0.35);   /* atmósfera — backgrounds sutiles */
---accent-soft:  rgba(61, 255, 127, 0.08);   /* atmósfera */
+--accent:         #1D1D1F;        /* el "acento" es el negro · monocromático */
+--accent-blue:    #0071E3;        /* exclusivo: focus, links, CTA recomendado, toggle on */
+--accent-blue-hover: #0062C4;
+--accent-mint:    #86868B;        /* LEGACY alias a gris para no romper código viejo */
+
+--danger:         #E5484D;        /* errores, status críticos */
+
+/* Dark override · activo con [data-theme="dark"] */
+[data-theme="dark"] {
+  --bg:           #000000;
+  --bg-subtle:    #1C1C1E;
+  --text-primary: #F5F5F7;
+  --accent-blue:  #2997FF;        /* azul Apple dark */
+  ...
+}
 ```
-
-### Política del verde (post v2.2.7)
-
-| Tier | Donde aparece |
-|---|---|
-| **Phosphor sólido** | `.btn-accent` (nav APLICAR, CTA-final ENVIAR, CTA-block, CTA del overlay móvil), `.metric.is-key .num`, `.h-progress-line.is-active`, `.cta-input-wrap::after` (blink), nav active dot, cursor blob hover sobre buttons, `.tag.is-status.is-active` |
-| **Mint** | Todos los `.eyebrow`, todos los `.section-num`, hover de `.link`, hover del arrow en `.menu-link`/`.link-arrow`, nav-links hover y active state, mega-card hover footer, mega-eyebrow |
-| **Soft / glow** | Backgrounds atmosféricos selectos (poco usado por ahora) |
-
-**Regla de oro**: el phosphor es el "sí" decisivo. Mint es información viva. Si el componente no es decisivo NI informacional, va en muted/secondary.
 
 ---
 
-## 4. Estructura de archivos
+## 4. Tipografía v13.2
+
+| Token | Familia | Uso |
+|---|---|---|
+| `--font-display` | Inter Tight 400/500/600 | **Casi todo el sistema** — headings, body, botones, eyebrows, footer headings, tab triggers, modal eyebrows, pricing card names. Sentence case con `letter-spacing: -0.005em` por default. |
+| `--font-body` | Inter Tight | Alias para texto corrido |
+| `--font-mono` | JetBrains Mono 400/500 | **Reservado a numéricos y técnicos**: unidades de métricas, numeración seccional (`.sc-num`, `.h-panel-num`, `.h-progress-num`, `.sl-num`, `.ec-num`), `.scroll-indicator`, `.tag` general, `.placeholder` utility, y la clase explícita `.t-mono`. NADA más. |
+
+### Escala (clamps mobile→desktop)
+- `--fs-hero`: `clamp(40px, 6.5vw, 76px)` (era 220px en v2 · radicalmente reducido)
+- `--fs-h2`: `clamp(28px, 4vw, 48px)`
+- `--fs-h3`: `clamp(22px, 2.6vw, 32px)`
+- `--fs-card-title`: `clamp(17px, 1.4vw, 19px)`
+- `--fs-body`: `clamp(15px, 1.05vw, 17px)`
+- `--fs-base`: 15px (botones, inputs, copy default)
+- `--fs-small`: 13px
+- `--fs-micro`: 11px
+
+### Regla mono uppercase
+**Sólo conservar mono uppercase en los siguientes selectores** (lista exhaustiva post-v13.2):
+
+`components.css`:
+- `.t-mono` (utility class explícita)
+
+`components-extra.css`:
+- `.scroll-indicator`
+- `.metric .num .unit`
+- `.editorial-card .ec-num`
+- `.scroll-layer .sl-num`
+- `.placeholder` (helper para wireframes)
+- `.h-panel-num`
+- `.h-progress-num`
+- `.tag` (chips genéricos)
+- `.stat-callout .sc-num .unit`
+
+Si necesitas un nuevo "marker técnico" en mono uppercase, defender el caso. Por default, **Inter Tight sentence case** gana.
+
+---
+
+## 5. Estructura de archivos
 
 ```
 /design-system-v2/
-├─ tokens.css            ← color, type, spacing, motion, z-index, keyframes ambient
-├─ components.css        ← reset, grid, section, type helpers, links, BUTTONS, inputs, navbar, footer
-├─ components-extra.css  ← hero, split, metrics, editorial-card, case-tile, marquee,
-│                          scroll-stack, faq, cta-final, NAV OVERLAY mobile, tag, blockquote,
-│                          stat-callout, tier-table, note, cta-block, toggle, icon-btn,
-│                          horizontal verticales, ambient (drift/breathe), grain, page-transition
-├─ motion.css            ← reveals, cursor, page-transition overlay, grain, reduced-motion
-├─ motion.js             ← cursor (lerp+rAF), split-text reveals, scroll-stack, marquee,
-│                          FAQ, navbar scroll state, MEGA MENU, NAV MOBILE TOGGLE,
-│                          horizontal verticales, BG fade observer, page-transitions SPA-lite,
-│                          grain shuffler
-├─ icons-reference.html  ← 16 iconos minimal stroke 1px
-├─ UI Kit.html           ← style guide navegable. ÚNICO archivo de "página" en el v2 hoy.
-│                          Versión bumpeada vía `?v=X.Y.Z` en cada `<link>` y `<script>`.
-├─ README.md             ← doc del sistema
+├─ tokens.css            ← color, type, spacing, motion, z-index. v13.1 light Apple por default · dark via [data-theme="dark"]
+├─ components.css        ← reset, grid, section, type, links, BUTTONS, inputs, navbar, footer
+├─ components-extra.css  ← hero, split, metrics, editorial-card, case-tile, marquee, faq,
+│                          cta-final, NAV OVERLAY mobile, tag, blockquote, stat-callout,
+│                          tier-table, note, cta-block, toggle-switch, search-field, modal, tabs
+├─ motion.css            ← reveals, page-transition overlay, reduced-motion. v13.2 podado (sin cursor, sin grain)
+├─ motion.js             ← reveals, marquee, FAQ, navbar, mega-menu, nav-mobile, page-transitions, modal, tabs.
+│                          v13.2 podado · sin initCursor, initGrain, initScrollStack, initHorizontal (~460 lineas)
+├─ icons-reference.html  ← 16 iconos minimal stroke 1px · light Apple v13.2
+├─ UI Kit.html           ← style guide navegable con toggle Light/Dark · v13.2
+├─ README.md             ← doc breve del sistema
 └─ HANDOFF.md            ← este archivo
 ```
 
-**El UI Kit.html es el demo navegable.** No hay `index.html` v2 todavía. Cuando se construyan páginas reales (home, verticales, etc.), heredan los 4 CSS + motion.js + estructura del nav.
+### Capa del cotizador (no parte del DS)
+`assets/quiz/styles.css` — capa mínima propia del cotizador, consume tokens VAULT + define `--hud-h`, clamps de título, layout del wizard. NUNCA tocar al iterar el DS.
+
+### Capa de las páginas del sitio
+`assets/sitio/*.css` + `assets/sitio/*.js` — componentes específicos del producto (ej. pricing-table). Consumen tokens VAULT.
 
 ---
 
-## 5. Componentes ya construidos en VAULT
+## 6. Componentes ya construidos en VAULT v13.2
 
 ### Foundations
-- Color (4 bg + 3 text + 4 accent), type scale (6 niveles + mono), spacing (escala 8px), motion (3 easings + 5 durations), grid 12-col gutter 24px max-w 1440px, z-index (`--z-base` 1, `--z-sticky` 20, `--z-nav` 50, `--z-cursor` 90, `--z-overlay` 100, `--z-page-transition` 105, `--z-modal` 110).
+- Color light Apple + dark override
+- Type scale (8 niveles + mono reservado)
+- Spacing (escala 8px)
+- Motion (3 easings + 5 durations)
+- Z-index escalonado
+- Grid 12-col gutter 24px max-w 1320px (era 1440 en v2)
 
-### Core (components.css)
-- **Botones** — `.btn` base + `.btn-primary`, `.btn-line`, `.btn-ghost`, `.btn-accent` (4 variantes). Modificador `.btn-sm`. Estados: `[disabled]`, `.is-loading`. Con icon: `.btn-icon` + SVG leading o trailing.
-  - Hover `.btn-accent`: bg verde se oscurece (`color-mix(in srgb, var(--accent) 75%, black)`), texto se mantiene en bg-deep. Decisión basada en feedback iterado (no se vuelve blanco, no se "despinta").
-- **Split-flap label**: `<span class="btn-label" data-text="LABEL">LABEL</span>` con dobles pseudo (`::before` original, `::after` duplicado), invisible vía `visibility: hidden` + `overflow: hidden`. Hover desliza ambos -100%, 60ms delay en el segundo.
-- **Inputs** — `.field` con label flotante. Focus pasa la línea inferior a mint, label a mint. Resize solo vertical. `box-sizing: border-box` para no desbordar.
-- **Links** — `.link` (underline thickness 1px offset 4px, hover a mint), `.link-arrow` (mono uppercase con underline animado).
+### Buttons (4 + 3 variantes pricing)
+- `.btn-primary` (negro Apple sólido, hover opacity)
+- `.btn-line` (border + texto secondary)
+- `.btn-ghost` (sin border)
+- `.btn-accent` (= `.btn-primary` ahora, monocromático)
+- `.btn-dark`, `.btn-blue`, `.btn-ghost-light` (variantes específicas del pricing-table)
+
+### Inputs
+- `.field` con label flotante. **Focus visible en azul Apple** (no gris).
+- `.search-field` (v12 F1) con icono inline.
+- `.toggle-switch` iOS-style. **On en azul Apple** (`#0071E3`).
 
 ### Layout
-- **Navbar de 2 filas** desktop: `.nav-topbar` (36px, mono, slogan + locations + social + ES/EN toggle) + `.nav-main` (72px, logo + 6 links + theme toggle + APLICAR).
-- **Mega-menu** sobre "Verticales": panel 920px con 4 cards (sin números, sin "Ver vertical →" — solo title + tag), padding 24/22px interno, hover bg-paper y border mint. JS: hover open + click toggle + Esc/click-outside close.
-- **Nav mobile bar** (≤768px): `VAULT logo · toggle theme · hamburger/×` (un solo `.nav-toggle` con SVGs internos toggleables vía `aria-expanded`). Permanece visible encima del overlay (z-index sube cuando `body.menu-locked`).
-- **Footer** — `.footer-mark` masivo + 4 cols.
-- **Section** — padding 160/80, `.section-num.is-corner` mono mint en esquina, `.eyebrow` con line de 24px y texto mono mint.
+- `.section` padding adaptativo (160/80 era v2, ahora `--sp-9`/`--sp-6` con clamps · más compacto)
+- `.container` max-width 1320
+- `.nav` (v2 multi-row) — pendiente refactor en v12-Fase6 a header v3 unificado
+- `.footer-mark` masivo + cols
 
-### Patterns (components-extra.css)
-- `.hero` — h1 masivo + lead + actions + scroll indicator
-- `.split` (.is-flip) — 50/50 imagen+texto alternable
-- `.metrics-row` — 4 stats con `.metric.is-key` para LA métrica focal
-- `.editorial-card` — long-form numerada
-- `.case-tile` — hover mask grayscale → color
-- `.marquee` infinito 40s con pausa en hover (auto-duplicate vía JS)
-- `.scroll-stack` — sticky storytelling, **paneles full-bleed 100vw × 100vh** (rediseñado en v2.2 — antes era inset 8% como cards flotantes, Eduardo lo odió)
-- `.verticals-horizontal` — golpe de teatro sticky + scroll lateral, 4 paneles full-bleed con progress lines laterales (mint)
-- `.faq` — accordion sin chevron, línea que rota 90°
-- `.cta-final` — full-bleed con tipografía gigante + input email con cursor parpadeante
-- `.cta-block` — variante compacta para CTAs inline (1 col en mobile, button full-width)
+### Patterns activos
+- `.hero` Apple-compacto (max-width 720 hero-inner)
+- `.faq` accordion nativo `<details>/<summary>` sin chevron, línea que rota 90°
+- `.cta-final` con tipografía gigante + actions
+- `.cta-block` variante compacta inline
+- `.tier-table` comparativo + scroll horizontal mobile (en pricing-table.css hay variante `cmp` más densa)
+- `.blockquote` editorial colapsable a stack mobile
+- `.tab-trigger` con underline azul Apple en active
+- `.modal-dialog` (v12 F1)
 
-### Building blocks
-- `.tag` (con `.is-solid` y `.is-status`/`.is-active`)
-- `.toggle` (pill ES/EN, sun/moon)
-- `.blockquote` — pull quote editorial. **Mobile colapsa a stack vertical** (mark arriba, body, attr).
-- `.stat-callout` — un solo número focal grande (variante focal del metrics-row). Mobile colapsa a 1 col, unit como block debajo.
-- `.tier-table` — comparación de planes con scroll horizontal interno en mobile via `<div class="tier-table-wrap">` envolviendo la `<table>`.
-- `.note` y `.note.is-regulatory` — disclaimers tipo CNBV con border-left vertical
-- `.icon-btn` — botón cuadrado 40×40
-
-### Mobile overlay (`.nav-overlay`)
-- Full-screen, sin scroll posible (`overflow: hidden`).
-- 5 zonas: SITEMAP (6 links, sin numbers ni guiones decorativos) → CONNECT (4 social full-width altos) → CTA accent full-width → FOOT (legal inline + idioma toggle + ©).
-- **NO tiene su propio header.** El `.nav-mobile-bar` (logo + theme toggle + hamburger/×) permanece visible encima del overlay con z-index `calc(var(--z-overlay) + 1)`.
-- `body.menu-locked` bloquea scroll del fondo.
-- Cierre vía: hamburger toggle (mismo botón, ícono cambia con `aria-expanded`), Esc, click en `<a>`, click en backdrop.
-
-### Ambient motion (decoración perpetua sutil)
-- **Grain**: SVG turbulence con `feTurbulence`, `mix-blend-mode: overlay`, opacity 0.04, JS reshuffle background-position cada 200ms.
-- **Hairline drift** (`.hairline-drift`): keyframes 18s ease-in-out alternate translateY 1px. Disponible como utility, no muy usado todavía.
-- **Type breathe** (`.t-breathe`): keyframes 8s sobre el `42` del metrics is-key. letter-spacing -0.04 ↔ -0.038 + opacity 1 ↔ 0.94. El sitio "respira".
-- **Page transitions**: overlay negro con `IBISNE` mark, sube 800ms, swap `<main>`, baja 1000ms. SPA-lite intercepta `<a>` internos.
-- **Reveals**: `data-reveal="word"` o `data-reveal="char"` con stagger 40ms (override con `data-stagger`).
+### Pricing (assets/sitio/pricing-table.{css,js})
+- 3 `.pricing-card` con bg `--bg-subtle`, recomendada con border negro + banner "Más popular"
+- `.pt-seg` segmented control (Pago mes a mes · Pago en exhibición -20%)
+- `.pt-powerups-master-toggle` switch iOS-style todo-o-nada (+43% activa los 5 Powerups simultáneamente: animaciones, dark/light, multi-idioma, multi-moneda, PWA)
+- `.pt-powerups-pills` info-only que se iluminan cuando master está on
+- `.pt-compare` botón "Comparar todos los planes" + tabla `.cmp` densa colapsable
 
 ---
 
-## 6. Issues conocidos / decisiones difíciles aprendidas
+## 7. Lo que se eliminó en v13 (no resucitar)
 
-### Specificity wars
-- `.nav-links a` (specificity 0,1,1) tenía `padding: 4px 0` + `text-transform: uppercase` y heredaba a `.nav-mega-card` (que es un `<a>` adentro). Resultado: el padding generoso de la card era ignorado.
-- **Fix v2.3.5**: doble selector `.nav-links a.nav-mega-card, .nav-mega-card` + `!important` en padding/text-transform/letter-spacing/font-family.
-- **Lección**: cuando un componente vive dentro de un selector de mayor specificity, hay que ganarle el cascade. No basta con definir la regla con la clase del componente.
-
-### Cache del navegador
-- El UI Kit tiene `<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">` + `?v=X.Y.Z` en cada `<link>` y `<script>`.
-- Cada cambio de CSS/JS bumpea la versión (formato semver).
-- Si Eduardo dice "veo lo viejo" → es cache pegado del navegador. Recomendar `Ctrl+Shift+R` o ventana incógnita.
-- Localmente el preview tool mete a veces viewport raro (`window.innerWidth: 728` aunque preset sea mobile 375). Las CSS media queries reaccionan al viewport real del browser; el visual del preview es engañoso a veces.
-
-### Subagentes y modelos
-- Eduardo pide explícitamente que se delegue a Sonnet/Haiku para evitar gastar Opus innecesario. **CSS isolated tasks** (agregar building blocks, refactor de un solo archivo) son ideales para Sonnet. **HTML markup cruzado + design judgment** se queda en main.
-- Patrón: el agente principal escribe el spec del CSS exacto, lo pasa a un subagent Sonnet con la instrucción de "edit este archivo, sin búsquedas amplias". Si el subagent vuelve con "plan" en vez de ejecutar, aplicar el edit en main directamente.
-
-### Mega-menu — múltiples iteraciones
-1. v1: cards bordeadas pesadas con bg-paper → "se ve disonante con el sistema"
-2. v2: lista plana editorial → "se ve plano, sin estructura"
-3. v3: cards en grid 2x2 con números + tagline + "Ver vertical →" → "amontonado, números innecesarios"
-4. v4 (actual v2.3.6): grid 4 cols, cards `padding: 24px 22px`, `min-height: 180px`, **solo title + descripción**, sin números ni botón secundario.
-- **Lección**: en VAULT, "menos es más" no es slogan — es regla. Cuando hay duda, quitar.
-
-### Botones full-width en mobile
-- Todos los botones de **acción** (no de demo): `.hero-actions .btn`, `.cta-foot .btn`, `.cta-block .cb-actions .btn`, `.menu-cta .btn` → `width: 100%` en `≤768px`.
-- Los botones de **demo** del UI Kit (en `.demo-row`) NO se hacen full-width — son documentación de tamaño natural.
-- El nav `.btn-sm` y `.icon-btn` tampoco se hacen full-width.
+| Eliminado | Por qué |
+|---|---|
+| Verde phosphor `#3DFF7F` + mint `#AEFFC8` + glow | Eduardo decidió monocromático Apple-like; los 3 tiers de verde eran ruido cyberpunk |
+| Cursor custom blob (`initCursor` 62L JS + 78L CSS) | Decorativo, no comunica estado · performance penalty global rAF |
+| Grain SVG turbulence + reshuffle 200ms (`initGrain` 15L) | Decorativo · solo agrega ruido visual |
+| Scroll-stack editorial (`initScrollStack` 42L) | Storytelling editorial, no flujo SaaS |
+| Horizontal verticales (`initHorizontal` 58L) | Era para 4 verticales del holding v1; el sitio v12 no las usa |
+| Hairline drift + type breathe keyframes | Decorativos perpetuos · ruido sin valor |
+| Mono uppercase en `.eyebrow`, `.section-num`, `.hero-eyebrow`, `.footer-col h4`, `.case-tile .ct-tag/.ct-meta`, `.split-meta`, `.scroll-layer .sl-meta`, `.h-panel-meta`, `.blockquote .bq-attr`, `.stat-callout .sc-eyebrow`, `.tier-table thead/tbody th`, `.note-tag`, `.cb-eyebrow`, `.modal-dialog-eyebrow`, `.tab-trigger`, `.menu-eyebrow`, `.menu-legal a`, `.menu-foot-meta`, `.btn`, `.link-arrow`, `.field label`, `.nav-topbar`, `.nav-links`, `.nav-mega-eyebrow`, `.metric .label` | Hacía sentir "developer tool" en lugar de "producto SaaS". Refactoreados a Inter Tight sentence case con tracking apretado. |
 
 ---
 
-## 7. Cómo iterar
+## 8. Cómo iterar
 
 ### Servir local
-```powershell
-cd C:\Users\ibisn\OneDrive\Desktop\iBisneVC
-python -m http.server 8787
+```bash
+cd /Users/macbookair/Documents/Proyectos/ibisne-web
+python3 -m http.server 8787
 ```
 Abrir: `http://localhost:8787/design-system-v2/UI%20Kit.html`
 
 ### Ver mobile real
-DevTools (`F12`) → device toolbar (`Ctrl+Shift+M`) → iPhone SE / iPhone 12 / Pixel.
+DevTools → device toolbar → iPhone 14 Pro (393×852) / Pixel 7 (412×915).
 
-### Cuando hay queja sobre un componente específico
-1. Verificar primero si es **cache** (Ctrl+Shift+R o incógnito).
-2. Si no es cache, abrir DevTools → Computed Styles del elemento → ver qué selector está ganando.
-3. Si hay specificity war, subir specificity o usar `!important` puntual.
-4. Bumpear `?v=X.Y.Z` en `UI Kit.html` (todos los `<link>` y `<script>` lo tienen).
+### Cuando hay queja sobre un componente
+1. **Cache** (Ctrl+Shift+R o incógnito). El SW del sitio es **network-first** desde v11.3 y notifica clientes en activate, pero el UI Kit usa headers no-cache + `?v=X.Y.Z`.
+2. **Specificity**: DevTools → Computed → ver qué selector gana. Subir specificity o aplicar `!important` puntual.
+3. **Bump `?v=`** en UI Kit links cuando cambies tokens/components.
 
 ### Antes de tocar
 - Leer este HANDOFF.md
-- Leer `README.md`
-- Si es la primera vez con el repo: leer también `/CLAUDE.md` raíz (tiene contexto del v1 y reglas globales)
-- **NUNCA** mezclar tokens de v1 (`--cyan`, `--violet`) con v2 (`--accent`, `--accent-mint`)
+- Leer `README.md` (resumen del sistema)
+- Leer `/CLAUDE.md` raíz (contexto global del repo, reglas duras del proyecto)
+- **NUNCA** mezclar tokens muertos (`--cyan`, `--violet` del v1; `--accent-mint` queda solo como alias-legacy)
+
+### Workflow git/deploy
+- Branch personal `claude/<sufijo>` → PR a `main` → merge → Vercel auto-deploya a `https://www.ibisne.com`
+- **NUNCA** commitear sin autorización explícita ("dale", "adelante", "commit")
+- **NUNCA** `git add -A` o `git add .`
+- **NUNCA** push directo a `main`
+- **NUNCA** `--force` ni `--amend` salvo petición explícita
+- Co-Authored-By trailer obligatorio: `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`
 
 ---
 
-## 8. Pendientes y roadmap
+## 9. Lo que NO hacer (errores cometidos antes)
 
-### Inmediato
-- v2.3.6 funcional. Si Eduardo lanza nueva queja, iterar sobre lo que diga literalmente.
-- Verificar todas las fonts cargan (Inter Tight de Google Fonts + JetBrains Mono).
-
-### Próximas fases (cuando Eduardo lo pida)
-- Construir `pages/index-v2.html` aplicando VAULT al home real con el copy oficial (Hero LOCKED del Operator Grid: "Si funciona, es porque lo operamos…").
-- Construir `pages/verticales/*.html` — cuatro páginas de las 4 verticales.
-- Migrar `pages/index.html` (Operator Grid v1) a VAULT, o decidir si v1 queda como histórico.
-- Sustituir placeholders editoriales por fotografía dirigida real cuando exista.
-- Habilitar light theme cuando se decida (todos los tokens están preparados para `[data-theme="light"]` override).
-- Resolver licencia de Söhne (Klim Type Foundry) para reemplazar Inter Tight como `--font-display`.
-
-### Componentes no priorizados (agregar si Eduardo los pide)
-- Tabs / Breadcrumb / Pagination (para blog y portfolio internos)
-- Code block / pre (para memos técnicos)
-- Logo wall estático (alternativa al marquee)
-- Newsletter inline form
-- Modal / dialog (para deck-request, aplicaciones LP)
-
----
-
-## 9. Lo que NO hacer (errores cometidos en sesiones pasadas)
-
-- **No inventar copy/sitemap/labels.** Si no recuerdas algo de iBisne, leer el v1 (`pages/index.html`) o pedir a Eduardo.
-- **No usar `//` como markers.** Es del v1. VAULT usa `§` y `—`.
-- **No agregar gradientes, glow, scale, magnet, jiggle, parallax, blur decorativo.** Lo que sea cyberpunk-y rompe el sistema.
-- **No usar emojis.** Ni en UI ni en docs (a menos que Eduardo pida explícito).
-- **No usar iconos de librerías** (Lucide, Heroicons, Material, FA). Solo el set propio.
-- **No introducir frameworks JS.** Vanilla JS. Punto.
-- **No mezclar magnetic con VAULT** — el código legacy fue purgado en v2.2.2; no reintroducirlo.
-- **No introducir nuevos botones** sin defenderlo y removerlos del baseline. Hay 4 (`primary`, `line`, `ghost`, `accent`) + `sm` modifier + estados (disabled, loading, with icon). Cubre todo.
-- **No agregar verde fuera del sistema de 3 tiers.** Si necesitas un verde, usa `--accent`, `--accent-mint`, `--accent-glow`, o `--accent-soft`. Si necesitas un cuarto, defenderlo.
-- **No tocar `/design-system/` (v1 Operator Grid).** Ese sistema está congelado. Cualquier cambio se hace en `/design-system-v2/`.
+- **No reintroducir verde phosphor/mint** salvo que Eduardo lo pida explícitamente. Si necesitas un color para destacar, usar `--accent-blue` o `--text-primary`.
+- **No usar `text-transform: uppercase` + `var(--font-mono)`** fuera de la lista whitelistada en §4. Si lo necesitas, defender el caso.
+- **No agregar emojis** en UI ni en docs.
+- **No agregar gradientes, glow, scale, jiggle, magnet, parallax, blur decorativo, scanlines.**
+- **No introducir frameworks JS** (React/Vue/Svelte). Vanilla. Punto.
+- **No usar iconos de librerías externas.** Solo el set propio.
+- **No introducir nuevos botones** sin defenderlo. Hay 4 + 3 variantes del pricing.
+- **No tocar `quiz.html` ni `assets/quiz/*`** al iterar el DS. El cotizador vive aislado.
+- **No tocar `tokens.css`, `components.css`, `components-extra.css`, `motion.css`, `motion.js`** sin justificación. Son el contrato. Si faltan tokens o componentes, pedir a Eduardo antes de inventar.
 
 ---
 
@@ -267,11 +267,11 @@ DevTools (`F12`) → device toolbar (`Ctrl+Shift+M`) → iPhone SE / iPhone 12 /
 
 Si lees esto en un chat nuevo, los siguientes mensajes deberían:
 
-1. Confirmar al usuario que entendiste que **VAULT (v2) es el sistema oficial**.
-2. Mencionar la versión actual (`v2.3.6` en el momento de este handoff).
+1. Confirmar que entendiste que **VAULT v13.2 Apple-like es el sistema oficial**.
+2. Mencionar la versión actual (`v13.2` · `?v=3.2.0` en assets del kit).
 3. Preguntar qué quiere iterar antes de tocar código.
 4. **No pedir contexto** que ya está aquí. No re-explorar el repo si la pregunta cae bajo "lo que ya está construido".
 
-Si Eduardo dice "se ve raro" sin más contexto, pedir screenshot y elemento específico — los problemas en este sistema casi siempre son: cache pegado, specificity de CSS, o un padding/gap del nav heredándose. Diagnosticar en ese orden.
+Si Eduardo dice "se ve raro" sin más contexto, pedir screenshot y elemento específico — los problemas casi siempre son: cache pegado, specificity de CSS, o un padding heredándose.
 
-— Generado al cierre de la sesión que terminó en `v2.3.6` con la mega-card padding 24/22.
+— Generado al cierre de v13.2: completar el DS al 100% en estética Apple-like (light + cero verde + mono reservado a numéricos + motion podado).
