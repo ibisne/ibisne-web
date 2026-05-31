@@ -14,24 +14,31 @@
    ============================================================ */
 
 :root {
-  /* ─── COLOR · BASE (light-first · casi monocromático) ─────── */
-  --bg-deep:    #FAFAFA;   /* alternancia seccional / cierre */
-  --bg:         #FFFFFF;   /* base · la mayoría del sitio */
-  --bg-paper:   #FFFFFF;   /* cards · se separan por hairline, no por tono */
-  --bg-subtle:  #F5F5F4;   /* zebra de tabla, hover, wash neutro */
-  --bg-line:    #EAEAEA;   /* hairlines 1px */
-  --bg-line-strong: #D4D4D4;  /* hairline de énfasis (header tabla, card recomendada) */
+  /* ─── COLOR · BASE · v13.1 Apple-like · negro/blanco + azul CTA ──
+     Eduardo: "saca el verde, juega solo con negros y blancos, máx rojo
+     para errores, azules para CTAs específicos, lo más parecido a Apple".
+     Superficies en grises Apple (#F5F5F7) para contraste limpio sin
+     depender de bordes. CERO verde en el sistema. */
+  --bg:         #FFFFFF;   /* base · secciones blancas */
+  --bg-deep:    #F5F5F7;   /* Apple gray · secciones alternas */
+  --bg-paper:   #FFFFFF;   /* cards crisp blanco */
+  --bg-subtle:  #F5F5F7;   /* card tenue, zebra de tabla, hover */
+  --bg-line:    #E5E5E7;   /* hairlines 1px */
+  --bg-line-strong: #D2D2D7;  /* hairline de énfasis */
 
-  --text-primary:   #0A0A0A;   /* títulos, texto fuerte */
-  --text-secondary: #555555;   /* párrafos, descripciones · ~7:1 */
-  --text-muted:     #767676;   /* labels, metadata · ~4.5:1 (AA) */
+  --text-primary:   #1D1D1F;   /* Apple near-black */
+  --text-secondary: #6E6E73;   /* Apple gray texto */
+  --text-muted:     #86868B;   /* Apple muted */
 
-  /* Acento = NEGRO (CTA primario sólido) · "casi monocromático" */
-  --accent:        #0A0A0A;
-  /* Verde de marca · susurro · checks + plan recomendado SOLO */
-  --accent-mint:   #0E7C4A;   /* esmeralda profundo · premium, no neón */
-  --accent-glow:   rgba(14, 124, 74, 0.12);
-  --accent-soft:   #F0F7F3;   /* wash verde muy sutil (recomendado) */
+  /* Acento primario = NEGRO · azul SOLO en CTAs específicos · rojo errores */
+  --accent:        #1D1D1F;       /* negro · CTA primario, texto fuerte */
+  --accent-blue:   #0071E3;       /* azul Apple · CTA del plan recomendado, links */
+  --accent-blue-hover: #0062C4;
+  --danger:        #E5484D;       /* rojo · SOLO errores */
+  /* tokens legacy repuntados a neutro (componentes viejos no rompen · cero verde) */
+  --accent-mint:   #86868B;       /* (era verde) ahora gris · eyebrows/labels */
+  --accent-glow:   rgba(0, 113, 227, 0.12);
+  --accent-soft:   #F5F5F7;       /* wash neutro */
 
   --bg-scrim:  rgba(255, 255, 255, 0.7);   /* overlay sobre imágenes */
 
@@ -129,23 +136,25 @@
    de marca sube luminosidad SIN llegar a neón.
    ════════════════════════════════════════════════════════════ */
 :root[data-theme="dark"] {
-  --bg-deep:    #000000;
-  --bg:         #0A0A0A;
-  --bg-paper:   #141414;
-  --bg-subtle:  #1A1A1A;
-  --bg-line:    #262626;
-  --bg-line-strong: #383838;
+  --bg:         #000000;   /* Apple dark · negro puro */
+  --bg-deep:    #1D1D1F;   /* sección alterna */
+  --bg-paper:   #1D1D1F;   /* cards */
+  --bg-subtle:  #1D1D1F;   /* card tenue, zebra */
+  --bg-line:    #2D2D2F;
+  --bg-line-strong: #424245;
 
-  --text-primary:   #EDEDED;
-  --text-secondary: #A0A0A0;
-  --text-muted:     #707070;
+  --text-primary:   #F5F5F7;
+  --text-secondary: #A1A1A6;
+  --text-muted:     #6E6E73;
 
-  /* CTA = blanco sólido sobre negro */
-  --accent:        #FFFFFF;
-  /* Verde de marca · brillante pero controlado (no #3DFF7F neón) */
-  --accent-mint:   #3DDC84;
-  --accent-glow:   rgba(61, 220, 132, 0.20);
-  --accent-soft:   rgba(61, 220, 132, 0.10);
+  /* CTA = blanco sólido · azul Apple sube luminosidad */
+  --accent:        #F5F5F7;
+  --accent-blue:   #2997FF;       /* azul Apple dark */
+  --accent-blue-hover: #0071E3;
+  --danger:        #FF6961;
+  --accent-mint:   #6E6E73;       /* neutro */
+  --accent-glow:   rgba(41, 151, 255, 0.20);
+  --accent-soft:   #1D1D1F;
 
   --bg-scrim:  rgba(0, 0, 0, 0.7);
 }

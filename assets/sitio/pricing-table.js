@@ -1,11 +1,18 @@
 /* ===================================================================
-   assets/sitio/pricing-table.js · v12.0
+   assets/sitio/pricing-table.js · v13.1
    ===================================================================
    Render del componente Pricing Table desde IBISNE_PRECIOS_V12.
    Auto-inicializa cualquier <div data-pricing-categoria="webs">.
-   Estado: pago en exhibición (global) + powerups activos por plan.
-   Precio = base × (1 + Σ powerups activos) × (exhibición ? 0.75 : 1)
-   CTA por plan → WhatsApp al hunter con plan + precio + extras.
+
+   v13.1 (feedback Eduardo):
+   - Power-ups son GLOBALES: barra de chips al lado del toggle de pago
+     (ya no 4 toggles por card · eso alargaba las cards). Aplican a TODOS
+     los planes. Al activar un chip se rellena en negro ("brutal") y todos
+     los precios suben en vivo.
+   - Tabla comparativa detrás de botón "Comparar todos los planes" ·
+     specs técnicas · cerrada por default.
+   - Cero verde · negro/blanco/azul. Precio = base × (1+Σpowerups) ×
+     (exhibición ? 0.75 : 1).
    =================================================================== */
 (function () {
   'use strict';
@@ -16,17 +23,13 @@
     if (window.IBISNE_ICONS && id) return window.IBISNE_ICONS.get(id, 'line') || '';
     return '';
   }
-
-  // Formato MXN · sin decimales para precios redondos de planes
   function fmt(n) {
     var v = Math.round(Number(n) || 0);
     return '$' + v.toLocaleString('en-US');
   }
-
-  // Interpola un número con RAF · easeOutQuart · respeta reduced-motion
   function animateNumber(el, from, to, dur) {
     if (!el) return;
-    dur = dur || 360;
+    dur = dur || 320;
     if (from === to || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
       el.textContent = fmt(to); return;
     }
@@ -40,10 +43,10 @@
     requestAnimationFrame(step);
   }
 
-  // Precio efectivo de un plan según estado
-  function planPrice(plan, exhibicion, activePowerups, powerupsDef) {
+  // Precio efectivo · powerups GLOBALES (mismos para todos los planes)
+  function planPrice(plan, exhibicion, activeGlobal, powerupsDef) {
     var mult = 1;
-    activePowerups.forEach(function (pid) {
+    activeGlobal.forEach(function (pid) {
       var pu = powerupsDef.find(function (p) { return p.id === pid; });
       if (pu) mult += pu.addPct;
     });
@@ -61,28 +64,40 @@
     var cat = DATA[categoria];
     var powerupsDef = DATA.powerups || [];
 
-    // Estado local
-    var state = {
-      exhibicion: false,
-      powerups: {},   // { planId: Set(powerupId) }
-    };
-    cat.planes.forEach(function (p) { state.powerups[p.id] = new Set(); });
+    // Estado · powerups GLOBALES (un solo Set para todos los planes)
+    var state = { exhibicion: false, powerups: new Set() };
 
-    // ── Markup base ────────────────────────────────────────────
     var html = '';
 
-    // Toggle de pago
-    html += '<div class="pt-paytoggle">';
-    html += '  <span class="pt-paytoggle-opt is-on" data-pay="mes">Pago mes a mes</span>';
-    html += '  <label class="toggle-switch" aria-label="Cambiar a pago en exhibición">';
-    html += '    <input type="checkbox" class="toggle-switch-input" id="pt-pay-' + categoria + '">';
-    html += '    <span class="toggle-switch-track"></span>';
-    html += '  </label>';
-    html += '  <span class="pt-paytoggle-opt" data-pay="exhibicion">' + (DATA.exhibicion ? DATA.exhibicion.label : 'Pago en exhibición') +
-            '<span class="pt-paytoggle-badge">' + (DATA.exhibicion ? DATA.exhibicion.badge : 'Ahorra 25%') + '</span></span>';
+    // ── CONTROLES: toggle de pago + powerups (banda compartida) ──
+    html += '<div class="pt-controls">';
+
+    // Segmented control de pago (no switch · pestaña tipo Shopify)
+    html += '  <div class="pt-seg" role="tablist" aria-label="Forma de pago">';
+    html += '    <button class="pt-seg-opt is-on" data-pay="mes" type="button" role="tab" aria-selected="true">Pago mes a mes</button>';
+    html += '    <button class="pt-seg-opt" data-pay="exhibicion" type="button" role="tab" aria-selected="false">' +
+            (DATA.exhibicion ? DATA.exhibicion.label : 'Pago en exhibición') +
+            ' <span class="pt-seg-badge">' + (DATA.exhibicion ? DATA.exhibicion.badge : 'Ahorra 25%') + '</span></button>';
+    html += '  </div>';
+
+    // Powerups como chips (banda compartida · aplican a todos los planes)
+    if (powerupsDef.length) {
+      html += '  <div class="pt-powerups">';
+      html += '    <span class="pt-powerups-label">Powerups</span>';
+      html += '    <div class="pt-powerups-chips">';
+      powerupsDef.forEach(function (pu) {
+        html += '<button class="pt-chip" data-powerup="' + pu.id + '" type="button" aria-pressed="false">' +
+                '<span class="pt-chip-ic">' + icon(pu.icon) + '</span>' +
+                '<span class="pt-chip-name">' + pu.label + '</span>' +
+                '<span class="pt-chip-pct">+' + Math.round(pu.addPct * 100) + '%</span>' +
+                '</button>';
+      });
+      html += '    </div>';
+      html += '  </div>';
+    }
     html += '</div>';
 
-    // Grid de cards
+    // ── Grid de cards (sin powerups dentro · más cortas) ──────────
     html += '<div class="pricing-grid">';
     cat.planes.forEach(function (plan) {
       html += '<article class="pricing-card' + (plan.recomendado ? ' is-recomendado' : '') + '" data-plan="' + plan.id + '">';
@@ -101,57 +116,40 @@
       html += '<div class="pricing-card-tiempo">Entrega ' + plan.tiempo + '</div>';
 
       html += '<div class="pricing-card-cta">';
-      html += '  <a class="btn ' + (plan.recomendado ? 'btn-accent' : 'btn-line') + '" data-cta href="#">' + (plan.cta || 'Empezar') + '</a>';
+      html += '  <a class="btn ' + (plan.recomendado ? 'btn-blue' : 'btn-dark') + '" data-cta href="#">' + (plan.cta || 'Empezar') + '</a>';
       html += '</div>';
 
-      // Features
+      // Features (las de la card)
       html += '<div class="pricing-card-features">';
       (plan.features || []).forEach(function (f) {
         html += '<div class="pricing-card-feature"><span class="pricing-card-feature-check">' + icon('check') + '</span><span>' + f + '</span></div>';
       });
       html += '</div>';
 
-      // Powerups
-      if (powerupsDef.length) {
-        html += '<div class="pricing-card-powerups">';
-        html += '  <div class="pricing-card-powerups-label">— Powerups (suman al precio)</div>';
-        powerupsDef.forEach(function (pu) {
-          html += '<div class="pricing-powerup">';
-          html += '  <span class="pricing-powerup-info">';
-          html += '    <span class="pricing-powerup-icon">' + icon(pu.icon) + '</span>';
-          html += '    <span class="pricing-powerup-text"><span class="pricing-powerup-name">' + pu.label + '</span> ';
-          html += '    <span class="pricing-powerup-pct">+' + Math.round(pu.addPct * 100) + '%</span></span>';
-          html += '  </span>';
-          html += '  <label class="toggle-switch" aria-label="Activar ' + pu.label + '">';
-          html += '    <input type="checkbox" class="toggle-switch-input" data-powerup="' + pu.id + '">';
-          html += '    <span class="toggle-switch-track"></span>';
-          html += '  </label>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
-
       html += '</article>';
     });
     html += '</div>';
 
-    // Tabla comparativa
+    // ── Tabla comparativa · detrás de botón "Comparar todos los planes" ──
     if (cat.featureRows && cat.featureRows.length) {
       html += '<div class="pt-compare">';
-      html += '  <div class="pt-compare-title">— COMPARA TODOS LOS PLANES</div>';
-      html += '  <button class="pt-compare-toggle" type="button">Lista completa <span class="pt-chevron">▾</span></button>';
+      html += '  <button class="pt-compare-toggle" type="button" aria-expanded="false">';
+      html += '    <span>Comparar todos los planes</span><span class="pt-chevron">' + icon('chevron') + '</span>';
+      html += '  </button>';
       html += '  <div class="pt-compare-table-wrap"><div class="pt-compare-table-inner">';
-      html += '    <table class="tier-table"><thead><tr><th>Característica</th>';
+      html += '    <table class="cmp"><thead><tr><th class="cmp-feat">Característica</th>';
       cat.planes.forEach(function (p) {
-        html += '<th class="' + (p.recomendado ? 'is-featured' : '') + '">' + p.label + '<span class="sub">' + p.sub + '</span></th>';
+        html += '<th class="' + (p.recomendado ? 'is-featured' : '') + '">' + p.label + '</th>';
       });
       html += '</tr></thead><tbody>';
       cat.featureRows.forEach(function (row) {
-        html += '<tr><th>' + row.label + '</th>';
+        html += '<tr><th class="cmp-feat">' + row.label + '</th>';
         cat.planes.forEach(function (p) {
           var val = row.values[p.id];
-          var cls = val === '✓' ? 'check' : (val === '—' ? 'dash' : '');
-          html += '<td class="' + cls + (p.recomendado ? ' is-featured' : '') + '">' + (val || '—') + '</td>';
+          var cell = val === '✓'
+            ? '<span class="cmp-yes">' + icon('check') + '</span>'
+            : (val === '—' ? '<span class="cmp-no">—</span>' : val);
+          html += '<td class="' + (p.recomendado ? 'is-featured' : '') + '">' + (cell || '<span class="cmp-no">—</span>') + '</td>';
         });
         html += '</tr>';
       });
@@ -162,21 +160,21 @@
 
     container.innerHTML = html;
 
-    // ── Recalcular precios de todas las cards ──────────────────
+    // ── Recalcular precios ─────────────────────────────────────
     function recalc(animate) {
       cat.planes.forEach(function (plan) {
         var card = container.querySelector('.pricing-card[data-plan="' + plan.id + '"]');
         if (!card) return;
         var amountEl = card.querySelector('[data-amount]');
         var prev = parseFloat((amountEl.textContent || '0').replace(/[^0-9.]/g, '')) || plan.base;
-        var next = planPrice(plan, state.exhibicion, state.powerups[plan.id], powerupsDef);
+        var next = planPrice(plan, state.exhibicion, state.powerups, powerupsDef);
         if (animate) animateNumber(amountEl, prev, next);
         else amountEl.textContent = fmt(next);
-        // Actualizar el href del CTA con el precio actual
+
         var cta = card.querySelector('[data-cta]');
         if (cta) {
           var puNames = [];
-          state.powerups[plan.id].forEach(function (pid) {
+          state.powerups.forEach(function (pid) {
             var pu = powerupsDef.find(function (p) { return p.id === pid; });
             if (pu) puNames.push(pu.label);
           });
@@ -185,52 +183,51 @@
             (puNames.length ? 'Powerups: ' + puNames.join(', ') + '.\n' : '') +
             '¿Cómo procedemos?';
           cta.href = 'https://wa.me/' + HUNTER_WA + '?text=' + encodeURIComponent(msg);
-          cta.target = '_blank';
-          cta.rel = 'noopener';
+          cta.target = '_blank'; cta.rel = 'noopener';
         }
       });
     }
 
-    // ── Toggle de pago ─────────────────────────────────────────
-    var payInput = container.querySelector('#pt-pay-' + categoria);
-    if (payInput) {
-      payInput.addEventListener('change', function () {
-        state.exhibicion = payInput.checked;
-        container.querySelectorAll('.pt-paytoggle-opt').forEach(function (o) {
-          o.classList.toggle('is-on',
-            (o.getAttribute('data-pay') === 'exhibicion') === state.exhibicion);
+    // ── Segmented control de pago ──────────────────────────────
+    container.querySelectorAll('.pt-seg-opt').forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        var isExh = opt.getAttribute('data-pay') === 'exhibicion';
+        if (state.exhibicion === isExh) return;
+        state.exhibicion = isExh;
+        container.querySelectorAll('.pt-seg-opt').forEach(function (o) {
+          var on = (o.getAttribute('data-pay') === 'exhibicion') === isExh;
+          o.classList.toggle('is-on', on);
+          o.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         recalc(true);
       });
-    }
+    });
 
-    // ── Powerups ───────────────────────────────────────────────
-    container.querySelectorAll('.pricing-card').forEach(function (card) {
-      var planId = card.getAttribute('data-plan');
-      card.querySelectorAll('[data-powerup]').forEach(function (input) {
-        input.addEventListener('change', function () {
-          var pid = input.getAttribute('data-powerup');
-          if (input.checked) state.powerups[planId].add(pid);
-          else state.powerups[planId].delete(pid);
-          recalc(true);
-        });
+    // ── Powerups globales (chips) ──────────────────────────────
+    container.querySelectorAll('.pt-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var pid = chip.getAttribute('data-powerup');
+        var on = !chip.classList.contains('is-on');
+        chip.classList.toggle('is-on', on);
+        chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+        if (on) state.powerups.add(pid); else state.powerups.delete(pid);
+        recalc(true);
       });
     });
 
-    // ── Acordeón tabla comparativa (mobile) ────────────────────
+    // ── Botón "Comparar todos los planes" ──────────────────────
     var cmp = container.querySelector('.pt-compare');
     var cmpToggle = container.querySelector('.pt-compare-toggle');
     if (cmp && cmpToggle) {
       cmpToggle.addEventListener('click', function () {
-        cmp.classList.toggle('is-open');
+        var open = cmp.classList.toggle('is-open');
+        cmpToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     }
 
-    // Init precios (sin animar)
     recalc(false);
   }
 
-  // ── Auto-init ────────────────────────────────────────────────
   function boot() {
     document.querySelectorAll('[data-pricing-categoria]').forEach(function (el) {
       render(el, el.getAttribute('data-pricing-categoria'));
@@ -238,9 +235,7 @@
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+  } else { boot(); }
 
   window.IBISNE_PRICING_TABLE = { render: render };
 })();

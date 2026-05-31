@@ -29,17 +29,27 @@
     -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom: var(--hairline);
   }
-  .site-header-logo { height: 22px; width: auto; }
+  .site-logo {
+    font-family: var(--font-display); font-size: 20px;
+    font-weight: var(--fw-semibold); letter-spacing: -0.02em;
+    color: var(--text-primary); line-height: 1;
+  }
   .site-header-spacer { flex: 1; }
-  .site-nav { display: none; gap: var(--sp-4); align-items: center; }
+  .site-nav { display: none; gap: var(--sp-5); align-items: center; }
   .site-nav a {
-    font-family: var(--font-mono); font-size: var(--fs-micro);
-    letter-spacing: var(--ls-mono); text-transform: uppercase;
+    font-size: var(--fs-base); font-weight: var(--fw-medium);
     color: var(--text-secondary);
     transition: color var(--dur-fast) var(--ease-out-quart);
   }
   .site-nav a:hover, .site-nav a.is-active { color: var(--text-primary); }
   @media (min-width: 900px) { .site-nav { display: flex; } }
+
+  /* v13.1 · container más ancho · usar el ancho disponible (Eduardo:
+     "tienes mucho espacio a lo ancho por utilizar") */
+  .container { max-width: 1320px; }
+
+  /* Eyebrow neutro · sin verde */
+  .eyebrow { color: var(--text-muted); }
 
   /* Ventajas · grid de 3 */
   .ventajas-grid {
@@ -49,14 +59,15 @@
   @media (min-width: 768px) { .ventajas-grid { grid-template-columns: repeat(3, 1fr); } }
   .ventaja {
     padding: var(--sp-5);
-    border: var(--hairline); border-radius: var(--radius);
-    background: var(--bg-paper);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
   }
   .ventaja-icon {
     display: inline-flex; align-items: center; justify-content: center;
     width: 44px; height: 44px;
-    border: var(--hairline); border-radius: var(--radius-input);
-    color: var(--accent-mint); margin-bottom: var(--sp-3);
+    border: 1px solid var(--bg-line-strong); border-radius: var(--radius-input);
+    background: var(--bg);
+    color: var(--text-primary); margin-bottom: var(--sp-3);
   }
   .ventaja-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; }
   .ventaja h3 {
@@ -74,8 +85,8 @@
   @media (min-width: 768px) { .manten-grid { grid-template-columns: repeat(2, 1fr); } }
   .manten-card {
     padding: var(--sp-5);
-    border: var(--hairline); border-radius: var(--radius);
-    background: var(--bg-paper);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
     display: flex; flex-direction: column;
   }
   .manten-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
@@ -94,7 +105,7 @@
     display: flex; align-items: flex-start; gap: var(--sp-2);
     font-size: var(--fs-base); color: var(--text-secondary);
   }
-  .manten-feature span:first-child { color: var(--accent-mint); flex: none; }
+  .manten-feature span:first-child { color: var(--text-primary); flex: none; }
   .manten-feature svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
   /* Footer simple del slice */
@@ -125,7 +136,7 @@
 
 <!-- ── HEADER simple (Fase 6 lo reemplaza por nav 2-filas) ──────── -->
 <header class="site-header">
-  <a href="index.html"><img class="site-header-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
+  <a href="index.html"><span class="site-logo">iBisne</span></a>
   <nav class="site-nav">
     <a href="index.html">Inicio</a>
     <a href="webs.html" class="is-active">Webs</a>
@@ -135,7 +146,7 @@
     <a href="#" aria-disabled="true">Clientes</a>
   </nav>
   <span class="site-header-spacer"></span>
-  <a class="btn btn-accent" href="cotizador.html">Cotizar ahora</a>
+  <a class="btn-blue" href="cotizador.html">Cotizar ahora</a>
 </header>
 
 <main>
@@ -151,8 +162,8 @@
           Sin costos ocultos, sin mensualidades obligatorias. Tú solo eliges el plan.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-accent" href="#pricing">Ver planes ↓</a>
-          <a class="btn btn-line" href="#" aria-disabled="true">Proyectos realizados →</a>
+          <a class="btn-dark" href="#pricing">Ver planes ↓</a>
+          <a class="btn-ghost-light" href="#" aria-disabled="true">Proyectos realizados →</a>
         </div>
       </div>
     </div>
@@ -270,8 +281,8 @@
       <h2>¿Algo a<br>la medida?</h2>
       <p class="cta-final-sub">Si necesitas un desarrollo que no cabe en un plan, te armamos una cotización personalizada.</p>
       <div class="cta-foot" style="margin-top: var(--sp-6); display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap;">
-        <a class="btn btn-accent" href="cotizador.html">Arma tu plan →</a>
-        <a class="btn btn-line" href="#" aria-disabled="true">Hablar con un asesor</a>
+        <a class="btn-dark" href="cotizador.html">Arma tu plan →</a>
+        <a class="btn-ghost-light" href="#" aria-disabled="true">Hablar con un asesor</a>
       </div>
     </div>
   </section>
