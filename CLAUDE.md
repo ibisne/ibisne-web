@@ -6,7 +6,9 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v13.2.0) es multipágina** (rework v12 en progreso) con `webs.html` como primer slice production-ready (Desarrollo Web). `index.html` sigue como home + entry al cotizador; `quiz.html` es el cotizador completo (intacto desde v11.8, sigue funcional). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v13.3.0) es multipágina light Apple.** Páginas activas: `index.html` (home rediseñada v13.3 con header + hero + 4 servicios + cómo trabajamos + diferenciadores + CTA final + footer) · `webs.html` (Desarrollo Web · pricing-table completo) · `quiz.html` (cotizador, intacto desde v11.8). Las categorías Apps, Shopify, Software y Clientes aparecen en el nav y en las cards del home como "Próximamente" (deshabilitadas hasta que se construyan). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v13.3 · Home rediseñada Apple-like (coherente con webs.html).** El `index.html` legacy (hero dark centrado + 5 highlights · v11.0) fue reemplazado por una página multi-sección que aplica la misma plantilla de `webs.html`: header sticky con nav (Inicio · Webs · Apps · Shopify · Software · Clientes · CTA azul Cotizar ahora), hero compacto con "Construye lo que tu negocio merece" + 2 CTAs, sección "Lo que hacemos" con 4 cards de servicios (Webs activa, otras 3 con badge "Próximamente"), sección "Cómo trabajamos" con 4 pasos numerados, sección "Por qué iBisne" con las 5 highlights originales rediseñadas, CTA final con dos acciones (Cotizar + Hablar con asesor WhatsApp), footer alineado al ancho del contenido. Eliminadas dependencias del cotizador en el home (assets/quiz/loader, prefs, i18n, ambient, hud, clientes-data) — el home solo carga icons.js + motion.js + pwa.js. SW bumpeado a v13.3.0.
 
 **v13.2 · Design System Apple-like completado al 100%.** Rework completo del DS de dark editorial verde a **light Apple monocromático**:
 - **Color**: blanco/negro Apple (`#FFFFFF`/`#1D1D1F`) + grises (`#F5F5F7`, `#86868B`) + azul Apple `#0071E3` exclusivo (focus, links, CTA recomendado, toggle iOS on) + rojo `#E5484D` para errores. **Cero verde** (phosphor y mint eliminados · alias-legacy convertidos a `--text-muted`).
@@ -178,7 +180,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v13.2.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v13.3.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 
