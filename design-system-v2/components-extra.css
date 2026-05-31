@@ -1163,6 +1163,245 @@ body.menu-locked { overflow: hidden; }
 .icon-btn:hover { border-color: var(--text-primary); color: var(--text-primary); background: var(--bg-paper); }
 .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 
+/* ─── TOGGLE SWITCH (iOS style) — track + thumb · v12 ──────
+   Para toggles binarios on/off donde "pill" no aplica (ej. powerups en
+   pricing cards, dark/light en HUD). Estructura:
+     <label class="toggle-switch">
+       <input type="checkbox" class="toggle-switch-input">
+       <span class="toggle-switch-track"></span>
+       <span class="toggle-switch-label">Label</span>
+     </label>
+   El input se oculta visualmente pero queda focusable y accesible.
+   ────────────────────────────────────────────────────────── */
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px; height: 1px;
+  pointer-events: none;
+}
+.toggle-switch-track {
+  position: relative;
+  display: inline-block;
+  width: 44px; height: 24px;
+  background: var(--bg-paper);
+  border: var(--hairline);
+  border-radius: 999px;
+  transition: background var(--dur-fast) var(--ease-out-quart),
+              border-color var(--dur-fast) var(--ease-out-quart);
+  flex: none;
+}
+.toggle-switch-track::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: var(--text-secondary);
+  border-radius: 999px;
+  transition: transform var(--dur-fast) var(--ease-out-quart),
+              background var(--dur-fast) var(--ease-out-quart);
+}
+.toggle-switch-input:checked + .toggle-switch-track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle-switch-input:checked + .toggle-switch-track::after {
+  transform: translateX(20px);
+  background: var(--bg-deep);
+}
+.toggle-switch-input:focus-visible + .toggle-switch-track {
+  outline: 2px solid var(--accent-mint);
+  outline-offset: 3px;
+}
+.toggle-switch-label {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+}
+.toggle-switch-input:disabled ~ .toggle-switch-track,
+.toggle-switch-input:disabled ~ .toggle-switch-label { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── SEARCH FIELD — input con icono SVG a la derecha · v12 ──
+   Variante de `.field` para búsqueda. El icon se inyecta vía
+   pseudo-element o SVG. Estructura:
+     <div class="search-field">
+       <input type="search" class="search-field-input" placeholder="Buscar…">
+       <button class="search-field-icon" aria-label="Buscar">
+         <svg>...</svg>
+       </button>
+     </div>
+   ────────────────────────────────────────────────────────── */
+.search-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+}
+.search-field-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--hairline);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  padding: 10px 36px 10px 0;
+  outline: 0;
+  transition: border-color var(--dur-fast) var(--ease-out-quart);
+}
+.search-field-input::placeholder { color: var(--text-muted); }
+.search-field-input:focus { border-bottom-color: var(--accent-mint); }
+.search-field-icon {
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  background: transparent;
+  border: 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.search-field-icon:hover { color: var(--text-primary); }
+.search-field-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+/* ─── MODAL DIALOG — overlay full-screen · v12 ───────────────
+   Patrón base: backdrop blur + card centrada. Estructura:
+     <div class="modal-dialog" id="dialog-x" role="dialog" aria-modal="true" aria-hidden="true">
+       <div class="modal-dialog-panel">
+         <button class="modal-dialog-close" aria-label="Cerrar">×</button>
+         <div class="modal-dialog-eyebrow">— EYEBROW</div>
+         <h3 class="modal-dialog-title">Título</h3>
+         <div class="modal-dialog-body">contenido</div>
+       </div>
+     </div>
+   JS abre con .is-open class. ESC, click backdrop, click ×.
+   Para focus trap usar el patrón existente de nav-overlay (motion.js).
+   ────────────────────────────────────────────────────────── */
+.modal-dialog {
+  position: fixed; inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  background: var(--bg-scrim);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out-quart);
+}
+.modal-dialog.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-dialog-panel {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  background: var(--bg);
+  border: var(--hairline);
+  border-radius: var(--radius);
+  padding: var(--sp-6) var(--sp-5);
+  overflow-y: auto;
+  transform: scale(0.96) translateY(8px);
+  transition: transform var(--dur-reg) var(--ease-out-expo);
+}
+.modal-dialog.is-open .modal-dialog-panel {
+  transform: scale(1) translateY(0);
+}
+.modal-dialog-close {
+  position: absolute;
+  top: var(--sp-3); right: var(--sp-3);
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.modal-dialog-close:hover { color: var(--text-primary); }
+.modal-dialog-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--accent-mint);
+  margin-bottom: var(--sp-2);
+}
+.modal-dialog-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-h2);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-4);
+}
+.modal-dialog-body { color: var(--text-secondary); }
+
+/* ─── TABS — segmented control con panels · v12 ──────────────
+   Para alternar vistas dentro de una página (ej. CRM/ERP/SaaS sub-views
+   en /software.html). Estructura:
+     <div class="tabs">
+       <div class="tabs-list" role="tablist">
+         <button class="tab-trigger is-active" role="tab" aria-controls="tab-1" aria-selected="true">Uno</button>
+         <button class="tab-trigger" role="tab" aria-controls="tab-2" aria-selected="false">Dos</button>
+       </div>
+       <div class="tab-panel is-active" id="tab-1" role="tabpanel">Panel 1</div>
+       <div class="tab-panel" id="tab-2" role="tabpanel" hidden>Panel 2</div>
+     </div>
+   JS: click trigger → swap is-active + show panel + hide otros.
+   ────────────────────────────────────────────────────────── */
+.tabs { width: 100%; }
+.tabs-list {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: var(--hairline);
+  margin-bottom: var(--sp-5);
+}
+.tab-trigger {
+  position: relative;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.tab-trigger:hover:not(.is-active) { color: var(--text-secondary); }
+.tab-trigger.is-active { color: var(--text-primary); }
+.tab-trigger.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--accent-mint);
+}
+.tab-panel {
+  opacity: 1;
+  transition: opacity var(--dur-fast) var(--ease-out-quart);
+}
+.tab-panel[hidden] { display: none; }
+
 /* ─── RESPONSIVE patterns ─────────────────────────────────── */
 @media (max-width: 1024px) {
   .metrics-row { grid-template-columns: repeat(2, 1fr); row-gap: var(--sp-6); }

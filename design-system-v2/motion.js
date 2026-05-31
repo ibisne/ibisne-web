@@ -572,6 +572,120 @@
     });
   }
 
+  /* ── MODAL DIALOG · v12 ────────────────────────────────────
+   * Patrón: cualquier botón con data-modal-open="dialog-id" abre el
+   * dialog `.modal-dialog#dialog-id`. Cierra con ESC, click backdrop,
+   * o cualquier elemento con `.modal-dialog-close` o data-modal-close.
+   * Focus trap mientras está abierto (reusa patrón nav-overlay).
+   * Llamar a window.__VAULT__.openModal(id) para abrir programáticamente.
+   * ──────────────────────────────────────────────────────── */
+  function initModalDialogs() {
+    let lastFocused = null;
+
+    function openModal(id) {
+      const dlg = document.getElementById(id);
+      if (!dlg || !dlg.classList.contains('modal-dialog')) return;
+      lastFocused = document.activeElement;
+      dlg.classList.add('is-open');
+      dlg.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // foco al primer focusable o al panel
+      setTimeout(() => {
+        const focusables = dlg.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        (focusables[0] || dlg).focus();
+      }, 40);
+    }
+
+    function closeModal(dlg) {
+      if (!dlg) return;
+      dlg.classList.remove('is-open');
+      dlg.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+        lastFocused = null;
+      }
+    }
+
+    // Triggers de apertura (delegated)
+    document.addEventListener('click', (e) => {
+      const opener = e.target.closest('[data-modal-open]');
+      if (opener) {
+        e.preventDefault();
+        openModal(opener.getAttribute('data-modal-open'));
+      }
+      const closer = e.target.closest('[data-modal-close], .modal-dialog-close');
+      if (closer) {
+        const dlg = closer.closest('.modal-dialog');
+        if (dlg) closeModal(dlg);
+      }
+    });
+
+    // Click en backdrop cierra (target === el .modal-dialog mismo, no el panel)
+    document.querySelectorAll('.modal-dialog').forEach(dlg => {
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) closeModal(dlg);
+      });
+      // Focus trap + ESC
+      dlg.addEventListener('keydown', (e) => {
+        if (!dlg.classList.contains('is-open')) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeModal(dlg);
+          return;
+        }
+        if (e.key === 'Tab') {
+          const focusables = dlg.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+          }
+        }
+      });
+    });
+
+    // expose para llamadas programáticas
+    window.__VAULT_MODAL__ = { open: openModal, close: closeModal };
+  }
+
+  /* ── TABS · v12 ────────────────────────────────────────────
+   * Patrón: dentro de un .tabs, los .tab-trigger controlan sus
+   * .tab-panel via aria-controls. Click en trigger swap is-active +
+   * muestra panel correspondiente · oculta los otros.
+   * ──────────────────────────────────────────────────────── */
+  function initTabs() {
+    document.querySelectorAll('.tabs').forEach(tabs => {
+      const triggers = tabs.querySelectorAll('.tab-trigger');
+      triggers.forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const targetId = trigger.getAttribute('aria-controls');
+          if (!targetId) return;
+          // Deactivate all triggers + hide all panels
+          triggers.forEach(t => {
+            t.classList.remove('is-active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tabs.querySelectorAll('.tab-panel').forEach(p => {
+            p.classList.remove('is-active');
+            p.hidden = true;
+          });
+          // Activate this one
+          trigger.classList.add('is-active');
+          trigger.setAttribute('aria-selected', 'true');
+          const panel = tabs.querySelector('#' + targetId);
+          if (panel) {
+            panel.classList.add('is-active');
+            panel.hidden = false;
+          }
+        });
+      });
+    });
+  }
+
   /* ── BOOT ───────────────────────────────────────────────── */
   function boot() {
     initCursor();
@@ -588,6 +702,8 @@
     initNavMobile();
     initBgFade();
     initPageTransitions();
+    initModalDialogs();    // v12
+    initTabs();            // v12
   }
 
   if (document.readyState === 'loading') {
@@ -597,5 +713,5 @@
   }
 
   // expose para debugging
-  window.__VAULT__ = { initReveals, initRevealStagger, initScrollStack, initMarquee, initFAQ, initHorizontal, initBgFade, initMegaMenu, initNavMobile };
+  window.__VAULT__ = { initReveals, initRevealStagger, initScrollStack, initMarquee, initFAQ, initHorizontal, initBgFade, initMegaMenu, initNavMobile, initModalDialogs, initTabs };
 })();
