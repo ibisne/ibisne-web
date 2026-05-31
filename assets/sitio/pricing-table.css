@@ -1,0 +1,232 @@
+/* ===================================================================
+   assets/sitio/pricing-table.css · v12.0
+   ===================================================================
+   Componente Pricing Table (cards comparativas tipo Shopify).
+   Extiende VAULT v2 · consume tokens · reusa .toggle-switch, .tier-table,
+   .btn-accent, .tag. Cero hardcode. Verde phosphor SOLO en: plan
+   recomendado (precio + banner), CTA accent, powerup activo.
+   =================================================================== */
+
+/* ── Toggle de pago (mes a mes / exhibición) ──────────────────── */
+.pt-paytoggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-7);
+}
+.pt-paytoggle-opt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.pt-paytoggle-opt.is-on { color: var(--text-primary); }
+.pt-paytoggle-badge {
+  font-family: var(--font-mono);
+  font-size: var(--fs-pico);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--sp-2);
+  margin-left: var(--sp-2);
+}
+
+/* ── Grid de cards ────────────────────────────────────────────── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  align-items: stretch;
+}
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.pricing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-5);
+  background: var(--bg-paper);
+  border: var(--hairline);
+  border-radius: var(--radius);
+  transition: border-color var(--dur-fast) var(--ease-out-quart),
+              transform var(--dur-fast) var(--ease-out-quart);
+}
+.pricing-card:hover { border-color: var(--text-muted); transform: translateY(-2px); }
+.pricing-card.is-recomendado {
+  border-color: var(--accent);
+}
+
+/* Banner "Más popular" */
+.pricing-card-banner {
+  position: absolute;
+  top: 0; left: var(--sp-5);
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--fs-pico);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 3px var(--sp-3);
+}
+
+.pricing-card-head { display: flex; align-items: center; gap: var(--sp-3); }
+.pricing-card-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex: none;
+  border: var(--hairline); border-radius: var(--radius-input);
+  color: var(--text-primary);
+}
+.pricing-card-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.pricing-card-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.pricing-card-sub {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Precio */
+.pricing-card-price {
+  margin-top: var(--sp-4);
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+.pricing-card-amount {
+  font-family: var(--font-mono);
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.pricing-card.is-recomendado .pricing-card-amount { color: var(--accent); }
+.pricing-card-period {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+}
+.pricing-card-tiempo {
+  font-family: var(--font-mono);
+  font-size: var(--fs-pico);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: var(--sp-2);
+}
+
+/* CTA */
+.pricing-card-cta { margin-top: var(--sp-4); }
+.pricing-card-cta .btn { width: 100%; }
+
+/* Features de la card */
+.pricing-card-features {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: var(--hairline);
+  display: flex; flex-direction: column; gap: var(--sp-2);
+  flex: 1;
+}
+.pricing-card-feature {
+  display: flex; align-items: flex-start; gap: var(--sp-2);
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+}
+.pricing-card-feature-check {
+  flex: none; color: var(--accent-mint); margin-top: 2px;
+}
+.pricing-card-feature-check svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Powerups dentro de la card */
+.pricing-card-powerups {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: var(--hairline);
+  display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.pricing-card-powerups-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-pico);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.pricing-powerup {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-3);
+}
+.pricing-powerup-info { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.pricing-powerup-icon { flex: none; color: var(--text-secondary); }
+.pricing-powerup-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.pricing-powerup-text { min-width: 0; }
+.pricing-powerup-name {
+  font-size: var(--fs-small);
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.pricing-powerup-pct {
+  font-family: var(--font-mono);
+  font-size: var(--fs-pico);
+  color: var(--text-muted);
+}
+
+/* ── Tabla comparativa ────────────────────────────────────────── */
+.pt-compare { margin-top: var(--sp-8); }
+.pt-compare-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-4);
+}
+/* Mobile: toggle acordeón "Lista completa" */
+.pt-compare-toggle {
+  display: none;
+  width: 100%;
+  align-items: center; justify-content: space-between;
+  padding: var(--sp-4) 0;
+  border-top: var(--hairline); border-bottom: var(--hairline);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: none; cursor: pointer;
+}
+.pt-compare-toggle .pt-chevron { transition: transform var(--dur-fast) var(--ease-out-quart); }
+.pt-compare.is-open .pt-compare-toggle .pt-chevron { transform: rotate(180deg); }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
+}
+@media (max-width: 767px) {
+  /* Tabla comparativa colapsa a acordeón */
+  .pt-compare-toggle { display: flex; }
+  .pt-compare-table-wrap {
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: minmax(0, 0fr);
+    transition: grid-template-rows var(--dur-reg) var(--ease-out-expo);
+  }
+  .pt-compare.is-open .pt-compare-table-wrap { grid-template-rows: minmax(0, 1fr); }
+  .pt-compare-table-inner { min-height: 0; overflow-x: auto; }
+  .tier-table { min-width: 540px; }
+}

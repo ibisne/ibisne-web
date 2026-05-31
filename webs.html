@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Desarrollo Web · iBisne</title>
+<meta name="description" content="Planes de desarrollo web con precio cerrado: dominio, hosting y licencias incluidas. Desde $1,000 MXN." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.1.0">
+<link rel="stylesheet" href="design-system-v2/components.css?v=3.1.0">
+<link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.1.0">
+<link rel="stylesheet" href="design-system-v2/motion.css?v=3.1.0">
+<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=12.0.0">
+
+<style>
+  /* ── Overrides exclusivos de página (no parte del VAULT) ──────── */
+
+  /* Header simple del slice · versión 2-filas completa viene en Fase 6 */
+  .site-header {
+    position: sticky; top: 0; z-index: var(--z-nav);
+    display: flex; align-items: center; gap: var(--sp-4);
+    height: 64px; padding: 0 var(--grid-edge);
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: var(--hairline);
+  }
+  .site-header-logo { height: 22px; width: auto; }
+  .site-header-spacer { flex: 1; }
+  .site-nav { display: none; gap: var(--sp-4); align-items: center; }
+  .site-nav a {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono); text-transform: uppercase;
+    color: var(--text-secondary);
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+  .site-nav a:hover, .site-nav a.is-active { color: var(--text-primary); }
+  @media (min-width: 900px) { .site-nav { display: flex; } }
+
+  /* Ventajas · grid de 3 */
+  .ventajas-grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--sp-4);
+    margin-top: var(--sp-6);
+  }
+  @media (min-width: 768px) { .ventajas-grid { grid-template-columns: repeat(3, 1fr); } }
+  .ventaja {
+    padding: var(--sp-5);
+    border: var(--hairline); border-radius: var(--radius);
+    background: var(--bg-paper);
+  }
+  .ventaja-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    border: var(--hairline); border-radius: var(--radius-input);
+    color: var(--accent-mint); margin-bottom: var(--sp-3);
+  }
+  .ventaja-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .ventaja h3 {
+    font-family: var(--font-display); font-size: var(--fs-card-title);
+    font-weight: var(--fw-medium); color: var(--text-primary);
+    margin-bottom: var(--sp-2);
+  }
+  .ventaja p { color: var(--text-secondary); font-size: var(--fs-base); line-height: var(--lh-body); }
+
+  /* Mantenimiento · grid de 2 */
+  .manten-grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--sp-4);
+    margin-top: var(--sp-6);
+  }
+  @media (min-width: 768px) { .manten-grid { grid-template-columns: repeat(2, 1fr); } }
+  .manten-card {
+    padding: var(--sp-5);
+    border: var(--hairline); border-radius: var(--radius);
+    background: var(--bg-paper);
+    display: flex; flex-direction: column;
+  }
+  .manten-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+  .manten-name {
+    font-family: var(--font-display); font-size: var(--fs-card-title);
+    font-weight: var(--fw-medium); color: var(--text-primary);
+  }
+  .manten-price {
+    font-family: var(--font-mono); font-size: var(--fs-h3);
+    color: var(--text-primary); white-space: nowrap;
+  }
+  .manten-price small { font-size: var(--fs-micro); color: var(--text-muted); }
+  .manten-desc { color: var(--text-secondary); margin: var(--sp-2) 0 var(--sp-4); }
+  .manten-features { display: flex; flex-direction: column; gap: var(--sp-2); }
+  .manten-feature {
+    display: flex; align-items: flex-start; gap: var(--sp-2);
+    font-size: var(--fs-base); color: var(--text-secondary);
+  }
+  .manten-feature span:first-child { color: var(--accent-mint); flex: none; }
+  .manten-feature svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* Footer simple del slice */
+  .site-footer {
+    border-top: var(--hairline);
+    padding: var(--sp-6) var(--grid-edge);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--sp-4); flex-wrap: wrap;
+  }
+  .site-footer a, .site-footer span {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    letter-spacing: var(--ls-mono); text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .site-footer a:hover { color: var(--text-primary); }
+
+  /* Hero de página (más compacto que el hero full del VAULT) */
+  .page-hero { min-height: auto; padding: var(--sp-9) 0 var(--sp-7); }
+  .page-hero h1 { font-size: var(--fs-display); }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER simple (Fase 6 lo reemplaza por nav 2-filas) ──────── -->
+<header class="site-header">
+  <a href="index.html"><img class="site-header-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
+  <nav class="site-nav">
+    <a href="index.html">Inicio</a>
+    <a href="webs.html" class="is-active">Webs</a>
+    <a href="#" aria-disabled="true">Apps</a>
+    <a href="#" aria-disabled="true">Shopify</a>
+    <a href="#" aria-disabled="true">Software</a>
+    <a href="#" aria-disabled="true">Clientes</a>
+  </nav>
+  <span class="site-header-spacer"></span>
+  <a class="btn btn-accent" href="cotizador.html">Cotizar ahora</a>
+</header>
+
+<main>
+
+  <!-- ── HERO ──────────────────────────────────────────────────── -->
+  <section class="section page-hero">
+    <div class="container">
+      <span class="eyebrow">— DESARROLLO WEB</span>
+      <div class="hero-inner">
+        <h1>Desarrollo web<br>sin sorpresas.</h1>
+        <p class="hero-lead">
+          Precio cerrado que ya incluye dominio, hosting y todas las licencias.
+          Sin costos ocultos, sin mensualidades obligatorias. Tú solo eliges el plan.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-accent" href="#pricing">Ver planes ↓</a>
+          <a class="btn btn-line" href="#" aria-disabled="true">Proyectos realizados →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── VENTAJAS ──────────────────────────────────────────────── -->
+  <section class="section bg-paper" data-bg="paper">
+    <div class="container">
+      <span class="eyebrow">— POR QUÉ iBISNE</span>
+      <h2 class="t-h2">Lo que otros cobran aparte, aquí ya viene incluido.</h2>
+      <div class="ventajas-grid">
+        <div class="ventaja">
+          <span class="ventaja-icon" data-icon="shield"></span>
+          <h3>Precio cerrado</h3>
+          <p>Dominio, hosting, licencias de terceros, diseño, frontend y backend. Todo en un solo precio, pagado una vez.</p>
+        </div>
+        <div class="ventaja">
+          <span class="ventaja-icon" data-icon="zap"></span>
+          <h3>De 0 al lanzamiento</h3>
+          <p>Nosotros nos encargamos de todo el desarrollo. Sin proveedores externos, sin sorpresas en el camino.</p>
+        </div>
+        <div class="ventaja">
+          <span class="ventaja-icon" data-icon="partnership"></span>
+          <h3>Mantenimiento opcional</h3>
+          <p>Si lo necesitas, agrega un plan mensual de soporte. Si no, tu desarrollo es 100% tuyo sin ataduras.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ───────────────────────────────────────────────── -->
+  <section class="section" id="pricing" data-bg="base">
+    <div class="container">
+      <span class="eyebrow">— PLANES WEB</span>
+      <h2 class="t-h2">Elige tu plan.</h2>
+      <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
+        Activa "pago en exhibición" para -25% de descuento. Suma powerups según lo que necesites.
+      </p>
+      <div style="margin-top: var(--sp-6);" data-pricing-categoria="webs"></div>
+    </div>
+  </section>
+
+  <!-- ── MANTENIMIENTO ─────────────────────────────────────────── -->
+  <section class="section bg-paper" data-bg="paper">
+    <div class="container">
+      <span class="eyebrow">— MANTENIMIENTO OPCIONAL</span>
+      <h2 class="t-h2">¿Quieres que lo mantengamos vivo?</h2>
+      <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
+        Opcional y mensual. Cancela cuando quieras. Tu desarrollo funciona aunque no contrates mantenimiento.
+      </p>
+      <div class="manten-grid">
+        <div class="manten-card">
+          <div class="manten-head">
+            <span class="manten-name">Básico</span>
+            <span class="manten-price">$5,000<small>/mes</small></span>
+          </div>
+          <p class="manten-desc">Para mantener tu desarrollo vivo y actualizado.</p>
+          <div class="manten-features">
+            <div class="manten-feature"><span data-icon="check"></span><span>Modificaciones y cambios simples</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Soporte por WhatsApp en horario hábil</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Actualizaciones de seguridad</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Renovación de licencias incluida</span></div>
+          </div>
+        </div>
+        <div class="manten-card">
+          <div class="manten-head">
+            <span class="manten-name">Premium</span>
+            <span class="manten-price">$10,000<small>/mes</small></span>
+          </div>
+          <p class="manten-desc">Acompañamiento para cambios urgentes o críticos.</p>
+          <div class="manten-features">
+            <div class="manten-feature"><span data-icon="check"></span><span>Todo lo del plan Básico</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Cambios urgentes priorizados</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Acompañamiento dedicado</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Soporte extendido</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ───────────────────────────────────────────────────── -->
+  <section class="section" data-bg="base">
+    <div class="container">
+      <span class="eyebrow">— PREGUNTAS FRECUENTES</span>
+      <h2 class="t-h2" style="margin-bottom: var(--sp-6);">Lo que todos preguntan.</h2>
+      <div class="faq">
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿El dominio y el hosting están incluidos?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Sí. El precio del plan ya incluye dominio + hosting por el primer año, además de cualquier licencia de terceros que tu proyecto requiera. No pagas nada extra para salir en línea.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si no contrato mantenimiento?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Nada. Tu desarrollo es 100% tuyo y sigue funcionando. El mantenimiento mensual es opcional: lo contratas solo si quieres que sigamos haciendo cambios y dándote soporte continuo.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Cuál es la diferencia entre pago mes a mes y en exhibición?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">El precio base es para pago mes a mes (a 12 meses). Si pagas en una sola exhibición, obtienes 25% de descuento sobre ese precio. Usa el toggle arriba de los planes para ver ambos precios.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Qué son los powerups?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Capacidades extra que le dan superpoderes a tu desarrollo: animaciones premium, modo claro/oscuro, multi-idioma y multi-moneda. Cada uno suma un porcentaje al precio. Actívalos en la card del plan para ver el precio actualizado.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Y si necesito algo más complejo?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Si tu proyecto no cabe en estos planes (un CRM, un ERP, un SaaS a la medida), usa nuestro cotizador para armar un plan personalizado, o habla directo con un asesor.</div></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA FINAL ─────────────────────────────────────────────── -->
+  <section class="section cta-final" data-bg="base">
+    <div class="container cta-final-inner">
+      <h2>¿Algo a<br>la medida?</h2>
+      <p class="cta-final-sub">Si necesitas un desarrollo que no cabe en un plan, te armamos una cotización personalizada.</p>
+      <div class="cta-foot" style="margin-top: var(--sp-6); display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap;">
+        <a class="btn btn-accent" href="cotizador.html">Arma tu plan →</a>
+        <a class="btn btn-line" href="#" aria-disabled="true">Hablar con un asesor</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER simple (Fase 6 lo reemplaza por footer 5-cols) ────── -->
+<footer class="site-footer">
+  <span>© 2026 · iBisne</span>
+  <span>
+    <a href="legal/privacidad.html">Privacidad</a> ·
+    <a href="legal/terminos.html">Términos</a> ·
+    <a href="cotizador.html">Cotizador</a>
+  </span>
+</footer>
+
+<!-- Hidratar iconos data-icon del set propio -->
+<script src="assets/quiz/icons.js?v=12.0.0"></script>
+<script src="data/precios-v12.js?v=12.0.0"></script>
+<script src="assets/sitio/pricing-table.js?v=12.0.0"></script>
+<script src="design-system-v2/motion.js?v=3.1.0"></script>
+<script>
+  // Hidratar iconos estáticos (data-icon) de ventajas + mantenimiento
+  (function () {
+    if (!window.IBISNE_ICONS) return;
+    document.querySelectorAll('[data-icon]').forEach(function (el) {
+      // No tocar los que ya tienen SVG (los del pricing-table los inyecta su JS)
+      if (el.querySelector('svg')) return;
+      el.innerHTML = window.IBISNE_ICONS.get(el.getAttribute('data-icon'), 'line') || '';
+    });
+  })();
+</script>
+</body>
+</html>
