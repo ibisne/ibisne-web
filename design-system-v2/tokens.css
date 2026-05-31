@@ -1,156 +1,159 @@
 /* ============================================================
-   iBisne · Design System v2.0 "VAULT"
-   tokens.css — único punto de verdad. NO hardcodear nada.
+   VAULT · tokens.css — el contrato. Todo deriva de aquí.
+   No hardcodear NADA fuera de este archivo.
+   v3.0 · LIGHT-FIRST · casi monocromático · mobile-compacto
+   ------------------------------------------------------------
+   Rework v3 (2026): tras auditoría (3/10 mobile compactness,
+   estética de agencia vs producto SaaS), se reorienta:
+     · LIGHT primario · DARK como toggle [data-theme="dark"]
+     · Casi monocromático (negro/blanco/grises) · acento = negro
+       en CTAs · verde de marca SOLO como susurro (checks, plan
+       recomendado), tono profundo #0E7C4A (no neón)
+     · Escala mobile-first compacta (hero 220→76, etc.)
+     · line-heights legibles (1.05 cortaba descenders → 1.2)
    ============================================================ */
 
 :root {
-  /* ─── COLOR · TEMA OSCURO (default) ───────────────────────── */
-  --bg-deep: #0A0E13;         /* abismo — solo hero y CTA final */
-  --bg: #0D1117;              /* base — la mayoría */
-  --bg-paper: #14191F;        /* elevado — secciones de data / testimonios */
-  --bg-line: #1E242B;         /* hairlines 1px */
+  /* ─── COLOR · BASE (light-first · casi monocromático) ─────── */
+  --bg-deep:    #FAFAFA;   /* alternancia seccional / cierre */
+  --bg:         #FFFFFF;   /* base · la mayoría del sitio */
+  --bg-paper:   #FFFFFF;   /* cards · se separan por hairline, no por tono */
+  --bg-subtle:  #F5F5F4;   /* zebra de tabla, hover, wash neutro */
+  --bg-line:    #EAEAEA;   /* hairlines 1px */
+  --bg-line-strong: #D4D4D4;  /* hairline de énfasis (header tabla, card recomendada) */
 
-  --text-primary: #F2F2F2;    /* nunca #FFF puro */
-  --text-secondary: #8B9099;
-  --text-muted: #4A5058;
+  --text-primary:   #0A0A0A;   /* títulos, texto fuerte */
+  --text-secondary: #555555;   /* párrafos, descripciones · ~7:1 */
+  --text-muted:     #767676;   /* labels, metadata · ~4.5:1 (AA) */
 
-  --accent: #3DFF7F;          /* verde phosphor sólido — CTAs decisivos, microinteracciones reservadas */
-  --accent-mint: #AEFFC8;     /* verde mint pastel — acento informacional, eyebrows, hover de links, arrows */
-  --accent-glow: rgba(61, 255, 127, 0.35);
-  --accent-soft: rgba(61, 255, 127, 0.08);
+  /* Acento = NEGRO (CTA primario sólido) · "casi monocromático" */
+  --accent:        #0A0A0A;
+  /* Verde de marca · susurro · checks + plan recomendado SOLO */
+  --accent-mint:   #0E7C4A;   /* esmeralda profundo · premium, no neón */
+  --accent-glow:   rgba(14, 124, 74, 0.12);
+  --accent-soft:   #F0F7F3;   /* wash verde muy sutil (recomendado) */
 
-  /* ─── TYPOGRAPHY ──────────────────────────────────────────── */
-  --font-display: 'Inter Tight', 'Söhne', 'Neue Haas Grotesk Display', system-ui, sans-serif;
-  --font-body:    'Inter Tight', 'Söhne', 'Inter', system-ui, sans-serif;
+  --bg-scrim:  rgba(255, 255, 255, 0.7);   /* overlay sobre imágenes */
+
+  /* ─── TIPOGRAFÍA ──────────────────────────────────────────── */
+  --font-display: 'Inter Tight', 'Söhne', system-ui, sans-serif;
+  --font-body:    'Inter Tight', 'Inter', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Söhne Mono', ui-monospace, monospace;
 
-  /* Display sizes — neo-grotesk masivos */
-  --fs-hero:       clamp(72px, 14vw, 220px);
-  --fs-display:    clamp(48px,  8vw, 120px);
-  --fs-h2:         clamp(40px,  5vw,  72px);
-  --fs-h3:         32px;
-  --fs-card-title: 22px;     /* títulos internos de cards (.nav-mega-card .nmc-name) */
-  --fs-input:      18px;     /* inputs editoriales (.field input/select) */
-  --fs-body:       17px;
-  --fs-base:       14px;     /* texto secundario interno (cards, body cortos) */
-  --fs-small:      13px;
-  --fs-micro:      11px;
-  --fs-nano:       10px;     /* eyebrows internos overlay, labels técnicos */
-  --fs-pico:        9px;     /* micro-labels: toggle, h-progress-num, section-num mobile */
+  /* Escala compacta · producto SaaS (era editorial: hero 220px) */
+  --fs-hero:    clamp(40px, 8vw, 76px);    /* h1 hero · contenido */
+  --fs-display: clamp(32px, 6vw, 56px);    /* h1 sección grande */
+  --fs-h2:      clamp(26px, 4vw, 40px);    /* títulos de sección */
+  --fs-h3:      clamp(20px, 2.5vw, 26px);  /* subtítulos */
+  --fs-card-title: 18px;                     /* títulos de card */
+  --fs-input:   16px;                        /* inputs */
+  --fs-body:    16px;                        /* texto base */
+  --fs-base:    14px;                        /* texto secundario */
+  --fs-small:   13px;                        /* small print */
+  --fs-micro:   11px;                        /* eyebrows, labels mono */
+  --fs-nano:    10px;                        /* micro labels */
+  --fs-pico:    9px;                         /* extremo (badges densos) */
 
-  --lh-display: 0.92;
-  --lh-tight:   1.05;
-  --lh-body:    1.6;
+  --lh-display: 1.0;    /* títulos grandes · ya no 0.92 dramático */
+  --lh-tight:   1.2;    /* subtítulos · 1.05 cortaba descenders (g,p,y) */
+  --lh-body:    1.55;   /* lectura cómoda */
 
-  --ls-display: -0.04em;
-  --ls-h2:      -0.025em;
-  --ls-body:    -0.005em;
-  --ls-mono:    0.04em;        /* labels mono — uppercase */
+  --ls-display: -0.025em;  /* tracking negativo moderado (era -0.04) */
+  --ls-h2:      -0.018em;
+  --ls-body:    -0.003em;
+  --ls-mono:    0.04em;   /* mono spread */
 
-  --fw-regular:  400;
-  --fw-medium:   500;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold: 600;
 
-  /* ─── SPACING — escala 8px estricta ───────────────────────── */
-  --sp-1:   4px;
-  --sp-2:   8px;
-  --sp-3:  16px;
-  --sp-4:  24px;
-  --sp-5:  32px;
-  --sp-6:  48px;
-  --sp-7:  64px;
-  --sp-8:  80px;
+  /* ─── ESPACIADO (escala 8px) ──────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 16px;
+  --sp-4: 24px;
+  --sp-5: 32px;
+  --sp-6: 48px;
+  --sp-7: 64px;
+  --sp-8: 80px;
   --sp-9: 120px;
-  --sp-10: 160px;             /* padding seccional desktop */
+  --sp-10: 160px;
   --sp-11: 200px;
 
-  --section-pad-y: var(--sp-10);
-  --section-pad-y-mobile: var(--sp-8);
-  --hero-offset:   144px;     /* nav 72 × 2 — padding-top del hero sobre nav fijo */
+  /* Padding seccional compacto (era 160/80 · derrochaba viewport) */
+  --section-pad-y:        var(--sp-8);   /* 80px desktop (era 160) */
+  --section-pad-y-mobile: var(--sp-6);   /* 48px mobile (era 80) */
+  --hero-offset: 96px;    /* nav + aire (era 144) */
 
-  /* ─── FIELD shape — texto largo controlado ────────────────── */
   --field-textarea-min-h: 96px;
   --field-textarea-max-h: 320px;
 
-  /* ─── SURFACES — scrim sobre imágenes ─────────────────────── */
-  --bg-scrim: rgba(13, 17, 23, 0.6);   /* mismo color de --bg con alpha; usado en .case-tile .ct-tag */
-
   /* ─── GRID ────────────────────────────────────────────────── */
   --grid-cols: 12;
-  --grid-gutter: 24px;
-  --grid-max: 1440px;
-  --grid-edge: var(--sp-6);   /* 48px márgenes desktop */
-  --grid-edge-mobile: var(--sp-4);
+  --gutter: 24px;
+  --grid-max: 1200px;     /* contenido más contenido (era 1440) */
+  --grid-edge: var(--sp-6);          /* 48px desktop */
+  --grid-edge-mobile: var(--sp-4);   /* 24px mobile */
+
+  /* ─── RADIOS ──────────────────────────────────────────────── */
+  --radius:       12px;   /* cards, paneles (era 14) */
+  --radius-pill:  999px;  /* pills, badges */
+  --radius-btn:   10px;   /* botones (era 12) */
+  --radius-input: 8px;    /* inputs, toggles (era 10) */
 
   /* ─── MOTION ──────────────────────────────────────────────── */
+  /* Velocidad ES la estética en SaaS · se atenuó el teatro */
+  --dur-cinematic: 600ms;   /* era 1200 */
+  --dur-reg:  360ms;        /* era 600 */
+  --dur-fast: 200ms;        /* era 240 */
+  --dur-instant: 100ms;     /* era 120 */
+
   --ease-out-expo:     cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-out-quart:    cubic-bezier(0.25, 1, 0.5, 1);
 
-  --dur-cinematic: 1200ms;
-  --dur-reg:        600ms;
-  --dur-fast:       240ms;
-  --dur-instant:    120ms;
-
-  /* ─── HAIRLINES & RADII ───────────────────────────────────── */
-  --hairline: 1px solid var(--bg-line);
-  --radius:        14px;   /* cards, paneles, contenedores grandes */
-  --radius-pill:   999px;  /* pills capsule · categorías, schedules, badges */
-  --radius-btn:    12px;   /* botones rectangulares · CTAs, nav */
-  --radius-input:  10px;   /* inputs y toggles compactos */
-
   /* ─── Z-INDEX ─────────────────────────────────────────────── */
-  --z-base:       1;
-  --z-raised:     5;          /* elevación moderada: .h-progress, .nav-mega panel */
-  --z-nav:       50;
-  --z-cursor:    90;          /* siempre arriba */
-  --z-overlay:  100;          /* nav-overlay móvil */
-  --z-nav-locked: 101;        /* nav sobre overlay cuando body.menu-locked */
-  --z-page-transition: 105;   /* sobre nav-overlay para que cubra al navegar */
-  --z-modal:    110;          /* reservado — modales/dialog puntuales */
+  --z-base: 1;
+  --z-raised: 5;
+  --z-nav: 50;
+  --z-cursor: 90;
+  --z-overlay: 100;
+  --z-nav-locked: 101;
+  --z-page-transition: 105;
+  --z-modal: 110;
 }
 
-/* ─── Tipografía base ─────────────────────────────────────── */
-html {
-  font-family: var(--font-body);
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  color: var(--text-primary);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: 'ss01', 'cv11';   /* alternates limpios en Inter Tight */
+/* ════════════════════════════════════════════════════════════
+   DARK THEME · v3.0 — toggle secundario [data-theme="dark"]
+   Near-black cálido · CTA = blanco (Vercel-style) · verde
+   de marca sube luminosidad SIN llegar a neón.
+   ════════════════════════════════════════════════════════════ */
+:root[data-theme="dark"] {
+  --bg-deep:    #000000;
+  --bg:         #0A0A0A;
+  --bg-paper:   #141414;
+  --bg-subtle:  #1A1A1A;
+  --bg-line:    #262626;
+  --bg-line-strong: #383838;
+
+  --text-primary:   #EDEDED;
+  --text-secondary: #A0A0A0;
+  --text-muted:     #707070;
+
+  /* CTA = blanco sólido sobre negro */
+  --accent:        #FFFFFF;
+  /* Verde de marca · brillante pero controlado (no #3DFF7F neón) */
+  --accent-mint:   #3DDC84;
+  --accent-glow:   rgba(61, 220, 132, 0.20);
+  --accent-soft:   rgba(61, 220, 132, 0.10);
+
+  --bg-scrim:  rgba(0, 0, 0, 0.7);
 }
 
-/* ─── KEYFRAMES AMBIENTE — susurro, no grito ──────────────── */
-@keyframes drift {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(1px); }
-}
-@keyframes breathe {
-  0%, 100% { letter-spacing: -0.04em;  opacity: 1;    }
-  50%      { letter-spacing: -0.038em; opacity: 0.94; }
-}
-@keyframes blink {
-  0%, 49%   { opacity: 1; }
-  50%, 100% { opacity: 0; }
+/* reduce motion · respeta preferencia del SO */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-cinematic: 0ms; --dur-reg: 0ms; --dur-fast: 0ms; --dur-instant: 0ms; }
 }
 
-
-/* ─── LIGHT THEME OVERRIDE ──────────────────────────────────── */
-/* Activado por window.IBISNE_PREFS.setTheme('light') → data-theme="light" en <html> */
-:root[data-theme="light"] {
-  --bg-deep: #FFFFFF;
-  --bg: #F7F8FA;
-  --bg-paper: #FFFFFF;
-  --bg-line: #DEE2E8;
-
-  --text-primary: #0D1117;
-  --text-secondary: #3A3F47;  /* WCAG AA: 9.5:1 sobre #F7F8FA */
-  --text-muted: #5A6068;      /* WCAG AA: 4.8:1 sobre #F7F8FA (era #8B9099 · 3.0:1 fail) */
-
-  --accent: #00A346;
-  --accent-mint: #2DC066;
-  --accent-glow: rgba(0, 163, 70, 0.18);
-  --accent-soft: rgba(0, 163, 70, 0.06);
-}
+/* tap highlight transparente global */
+* { -webkit-tap-highlight-color: transparent; }
