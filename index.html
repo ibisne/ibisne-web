@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>iBisne | Creamos imperios para tu negocio</title>
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#0D1117">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="iBisne">
 <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
 <meta name="description" content="iBisne. Capital operativo. Mentalidad operadora. Holding LATAM con 4 verticales operativas.">
@@ -57,7 +57,7 @@
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: var(--accent-mint);
+    color: var(--text-muted);
   }
   .hero-q{
     font-family: var(--font-display);
@@ -67,7 +67,7 @@
     line-height: 1.02;
     color: var(--text-primary);
   }
-  .hero-q .highlight{ color: var(--accent-mint, #AEFFC8); }
+  .hero-q .highlight{ color: var(--text-primary); font-weight: 800; }
   .hero-sub{
     font-family: var(--font-display);
     font-size: clamp(14px, 1.3vw, 17px);
@@ -100,8 +100,8 @@
     color: var(--bg-deep);
     border-color: var(--accent);
   }
-  .cta-big.primary:hover{ background: var(--accent-mint); border-color: var(--accent-mint); }
-  .cta-big.line:hover{ border-color: var(--accent-mint); color: var(--accent-mint); }
+  .cta-big.primary:hover{ background: var(--text-primary); border-color: var(--text-primary); }
+  .cta-big.line:hover{ border-color: var(--text-primary); color: var(--text-primary); }
 
   /* ─── Highlights · cards pequeñas en grid ─── */
   .highlights{
@@ -124,7 +124,7 @@
     transition: border-color 0.22s ease, transform 0.18s ease;
   }
   .hl-card:hover{
-    border-color: rgba(174,255,200,0.3);
+    border-color: rgba(0,0,0,0.15);
     transform: translateY(-2px);
   }
   .hl-icon{
@@ -133,7 +133,7 @@
     background: var(--bg);
     border: 1px solid var(--bg-line);
     border-radius: 8px;
-    color: var(--accent-mint);
+    color: var(--text-primary);
     margin-bottom: 2px;
   }
   .hl-icon svg{ width: 14px; height: 14px; }

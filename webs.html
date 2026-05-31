@@ -10,24 +10,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.1.0">
-<link rel="stylesheet" href="design-system-v2/components.css?v=3.1.0">
-<link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.1.0">
-<link rel="stylesheet" href="design-system-v2/motion.css?v=3.1.0">
-<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=12.0.0">
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/motion.css?v=3.2.0">
+<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=13.2.0">
 
 <style>
   /* ── Overrides exclusivos de página (no parte del VAULT) ──────── */
 
-  /* Header simple del slice · versión 2-filas completa viene en Fase 6 */
+  /* v13.2 · container ancho compartido (1320) para hero + header + footer */
+  .container { max-width: 1320px; }
+
+  /* Header v13.2 · ancho alineado al contenido (antes iba edge-to-edge).
+     El wrapper exterior queda full-width para la línea + blur, pero el
+     contenido interno respeta .container · header y contenido terminan a
+     la misma altura visual a la derecha. */
   .site-header {
     position: sticky; top: 0; z-index: var(--z-nav);
-    display: flex; align-items: center; gap: var(--sp-4);
-    height: 64px; padding: 0 var(--grid-edge);
     background: color-mix(in srgb, var(--bg) 86%, transparent);
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom: var(--hairline);
+  }
+  .site-header-inner {
+    display: flex; align-items: center; gap: var(--sp-4);
+    height: 64px;
   }
   .site-logo {
     font-family: var(--font-display); font-size: 20px;
@@ -43,10 +51,6 @@
   }
   .site-nav a:hover, .site-nav a.is-active { color: var(--text-primary); }
   @media (min-width: 900px) { .site-nav { display: flex; } }
-
-  /* v13.1 · container más ancho · usar el ancho disponible (Eduardo:
-     "tienes mucho espacio a lo ancho por utilizar") */
-  .container { max-width: 1320px; }
 
   /* Eyebrow neutro · sin verde */
   .eyebrow { color: var(--text-muted); }
@@ -99,26 +103,29 @@
     color: var(--text-primary); white-space: nowrap;
   }
   .manten-price small { font-size: var(--fs-micro); color: var(--text-muted); }
+  .manten-titulo {
+    font-size: var(--fs-small); color: var(--text-muted);
+    margin-top: var(--sp-1);
+  }
   .manten-desc { color: var(--text-secondary); margin: var(--sp-2) 0 var(--sp-4); }
   .manten-features { display: flex; flex-direction: column; gap: var(--sp-2); }
   .manten-feature {
     display: flex; align-items: flex-start; gap: var(--sp-2);
-    font-size: var(--fs-base); color: var(--text-secondary);
+    font-size: var(--fs-base); color: var(--text-secondary); line-height: 1.35;
   }
-  .manten-feature span:first-child { color: var(--text-primary); flex: none; }
+  .manten-feature span:first-child { color: var(--text-primary); flex: none; margin-top: 1px; }
   .manten-feature svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-  /* Footer simple del slice */
-  .site-footer {
-    border-top: var(--hairline);
-    padding: var(--sp-6) var(--grid-edge);
+  /* Footer v13.2 · ancho alineado al contenido */
+  .site-footer { border-top: var(--hairline); }
+  .site-footer-inner {
+    padding: var(--sp-6) 0;
     display: flex; align-items: center; justify-content: space-between;
     gap: var(--sp-4); flex-wrap: wrap;
   }
   .site-footer a, .site-footer span {
-    font-family: var(--font-mono); font-size: var(--fs-micro);
-    letter-spacing: var(--ls-mono); text-transform: uppercase;
-    color: var(--text-muted);
+    font-family: var(--font-body); font-size: var(--fs-small);
+    color: var(--text-muted); text-transform: none; letter-spacing: 0;
   }
   .site-footer a:hover { color: var(--text-primary); }
 
@@ -128,25 +135,25 @@
   .hero-inner { max-width: 720px; }
   .hero-lead { max-width: 56ch; margin-top: var(--sp-4); color: var(--text-secondary); font-size: var(--fs-body); line-height: var(--lh-body); }
   .hero-actions { display: flex; gap: var(--sp-3); margin-top: var(--sp-5); flex-wrap: wrap; }
-  /* Footer en sentence case (era mono uppercase · v3 reduce mono) */
-  .site-footer a, .site-footer span { text-transform: none; font-family: var(--font-body); letter-spacing: 0; font-size: var(--fs-small); }
 </style>
 </head>
 <body>
 
-<!-- ── HEADER simple (Fase 6 lo reemplaza por nav 2-filas) ──────── -->
+<!-- ── HEADER · v13.2 ancho alineado al contenido (.container 1320) ──── -->
 <header class="site-header">
-  <a href="index.html"><span class="site-logo">iBisne</span></a>
-  <nav class="site-nav">
-    <a href="index.html">Inicio</a>
-    <a href="webs.html" class="is-active">Webs</a>
-    <a href="#" aria-disabled="true">Apps</a>
-    <a href="#" aria-disabled="true">Shopify</a>
-    <a href="#" aria-disabled="true">Software</a>
-    <a href="#" aria-disabled="true">Clientes</a>
-  </nav>
-  <span class="site-header-spacer"></span>
-  <a class="btn-blue" href="cotizador.html">Cotizar ahora</a>
+  <div class="container site-header-inner">
+    <a href="index.html"><span class="site-logo">iBisne</span></a>
+    <nav class="site-nav">
+      <a href="index.html">Inicio</a>
+      <a href="webs.html" class="is-active">Webs</a>
+      <a href="#" aria-disabled="true">Apps</a>
+      <a href="#" aria-disabled="true">Shopify</a>
+      <a href="#" aria-disabled="true">Software</a>
+      <a href="#" aria-disabled="true">Clientes</a>
+    </nav>
+    <span class="site-header-spacer"></span>
+    <a class="btn-blue" href="quiz.html">Cotizar ahora</a>
+  </div>
 </header>
 
 <main>
@@ -200,7 +207,7 @@
       <span class="eyebrow">— PLANES WEB</span>
       <h2 class="t-h2">Elige tu plan.</h2>
       <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
-        Activa "pago en exhibición" para -25% de descuento. Suma powerups según lo que necesites.
+        Activa "pago en exhibición" para -20% de descuento. Agrega Powerups todo-o-nada para subir el desarrollo a otro nivel.
       </p>
       <div style="margin-top: var(--sp-6);" data-pricing-categoria="webs"></div>
     </div>
@@ -220,12 +227,16 @@
             <span class="manten-name">Básico</span>
             <span class="manten-price">$5,000<small>/mes</small></span>
           </div>
-          <p class="manten-desc">Para mantener tu desarrollo vivo y actualizado.</p>
+          <div class="manten-titulo">Tuyo que no muere</div>
+          <p class="manten-desc">Para mantener tu desarrollo vivo, actualizado y con presencia constante.</p>
           <div class="manten-features">
             <div class="manten-feature"><span data-icon="check"></span><span>Modificaciones y cambios simples</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Soporte por WhatsApp en horario hábil</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Actualizaciones de seguridad</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>12 piezas gráficas mensuales (posts, banners)</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>2 redes sociales gestionadas</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>1 historia o reel mensual</span></div>
             <div class="manten-feature"><span data-icon="check"></span><span>Renovación de licencias incluida</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Actualizaciones de seguridad</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Soporte WhatsApp + email · horario oficina (10am-5pm)</span></div>
           </div>
         </div>
         <div class="manten-card">
@@ -233,12 +244,17 @@
             <span class="manten-name">Premium</span>
             <span class="manten-price">$10,000<small>/mes</small></span>
           </div>
-          <p class="manten-desc">Acompañamiento para cambios urgentes o críticos.</p>
+          <div class="manten-titulo">Acompañamiento 360°</div>
+          <p class="manten-desc">Para crecer activamente con cambios urgentes y operación de marketing.</p>
           <div class="manten-features">
             <div class="manten-feature"><span data-icon="check"></span><span>Todo lo del plan Básico</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Cambios urgentes priorizados</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Acompañamiento dedicado</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Soporte extendido</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Cambios urgentes priorizados (mismo día)</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>20 piezas gráficas mensuales</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>4 redes sociales gestionadas</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>3 historias o reels mensuales</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Reportes mensuales de performance</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>2 reuniones estratégicas al mes</span></div>
+            <div class="manten-feature"><span data-icon="check"></span><span>Soporte teléfono + Google Meet · 24/7</span></div>
           </div>
         </div>
       </div>
@@ -261,11 +277,15 @@
         </details>
         <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿Cuál es la diferencia entre pago mes a mes y en exhibición?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">El precio base es para pago mes a mes (a 12 meses). Si pagas en una sola exhibición, obtienes 25% de descuento sobre ese precio. Usa el toggle arriba de los planes para ver ambos precios.</div></div>
+          <div class="faq-panel"><div class="faq-panel-inner">El precio base es el anual. "Pago mes a mes" lo divide en 12 cuotas mensuales (aceptamos Visa, Mastercard y American Express). "Pago en exhibición" es pagar el anual completo en una sola exhibición y obtienes 20% de descuento. Usa el toggle arriba de los planes para ver ambos precios.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué son los powerups?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Capacidades extra que le dan superpoderes a tu desarrollo: animaciones premium, modo claro/oscuro, multi-idioma y multi-moneda. Cada uno suma un porcentaje al precio. Actívalos en la card del plan para ver el precio actualizado.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué son los Powerups?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Cinco superpoderes técnicos que le dan otro nivel a tu desarrollo: animaciones premium, modo claro/oscuro, multi-idioma, multi-moneda y PWA (app-like instalable). Se activan todos a la vez (todo o nada) y suman +43% al precio del plan. Si los necesitas, los tienes a un clic.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Qué soporte técnico viene incluido?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Web Micro: soporte por email con respuesta en 48h. Landing y Sitio Web: soporte por WhatsApp y email en horario de oficina (10am-5pm). Para soporte 24/7 por teléfono y Google Meet, agrega un plan de Mantenimiento Premium.</div></div>
         </details>
         <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿Y si necesito algo más complejo?</span><span class="faq-icon"></span></summary>
@@ -281,7 +301,7 @@
       <h2>¿Algo a<br>la medida?</h2>
       <p class="cta-final-sub">Si necesitas un desarrollo que no cabe en un plan, te armamos una cotización personalizada.</p>
       <div class="cta-foot" style="margin-top: var(--sp-6); display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap;">
-        <a class="btn-dark" href="cotizador.html">Arma tu plan →</a>
+        <a class="btn-dark" href="quiz.html">Arma tu plan →</a>
         <a class="btn-ghost-light" href="#" aria-disabled="true">Hablar con un asesor</a>
       </div>
     </div>
@@ -289,21 +309,23 @@
 
 </main>
 
-<!-- ── FOOTER simple (Fase 6 lo reemplaza por footer 5-cols) ────── -->
+<!-- ── FOOTER · v13.2 ancho alineado al contenido ─────────────── -->
 <footer class="site-footer">
-  <span>© 2026 · iBisne</span>
-  <span>
-    <a href="legal/privacidad.html">Privacidad</a> ·
-    <a href="legal/terminos.html">Términos</a> ·
-    <a href="cotizador.html">Cotizador</a>
-  </span>
+  <div class="container site-footer-inner">
+    <span>© 2026 · iBisne</span>
+    <span>
+      <a href="legal/privacidad.html">Privacidad</a> ·
+      <a href="legal/terminos.html">Términos</a> ·
+      <a href="quiz.html">Cotizador</a>
+    </span>
+  </div>
 </footer>
 
 <!-- Hidratar iconos data-icon del set propio -->
-<script src="assets/quiz/icons.js?v=12.0.0"></script>
-<script src="data/precios-v12.js?v=12.0.0"></script>
-<script src="assets/sitio/pricing-table.js?v=12.0.0"></script>
-<script src="design-system-v2/motion.js?v=3.1.0"></script>
+<script src="assets/quiz/icons.js?v=13.2.0"></script>
+<script src="data/precios-v12.js?v=13.2.0"></script>
+<script src="assets/sitio/pricing-table.js?v=13.2.0"></script>
+<script src="design-system-v2/motion.js?v=3.2.0"></script>
 <script>
   // Hidratar iconos estáticos (data-icon) de ventajas + mantenimiento
   (function () {

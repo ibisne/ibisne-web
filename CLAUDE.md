@@ -6,7 +6,16 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v11.8.0) es un cotizador puro tipo carrito** para servicios tech B2B. Vive en `index.html` (entrada) + `quiz.html` (cotizador completo). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v13.2.0) es multipágina** (rework v12 en progreso) con `webs.html` como primer slice production-ready (Desarrollo Web). `index.html` sigue como home + entry al cotizador; `quiz.html` es el cotizador completo (intacto desde v11.8, sigue funcional). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v13.2 · Design System Apple-like completado al 100%.** Rework completo del DS de dark editorial verde a **light Apple monocromático**:
+- **Color**: blanco/negro Apple (`#FFFFFF`/`#1D1D1F`) + grises (`#F5F5F7`, `#86868B`) + azul Apple `#0071E3` exclusivo (focus, links, CTA recomendado, toggle iOS on) + rojo `#E5484D` para errores. **Cero verde** (phosphor y mint eliminados · alias-legacy convertidos a `--text-muted`).
+- **Tipografía**: Inter Tight sentence case en todo · mono uppercase reservado SÓLO a numéricos (`.metric .num .unit`, `.sc-num`, `.h-panel-num`, `.h-progress-num`, `.sl-num`, `.ec-num`, `.scroll-indicator`, `.tag`, `.placeholder`, `.t-mono`). 30 selectores refactoreados de mono→display.
+- **Motion**: motion.js 717→498 (-219L) eliminando `initCursor` + `initGrain` + `initScrollStack` + `initHorizontal`. motion.css 230→154 (-76L). Total ~295L de teatro eliminado.
+- **Pricing v13.2** (`assets/sitio/pricing-table.{js,css}` + `data/precios-v12.js`): pago mes a mes (÷12 cuotas Visa/Mastercard/Amex) vs **pago en exhibición -20%** (era -25%). Powerups **todo-o-nada** vía master toggle iOS-style "Activar Powerups (+43%)" que habilita los 5 simultáneo (animaciones +10% · dark/light +5% · multi-idioma +15% · multi-moneda +8% · **PWA +5%** nuevo). Pills info-only se iluminan cuando master está on.
+- **Mantenimiento expandido** con marketing: Básico ($5k/mes "Tuyo que no muere") = 12 piezas + 2 redes + 1 historia + soporte horario oficina; Premium ($10k/mes "Acompañamiento 360°") = 20 piezas + 4 redes + 3 historias + reportes + 2 reuniones + soporte 24/7 teléfono+Meet.
+- **Webs**: featureRows comparativos con fila "Soporte técnico" (email 48h · WA+email oficina · ampliable 24/7). 3 links `cotizador.html`→`quiz.html` fixeados. Header + footer dentro de `.container 1320` alineados al contenido.
+- **UI Kit** (`design-system-v2/UI Kit.html`) ahora con toggle Light/Dark de preview en topbar (localStorage persistente). icons-reference y HANDOFF.md migrados a v13.2. Sections legacy `verticales-horizontal` y `scroll-stack` ocultas con `hidden` (CSS preservado para histórico).
 
 **v11.8 · Cart bottom-bar ELIMINADO · pagos inline en #/resultado.** El cart bottom-bar fijo abajo (de v11.0-v11.7) se eliminó por completo. El wizard ahora ocupa el ancho completo del viewport sin barra inferior persistente. Payment plan + código descuento + CTAs PayPal/WhatsApp se renderizan inline como sección `<article class="rk-card rk-payment-inline">` dentro de la pantalla `#/resultado`. Funciones `renderCartContent`, `bindCart`, `flyToCart` eliminadas (~390 líneas). `refreshCart` queda no-op para no romper call sites legacy. Funciones nuevas: `renderPaymentPlanInline(calc)` + `bindResultadoPayment()`. CSS §17 (~150 líneas) y §19 (fly-to-cart) eliminados. Tokens `--ds-cart-w` y `--ds-cart-peek` removidos del cotizador. Trade-off: no hay TOTAL en tiempo real durante subflow (Eduardo lo aceptó).
 
@@ -169,7 +178,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v11.8.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v13.2.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 

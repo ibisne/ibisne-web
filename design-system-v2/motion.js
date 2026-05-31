@@ -22,104 +22,6 @@
   }
 
   /* ── 1. CUSTOM CURSOR ───────────────────────────────────── */
-  function initCursor() {
-    if (isCoarse || reducedMotion) return;
-
-    const dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    const blob = document.createElement('div');
-    blob.className = 'cursor-blob';
-    const label = document.createElement('span');
-    label.className = 'cb-label';
-    blob.appendChild(label);
-    document.body.appendChild(dot);
-    document.body.appendChild(blob);
-    document.documentElement.classList.add('has-cursor');
-
-    const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    const dotPos = { x: mouse.x, y: mouse.y };
-    const blobPos = { x: mouse.x, y: mouse.y };
-
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-    document.addEventListener('mouseleave', () => blob.classList.add('is-hidden'));
-    document.addEventListener('mouseenter', () => blob.classList.remove('is-hidden'));
-
-    let cursorRaf = null;
-    function tick() {
-      dotPos.x = lerp(dotPos.x, mouse.x, 0.55);
-      dotPos.y = lerp(dotPos.y, mouse.y, 0.55);
-      blobPos.x = lerp(blobPos.x, mouse.x, 0.12);
-      blobPos.y = lerp(blobPos.y, mouse.y, 0.12);
-      dot.style.transform = `translate3d(${dotPos.x}px, ${dotPos.y}px, 0) translate(-50%, -50%)`;
-      blob.style.transform = `translate3d(${blobPos.x}px, ${blobPos.y}px, 0) translate(-50%, -50%)`;
-      cursorRaf = requestAnimationFrame(tick);
-    }
-    cursorRaf = requestAnimationFrame(tick);
-    /* expose teardown para futuras necesidades (SPA, theme reset, etc.) */
-    initCursor.cancel = () => { if (cursorRaf) cancelAnimationFrame(cursorRaf); cursorRaf = null; };
-
-    /* Hover states delegados al document */
-    function setBlobMode(mode, text) {
-      blob.classList.remove('is-link', 'is-button', 'is-view');
-      label.textContent = '';
-      if (mode === 'link')   blob.classList.add('is-link');
-      if (mode === 'button') blob.classList.add('is-button');
-      if (mode === 'view')   { blob.classList.add('is-view'); label.textContent = text || 'VIEW'; }
-    }
-
-    document.addEventListener('mouseover', (e) => {
-      const t = e.target.closest('[data-cursor], button, a, .btn');
-      if (!t) { setBlobMode(null); return; }
-      const data = t.getAttribute('data-cursor');
-      if (data === 'view' || data === 'read') setBlobMode('view', data.toUpperCase());
-      else if (t.matches('button, .btn')) setBlobMode('button');
-      else setBlobMode('link');
-    });
-    document.addEventListener('mouseout', (e) => {
-      if (!e.relatedTarget || !e.relatedTarget.closest) { setBlobMode(null); return; }
-      const t = e.relatedTarget.closest('[data-cursor], button, a, .btn');
-      if (!t) setBlobMode(null);
-    });
-  }
-
-  /* ── 2. SPLIT-TEXT REVEALS ──────────────────────────────── */
-  function splitText(el) {
-    if (el.dataset.split === 'done') return;
-    const mode = el.dataset.reveal || 'word';
-    const text = el.textContent;
-    el.textContent = '';
-    if (mode === 'char') {
-      [...text].forEach((ch) => {
-        const span = document.createElement('span');
-        span.className = 'char';
-        span.textContent = ch === ' ' ? ' ' : ch;
-        el.appendChild(span);
-      });
-    } else {
-      text.split(/(\s+)/).forEach((w) => {
-        if (!w) return;
-        if (/^\s+$/.test(w)) {
-          el.appendChild(document.createTextNode(w));
-        } else {
-          const wrap = document.createElement('span');
-          wrap.className = 'word-wrap';
-          wrap.style.display = 'inline-block';
-          wrap.style.overflow = 'hidden';
-          wrap.style.verticalAlign = 'top';
-          const inner = document.createElement('span');
-          inner.className = 'word';
-          inner.textContent = w;
-          wrap.appendChild(inner);
-          el.appendChild(wrap);
-        }
-      });
-    }
-    el.dataset.split = 'done';
-  }
-
   function initReveals(scope) {
     if (reducedMotion) return;
     const root = scope || document;
@@ -132,7 +34,7 @@
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const el = entry.target;
-          const stagger = parseInt(el.dataset.stagger || '40', 10);
+          const stagger = parseInt(el.dataset.stagger || '25', 10);  // v13.2 atenuado 40→25
           const isChar = el.dataset.reveal === 'char';
           const items = el.querySelectorAll(isChar ? '.char' : '.word');
           items.forEach((item, i) => {
@@ -189,49 +91,6 @@
   }
 
   /* ── 3. SCROLL-STACK STORYTELLING ───────────────────────── */
-  function initScrollStack(scope) {
-    if (reducedMotion) return;
-    const root = scope || document;
-    const stacks = root.querySelectorAll('.scroll-stack');
-    stacks.forEach((stack) => {
-      const layers = stack.querySelectorAll('.scroll-layer');
-      const total = layers.length;
-      if (!total) return;
-
-      // La altura del stack = total * 100vh (el sticky vive dentro)
-      stack.style.height = `${total * 100}vh`;
-
-      function update() {
-        const rect = stack.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const totalScroll = stack.offsetHeight - vh;
-        const progress = Math.min(Math.max(-rect.top / totalScroll, 0), 1);
-        const idx = Math.min(Math.floor(progress * total), total - 1);
-        layers.forEach((layer, i) => {
-          if (i < idx) {
-            layer.style.transform = 'translateY(-40px) scale(0.94)';
-            layer.style.opacity = '0';
-            layer.classList.remove('is-active');
-          } else if (i === idx) {
-            layer.style.transform = 'translateY(0) scale(1)';
-            layer.style.opacity = '1';
-            layer.classList.add('is-active');
-          } else {
-            layer.style.transform = 'translateY(80px) scale(0.96)';
-            layer.style.opacity = '0';
-            layer.classList.remove('is-active');
-          }
-        });
-      }
-      const controller = new AbortController();
-      spaControllers.push(controller);
-      window.addEventListener('scroll', update, { passive: true, signal: controller.signal });
-      window.addEventListener('resize', update, { signal: controller.signal });
-      update();
-    });
-  }
-
-  /* ── 5. MARQUEE — duplicar contenido para loop continuo ── */
   function initMarquee(scope) {
     const root = scope || document;
     const tracks = root.querySelectorAll('.marquee .marquee-track');
@@ -357,82 +216,6 @@
   }
 
   /* ── 9. HORIZONTAL VERTICALES — sticky + scroll lateral ─── */
-  function initHorizontal(scope) {
-    const root = scope || document;
-    const sections = root.querySelectorAll('.verticals-horizontal');
-    sections.forEach((section) => {
-      const track = section.querySelector('.h-track');
-      const panels = section.querySelectorAll('.h-panel');
-      const lines = section.querySelectorAll('.h-progress-line');
-      const total = panels.length;
-      if (!track || total < 2) return;
-
-      const isWide = () => window.matchMedia('(min-width: 1024px)').matches;
-
-      let target = 0;
-      let current = 0;
-      let raf = null;
-
-      function setHeight() {
-        if (isWide()) {
-          section.classList.remove('is-mobile');
-          section.style.height = `${total * 100}vh`;
-        } else {
-          section.classList.add('is-mobile');
-          section.style.height = '';
-          track.style.transform = '';
-          if (raf) { cancelAnimationFrame(raf); raf = null; }
-        }
-      }
-
-      function loop() {
-        current = reducedMotion ? target : lerp(current, target, 0.12);
-        track.style.transform = `translate3d(${-current * (total - 1) * 100}vw, 0, 0)`;
-        const idx = Math.min(Math.round(current * (total - 1)), total - 1);
-        lines.forEach((line, i) => line.classList.toggle('is-active', i === idx));
-        if (!reducedMotion && Math.abs(current - target) > 0.0005) {
-          raf = requestAnimationFrame(loop);
-        } else {
-          raf = null;
-        }
-      }
-
-      function update() {
-        if (!isWide()) return;
-        const rect = section.getBoundingClientRect();
-        const totalScroll = section.offsetHeight - window.innerHeight;
-        const progress = Math.min(Math.max(-rect.top / totalScroll, 0), 1);
-        target = progress;
-        if (!raf) raf = requestAnimationFrame(loop);
-      }
-
-      setHeight();
-      update();
-      const controller = new AbortController();
-      spaControllers.push(controller);
-      window.addEventListener('scroll', update, { passive: true, signal: controller.signal });
-      window.addEventListener('resize', () => { setHeight(); update(); }, { signal: controller.signal });
-    });
-  }
-
-  /* ── 10. GRAIN — shuffle del background-position ────────── */
-  function initGrain() {
-    if (reducedMotion) return;
-    let grain = document.querySelector('.grain');
-    if (!grain) {
-      grain = document.createElement('div');
-      grain.className = 'grain';
-      grain.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(grain);
-    }
-    setInterval(() => {
-      const x = Math.floor(Math.random() * 240);
-      const y = Math.floor(Math.random() * 240);
-      grain.style.backgroundPosition = `${x}px ${y}px`;
-    }, 200);
-  }
-
-  /* ── 11. BG CROSSFADE — body bg sigue la sección visible ── */
   function initBgFade() {
     if (reducedMotion) return;
     const sections = document.querySelectorAll('.section[data-bg]');
@@ -686,15 +469,13 @@
     });
   }
 
-  /* ── BOOT ───────────────────────────────────────────────── */
+  /* ── BOOT ───────────────────────────────────────────────────
+     v13.2 · poda de "teatro": removidos initCursor, initGrain,
+     initScrollStack, initHorizontal (~217 líneas). Solo quedan
+     funciones que comunican estado/feedback/navegación. */
   function boot() {
-    initCursor();
-    initGrain();
     initReveals();
     initRevealStagger();
-    initScrollStack();
-    initHorizontal();
-
     initMarquee();
     initFAQ();
     initNavScroll();
@@ -713,5 +494,5 @@
   }
 
   // expose para debugging
-  window.__VAULT__ = { initReveals, initRevealStagger, initScrollStack, initMarquee, initFAQ, initHorizontal, initBgFade, initMegaMenu, initNavMobile, initModalDialogs, initTabs };
+  window.__VAULT__ = { initReveals, initRevealStagger, initMarquee, initFAQ, initBgFade, initMegaMenu, initNavMobile, initPageTransitions, initModalDialogs, initTabs };
 })();

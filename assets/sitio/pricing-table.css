@@ -1,10 +1,15 @@
 /* ===================================================================
-   assets/sitio/pricing-table.css · v13.1 · Apple-like
+   assets/sitio/pricing-table.css · v13.2 · Apple-like
    ===================================================================
    Negro/blanco + azul en CTA recomendado. Cero verde. Cards tenues
-   (#F5F5F7) sobre secciones blancas. Powerups GLOBALES como chips que
-   se rellenan en negro al activarse. Tabla comparativa compacta detrás
-   de botón. Listas con interlineado ajustado (como Shopify, no altas).
+   (#F5F5F7) sobre secciones blancas.
+
+   v13.2 (feedback Eduardo · powerups todo-o-nada):
+   - Se eliminó el patrón .pt-chip (chips clickables individuales).
+   - Powerups ahora: UN solo .pt-powerups-master-toggle grande con switch
+     iOS-style + copy + % total a la derecha. Al activarse, las pills
+     informativas debajo se "iluminan" como confirmación visual de
+     que los 5 superpoderes están activos.
    =================================================================== */
 
 /* ── Botones del componente (negro sólido / azul Apple) ───────── */
@@ -29,7 +34,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   transition: background var(--dur-fast) var(--ease-out-quart);
 }
-.btn-blue:hover { background: var(--accent-blue-hover); }
+.btn-blue:hover { background: var(--accent-blue-hover, #0064CC); }
 .btn-ghost-light {
   background: transparent; color: var(--text-secondary);
   border: 1px solid var(--bg-line-strong);
@@ -74,33 +79,105 @@
   font-weight: var(--fw-semibold); margin-left: 4px;
 }
 
-/* Powerups · banda de chips compartida */
-.pt-powerups { display: flex; flex-direction: column; gap: var(--sp-2); }
-.pt-powerups-label {
-  font-size: var(--fs-small); color: var(--text-muted);
+/* ── Powerups · MASTER TOGGLE (todo-o-nada) ───────────────────── */
+.pt-powerups {
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  width: 100%;
 }
-.pt-powerups-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
-.pt-chip {
-  display: inline-flex; align-items: center; gap: var(--sp-2);
-  background: var(--bg); color: var(--text-primary);
-  border: 1px solid var(--bg-line-strong);
-  border-radius: var(--radius-pill);
-  padding: 8px 14px; cursor: pointer;
+
+.pt-powerups-master-toggle {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%;
+  background: var(--bg-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
   transition: background var(--dur-fast) var(--ease-out-quart),
-              border-color var(--dur-fast) var(--ease-out-quart),
-              color var(--dur-fast) var(--ease-out-quart);
+              border-color var(--dur-fast) var(--ease-out-quart);
 }
-.pt-chip-ic { display: inline-flex; color: currentColor; }
-.pt-chip-ic svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
-.pt-chip-name { font-size: var(--fs-base); font-weight: var(--fw-medium); }
-.pt-chip-pct { font-size: var(--fs-small); color: var(--text-muted); }
-.pt-chip:hover { border-color: var(--text-primary); }
-/* ACTIVO · se rellena en negro ("brutal") */
-.pt-chip.is-on {
-  background: var(--text-primary); color: var(--bg);
+.pt-powerups-master-toggle:hover { border-color: var(--bg-line-strong); }
+.pt-powerups-master-toggle.is-on {
+  background: var(--text-primary);
   border-color: var(--text-primary);
 }
-.pt-chip.is-on .pt-chip-pct { color: var(--bg); opacity: 0.7; }
+
+/* Switch iOS-style */
+.pt-pm-switch {
+  position: relative; flex: none;
+  width: 44px; height: 26px;
+  background: var(--bg-line-strong);
+  border-radius: 999px;
+  transition: background var(--dur-fast) var(--ease-out-quart);
+}
+.pt-pm-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform var(--dur-fast) var(--ease-out-quart);
+}
+.pt-powerups-master-toggle.is-on .pt-pm-switch { background: var(--accent-blue); }
+.pt-powerups-master-toggle.is-on .pt-pm-knob { transform: translateX(18px); }
+
+.pt-pm-copy {
+  display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;
+}
+.pt-pm-title {
+  font-size: var(--fs-base); font-weight: var(--fw-semibold);
+  color: var(--text-primary); line-height: 1.2;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.pt-pm-sub {
+  font-size: var(--fs-small); color: var(--text-muted); line-height: 1.3;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.pt-pm-pct {
+  font-family: var(--font-mono); font-size: var(--fs-base);
+  font-weight: var(--fw-semibold); color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+/* En estado ACTIVO el toggle se invierte (fondo negro, texto blanco) */
+.pt-powerups-master-toggle.is-on .pt-pm-title { color: var(--bg); }
+.pt-powerups-master-toggle.is-on .pt-pm-sub { color: rgba(255,255,255,0.7); }
+.pt-powerups-master-toggle.is-on .pt-pm-pct { color: var(--bg); }
+
+/* Pills informativas · NO clickables · solo muestran el contenido */
+.pt-powerups-pills {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2);
+}
+.pt-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  user-select: none;
+  transition: background var(--dur-fast) var(--ease-out-quart),
+              border-color var(--dur-fast) var(--ease-out-quart),
+              color var(--dur-fast) var(--ease-out-quart),
+              opacity var(--dur-fast) var(--ease-out-quart);
+  opacity: 0.6;   /* atenuadas hasta que se activen */
+}
+.pt-pill-ic { display: inline-flex; color: var(--text-secondary); }
+.pt-pill-ic svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.pt-pill-name { font-size: var(--fs-small); font-weight: var(--fw-medium); color: var(--text-secondary); }
+.pt-pill-pct { font-size: var(--fs-micro); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* Cuando el master toggle está ON, las pills se "iluminan" */
+.pt-powerups.is-on .pt-pill {
+  opacity: 1;
+  border-color: var(--text-primary);
+  background: var(--bg);
+}
+.pt-powerups.is-on .pt-pill .pt-pill-ic,
+.pt-powerups.is-on .pt-pill .pt-pill-name { color: var(--text-primary); }
+.pt-powerups.is-on .pt-pill .pt-pill-pct { color: var(--accent-blue); font-weight: var(--fw-semibold); }
 
 /* ── Grid de cards ────────────────────────────────────────────── */
 .pricing-grid {
@@ -223,7 +300,12 @@
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (min-width: 768px) {
   .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
-  .pt-controls { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-4); }
+  /* Layout horizontal: pago a la izq, powerups grande a la der */
+  .pt-controls {
+    flex-direction: row; align-items: flex-start;
+    justify-content: space-between; flex-wrap: wrap; gap: var(--sp-4);
+  }
+  .pt-powerups { flex: 1; max-width: 560px; min-width: 320px; }
 }
 @media (max-width: 767px) {
   .cmp { min-width: 480px; }

@@ -1,18 +1,18 @@
 /* ===================================================================
-   assets/sitio/pricing-table.js · v13.1
+   assets/sitio/pricing-table.js · v13.2
    ===================================================================
    Render del componente Pricing Table desde IBISNE_PRECIOS_V12.
    Auto-inicializa cualquier <div data-pricing-categoria="webs">.
 
-   v13.1 (feedback Eduardo):
-   - Power-ups son GLOBALES: barra de chips al lado del toggle de pago
-     (ya no 4 toggles por card · eso alargaba las cards). Aplican a TODOS
-     los planes. Al activar un chip se rellena en negro ("brutal") y todos
-     los precios suben en vivo.
-   - Tabla comparativa detrás de botón "Comparar todos los planes" ·
-     specs técnicas · cerrada por default.
-   - Cero verde · negro/blanco/azul. Precio = base × (1+Σpowerups) ×
-     (exhibición ? 0.75 : 1).
+   v13.2 (feedback Eduardo · powerups todo-o-nada · descuento 20%):
+   - Powerups GLOBALES con UX "todo o nada": un solo toggle grande
+     "Activar Powerups (+43%)" que habilita los 5 a la vez. Pills debajo
+     son informativas (no clickables individualmente).
+   - state.powerupsOn pasa de Set a boolean.
+   - planPrice(): si powerupsOn, suma DATA.powerupsTotalPct (= 0.43).
+   - Descuento exhibición: 25% → 20% (multiplier 0.75 → 0.80) leído desde
+     DATA.exhibicion.multiplier (NO hardcodeado).
+   - Mensaje WhatsApp incluye "-20%" y "+ todos los powerups" según estado.
    =================================================================== */
 (function () {
   'use strict';
@@ -43,15 +43,11 @@
     requestAnimationFrame(step);
   }
 
-  // Precio efectivo · powerups GLOBALES (mismos para todos los planes)
-  function planPrice(plan, exhibicion, activeGlobal, powerupsDef) {
-    var mult = 1;
-    activeGlobal.forEach(function (pid) {
-      var pu = powerupsDef.find(function (p) { return p.id === pid; });
-      if (pu) mult += pu.addPct;
-    });
+  // Precio efectivo · powerups todo-o-nada
+  function planPrice(plan, exhibicion, powerupsOn, totalPct, exhMultiplier) {
+    var mult = 1 + (powerupsOn ? (totalPct || 0) : 0);
     var price = plan.base * mult;
-    if (exhibicion) price *= 0.75;
+    if (exhibicion) price *= (exhMultiplier || 0.80);
     return price;
   }
 
@@ -63,34 +59,46 @@
     }
     var cat = DATA[categoria];
     var powerupsDef = DATA.powerups || [];
+    var powerupsTotalPct = DATA.powerupsTotalPct || 0;
+    var exhMultiplier = (DATA.exhibicion && DATA.exhibicion.multiplier) || 0.80;
+    var exhBadge = (DATA.exhibicion && DATA.exhibicion.badge) || 'Ahorra 20%';
+    var exhLabel = (DATA.exhibicion && DATA.exhibicion.label) || 'Pago en exhibición';
+    var discountPctLabel = Math.round((1 - exhMultiplier) * 100); // 20
 
-    // Estado · powerups GLOBALES (un solo Set para todos los planes)
-    var state = { exhibicion: false, powerups: new Set() };
+    // Estado · powerups todo-o-nada (boolean en vez de Set)
+    var state = { exhibicion: false, powerupsOn: false };
+    var powerupsTotalPctLabel = Math.round(powerupsTotalPct * 100); // 43
 
     var html = '';
 
-    // ── CONTROLES: toggle de pago + powerups (banda compartida) ──
+    // ── CONTROLES: toggle de pago + powerups master ──────────────
     html += '<div class="pt-controls">';
 
-    // Segmented control de pago (no switch · pestaña tipo Shopify)
+    // Segmented control de pago (pestaña tipo Shopify)
     html += '  <div class="pt-seg" role="tablist" aria-label="Forma de pago">';
     html += '    <button class="pt-seg-opt is-on" data-pay="mes" type="button" role="tab" aria-selected="true">Pago mes a mes</button>';
     html += '    <button class="pt-seg-opt" data-pay="exhibicion" type="button" role="tab" aria-selected="false">' +
-            (DATA.exhibicion ? DATA.exhibicion.label : 'Pago en exhibición') +
-            ' <span class="pt-seg-badge">' + (DATA.exhibicion ? DATA.exhibicion.badge : 'Ahorra 25%') + '</span></button>';
+            exhLabel + ' <span class="pt-seg-badge">' + exhBadge + '</span></button>';
     html += '  </div>';
 
-    // Powerups como chips (banda compartida · aplican a todos los planes)
+    // Powerups · master toggle + pills informativas
     if (powerupsDef.length) {
-      html += '  <div class="pt-powerups">';
-      html += '    <span class="pt-powerups-label">Powerups</span>';
-      html += '    <div class="pt-powerups-chips">';
+      html += '  <div class="pt-powerups" data-powerups-block>';
+      html += '    <button class="pt-powerups-master-toggle" type="button" aria-pressed="false" data-powerups-toggle>';
+      html += '      <span class="pt-pm-switch" aria-hidden="true"><span class="pt-pm-knob"></span></span>';
+      html += '      <span class="pt-pm-copy">';
+      html += '        <span class="pt-pm-title">Activar Powerups</span>';
+      html += '        <span class="pt-pm-sub">5 superpoderes para tu desarrollo · todo o nada</span>';
+      html += '      </span>';
+      html += '      <span class="pt-pm-pct">+' + powerupsTotalPctLabel + '%</span>';
+      html += '    </button>';
+      html += '    <div class="pt-powerups-pills" aria-label="Powerups incluidos">';
       powerupsDef.forEach(function (pu) {
-        html += '<button class="pt-chip" data-powerup="' + pu.id + '" type="button" aria-pressed="false">' +
-                '<span class="pt-chip-ic">' + icon(pu.icon) + '</span>' +
-                '<span class="pt-chip-name">' + pu.label + '</span>' +
-                '<span class="pt-chip-pct">+' + Math.round(pu.addPct * 100) + '%</span>' +
-                '</button>';
+        html += '<span class="pt-pill" data-pill="' + pu.id + '">' +
+                '<span class="pt-pill-ic">' + icon(pu.icon) + '</span>' +
+                '<span class="pt-pill-name">' + pu.label + '</span>' +
+                '<span class="pt-pill-pct">+' + Math.round(pu.addPct * 100) + '%</span>' +
+                '</span>';
       });
       html += '    </div>';
       html += '  </div>';
@@ -167,20 +175,16 @@
         if (!card) return;
         var amountEl = card.querySelector('[data-amount]');
         var prev = parseFloat((amountEl.textContent || '0').replace(/[^0-9.]/g, '')) || plan.base;
-        var next = planPrice(plan, state.exhibicion, state.powerups, powerupsDef);
+        var next = planPrice(plan, state.exhibicion, state.powerupsOn, powerupsTotalPct, exhMultiplier);
         if (animate) animateNumber(amountEl, prev, next);
         else amountEl.textContent = fmt(next);
 
         var cta = card.querySelector('[data-cta]');
         if (cta) {
-          var puNames = [];
-          state.powerups.forEach(function (pid) {
-            var pu = powerupsDef.find(function (p) { return p.id === pid; });
-            if (pu) puNames.push(pu.label);
-          });
           var msg = 'Hola, me interesa el plan ' + plan.label + ' (' + cat.label + ').\n' +
-            'Precio: ' + fmt(next) + ' MXN ' + (state.exhibicion ? '(pago en exhibición -25%)' : '(pago mes a mes)') + '.\n' +
-            (puNames.length ? 'Powerups: ' + puNames.join(', ') + '.\n' : '') +
+            'Precio: ' + fmt(next) + ' MXN ' +
+            (state.exhibicion ? '(pago en exhibición -' + discountPctLabel + '%)' : '(pago mes a mes · 12 cuotas)') + '.\n' +
+            (state.powerupsOn ? 'Con los 5 Powerups activados (+' + powerupsTotalPctLabel + '%).\n' : '') +
             '¿Cómo procedemos?';
           cta.href = 'https://wa.me/' + HUNTER_WA + '?text=' + encodeURIComponent(msg);
           cta.target = '_blank'; cta.rel = 'noopener';
@@ -203,17 +207,18 @@
       });
     });
 
-    // ── Powerups globales (chips) ──────────────────────────────
-    container.querySelectorAll('.pt-chip').forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        var pid = chip.getAttribute('data-powerup');
-        var on = !chip.classList.contains('is-on');
-        chip.classList.toggle('is-on', on);
-        chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-        if (on) state.powerups.add(pid); else state.powerups.delete(pid);
+    // ── Master toggle de powerups (todo-o-nada) ────────────────
+    var puToggle = container.querySelector('[data-powerups-toggle]');
+    var puBlock  = container.querySelector('[data-powerups-block]');
+    if (puToggle) {
+      puToggle.addEventListener('click', function () {
+        state.powerupsOn = !state.powerupsOn;
+        puToggle.classList.toggle('is-on', state.powerupsOn);
+        puToggle.setAttribute('aria-pressed', state.powerupsOn ? 'true' : 'false');
+        if (puBlock) puBlock.classList.toggle('is-on', state.powerupsOn);
         recalc(true);
       });
-    });
+    }
 
     // ── Botón "Comparar todos los planes" ──────────────────────
     var cmp = container.querySelector('.pt-compare');

@@ -1,22 +1,22 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>VAULT · iBisne Design System v2.3 · UI Kit</title>
-<meta name="description" content="Sistema VAULT — antítesis de Operator Grid. Editorial, escaso, premium." />
+<title>VAULT · iBisne Design System v13.2 · UI Kit</title>
+<meta name="description" content="VAULT v13.2 — Apple-like, light por default, dark opcional. Producto SaaS limpio, no terminal." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="tokens.css?v=3.1.0">
-<link rel="stylesheet" href="components.css?v=3.1.0">
-<link rel="stylesheet" href="components-extra.css?v=3.1.0">
-<link rel="stylesheet" href="motion.css?v=3.1.0">
+<link rel="stylesheet" href="tokens.css?v=3.2.0">
+<link rel="stylesheet" href="components.css?v=3.2.0">
+<link rel="stylesheet" href="components-extra.css?v=3.2.0">
+<link rel="stylesheet" href="motion.css?v=3.2.0">
 
 <style>
   /* ============================================================
@@ -32,20 +32,42 @@
     flex-direction: column;
     gap: 6px;
     padding: var(--sp-3);
-    background: rgba(13,17,23,0.6);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: var(--hairline);
+    border-radius: var(--radius);
   }
   .kit-toc a {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    font-family: var(--font-body);          /* v13.2 · sentence case */
+    font-size: 11px;
     color: var(--text-muted);
     transition: color var(--dur-fast) var(--ease-out-quart);
   }
   .kit-toc a:hover { color: var(--text-primary); }
   @media (max-width: 1100px) { .kit-toc { display: none; } }
+
+  /* v13.2 · Toggle Light/Dark del Kit (preview ambos modos) */
+  .kit-theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 50;
+    display: inline-flex; gap: 2px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--bg-line-strong);
+    border-radius: 999px;
+    padding: 3px;
+    font-family: var(--font-body);
+  }
+  .kit-theme-toggle button {
+    background: transparent; border: 0;
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out-quart),
+                color var(--dur-fast) var(--ease-out-quart);
+  }
+  .kit-theme-toggle button.is-on {
+    background: var(--bg); color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
 
   .kit-section { padding-top: var(--sp-9); padding-bottom: var(--sp-9); }
   .kit-head {
@@ -241,8 +263,38 @@
 </head>
 <body>
 
+<!-- v13.2 · Toggle Light/Dark · permite previsualizar el kit en ambos modos -->
+<div class="kit-theme-toggle" role="tablist" aria-label="Vista previa de tema">
+  <button type="button" data-theme-set="light" class="is-on" role="tab" aria-selected="true">Light</button>
+  <button type="button" data-theme-set="dark" role="tab" aria-selected="false">Dark</button>
+</div>
+<script>
+(function () {
+  var saved = localStorage.getItem('ibisne-kit-theme');
+  var html  = document.documentElement;
+  if (saved === 'dark') html.setAttribute('data-theme', 'dark');
+  function sync(target) {
+    document.querySelectorAll('.kit-theme-toggle button').forEach(function (b) {
+      var on = b.getAttribute('data-theme-set') === target;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+  sync(saved === 'dark' ? 'dark' : 'light');
+  document.querySelectorAll('.kit-theme-toggle button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-theme-set');
+      if (t === 'dark') html.setAttribute('data-theme', 'dark');
+      else html.removeAttribute('data-theme');
+      localStorage.setItem('ibisne-kit-theme', t);
+      sync(t);
+    });
+  });
+})();
+</script>
+
 <!-- Grain overlay defensivo (JS también lo inyecta si falta) -->
-<div class="grain" aria-hidden="true"></div>
+<!-- v13.2 · <div class="grain"> eliminado · ambient grain ya no es parte del DS Apple-like -->
 
 <!-- ─────────────────────── NAVBAR v2.2 ─────────────────────── -->
 <nav class="nav" aria-label="Navegación principal">
@@ -937,8 +989,12 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 06.5 · VERTICALES HORIZONTAL (golpe de teatro) ═══════════ -->
-  <section id="verticales" class="section bg-deep" data-bg="deep" style="padding: 0;">
+  <!-- ═══════════ § 06.5 · VERTICALES HORIZONTAL · DEPRECATED v13.2 ═══════════
+       El golpe de teatro horizontal scroll fue podado del sistema porque no
+       comunica estado/feedback (era pura narrativa editorial). El markup
+       queda oculto para histórico; CSS sigue en components-extra.css por si
+       se rescata en el futuro. -->
+  <section id="verticales" class="section bg-deep" data-bg="deep" style="padding: 0;" hidden>
     <span class="section-num is-corner" style="z-index: 6; color: var(--text-secondary);">§ 06.5</span>
     <div class="verticals-horizontal">
       <div class="h-sticky">
@@ -1153,8 +1209,10 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 11 · SCROLL STACK ═══════════ -->
-  <section id="stack" class="section kit-section bg-base" data-bg="base" style="padding-bottom: 0;">
+  <!-- ═══════════ § 11 · SCROLL STACK · DEPRECATED v13.2 ═══════════
+       Sticky storytelling editorial podado del sistema; era narrativa, no
+       feedback. Markup oculto para histórico; CSS sigue en components-extra.css. -->
+  <section id="stack" class="section kit-section bg-base" data-bg="base" style="padding-bottom: 0;" hidden>
     <span class="section-num is-corner">§ 11.00</span>
     <div class="container">
       <div class="kit-head">

@@ -1,61 +1,79 @@
 /* ===================================================================
-   data/precios-v12.js · v12.0 · Lista de precios predeterminada
+   data/precios-v12.js · v13.2 · Lista de precios predeterminada
    ===================================================================
-   Modelo nuevo (rework v12): listas de precios comparativas tipo Shopify.
-   Cada plan = PRECIO ÚNICO que YA INCLUYE: dominio + hosting + licencias
-   de terceros + diseño + frontend + backend + automatizaciones. El cliente
-   paga en una sola exhibición (con -25% de descuento vs mes a mes) y puede
-   agregar mantenimiento mensual opcional.
+   Modelo: cada plan = PRECIO ÚNICO que YA INCLUYE dominio + hosting +
+   licencias de terceros + diseño + frontend + backend + automatizaciones.
 
-   Toggles por plan:
-     - Pago: mes a mes (precio base) vs exhibición (-25%)
-     - Powerups: extras que SUMAN % al precio del plan (animaciones, etc.)
+   Modelo de pago (v13.2):
+     - "Mes a mes" = precio anual ÷ 12 cuotas mensuales (Visa/Mastercard/Amex)
+     - "Pago en exhibición" = precio anual completo con -20% de descuento
 
-   NOTA: este slice solo trae la categoría `webs`. apps/shopify/software
-   se agregan con la misma estructura en fases posteriores. Las features
-   son una primera propuesta · Eduardo las afina sobre la página renderizada.
+   Powerups (v13.2): TODO o NADA. Activar habilita los 5 superpoderes
+   simultáneamente al desarrollo y suma +43% al precio base (10+5+15+8+5).
 
-   API esperada por pricing-table.js:
+   Mantenimiento mensual opcional · NO suma al pago único · cubre
+   modificaciones + marketing + soporte continuo.
+
+   API:
      IBISNE_PRECIOS_V12[categoria] = { label, planes[], featureRows[] }
    =================================================================== */
 
 window.IBISNE_PRECIOS_V12 = {
 
-  /* ── Pago en una sola exhibición · descuento global ──────────── */
+  /* ── Pago en una sola exhibición · descuento global -20% ──────── */
   exhibicion: {
-    multiplier: 0.75,           // -25%
+    multiplier: 0.80,           // -20% (era -25% en v13.1)
     label: 'Pago en exhibición',
-    badge: 'Ahorra 25%',
+    badge: 'Ahorra 20%',
+    nota: 'Pago anual completo · una sola exhibición',
   },
 
-  /* ── Powerups · togglean por plan · suman % al precio ────────── */
+  /* ── Pago a mensualidades ────────────────────────────────────── */
+  mensualidad: {
+    meses: 12,
+    label: 'Pago mes a mes',
+    nota: 'Precio anual dividido en 12 · Visa, Mastercard, Amex',
+  },
+
+  /* ── Powerups · TODO O NADA · suman +43% al precio base ──────── */
   powerups: [
     { id: 'animaciones', label: 'Animaciones premium', desc: 'Microinteracciones + scroll reveals', addPct: 0.10, icon: 'zap' },
     { id: 'darklight',   label: 'Dark / Light mode',    desc: 'Tema doble + auto-detección del SO',  addPct: 0.05, icon: 'palette' },
     { id: 'idiomas',     label: 'Multi-idioma',         desc: 'Traducción + UI en 2+ idiomas',       addPct: 0.15, icon: 'partnership' },
-    { id: 'multimoneda', label: 'Multi-moneda',         desc: 'Precios en MXN/USD con conversión',    addPct: 0.08, icon: 'wallet' },
+    { id: 'multimoneda', label: 'Multi-moneda',         desc: 'Precios en MXN/USD con conversión',   addPct: 0.08, icon: 'wallet' },
+    { id: 'pwa',         label: 'PWA instalable',       desc: 'App-like en móvil sin tiendas',       addPct: 0.05, icon: 'app' },
   ],
+  powerupsTotalPct: 0.43,   // suma de todos los addPct · "todo-o-nada"
 
-  /* ── Mantenimiento mensual opcional · NO suma al pago único ──── */
+  /* ── Mantenimiento mensual opcional · incluye marketing ──────── */
   mantenimiento: [
     {
       id: 'basico', precio: 5000, label: 'Mantenimiento Básico',
-      desc: 'Para mantener tu desarrollo vivo y actualizado.',
+      titulo: 'Tuyo que no muere',
+      desc: 'Para mantener tu desarrollo vivo, actualizado y con presencia constante.',
       features: [
         'Modificaciones y cambios simples',
-        'Soporte por WhatsApp en horario hábil',
-        'Actualizaciones de seguridad',
+        '12 piezas gráficas mensuales (posts, banners)',
+        '2 redes sociales gestionadas',
+        '1 historia o reel mensual',
         'Renovación de licencias incluida',
+        'Actualizaciones de seguridad',
+        'Soporte WhatsApp + email · horario oficina (10am-5pm)',
       ],
     },
     {
       id: 'premium', precio: 10000, label: 'Mantenimiento Premium',
-      desc: 'Acompañamiento para cambios urgentes o críticos.',
+      titulo: 'Acompañamiento 360°',
+      desc: 'Para crecer activamente con cambios urgentes y operación de marketing.',
       features: [
-        'Todo lo del Básico',
-        'Cambios urgentes priorizados',
-        'Acompañamiento dedicado',
-        'Soporte extendido',
+        'Todo lo del plan Básico',
+        'Cambios urgentes priorizados (mismo día)',
+        '20 piezas gráficas mensuales',
+        '4 redes sociales gestionadas',
+        '3 historias o reels mensuales',
+        'Reportes mensuales de performance',
+        '2 reuniones estratégicas al mes',
+        'Soporte teléfono + Google Meet · 24/7',
       ],
     },
   ],
@@ -63,7 +81,7 @@ window.IBISNE_PRECIOS_V12 = {
   /* ── CATEGORÍA: WEBS ──────────────────────────────────────────── */
   webs: {
     label: 'Desarrollo Web',
-    eyebrow: '— PLANES WEB',
+    eyebrow: 'Planes web',
     title: 'Tu presencia en internet, sin sorpresas',
     sub: 'Precio cerrado que ya incluye dominio, hosting y todas las licencias. Tú solo eliges el plan.',
 
@@ -76,13 +94,13 @@ window.IBISNE_PRECIOS_V12 = {
         recomendado: false,
         icon: 'biolink',
         tiempo: '3-5 días',
-        // Features mostradas dentro de la card (las 5 más vendedoras)
         features: [
           'Página de enlaces (bio link)',
           'Dominio + hosting · 1 año incluido',
           'Diseño responsive (móvil)',
           'Hasta 8 enlaces + redes',
           'Botón de WhatsApp directo',
+          'Soporte por email · respuesta 48h',
         ],
         cta: 'Empezar',
       },
@@ -100,6 +118,7 @@ window.IBISNE_PRECIOS_V12 = {
           'SEO base + Analytics (GA4)',
           'Formulario de captura de leads',
           'Diseño responsive premium',
+          'Soporte WhatsApp + email · horario oficina',
         ],
         cta: 'Elegir Landing',
       },
@@ -117,6 +136,7 @@ window.IBISNE_PRECIOS_V12 = {
           'Dominio + hosting · 1 año incluido',
           'SEO + Analytics + formularios',
           'Diseño responsive premium',
+          'Soporte WhatsApp + email · ampliable a 24/7 con mantenimiento',
         ],
         cta: 'Elegir Sitio',
       },
@@ -135,6 +155,7 @@ window.IBISNE_PRECIOS_V12 = {
       { label: 'CMS editable',               values: { 'web-micro': '—',        'web-landing': '—',        'web-sitio': '✓' } },
       { label: 'Blog',                       values: { 'web-micro': '—',        'web-landing': '—',        'web-sitio': '✓' } },
       { label: 'Rondas de revisión',         values: { 'web-micro': '2',        'web-landing': '3',        'web-sitio': '5' } },
+      { label: 'Soporte técnico',            values: { 'web-micro': 'Email · 48h',           'web-landing': 'WhatsApp + email · oficina',  'web-sitio': 'WhatsApp + email · ampliable 24/7' } },
       { label: 'Tiempo de entrega',          values: { 'web-micro': '3-5 días', 'web-landing': '1-2 sem',  'web-sitio': '2-4 sem' } },
     ],
   },

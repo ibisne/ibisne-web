@@ -61,11 +61,10 @@ html.has-cursor * { cursor: none !important; }
 }
 .section + .section { border-top: var(--hairline); }
 .section-num {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
-  color: var(--accent-mint);            /* numeración de sección en mint */
+  letter-spacing: -0.005em;
+  color: var(--text-muted);            /* numeración de sección en mint */
 }
 .section-num.is-corner {
   position: absolute;
@@ -73,11 +72,10 @@ html.has-cursor * { cursor: none !important; }
   right: var(--grid-edge);
 }
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
-  color: var(--accent-mint);            /* mint — eyebrow es el marker de sección */
+  letter-spacing: -0.005em;
+  color: var(--text-muted);            /* mint — eyebrow es el marker de sección */
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
@@ -86,7 +84,7 @@ html.has-cursor * { cursor: none !important; }
   content: '';
   width: 24px;
   height: 1px;
-  background: var(--accent-mint);       /* hairline corta del eyebrow en mint */
+  background: var(--text-muted);       /* hairline corta del eyebrow en mint */
 }
 .eyebrow.is-muted { color: var(--text-secondary); }
 .eyebrow.is-muted::before { background: var(--text-muted); }
@@ -148,7 +146,7 @@ html.has-cursor * { cursor: none !important; }
               color var(--dur-fast) var(--ease-out-quart);
 }
 .link:hover {
-  text-decoration-color: var(--accent-mint);    /* mint en hover, no fósforo */
+  text-decoration-color: var(--accent-blue);    /* mint en hover, no fósforo */
   color: var(--text-primary);
 }
 
@@ -156,10 +154,9 @@ html.has-cursor * { cursor: none !important; }
   display: inline-flex;
   align-items: baseline;
   gap: var(--sp-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-small);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-primary);
   position: relative;
 }
@@ -189,8 +186,7 @@ html.has-cursor * { cursor: none !important; }
   font-family: var(--font-display);
   font-size: var(--fs-small);
   font-weight: var(--fw-medium);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   padding: var(--btn-pad-y) var(--btn-pad-x);
   border: 1px solid var(--bg-line);
   background: transparent;
@@ -367,15 +363,14 @@ html.has-cursor * { cursor: none !important; }
 /* Focus: línea más prominente en mint, indica acción activa */
 .field input:focus,
 .field textarea:focus,
-.field select:focus { border-bottom-color: var(--accent-mint); }
+.field select:focus { border-bottom-color: var(--accent-blue); }
 .field label {
   position: absolute;
   left: 0;
   bottom: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-small);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-muted);
   pointer-events: none;
   transition: transform var(--dur-fast) var(--ease-out-quart),
@@ -388,7 +383,7 @@ html.has-cursor * { cursor: none !important; }
 .field textarea:not(:placeholder-shown) + label {
   transform: translateY(-26px);
   font-size: var(--fs-micro);
-  color: var(--accent-mint);
+  color: var(--accent-blue);
 }
 .field input::placeholder,
 .field textarea::placeholder { color: transparent; }
@@ -406,7 +401,7 @@ html.has-cursor * { cursor: none !important; }
 .nav-links a:focus-visible,
 .nav-links button.nav-mega-trigger:focus-visible,
 .nav-topbar .tb-social a:focus-visible {
-  outline: 2px solid var(--accent-mint);
+  outline: 2px solid var(--accent-blue);
   outline-offset: 3px;
 }
 
@@ -444,10 +439,9 @@ html.has-cursor * { cursor: none !important; }
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-4);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-muted);
 }
 .nav-topbar .tb-locations {
@@ -480,10 +474,9 @@ html.has-cursor * { cursor: none !important; }
 .nav-topbar .tb-toggle button {
   background: transparent;
   color: var(--text-muted);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-pico);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   padding: 3px 7px;
   cursor: not-allowed;
   display: inline-flex;
@@ -521,10 +514,9 @@ html.has-cursor * { cursor: none !important; }
 .nav-links li { position: relative; }
 .nav-links a,
 .nav-links button.nav-mega-trigger {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-small);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-secondary);
   position: relative;
   padding: 4px 0;
@@ -537,8 +529,8 @@ html.has-cursor * { cursor: none !important; }
   transition: color var(--dur-fast) var(--ease-out-quart);
 }
 .nav-links a:hover,
-.nav-links button.nav-mega-trigger:hover { color: var(--accent-mint); }
-.nav-links a.is-active { color: var(--accent-mint); }
+.nav-links button.nav-mega-trigger:hover { color: var(--accent-blue); }
+.nav-links a.is-active { color: var(--accent-blue); }
 .nav-links a.is-active::before {
   content: '';
   position: absolute;
@@ -554,7 +546,7 @@ html.has-cursor * { cursor: none !important; }
   stroke: currentColor; fill: none; stroke-width: 1.5;
   transition: transform var(--dur-fast) var(--ease-out-quart);
 }
-.nav-links li.has-mega[aria-expanded="true"] .nav-mega-trigger { color: var(--accent-mint); }
+.nav-links li.has-mega[aria-expanded="true"] .nav-mega-trigger { color: var(--accent-blue); }
 .nav-links li.has-mega[aria-expanded="true"] .nav-mega-trigger .chev { transform: rotate(180deg); }
 
 /* Mega panel — grid de 4 cards editoriales con aire generoso */
@@ -580,11 +572,10 @@ html.has-cursor * { cursor: none !important; }
   transform: translateY(0);
 }
 .nav-mega-eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
-  color: var(--accent-mint);
+  letter-spacing: -0.005em;
+  color: var(--text-muted);
   margin-bottom: var(--sp-5);
   display: block;
 }
@@ -618,7 +609,7 @@ html.has-cursor * { cursor: none !important; }
 .nav-links a.nav-mega-card.is-active,
 .nav-mega-card.is-active {
   background: var(--bg-paper);
-  border-color: var(--accent-mint);
+  border-color: var(--accent-blue);
   color: var(--text-primary) !important;
 }
 .nav-mega-card .nmc-name {
@@ -672,7 +663,7 @@ html.has-cursor * { cursor: none !important; }
 .nav-toggle .nt-close  { width: 18px; height: 18px; opacity: 0; position: absolute; transform: rotate(-90deg); }
 .nav-toggle[aria-expanded="true"] .nt-burger { opacity: 0; transform: rotate(90deg); }
 .nav-toggle[aria-expanded="true"] .nt-close  { opacity: 1; transform: rotate(0); }
-.nav-toggle:hover { color: var(--accent-mint); }
+.nav-toggle:hover { color: var(--accent-blue); }
 
 /* ─── FOOTER — full-bleed, tipografía masiva ──────────────── */
 .footer {
@@ -700,10 +691,9 @@ html.has-cursor * { cursor: none !important; }
   border-bottom: var(--hairline);
 }
 .footer-col h4 {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-muted);
   margin-bottom: var(--sp-3);
 }
@@ -719,10 +709,9 @@ html.has-cursor * { cursor: none !important; }
   justify-content: space-between;
   align-items: center;
   padding-top: var(--sp-4);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--text-muted);
 }
 
