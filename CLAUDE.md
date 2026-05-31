@@ -6,9 +6,29 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v13.3.0) es multipágina light Apple.** Páginas activas: `index.html` (home rediseñada v13.3 con header + hero + 4 servicios + cómo trabajamos + diferenciadores + CTA final + footer) · `webs.html` (Desarrollo Web · pricing-table completo) · `quiz.html` (cotizador, intacto desde v11.8). Las categorías Apps, Shopify, Software y Clientes aparecen en el nav y en las cards del home como "Próximamente" (deshabilitadas hasta que se construyan). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v14.0.0) es una SPA landing única.** Páginas activas: `index.html` (SPA landing con 11 secciones que recorre TODO el funnel) · `quiz.html` (cotizador auxiliar accesible desde CTAs · intacto desde v11.8). Categorías cubiertas en el pricing toggle: **Webs · Apps móviles · Ecommerce · CRM · ERP · SaaS · IA & Automatización** (7 categorías · 21 planes totales). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
 
-**v13.3 · Home rediseñada Apple-like (coherente con webs.html).** El `index.html` legacy (hero dark centrado + 5 highlights · v11.0) fue reemplazado por una página multi-sección que aplica la misma plantilla de `webs.html`: header sticky con nav (Inicio · Webs · Apps · Shopify · Software · Clientes · CTA azul Cotizar ahora), hero compacto con "Construye lo que tu negocio merece" + 2 CTAs, sección "Lo que hacemos" con 4 cards de servicios (Webs activa, otras 3 con badge "Próximamente"), sección "Cómo trabajamos" con 4 pasos numerados, sección "Por qué iBisne" con las 5 highlights originales rediseñadas, CTA final con dos acciones (Cotizar + Hablar con asesor WhatsApp), footer alineado al ancho del contenido. Eliminadas dependencias del cotizador en el home (assets/quiz/loader, prefs, i18n, ambient, hud, clientes-data) — el home solo carga icons.js + motion.js + pwa.js. SW bumpeado a v13.3.0.
+**v14.0 · SPA Landing única (pivot multipágina → SPA).** El sitio era multipágina (`index.html` v13.3 + `webs.html` v13.2 + páginas pendientes apps/shopify/software/clientes). Eduardo decidió consolidar todo en una sola landing larga enfocada en venta. Estructura de la SPA (11 secciones · scroll vertical):
+- **§ 00 Header sticky** · logo + nav anchors (#servicios, #diferenciadores, #pricing, #mantenimiento, #faq) + CTA azul Cotizar ahora.
+- **§ 01 Hero** · h1 "Construye lo que tu negocio merece" con fondo de **video tech** (cae a fallback CSS hermoso: gradient angular dark + SVG dots flotantes + vignette · cuando dropees `.mp4`/`.webm` en `/assets/hero/` los browsers los servirán automáticamente). 2 CTAs (Ver precios + Cotizar ahora).
+- **§ 02 Social proof** · marquee con nombres de clientes (placeholders ProFutbol · Medical Mexicanna · SEM Endomap · etc.).
+- **§ 03 Servicios** · 7 cards (Web · Apps · Ecom · CRM · ERP · SaaS · IA) + 1 "A la medida" que linkea al cotizador.
+- **§ 04 Diferenciadores** · 5 cards (Soporte dedicado · 24/7 · 0→launch · 1 año · Imperios).
+- **§ 05 Cómo trabajamos** · 4 pasos numerados.
+- **§ 06 ★ PRICING con TOGGLE** · pieza central. Tabs horizontales de 7 categorías → renderiza un solo bloque dinámico (2-4 planes según categoría). Segmented mes/exhibición (-20%) + master toggle Powerups todo-o-nada (+43%) + tabla comparativa colapsable. Cada plan tiene CTA a WhatsApp con prefill (categoría + plan + estado de toggles).
+- **§ 07 Mantenimiento** · Básico $5k + Premium $10k (heredado v13.2 expandido con marketing).
+- **§ 08 Testimonios** · 3 placeholders genéricos (Eduardo provee reales después).
+- **§ 09 FAQ extendido** · 10 preguntas incluyendo una por categoría.
+- **§ 10 CTA final** · "Empieza esta semana" + 2 CTAs.
+- **§ 11 Footer 4 cols** · Brand · Sitio · Empezar · Legal.
+
+**Datos v14.0**: `data/precios-v13.js` con 7 categorías × 21 planes totales. Hereda exhibición -20%, powerups +43%, mantenimiento de v13.2. Rangos: Webs $1k-$10k · Apps $20k-$80k · Ecommerce $15k-$90k · CRM $40k-$90k · ERP $50k-$200k · SaaS $45k-$280k · IA $12k-$60k.
+
+**JS v14.0**: `assets/sitio/pricing-table.js` reescrito como `renderSPA(el, initialCategoria)`. Lee `data-pricing-spa="webs"`. Renderiza shell (tabs + controles globales) una vez, re-renderiza solo el panel interno al cambiar categoría (sin flicker). Mantiene state de exhibición + powerupsOn al cambiar categoría.
+
+**CSS v14.0**: `assets/sitio/pricing-table.css` agrega `.pt-cat-tabs` (tabs horizontales scroll) + `.pt-cat-head` (title + tagline dinámicos) + grid `[data-plans]` para soportar 2/3/4 cols según categoría.
+
+**Eliminadas en v14.0**: `webs.html` (su contenido se absorbe en SPA · redirect 301 en `vercel.json` de `/webs.html` y `/webs` → `/#pricing`). `data/precios-v12.js` queda como histórico (no se carga en producción, lo reemplaza precios-v13.js).
 
 **v13.2 · Design System Apple-like completado al 100%.** Rework completo del DS de dark editorial verde a **light Apple monocromático**:
 - **Color**: blanco/negro Apple (`#FFFFFF`/`#1D1D1F`) + grises (`#F5F5F7`, `#86868B`) + azul Apple `#0071E3` exclusivo (focus, links, CTA recomendado, toggle iOS on) + rojo `#E5484D` para errores. **Cero verde** (phosphor y mint eliminados · alias-legacy convertidos a `--text-muted`).
@@ -180,7 +200,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v13.3.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador o de la SPA), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v14.0.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 

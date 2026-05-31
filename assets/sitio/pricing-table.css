@@ -1,15 +1,16 @@
 /* ===================================================================
-   assets/sitio/pricing-table.css · v13.2 · Apple-like
+   assets/sitio/pricing-table.css · v14.0 · SPA multi-categoría
    ===================================================================
    Negro/blanco + azul en CTA recomendado. Cero verde. Cards tenues
    (#F5F5F7) sobre secciones blancas.
 
-   v13.2 (feedback Eduardo · powerups todo-o-nada):
-   - Se eliminó el patrón .pt-chip (chips clickables individuales).
-   - Powerups ahora: UN solo .pt-powerups-master-toggle grande con switch
-     iOS-style + copy + % total a la derecha. Al activarse, las pills
-     informativas debajo se "iluminan" como confirmación visual de
-     que los 5 superpoderes están activos.
+   v14.0 (pivot SPA):
+   - TOGGLE de categorías arriba (.pt-cat-tabs · scroll horizontal mobile).
+   - Head dinámico por categoría (title + tagline).
+   - Grid auto-fit soporta 2/3/4 cols según `data-plans` de la categoría.
+   - Resto heredado de v13.2: segmented mes/exhibición, master toggle
+     powerups todo-o-nada, pills info-only que se iluminan, tabla
+     comparativa colapsable.
    =================================================================== */
 
 /* ── Botones del componente (negro sólido / azul Apple) ───────── */
@@ -47,6 +48,63 @@
 }
 .btn-ghost-light:hover { border-color: var(--text-primary); color: var(--text-primary); }
 .btn-ghost-light[aria-disabled="true"] { opacity: 0.4; pointer-events: none; }
+
+/* ── TOGGLE de categorías (tabs horizontal) v14.0 ─────────────── */
+.pt-cat-tabs {
+  display: flex; gap: 4px;
+  margin-bottom: var(--sp-5);
+  padding: 4px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-btn);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pt-cat-tabs::-webkit-scrollbar { display: none; }
+
+.pt-cat-tab {
+  flex: 1 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  background: transparent; border: 0;
+  font-family: var(--font-body); font-size: var(--fs-base);
+  font-weight: var(--fw-medium); color: var(--text-secondary);
+  padding: 10px 16px; border-radius: calc(var(--radius-btn) - 2px);
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out-quart),
+              color var(--dur-fast) var(--ease-out-quart);
+}
+.pt-cat-tab:hover:not(.is-on) { color: var(--text-primary); }
+.pt-cat-tab.is-on {
+  background: var(--bg); color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.pt-cat-tab-ic { display: inline-flex; color: currentColor; }
+.pt-cat-tab-ic svg {
+  width: 16px; height: 16px;
+  stroke: currentColor; fill: none; stroke-width: 1.6;
+}
+@media (max-width: 767px) {
+  .pt-cat-tab { font-size: var(--fs-small); padding: 8px 12px; }
+  .pt-cat-tab-ic svg { width: 14px; height: 14px; }
+}
+
+/* ── Cabecera dinámica por categoría (title + tagline) ────────── */
+.pt-cat-head {
+  margin-bottom: var(--sp-5);
+}
+.pt-cat-title {
+  font-family: var(--font-display); font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold); color: var(--text-primary);
+  letter-spacing: -0.015em; line-height: 1.15;
+  margin: 0;
+}
+.pt-cat-tagline {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body); color: var(--text-secondary);
+  line-height: var(--lh-body);
+  max-width: 60ch;
+}
 
 /* ── CONTROLES (pago + powerups) ──────────────────────────────── */
 .pt-controls {
@@ -179,10 +237,21 @@
 .pt-powerups.is-on .pt-pill .pt-pill-name { color: var(--text-primary); }
 .pt-powerups.is-on .pt-pill .pt-pill-pct { color: var(--accent-blue); font-weight: var(--fw-semibold); }
 
-/* ── Grid de cards ────────────────────────────────────────────── */
+/* ── Grid de cards · auto-fit para soportar 2/3/4 planes ──────── */
 .pricing-grid {
   display: grid; grid-template-columns: 1fr; gap: var(--sp-3);
   align-items: stretch;
+}
+/* En desktop/tablet, auto-fit con minmax para que 2 planes ocupen
+   2 cols, 3 ocupen 3, 4 ocupen 4 (sin que se vean huérfanos). */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+}
+@media (min-width: 1100px) {
+  .pricing-grid { gap: var(--sp-4); }
+  .pricing-grid[data-plans="2"] { grid-template-columns: repeat(2, 1fr); max-width: 720px; margin-inline: auto; }
+  .pricing-grid[data-plans="3"] { grid-template-columns: repeat(3, 1fr); }
+  .pricing-grid[data-plans="4"] { grid-template-columns: repeat(4, 1fr); }
 }
 
 /* ── Card · tenue (#F5F5F7) sobre sección blanca ──────────────── */
@@ -297,9 +366,8 @@
 .cmp-yes svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
 .cmp-no { color: var(--text-muted); }
 
-/* ── Responsive ───────────────────────────────────────────────── */
+/* ── Responsive · controles ──────────────────────────────────── */
 @media (min-width: 768px) {
-  .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
   /* Layout horizontal: pago a la izq, powerups grande a la der */
   .pt-controls {
     flex-direction: row; align-items: flex-start;
