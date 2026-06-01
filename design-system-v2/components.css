@@ -72,22 +72,15 @@ html.has-cursor * { cursor: none !important; }
   right: var(--grid-edge);
 }
 .eyebrow {
+  /* v15.0 · sin línea decorativa · sentence case · más limpio Apple-style */
   font-family: var(--font-display);
-  font-size: var(--fs-micro);
+  font-size: var(--fs-small);          /* sube de micro a small · más legible */
+  font-weight: var(--fw-medium);
   letter-spacing: -0.005em;
-  color: var(--text-muted);            /* mint — eyebrow es el marker de sección */
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-.eyebrow::before {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--text-muted);       /* hairline corta del eyebrow en mint */
+  color: var(--text-muted);
+  display: inline-block;
 }
 .eyebrow.is-muted { color: var(--text-secondary); }
-.eyebrow.is-muted::before { background: var(--text-muted); }
 
 /* ─── TYPOGRAPHY HELPERS ──────────────────────────────────── */
 .t-hero {
