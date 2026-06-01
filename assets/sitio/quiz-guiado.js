@@ -83,7 +83,7 @@
 
     function htmlShell() {
       var html = '';
-      // SIDEBAR · 7 categorías
+      // SIDEBAR · 7 categorías · v19.0 cards verticales grandes + iconos grandes
       html += '<aside class="qg-sidebar" aria-label="Categorías">';
       html += '  <span class="qg-sidebar-title">Cotiza tu proyecto</span>';
       html += '  <nav class="qg-cat-list" role="tablist">';
@@ -92,9 +92,11 @@
         var on = catId === state.categoria;
         html += '<button class="qg-cat-item' + (on ? ' is-on' : '') + '" type="button" role="tab"' +
                 ' aria-selected="' + (on ? 'true' : 'false') + '" data-cat="' + catId + '">' +
-                '<span class="qg-cat-ic">' + icon(c.icon) + '</span>' +
+                '<span class="qg-cat-row-top">' +
+                '  <span class="qg-cat-ic">' + icon(c.icon) + '</span>' +
+                '  <span class="qg-cat-arrow" aria-hidden="true">→</span>' +
+                '</span>' +
                 '<span class="qg-cat-label">' + escHtml(c.label) + '</span>' +
-                (on ? '<span class="qg-cat-arrow" aria-hidden="true">→</span>' : '') +
                 '</button>';
       });
       html += '  </nav>';
@@ -107,16 +109,24 @@
 
       // MAIN
       html += '<section class="qg-content">';
+      // v19.0 · Stepper 1→2→3
+      html += '  <div class="qg-stepper" aria-label="Progreso de compra">';
+      html += '    <span class="qg-step is-active"><span class="qg-step-num">1</span><span class="qg-step-label">Cotizar</span></span>';
+      html += '    <span class="qg-step-line" aria-hidden="true"></span>';
+      html += '    <span class="qg-step"><span class="qg-step-num">2</span><span class="qg-step-label">Checkout</span></span>';
+      html += '    <span class="qg-step-line" aria-hidden="true"></span>';
+      html += '    <span class="qg-step"><span class="qg-step-num">3</span><span class="qg-step-label">Confirmación</span></span>';
+      html += '  </div>';
       html += '  <header class="qg-content-head" data-content-head></header>';
       html += '  <div class="qg-controls">';
-      // Powerups toggle
+      // Powerups toggle · v19.0 label más amigable (era "×4 precio")
       html += '    <button class="qg-toggle" type="button" data-toggle="powerups" aria-pressed="false">';
       html += '      <span class="qg-toggle-switch" aria-hidden="true"><span class="qg-toggle-knob"></span></span>';
       html += '      <span class="qg-toggle-copy">';
       html += '        <span class="qg-toggle-title">Powerups</span>';
       html += '        <span class="qg-toggle-sub">Animaciones · Dark/Light · Multi-idioma · Multi-moneda · PWA</span>';
       html += '      </span>';
-      html += '      <span class="qg-toggle-pct">×4 precio</span>';
+      html += '      <span class="qg-toggle-pct">Premium +300%</span>';
       html += '    </button>';
       // Mantenimiento segmented
       html += '    <div class="qg-mant" role="group" aria-label="Mantenimiento mensual">';
@@ -221,20 +231,11 @@
     function switchCategoria(newCatId) {
       if (!DATA.categorias[newCatId] || newCatId === state.categoria) return;
       state.categoria = newCatId;
+      // v19.0 · arrow siempre en DOM · CSS controla visibilidad via .is-on
       container.querySelectorAll('.qg-cat-item').forEach(function (b) {
         var on = b.getAttribute('data-cat') === newCatId;
         b.classList.toggle('is-on', on);
         b.setAttribute('aria-selected', on ? 'true' : 'false');
-        var arrow = b.querySelector('.qg-cat-arrow');
-        if (on && !arrow) {
-          var arr = document.createElement('span');
-          arr.className = 'qg-cat-arrow';
-          arr.setAttribute('aria-hidden', 'true');
-          arr.textContent = '→';
-          b.appendChild(arr);
-        } else if (!on && arrow) {
-          arrow.remove();
-        }
       });
       var headEl = container.querySelector('[data-content-head]');
       var panelEl = container.querySelector('[data-panel]');

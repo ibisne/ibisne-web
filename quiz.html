@@ -13,14 +13,24 @@
 <meta name="description" content="Cotizador iBisne · 21 planes pre-armados en 7 categorías. Elige tu plan y obtén precio cerrado al instante.">
 <meta name="robots" content="index,follow">
 
+<!-- v19.0 · Restore theme inline ANTES del CSS · evita FOUC -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('ibisne-site-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (_) {}
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.3.0">
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
-<link rel="stylesheet" href="assets/sitio/quiz-guiado.css?v=17.0.0">
+<link rel="stylesheet" href="assets/sitio/quiz-guiado.css?v=19.0.0">
 </head>
 <body class="qg-body">
 
@@ -46,10 +56,18 @@
   </div>
 </main>
 
+<!-- v19.0 · CTA persistente mobile (cuando sidebar colapsa a tabs y pierde el asesor) -->
+<a href="https://wa.me/523329575274?text=Hola%2C%20necesito%20asesor%C3%ADa" target="_blank" rel="noopener" class="qg-mobile-asesor" aria-label="Hablar con un asesor">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 21 L4.5 16 A8 8 0 1 1 8 19.5 Z"/>
+  </svg>
+  <span>Hablar con un asesor</span>
+</a>
+
 <!-- ═══════════ Scripts ═══════════ -->
-<script src="assets/quiz/icons.js?v=17.0.0"></script>
-<script src="data/precios-v13.js?v=17.0.0"></script>
-<script src="assets/sitio/quiz-guiado.js?v=17.0.0"></script>
-<script src="/assets/quiz/pwa.js?v=17.0.0" defer></script>
+<script src="assets/quiz/icons.js?v=19.0.0"></script>
+<script src="data/precios-v13.js?v=19.0.0"></script>
+<script src="assets/sitio/quiz-guiado.js?v=19.0.0"></script>
+<script src="/assets/quiz/pwa.js?v=19.0.0" defer></script>
 </body>
 </html>
