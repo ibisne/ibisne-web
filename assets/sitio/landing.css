@@ -1,0 +1,432 @@
+/* ===================================================================
+   assets/sitio/landing.css · v18.0 · Rework absoluto de la landing
+   ===================================================================
+   - Botones premium con gradient + shimmer + spring physics + lift
+   - Section padding generoso (200px) para "secciones más grandes"
+   - Sticky CTA flotante bottom-right (aparece tras scroll 100px)
+   - Focus-visible ring global · a11y bug fix
+   - Dark mode contrast fixes (botón hero negro sobre blanco)
+   - Prefers-reduced-motion respect
+
+   Solo se carga desde index.html · NO de quiz.html ni checkout.html.
+   =================================================================== */
+
+/* ═════════════════════ 1 · FOCUS VISIBLE GLOBAL ═════════════════════ */
+.qg-body :focus-visible,
+.co-body :focus-visible,
+body:not(.qg-body):not(.co-body) :focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 3px;
+  border-radius: inherit;
+}
+/* Override: solo en la landing aplicar focus en botones específicos */
+.btn-blue:focus-visible,
+.btn-ghost-light:focus-visible,
+.btn-dark:focus-visible,
+.cta-floating:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.35),
+              0 4px 14px rgba(0, 113, 227, 0.25);
+}
+
+/* ═════════════════════ 2 · SECTION PADDING GENEROSO ═════════════════════ */
+:root {
+  --section-pad-xl: var(--sp-11);    /* 200px desktop */
+  --section-pad-md: var(--sp-9);     /* 120px tablet */
+  --section-pad-sm: var(--sp-7);     /* 64px mobile */
+}
+
+main > .section,
+main > section.section {
+  padding-top: var(--section-pad-xl);
+  padding-bottom: var(--section-pad-xl);
+}
+@media (max-width: 1099px) {
+  main > .section,
+  main > section.section {
+    padding-top: var(--section-pad-md);
+    padding-bottom: var(--section-pad-md);
+  }
+}
+@media (max-width: 599px) {
+  main > .section,
+  main > section.section {
+    padding-top: var(--section-pad-sm);
+    padding-bottom: var(--section-pad-sm);
+  }
+}
+
+/* Hero · padding más dramático */
+.hero-spa {
+  min-height: 92vh !important;
+  padding: var(--section-pad-xl) 0 var(--sp-9) !important;
+}
+@media (max-width: 599px) { .hero-spa { min-height: 88vh !important; padding: var(--sp-9) 0 var(--sp-7) !important; } }
+
+/* CTA final · aún más dramática */
+.section.cta-final {
+  padding-top: 250px !important;
+  padding-bottom: 250px !important;
+}
+@media (max-width: 1099px) { .section.cta-final { padding-top: 160px !important; padding-bottom: 160px !important; } }
+@media (max-width: 599px)  { .section.cta-final { padding-top: 100px !important; padding-bottom: 100px !important; } }
+
+/* ═════════════════════ 3 · BOTONES PREMIUM ═════════════════════ */
+
+/* Reset base de botones de la landing */
+.btn-blue,
+.btn-ghost-light,
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  padding: 16px 28px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 220ms ease,
+    background 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+  will-change: transform;
+}
+.btn-blue:active,
+.btn-ghost-light:active,
+.btn-dark:active {
+  transform: scale(0.97);
+  transition-duration: 80ms;
+}
+
+/* PRIMARY · azul con gradient + shadow + shimmer */
+.btn-blue {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-hover, #0064CC) 100%);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 4px 14px rgba(0, 113, 227, 0.28),
+    0 1px 2px rgba(0, 113, 227, 0.18);
+}
+.btn-blue:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 10px 28px rgba(0, 113, 227, 0.38),
+    0 2px 6px rgba(0, 113, 227, 0.22);
+}
+/* Shimmer pseudo · pasa de izq a der al hover */
+.btn-blue::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 75%);
+  transform: translateX(-120%);
+  transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.btn-blue:hover::before { transform: translateX(120%); }
+
+/* GHOST · outline transparente */
+.btn-ghost-light {
+  background: transparent;
+  color: currentColor;
+  border-color: currentColor;
+  opacity: 0.85;
+}
+.btn-ghost-light:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* DARK · negro sólido (poco usado en landing) */
+.btn-dark {
+  background: var(--text-primary);
+  color: var(--bg);
+  border-color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.btn-dark:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+/* ═════════════════════ 4 · BUG FIX BOTÓN HERO (DARK MODE) ═════════════════════
+   El .hero-actions .btn-blue era blanco con color: var(--text-primary).
+   En dark, --text-primary = #F5F5F7 → texto blanco sobre fondo blanco = INVISIBLE.
+   v18 fix: hardcoded color: #1D1D1F en ambos themes (siempre legible).            */
+.hero-actions .btn-blue {
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 6px 20px rgba(0, 0, 0, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.hero-actions .btn-blue:hover {
+  background: #FFFFFF;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 12px 32px rgba(0, 0, 0, 0.28),
+    0 3px 8px rgba(0, 0, 0, 0.14);
+}
+.hero-actions .btn-blue::before {
+  background: linear-gradient(110deg,
+    transparent 25%,
+    rgba(0, 113, 227, 0.15) 50%,
+    transparent 75%);
+}
+[data-theme="dark"] .hero-actions .btn-blue {
+  background: #FFFFFF;
+  color: #1D1D1F;
+}
+
+/* Ghost del hero · sobre dark hero */
+.hero-actions .btn-ghost-light {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+.hero-actions .btn-ghost-light:hover {
+  border-color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ═════════════════════ 5 · STICKY CTA FLOTANTE ═════════════════════ */
+.cta-floating {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-hover, #0064CC) 100%);
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 24px rgba(0, 113, 227, 0.35),
+    0 2px 6px rgba(0, 113, 227, 0.2);
+
+  cursor: pointer;
+  user-select: none;
+
+  /* JS-controlled: aparece tras scroll 100px */
+  opacity: 0;
+  transform: translateY(24px) scale(0.92);
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, opacity;
+}
+.cta-floating.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  animation: ctaFloatPulse 4s ease-in-out 1s infinite;
+}
+.cta-floating:hover {
+  animation: none;
+  transform: translateY(-3px) scale(1.04);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 14px 36px rgba(0, 113, 227, 0.45),
+    0 3px 10px rgba(0, 113, 227, 0.25);
+}
+.cta-floating .cf-arrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cta-floating:hover .cf-arrow { transform: translateX(4px); }
+@keyframes ctaFloatPulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.025); }
+}
+@media (max-width: 599px) {
+  .cta-floating { right: 16px; bottom: 16px; padding: 12px 18px; font-size: var(--fs-small); }
+}
+
+/* ═════════════════════ 6 · TIPOGRAFÍA HERO MÁS EXPRESIVA ═════════════════════ */
+.hero-spa h1 {
+  font-size: clamp(44px, 8.5vw, 96px) !important;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+.hero-spa .hero-lead {
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.55;
+  max-width: 56ch;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ═════════════════════ 7 · GSAP ANIM HOOKS · estado inicial CSS ═════════════════════
+   Las cards y elementos animados por GSAP tienen opacity 0 inicial vía CSS para
+   evitar FOUC (flash of unstyled content). GSAP los anima al entrar viewport.
+   Si JS no carga, el progressive enhancement guard restaura visibility (ver §9). */
+[data-anim],
+[data-anim-stagger] > * {
+  opacity: 0;
+  transform: translateY(28px);
+  will-change: opacity, transform;
+}
+[data-anim].is-revealed,
+[data-anim-stagger].is-revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero entrance · oculto inicial · GSAP timeline al cargar */
+[data-anim="hero-eyebrow"],
+[data-anim="hero-h1"],
+[data-anim="hero-lead"],
+[data-anim="hero-actions"] {
+  opacity: 0;
+}
+
+/* ═════════════════════ 8 · CARDS HOVER PREMIUM ═════════════════════ */
+.servicio-card {
+  transition:
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 220ms ease,
+    box-shadow 280ms ease,
+    background 200ms ease;
+  position: relative;
+  overflow: hidden;
+}
+.servicio-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 113, 227, 0.4), transparent);
+  opacity: 0;
+  transition: opacity 280ms ease;
+}
+.servicio-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-blue);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.06);
+}
+.servicio-card:hover::after { opacity: 1; }
+.servicio-card .servicio-icon {
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.servicio-card:hover .servicio-icon { transform: scale(1.1) rotate(-2deg); }
+
+/* Diff card hover · scale + subtle glow */
+.diff-card {
+  transition:
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 220ms ease,
+    box-shadow 280ms ease;
+}
+.diff-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--accent-blue);
+  box-shadow: 0 10px 24px rgba(0, 113, 227, 0.12);
+}
+
+/* ═════════════════════ 9 · PROGRESSIVE ENHANCEMENT GUARD ═════════════════════
+   Si JS no carga (offline/error), las animaciones quedan en estado oculto.
+   Este guard se activa SOLO si JS confirmó que GSAP cargó (data-gsap-ready en <html>).
+   Sin JS: showAll. */
+html:not([data-gsap-ready]) [data-anim],
+html:not([data-gsap-ready]) [data-anim-stagger] > * {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ═════════════════════ 10 · REDUCED MOTION ═════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  [data-anim],
+  [data-anim-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .btn-blue,
+  .btn-ghost-light,
+  .btn-dark,
+  .cta-floating,
+  .servicio-card,
+  .diff-card {
+    transition: none !important;
+    animation: none !important;
+  }
+  .btn-blue:hover,
+  .btn-ghost-light:hover,
+  .servicio-card:hover,
+  .diff-card:hover {
+    transform: none !important;
+  }
+  .btn-blue::before { display: none !important; }
+}
+
+/* ═════════════════════ 11 · DARK MODE CONTRASTE FIXES ESPECÍFICOS ═════════════════════ */
+[data-theme="dark"] .site-header {
+  background: color-mix(in srgb, #0A0A0C 85%, transparent);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .site-topbar {
+  background: #0A0A0C;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .servicio-card {
+  background: var(--bg-subtle);   /* #1F1F22 ahora distinguible */
+  border-color: var(--bg-line);
+}
+[data-theme="dark"] .servicio-card:hover {
+  background: var(--bg-paper);   /* #161618 · hover sutil */
+}
+[data-theme="dark"] .diff-card {
+  background: var(--bg-subtle);
+  border-color: var(--bg-line);
+}
+[data-theme="dark"] .testi-card {
+  background: var(--bg-subtle);
+  border-color: var(--bg-line);
+}
+[data-theme="dark"] .servicio-icon,
+[data-theme="dark"] .diff-icon {
+  background: var(--bg-paper);
+  border-color: var(--bg-line-strong);
+}
+[data-theme="dark"] .site-theme-toggle {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+}
+[data-theme="dark"] .site-theme-toggle:hover {
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+}
