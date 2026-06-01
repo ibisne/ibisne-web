@@ -32,7 +32,6 @@
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/motion.css?v=3.2.0">
-<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=16.0.0">
 
 <style>
   /* ============================================================
@@ -650,8 +649,6 @@
     <nav class="site-nav">
       <a href="#servicios">Servicios</a>
       <a href="#diferenciadores">Por qué</a>
-      <a href="#pricing">Precios</a>
-      <a href="#despues-lanzamiento">Después</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="site-header-actions">
@@ -691,7 +688,7 @@
           Precio cerrado, sin sorpresas, con un año de seguimiento incluido.
         </p>
         <div class="hero-actions">
-          <a class="btn-blue" href="#pricing">Ver precios ↓</a>
+          <a class="btn-blue" href="quiz.html">Cotizar mi proyecto →</a>
           <a class="btn-ghost-light" href="quiz.html">Cotizar ahora →</a>
         </div>
       </div>
@@ -723,43 +720,43 @@
         Desde tu primera bio link hasta un SaaS enterprise con IA. Construimos todo y te acompañamos.
       </p>
       <div class="servicios-grid" data-reveal-stagger="40">
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=webs">
           <span class="servicio-icon" data-icon="sitio"></span>
           <span class="servicio-name">Desarrollo Web</span>
           <span class="servicio-desc">Bio link, landings y sitios con CMS. Dominio + hosting incluidos.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=apps">
           <span class="servicio-icon" data-icon="app"></span>
           <span class="servicio-name">Apps móviles</span>
           <span class="servicio-desc">iOS · Android · cross-platform. UX nativa, deploy a stores.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=ecommerce">
           <span class="servicio-icon" data-icon="ecommerce"></span>
           <span class="servicio-name">Ecommerce</span>
           <span class="servicio-desc">Shopify llave-en-mano y tiendas full-custom sin comisiones de plataforma.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=crm">
           <span class="servicio-icon" data-icon="partnership"></span>
           <span class="servicio-name">CRM</span>
           <span class="servicio-desc">Pipeline de ventas y atención que tu equipo sí usa.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=erp">
           <span class="servicio-icon" data-icon="serverapp"></span>
           <span class="servicio-name">ERP</span>
           <span class="servicio-desc">Inventario, contabilidad, RH, ventas — todo conectado.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=saas">
           <span class="servicio-icon" data-icon="saas"></span>
           <span class="servicio-name">SaaS</span>
           <span class="servicio-desc">De MVP a SaaS enterprise. Acompañamiento hasta el primer cliente pagador.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
-        <a class="servicio-card" href="#pricing">
+        <a class="servicio-card" href="quiz.html?cat=ia">
           <span class="servicio-icon" data-icon="star"></span>
           <span class="servicio-name">IA & Automatización</span>
           <span class="servicio-desc">Chatbots, integraciones y agentes autónomos que sí mueven el negocio.</span>
@@ -840,54 +837,7 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 06 · ★ PRICING con TOGGLE ═══════════ -->
-  <section class="section bg-paper" id="pricing" data-bg="paper">
-    <div class="container">
-      <span class="eyebrow">Precios</span>
-      <h2 class="t-h2">Elige tu plan.</h2>
-      <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3); margin-bottom: var(--sp-6);">
-        Precio cerrado por categoría. Activa <strong>Powerups</strong> para sumar 5 capacidades premium y multiplicar tu precio por 4 (las features se ven dentro de cada card).
-      </p>
-      <!-- El componente pricing-table.js auto-inicializa este div en modo SPA -->
-      <div data-pricing-spa="webs"></div>
-    </div>
-  </section>
-
-  <!-- ═══════════ § 07 · DESPUÉS DEL LANZAMIENTO (v16.0 · reemplaza Mantenimiento) ═══════════ -->
-  <section class="section" id="despues-lanzamiento" data-bg="base">
-    <div class="container">
-      <span class="eyebrow">Después del lanzamiento</span>
-      <h2 class="t-h2">Lo que sigue cuando ya estás en línea.</h2>
-      <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
-        Tu desarrollo es 100% tuyo desde el día 1. Cuando lo decidas, en checkout definimos juntos los módulos opcionales que te acompañan después:
-      </p>
-      <div class="despues-grid" data-reveal-stagger="60">
-        <div class="despues-card">
-          <span class="despues-card-ic" data-icon="wrench"></span>
-          <h3 class="despues-card-title">Mantenimiento mensual</h3>
-          <p class="despues-card-desc">Modificaciones, diseño gráfico y operación continua. Plan Básico o Premium, cancela cuando quieras.</p>
-          <span class="despues-card-foot">Desde $5,000 MXN / mes · opcional</span>
-        </div>
-        <div class="despues-card">
-          <span class="despues-card-ic" data-icon="headphones"></span>
-          <h3 class="despues-card-title">Soporte técnico</h3>
-          <p class="despues-card-desc">Email, WhatsApp, teléfono y Google Meet. Horario oficina por default; ampliable a 24/7 si tu operación lo exige.</p>
-          <span class="despues-card-foot">Definido por plan + mantenimiento</span>
-        </div>
-        <div class="despues-card">
-          <span class="despues-card-ic" data-icon="bell"></span>
-          <h3 class="despues-card-title">Marketing continuo</h3>
-          <p class="despues-card-desc">Piezas gráficas, posts, historias, reportes y reuniones estratégicas. Tu marca con presencia constante en redes.</p>
-          <span class="despues-card-foot">Incluido en mantenimiento Premium</span>
-        </div>
-      </div>
-      <p class="t-body t-muted" style="max-width: 60ch; margin-top: var(--sp-5); font-size: var(--fs-small);">
-        Lo definimos cuando estés listo. Sin compromiso ahora.
-      </p>
-    </div>
-  </section>
-
-  <!-- ═══════════ § 08 · TESTIMONIOS ═══════════ -->
+  <!-- ═══════════ § 06 · TESTIMONIOS (v17.0 · §06 + §07 eliminadas) ═══════════ -->
   <section class="section bg-paper" data-bg="paper">
     <div class="container">
       <span class="eyebrow">Lo que dicen</span>
@@ -1000,8 +950,6 @@
         <ul>
           <li><a href="#servicios">Servicios</a></li>
           <li><a href="#diferenciadores">Por qué iBisne</a></li>
-          <li><a href="#pricing">Precios</a></li>
-          <li><a href="#despues-lanzamiento">Después del lanzamiento</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
@@ -1062,11 +1010,9 @@
 </div>
 
 <!-- ── Scripts ── -->
-<script src="assets/quiz/icons.js?v=16.0.0"></script>
-<script src="data/precios-v13.js?v=16.0.0"></script>
-<script src="assets/sitio/pricing-table.js?v=16.0.0"></script>
+<script src="assets/quiz/icons.js?v=17.0.0"></script>
 <script src="design-system-v2/motion.js?v=3.2.0"></script>
-<script src="/assets/quiz/pwa.js?v=16.0.0" defer></script>
+<script src="/assets/quiz/pwa.js?v=17.0.0" defer></script>
 <script>
   // Hidratar iconos estáticos (data-icon)
   (function () {

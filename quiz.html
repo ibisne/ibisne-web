@@ -3,115 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>iBisne | Cotiza tu proyecto en 3 minutos</title>
+<title>Cotizador iBisne · Elige tu plan en 1 minuto</title>
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#0D1117">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="iBisne">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="iBisne Cotizador">
 <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
-<meta name="robots" content="noindex">
+<meta name="description" content="Cotizador iBisne · 21 planes pre-armados en 7 categorías. Elige tu plan y obtén precio cerrado al instante.">
+<meta name="robots" content="index,follow">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="design-system-v2/tokens.css">
-<link rel="stylesheet" href="assets/quiz/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
+<link rel="stylesheet" href="assets/sitio/quiz-guiado.css?v=17.0.0">
 </head>
-<body>
+<body class="qg-body">
 
-<div class="ambient-dots" aria-hidden="true">
-  <span class="dot"></span><span class="dot mint"></span><span class="dot"></span>
-  <span class="dot mint"></span><span class="dot"></span><span class="dot mint"></span>
-  <span class="dot"></span>
-</div>
-<div class="ambient-scan" aria-hidden="true"></div>
-
-<header class="hud">
-  <a href="index.html" class="hud-brand" aria-label="iBisne — Inicio" id="hud-brand"><img class="hud-logo" src="brand/iBisne_blanco.png" alt="iBisne"></a>
-  <div class="hud-spacer"></div>
-
-  <div class="hud-group hud-group-social">
-    <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram" aria-label="Instagram"></a>
-    <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin" aria-label="LinkedIn"></a>
-    <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x" aria-label="X"></a>
-  </div>
-  <span class="hud-divider" aria-hidden="true"></span>
-  <div class="hud-group hud-group-pref">
-    <button class="hud-toggle" id="hud-lang" type="button" aria-label="Cambiar idioma">
-      <span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span>
-    </button>
-    <button class="hud-toggle" id="hud-currency" type="button" aria-label="Cambiar moneda">
-      <span class="active" data-currency="mxn">MX$</span><span class="slash">/</span><span data-currency="usd">US$</span>
-    </button>
-  </div>
-  <span class="hud-divider" aria-hidden="true"></span>
-  <div class="hud-group hud-group-ui">
-    <button class="hud-btn" id="hud-theme" type="button" data-icon="moon" aria-label="Cambiar tema"></button>
-    <button class="hud-btn" id="hud-music" type="button" data-icon="play" aria-label="Música"></button>
-  </div>
-  <button class="hud-install-cta" id="hud-install" type="button" data-style="cta" data-icon="plus" aria-label="Instalar app" hidden>Instalar app</button>
-  <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quiz%20de%20iBisne" target="_blank" rel="noopener" class="hud-cta">
-    <span data-icon="whatsapp"></span><span data-i18n="hud.cta.hunter">Hablar con un hunter</span>
+<!-- ═══════════ HEADER mínimo ═══════════ -->
+<header class="qg-header">
+  <a href="/" class="qg-logo" aria-label="Volver a iBisne">
+    <span class="qg-logo-back" aria-hidden="true">←</span>
+    <span class="qg-logo-mark">iBisne</span>
   </a>
-  <button class="hud-mobile-toggle" id="hud-hamburger" type="button" data-icon="grid" aria-label="Abrir panel de cotización"></button>
+  <div class="qg-header-actions">
+    <a href="https://wa.me/523329575274?text=Hola%2C%20necesito%20ayuda%20con%20el%20cotizador" target="_blank" rel="noopener" class="qg-asesor-link">
+      <span class="qg-asesor-ic" data-icon="whatsapp"></span>
+      <span>Hablar con asesor</span>
+    </a>
+  </div>
 </header>
 
-<nav class="hud-mobile-menu" id="hud-menu">
-  <!-- Resumen movido al cotizador final v3.12 · este menú queda solo para redes/prefs/CTAs -->
-  <div class="menu-section">
-    <div class="menu-label">Redes</div>
-    <div class="menu-row">
-      <a href="https://instagram.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="instagram"></a>
-      <a href="https://linkedin.com/company/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="linkedin"></a>
-      <a href="https://x.com/ibisne" target="_blank" rel="noopener" class="hud-btn" data-icon="x"></a>
-    </div>
+<!-- ═══════════ COTIZADOR · 1 viewport ═══════════ -->
+<main class="qg-main" data-cotizador>
+  <div class="qg-loading" data-loading>
+    <div class="qg-loading-spinner" aria-hidden="true"></div>
+    <p>Cargando cotizador…</p>
   </div>
-  <div class="menu-section">
-    <div class="menu-label">Preferencias</div>
-    <div class="menu-row">
-      <button class="hud-toggle" id="hud-lang-m" type="button" aria-label="Cambiar idioma">
-        <span class="active" data-lang="es">ES</span><span class="slash">/</span><span data-lang="en">EN</span>
-      </button>
-      <button class="hud-toggle" id="hud-currency-m" type="button" aria-label="Cambiar moneda">
-        <span class="active" data-currency="mxn">MX$</span><span class="slash">/</span><span data-currency="usd">US$</span>
-      </button>
-    </div>
-    <div class="menu-row">
-      <button class="hud-btn" id="hud-theme-m" type="button" data-icon="moon" aria-label="Cambiar tema"></button>
-      <button class="hud-btn" id="hud-music-m" type="button" data-icon="play" aria-label="Música"></button>
-    </div>
-  </div>
-  <a href="https://wa.me/523329575274?text=Hola%2C%20vengo%20del%20quiz%20de%20iBisne" target="_blank" rel="noopener" class="menu-cta" data-i18n="hud.cta.hunter">Hablar con un hunter ahora</a>
-  <button class="menu-cta menu-cta-install" id="hud-install-m" type="button" data-style="cta" data-icon="plus" hidden>Instalar app</button>
-</nav>
+</main>
 
-<div class="progress-rail"><div class="fill"></div></div>
-
-<div class="quiz-layout">
-  <main class="quiz-main" id="main">
-    <!-- v6.0.0 · ui.js inyecta .rk-grid con #wizard (izq) + #cart (der) -->
-  </main>
-</div>
-
-<!-- v8.0.0 · sin nav inferior · el carrito sticky/bottom-sheet vive dentro de #main (.rk-grid) -->
-
-<footer class="legal-strip">
-  <div class="right">
-    <a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a>
-    <a href="legal/privacidad.html">Aviso de privacidad</a>
-    <a href="legal/terminos.html">Términos</a>
-  </div>
-</footer>
-
-<!-- v9.0 · catálogo adaptativo (tipos + add-ons). data/pricing.js v8 fue eliminado en Fase 4. -->
-<script src="data/pricing-v9.js"></script>
-<script src="assets/quiz/loader.js"></script>
-<script src="assets/quiz/prefs.js"></script>
-<script src="assets/quiz/i18n.js"></script>
-<script src="assets/quiz/icons.js"></script>
-<script src="assets/quiz/ambient.js"></script>
-<script src="assets/quiz/hud.js"></script>
-<script src="assets/quiz/ui.js"></script>
-<script src="/assets/quiz/pwa.js" defer></script>
+<!-- ═══════════ Scripts ═══════════ -->
+<script src="assets/quiz/icons.js?v=17.0.0"></script>
+<script src="data/precios-v13.js?v=17.0.0"></script>
+<script src="assets/sitio/quiz-guiado.js?v=17.0.0"></script>
+<script src="/assets/quiz/pwa.js?v=17.0.0" defer></script>
 </body>
 </html>

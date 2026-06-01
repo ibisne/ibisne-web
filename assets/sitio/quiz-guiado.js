@@ -1,0 +1,329 @@
+/* ===================================================================
+   assets/sitio/quiz-guiado.js · v17.0 · Cotizador guiado 1-viewport
+   ===================================================================
+   Reemplaza el cotizador adaptativo v9 (ui.js 2003L + pricing-v9.js).
+   Layout: sidebar izq (7 categorías) + main der (header + toggles + planes).
+
+   Estado:
+     { categoria, powerupsOn, mantenimiento: 'sin'|'basico'|'premium' }
+
+   Flujo:
+     1. Click categoría → cambia panel (mantiene toggles)
+     2. Toggle Powerups → multiplica precio plan ×4
+     3. Toggle Mantenimiento → suma precio mensual recurrente
+     4. Click "Elegir plan" → navega a /checkout.html con URL params
+
+   Reusa: data/precios-v13.js (21 planes en 7 categorías)
+   =================================================================== */
+(function () {
+  'use strict';
+
+  function icon(id) {
+    if (window.IBISNE_ICONS && id) return window.IBISNE_ICONS.get(id, 'line') || '';
+    return '';
+  }
+  function fmt(n) {
+    var v = Math.round(Number(n) || 0);
+    return '$' + v.toLocaleString('en-US');
+  }
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function animateNumber(el, from, to, dur) {
+    if (!el) return;
+    dur = dur || 320;
+    if (from === to || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      el.textContent = fmt(to); return;
+    }
+    var start = performance.now();
+    var ease = function (t) { return 1 - Math.pow(1 - t, 4); };
+    function step(now) {
+      var t = Math.min(1, (now - start) / dur);
+      el.textContent = fmt(from + (to - from) * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function planPrice(plan, powerupsOn, totalPct) {
+    var mult = 1 + (powerupsOn ? (totalPct || 0) : 0);
+    return plan.base * mult;
+  }
+
+  function mantPrice(mantId, mantList) {
+    if (!mantId || mantId === 'sin') return 0;
+    var m = mantList.find(function (x) { return x.id === mantId; });
+    return m ? m.precio : 0;
+  }
+
+  function init(container) {
+    var DATA = window.IBISNE_PRECIOS_V13;
+    if (!DATA || !DATA.categorias) {
+      container.innerHTML = '<p style="padding:32px;color:#666">Sin datos. Verifica precios-v13.js</p>';
+      return;
+    }
+
+    var powerupsDef = DATA.powerups || [];
+    var powerupsTotalPct = DATA.powerupsTotalPct || 0;
+    var powerupsTotalPctLabel = Math.round(powerupsTotalPct * 100);
+    var mantList = DATA.mantenimiento || [];
+
+    // Lectura inicial de URL params (deep-link desde landing)
+    var params = new URLSearchParams(window.location.search);
+    var initialCat = params.get('cat');
+    var validCat = initialCat && DATA.categorias[initialCat] ? initialCat : 'webs';
+
+    var state = {
+      categoria: validCat,
+      powerupsOn: false,
+      mantenimiento: 'sin',  // 'sin' | 'basico' | 'premium'
+    };
+
+    function htmlShell() {
+      var html = '';
+      // SIDEBAR · 7 categorías
+      html += '<aside class="qg-sidebar" aria-label="Categorías">';
+      html += '  <span class="qg-sidebar-title">Cotiza tu proyecto</span>';
+      html += '  <nav class="qg-cat-list" role="tablist">';
+      Object.keys(DATA.categorias).forEach(function (catId) {
+        var c = DATA.categorias[catId];
+        var on = catId === state.categoria;
+        html += '<button class="qg-cat-item' + (on ? ' is-on' : '') + '" type="button" role="tab"' +
+                ' aria-selected="' + (on ? 'true' : 'false') + '" data-cat="' + catId + '">' +
+                '<span class="qg-cat-ic">' + icon(c.icon) + '</span>' +
+                '<span class="qg-cat-label">' + escHtml(c.label) + '</span>' +
+                (on ? '<span class="qg-cat-arrow" aria-hidden="true">→</span>' : '') +
+                '</button>';
+      });
+      html += '  </nav>';
+      html += '  <div class="qg-sidebar-foot">';
+      html += '    <a href="https://wa.me/523329575274?text=Hola%2C%20necesito%20asesor%C3%ADa" target="_blank" rel="noopener" class="qg-sidebar-asesor">';
+      html += '      <span data-icon="whatsapp"></span><span>¿Dudas? Habla con un asesor</span>';
+      html += '    </a>';
+      html += '  </div>';
+      html += '</aside>';
+
+      // MAIN
+      html += '<section class="qg-content">';
+      html += '  <header class="qg-content-head" data-content-head></header>';
+      html += '  <div class="qg-controls">';
+      // Powerups toggle
+      html += '    <button class="qg-toggle" type="button" data-toggle="powerups" aria-pressed="false">';
+      html += '      <span class="qg-toggle-switch" aria-hidden="true"><span class="qg-toggle-knob"></span></span>';
+      html += '      <span class="qg-toggle-copy">';
+      html += '        <span class="qg-toggle-title">Powerups</span>';
+      html += '        <span class="qg-toggle-sub">Animaciones · Dark/Light · Multi-idioma · Multi-moneda · PWA</span>';
+      html += '      </span>';
+      html += '      <span class="qg-toggle-pct">×4 precio</span>';
+      html += '    </button>';
+      // Mantenimiento segmented
+      html += '    <div class="qg-mant" role="group" aria-label="Mantenimiento mensual">';
+      html += '      <span class="qg-mant-label">Mantenimiento</span>';
+      html += '      <div class="qg-mant-seg">';
+      html += '        <button type="button" class="qg-mant-opt is-on" data-mant="sin">Sin</button>';
+      html += '        <button type="button" class="qg-mant-opt" data-mant="basico">Básico <span class="qg-mant-pct">$5k/mes</span></button>';
+      html += '        <button type="button" class="qg-mant-opt" data-mant="premium">Premium <span class="qg-mant-pct">$10k/mes</span></button>';
+      html += '      </div>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '  <div class="qg-panel" data-panel></div>';
+      html += '</section>';
+
+      return html;
+    }
+
+    function htmlHead(catId) {
+      var cat = DATA.categorias[catId];
+      if (!cat) return '';
+      return '<h1 class="qg-cat-title">' + escHtml(cat.title || ('Planes de ' + cat.label)) + '</h1>' +
+             '<p class="qg-cat-tagline">' + escHtml(cat.tagline || cat.sub || '') + '</p>';
+    }
+
+    function htmlPanel(catId) {
+      var cat = DATA.categorias[catId];
+      if (!cat) return '<p class="qg-empty">Categoría no encontrada.</p>';
+      var html = '';
+      var planCount = cat.planes.length;
+      html += '<div class="qg-plans" data-plans="' + planCount + '">';
+      cat.planes.forEach(function (plan) {
+        html += '<article class="qg-plan' + (plan.recomendado ? ' is-recomendado' : '') + '" data-plan="' + plan.id + '">';
+        if (plan.recomendado) html += '<span class="qg-plan-banner">Más popular</span>';
+
+        // HEAD: icon + name + sub
+        html += '<div class="qg-plan-head">';
+        html += '  <span class="qg-plan-ic">' + icon(plan.icon) + '</span>';
+        html += '  <div class="qg-plan-headtxt"><div class="qg-plan-name">' + escHtml(plan.label) + '</div>';
+        html += '  <div class="qg-plan-sub">' + escHtml(plan.sub) + '</div></div>';
+        html += '</div>';
+
+        // PRICE block: one-time + recurrente
+        html += '<div class="qg-plan-price">';
+        html += '  <span class="qg-plan-amount" data-amount>' + fmt(plan.base) + '</span>';
+        html += '  <span class="qg-plan-amt-meta">MXN · one-time</span>';
+        html += '</div>';
+        html += '<div class="qg-plan-recur" data-recur hidden>';
+        html += '  <span class="qg-plan-plus">+</span>';
+        html += '  <span class="qg-plan-recur-amt" data-recur-amt>$0</span>';
+        html += '  <span class="qg-plan-recur-meta">/ mes</span>';
+        html += '</div>';
+        html += '<div class="qg-plan-tiempo">Entrega ' + escHtml(plan.tiempo) + '</div>';
+
+        // CTA
+        html += '<div class="qg-plan-cta">';
+        html += '  <button class="qg-plan-btn' + (plan.recomendado ? ' is-primary' : '') + '" type="button" data-elegir="' + plan.id + '">';
+        html += '    Elegir plan <span aria-hidden="true">→</span>';
+        html += '  </button>';
+        html += '</div>';
+
+        // Features list compacta
+        html += '<div class="qg-plan-features">';
+        var visibleFeatures = (plan.features || []).slice(0, 6);
+        visibleFeatures.forEach(function (f) {
+          html += '<div class="qg-plan-feat"><span class="qg-plan-feat-check">' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
+        });
+        if (plan.features && plan.features.length > 6) {
+          html += '<div class="qg-plan-feat-more">+ ' + (plan.features.length - 6) + ' más en checkout</div>';
+        }
+        html += '</div>';
+
+        html += '</article>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function recalc(animate) {
+      var cat = DATA.categorias[state.categoria];
+      if (!cat) return;
+      var mantP = mantPrice(state.mantenimiento, mantList);
+      cat.planes.forEach(function (plan) {
+        var card = container.querySelector('.qg-plan[data-plan="' + plan.id + '"]');
+        if (!card) return;
+        var amountEl = card.querySelector('[data-amount]');
+        var prev = parseFloat((amountEl.textContent || '0').replace(/[^0-9.]/g, '')) || plan.base;
+        var next = planPrice(plan, state.powerupsOn, powerupsTotalPct);
+        if (animate) animateNumber(amountEl, prev, next);
+        else amountEl.textContent = fmt(next);
+
+        var recurEl = card.querySelector('[data-recur]');
+        var recurAmtEl = card.querySelector('[data-recur-amt]');
+        if (mantP > 0) {
+          recurEl.hidden = false;
+          recurAmtEl.textContent = fmt(mantP);
+        } else {
+          recurEl.hidden = true;
+        }
+      });
+    }
+
+    function switchCategoria(newCatId) {
+      if (!DATA.categorias[newCatId] || newCatId === state.categoria) return;
+      state.categoria = newCatId;
+      container.querySelectorAll('.qg-cat-item').forEach(function (b) {
+        var on = b.getAttribute('data-cat') === newCatId;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+        var arrow = b.querySelector('.qg-cat-arrow');
+        if (on && !arrow) {
+          var arr = document.createElement('span');
+          arr.className = 'qg-cat-arrow';
+          arr.setAttribute('aria-hidden', 'true');
+          arr.textContent = '→';
+          b.appendChild(arr);
+        } else if (!on && arrow) {
+          arrow.remove();
+        }
+      });
+      var headEl = container.querySelector('[data-content-head]');
+      var panelEl = container.querySelector('[data-panel]');
+      if (headEl) headEl.innerHTML = htmlHead(newCatId);
+      if (panelEl) panelEl.innerHTML = htmlPanel(newCatId);
+      bindPanel();
+      recalc(false);
+    }
+
+    function elegirPlan(planId) {
+      var cat = DATA.categorias[state.categoria];
+      var plan = cat.planes.find(function (p) { return p.id === planId; });
+      if (!plan) return;
+      // Navegar a checkout con todos los params del paquete
+      var params = new URLSearchParams({
+        cat: state.categoria,
+        plan: planId,
+        pwr: state.powerupsOn ? '1' : '0',
+        mant: state.mantenimiento,
+      });
+      window.location.href = '/checkout.html?' + params.toString();
+    }
+
+    function bindPanel() {
+      container.querySelectorAll('[data-elegir]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          elegirPlan(btn.getAttribute('data-elegir'));
+        });
+      });
+    }
+
+    function bindShell() {
+      // Categorías
+      container.querySelectorAll('.qg-cat-item').forEach(function (b) {
+        b.addEventListener('click', function () {
+          switchCategoria(b.getAttribute('data-cat'));
+        });
+      });
+      // Powerups toggle
+      var puToggle = container.querySelector('[data-toggle="powerups"]');
+      if (puToggle) {
+        puToggle.addEventListener('click', function () {
+          state.powerupsOn = !state.powerupsOn;
+          puToggle.classList.toggle('is-on', state.powerupsOn);
+          puToggle.setAttribute('aria-pressed', state.powerupsOn ? 'true' : 'false');
+          recalc(true);
+        });
+      }
+      // Mantenimiento segmented
+      container.querySelectorAll('.qg-mant-opt').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var v = b.getAttribute('data-mant');
+          if (state.mantenimiento === v) return;
+          state.mantenimiento = v;
+          container.querySelectorAll('.qg-mant-opt').forEach(function (o) {
+            o.classList.toggle('is-on', o.getAttribute('data-mant') === v);
+          });
+          recalc(true);
+        });
+      });
+    }
+
+    // Mount
+    container.innerHTML = htmlShell();
+    var headEl = container.querySelector('[data-content-head]');
+    var panelEl = container.querySelector('[data-panel]');
+    if (headEl) headEl.innerHTML = htmlHead(state.categoria);
+    if (panelEl) panelEl.innerHTML = htmlPanel(state.categoria);
+
+    // Hidratar iconos del DS dentro del cotizador
+    container.querySelectorAll('[data-icon]').forEach(function (el) {
+      if (el.querySelector('svg')) return;
+      el.innerHTML = window.IBISNE_ICONS ? window.IBISNE_ICONS.get(el.getAttribute('data-icon'), 'line') || '' : '';
+    });
+
+    bindShell();
+    bindPanel();
+    recalc(false);
+  }
+
+  function boot() {
+    var container = document.querySelector('[data-cotizador]');
+    if (!container) return;
+    init(container);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else { boot(); }
+
+  window.IBISNE_QUIZ_GUIADO = { init: init };
+})();
