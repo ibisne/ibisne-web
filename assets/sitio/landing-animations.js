@@ -72,14 +72,13 @@
       var heroLead = document.querySelector('[data-anim="hero-lead"]');
       var heroActions = document.querySelector('[data-anim="hero-actions"]');
 
-      // Split text del h1 por palabras (manual · evita SplitText premium plugin)
+      // Split text del h1 por palabras · DOM-safe (iterando childNodes)
+      // v18.0.1 hotfix: la versión anterior usaba regex sobre innerHTML que
+      // matcheaba fragmentos de tags HTML (<span class="hl">) como palabras
+      // y rompía el rendering. Ahora iteramos childNodes y respetamos elementos.
       var heroWords = [];
       if (heroH1) {
-        var text = heroH1.innerHTML;
-        // Conservar el span.hl interno · split solo en text nodes top-level
-        var wrapped = text.replace(/(\S+)/g, '<span class="hero-word" style="display:inline-block;will-change:transform,opacity">$1</span>');
-        heroH1.innerHTML = wrapped;
-        heroWords = heroH1.querySelectorAll('.hero-word');
+        heroWords = splitWordsDomSafe(heroH1);
         gsap.set(heroWords, { opacity: 0, y: 40, rotateX: -30 });
         gsap.set(heroH1, { opacity: 1 });  // unhide container · words son los que aparecen
       }
@@ -201,6 +200,77 @@
     //    (CSS ya da el lift básico · GSAP suma micro-rotate al icono)
     // ─────────────────────────────────────────────────────────
     setupButtonHovers();
+  }
+
+  /**
+   * Split text en palabras animables sin romper HTML interno.
+   * Itera childNodes del elemento, separando text nodes en palabras
+   * y preservando element nodes (ej. <span class="hl">) wrappeando
+   * cada palabra dentro del element con el mismo class para mantener
+   * el styling (gradient, color, etc.).
+   *
+   * @param {HTMLElement} el · contenedor a partir
+   * @returns {HTMLElement[]} · array de wrappers .hero-word creados
+   */
+  function splitWordsDomSafe(el) {
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var fragment = document.createDocumentFragment();
+    var wrappers = [];
+
+    function makeWrapper(textContent, preserveClassName) {
+      var wrapper = document.createElement('span');
+      wrapper.className = 'hero-word';
+      wrapper.style.display = 'inline-block';
+      wrapper.style.willChange = 'transform, opacity';
+
+      if (preserveClassName) {
+        // Conservar el styling del element padre (ej. .hl gradient)
+        var inner = document.createElement('span');
+        inner.className = preserveClassName;
+        inner.textContent = textContent;
+        wrapper.appendChild(inner);
+      } else {
+        wrapper.textContent = textContent;
+      }
+      return wrapper;
+    }
+
+    function appendSpace() {
+      // Espacio normal (no nbsp · permite wrap natural en mobile)
+      fragment.appendChild(document.createTextNode(' '));
+    }
+
+    nodes.forEach(function (node, idx) {
+      if (node.nodeType === 3) {
+        // Text node · split por whitespace
+        var words = node.textContent.split(/\s+/).filter(Boolean);
+        words.forEach(function (word, i) {
+          var w = makeWrapper(word, null);
+          fragment.appendChild(w);
+          wrappers.push(w);
+          if (i < words.length - 1) appendSpace();
+        });
+        // Si el text node termina con space y hay más nodes, agregar uno
+        if (idx < nodes.length - 1 && /\s$/.test(node.textContent)) appendSpace();
+      } else if (node.nodeType === 1) {
+        // Element node · preservar className y wrappear cada palabra interna
+        var elClass = node.className;
+        var elWords = node.textContent.split(/\s+/).filter(Boolean);
+        elWords.forEach(function (word, i) {
+          var w = makeWrapper(word, elClass);
+          fragment.appendChild(w);
+          wrappers.push(w);
+          if (i < elWords.length - 1) appendSpace();
+        });
+        // Si el element terminaba con space adyacente al siguiente, agregar
+        if (idx < nodes.length - 1) appendSpace();
+      }
+    });
+
+    // Replace contenido original con el nuevo fragment
+    el.innerHTML = '';
+    el.appendChild(fragment);
+    return wrappers;
   }
 
   function setupStickyCTAStatic() {
