@@ -119,14 +119,14 @@
       html += '  </div>';
       html += '  <header class="qg-content-head" data-content-head></header>';
       html += '  <div class="qg-controls">';
-      // Powerups toggle · v19.0 label más amigable (era "×4 precio")
+      // Modo Pro toggle · v19.3 sin porcentajes · label que comunica VALOR
       html += '    <button class="qg-toggle" type="button" data-toggle="powerups" aria-pressed="false">';
       html += '      <span class="qg-toggle-switch" aria-hidden="true"><span class="qg-toggle-knob"></span></span>';
       html += '      <span class="qg-toggle-copy">';
-      html += '        <span class="qg-toggle-title">Powerups</span>';
-      html += '        <span class="qg-toggle-sub">Animaciones · Dark/Light · Multi-idioma · Multi-moneda · PWA</span>';
+      html += '        <span class="qg-toggle-title">Modo Pro</span>';
+      html += '        <span class="qg-toggle-sub">Tu proyecto destaca · animaciones · claro y oscuro · varios idiomas · varias monedas · app instalable</span>';
       html += '      </span>';
-      html += '      <span class="qg-toggle-pct">Premium +300%</span>';
+      html += '      <span class="qg-toggle-pct">Destaca de tu competencia</span>';
       html += '    </button>';
       // Mantenimiento segmented
       html += '    <div class="qg-mant" role="group" aria-label="Mantenimiento mensual">';
