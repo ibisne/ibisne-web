@@ -683,16 +683,26 @@
 
 <main>
 
-  <!-- ═══════════ § 01 · HERO con VIDEO ═══════════ -->
+  <!-- ═══════════ § 01 · HERO con visual CSS premium (v19.4) ═══════════ -->
   <section class="hero-spa" id="hero">
-    <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline preload="metadata"
-             poster="/assets/hero/poster.webp"
-             aria-hidden="true">
-        <source src="/assets/hero/tech.webm" type="video/webm">
-        <source src="/assets/hero/tech.mp4" type="video/mp4">
-      </video>
-      <!-- Si video no carga, queda el background del .hero-video-wrap (bg-deep) -->
+    <div class="hero-video-wrap" aria-hidden="true">
+      <!-- Mesh gradient animado + grid + particles · 0 KB extra -->
+      <div class="hero-mesh"></div>
+      <div class="hero-grid-pattern"></div>
+      <svg class="hero-particles" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <g fill="#fff">
+          <circle cx="120" cy="180" r="1.5" opacity="0.5"><animate attributeName="cy" values="180;220;180" dur="7s" repeatCount="indefinite"/></circle>
+          <circle cx="320" cy="420" r="2" opacity="0.4"><animate attributeName="cy" values="420;380;420" dur="9s" repeatCount="indefinite"/></circle>
+          <circle cx="520" cy="240" r="1.5" opacity="0.6"><animate attributeName="cy" values="240;280;240" dur="6s" repeatCount="indefinite"/></circle>
+          <circle cx="780" cy="560" r="2" opacity="0.3"><animate attributeName="cy" values="560;520;560" dur="11s" repeatCount="indefinite"/></circle>
+          <circle cx="980" cy="320" r="1.5" opacity="0.5"><animate attributeName="cy" values="320;360;320" dur="8s" repeatCount="indefinite"/></circle>
+          <circle cx="1080" cy="640" r="1" opacity="0.4"><animate attributeName="cy" values="640;680;640" dur="10s" repeatCount="indefinite"/></circle>
+          <circle cx="200" cy="640" r="1" opacity="0.35"><animate attributeName="cy" values="640;600;640" dur="12s" repeatCount="indefinite"/></circle>
+          <circle cx="900" cy="120" r="2" opacity="0.45"><animate attributeName="cy" values="120;160;120" dur="9s" repeatCount="indefinite"/></circle>
+          <circle cx="640" cy="700" r="1.5" opacity="0.35"><animate attributeName="cy" values="700;660;700" dur="11s" repeatCount="indefinite"/></circle>
+          <circle cx="400" cy="80" r="1" opacity="0.5"><animate attributeName="cy" values="80;120;80" dur="8s" repeatCount="indefinite"/></circle>
+        </g>
+      </svg>
     </div>
     <div class="hero-overlay"></div>
     <div class="container">
@@ -1037,7 +1047,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 · iBisne SAS DE CV</span>
-      <span>v19.3.1 · construido en LATAM</span>
+      <span>v19.4.0 · construido en LATAM</span>
     </div>
   </div>
 </footer>

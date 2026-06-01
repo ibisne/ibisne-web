@@ -30,6 +30,9 @@
   font-size: 18px; letter-spacing: -0.02em;
 }
 .co-logo-back { color: var(--text-muted); font-weight: var(--fw-regular); }
+/* v19.4 · logo real PNG (iBisne_blanco.png · invert en light) */
+.co-logo-img { height: 22px; width: auto; display: block; filter: invert(1); }
+[data-theme="dark"] .co-logo-img { filter: none; }
 .co-back-link {
   font-size: var(--fs-small); color: var(--text-muted);
   text-decoration: none;
