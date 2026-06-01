@@ -254,16 +254,16 @@
   max-width: 60ch;
 }
 
-/* ── TOPROW v19.5.3 · header categoría + Modo Pro + Mantenimiento EN LA MISMA FILA ── */
+/* ── TOPROW v19.5.3 · header categoría + Modo Pro + Mantenimiento EN LA MISMA FILA ──
+   v19.7.1: bordes top/bottom REMOVIDOS · creaban una línea horizontal visible sin
+   contenido encima (heredada de cuando había stepper arriba en v19.5-19.6.0). */
 .qg-toprow {
   flex: none;
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--sp-3);
   align-items: stretch;
-  padding: var(--sp-3) 0;
-  border-top: 1px solid var(--bg-line);
-  border-bottom: 1px solid var(--bg-line);
+  padding: 0;
 }
 .qg-toprow .qg-content-head {
   display: flex; flex-direction: column; justify-content: center;
