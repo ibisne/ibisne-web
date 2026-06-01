@@ -119,22 +119,30 @@
       html += '  </div>';
       html += '  <header class="qg-content-head" data-content-head></header>';
       html += '  <div class="qg-controls">';
-      // Modo Pro toggle · v19.3 sin porcentajes · label que comunica VALOR
-      html += '    <button class="qg-toggle" type="button" data-toggle="powerups" aria-pressed="false">';
-      html += '      <span class="qg-toggle-switch" aria-hidden="true"><span class="qg-toggle-knob"></span></span>';
-      html += '      <span class="qg-toggle-copy">';
-      html += '        <span class="qg-toggle-title">Modo Pro</span>';
-      html += '        <span class="qg-toggle-sub">Tu proyecto destaca · animaciones · claro y oscuro · varios idiomas · varias monedas · app instalable</span>';
+      // v19.5 · Modo Pro card (cyberpunk púrpura/azul + rayo) · compacta + llamativa
+      html += '    <button class="qg-pro-card" type="button" data-toggle="powerups" aria-pressed="false">';
+      html += '      <span class="qg-pro-icon" aria-hidden="true">';
+      html += '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L4 14 h7 L11 22 L20 10 h-7 z"/></svg>';
       html += '      </span>';
-      html += '      <span class="qg-toggle-pct">Destaca de tu competencia</span>';
+      html += '      <span class="qg-pro-text">';
+      html += '        <span class="qg-pro-title">Modo Pro</span>';
+      html += '        <span class="qg-pro-sub">Destaca de tu competencia</span>';
+      html += '      </span>';
+      html += '      <span class="qg-pro-switch" aria-hidden="true"><span class="qg-pro-knob"></span></span>';
       html += '    </button>';
-      // Mantenimiento segmented
-      html += '    <div class="qg-mant" role="group" aria-label="Mantenimiento mensual">';
-      html += '      <span class="qg-mant-label">Mantenimiento</span>';
+      // v19.5 · Mantenimiento card · compacta + neutra
+      html += '    <div class="qg-mant-card" role="group" aria-label="Mantenimiento mensual">';
+      html += '      <span class="qg-mant-icon" aria-hidden="true">';
+      html += '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3 a4 4 0 0 0 5 5 L17 14 L10 7 z"/><path d="M10 7 L3 14 l4 4 7-7"/></svg>';
+      html += '      </span>';
+      html += '      <span class="qg-mant-text">';
+      html += '        <span class="qg-mant-title">Mantenimiento</span>';
+      html += '        <span class="qg-mant-sub">Cuida tu proyecto</span>';
+      html += '      </span>';
       html += '      <div class="qg-mant-seg">';
       html += '        <button type="button" class="qg-mant-opt is-on" data-mant="sin">Sin</button>';
-      html += '        <button type="button" class="qg-mant-opt" data-mant="basico">Básico <span class="qg-mant-pct">$5k/mes</span></button>';
-      html += '        <button type="button" class="qg-mant-opt" data-mant="premium">Premium <span class="qg-mant-pct">$10k/mes</span></button>';
+      html += '        <button type="button" class="qg-mant-opt" data-mant="basico">Básico</button>';
+      html += '        <button type="button" class="qg-mant-opt" data-mant="premium">Premium</button>';
       html += '      </div>';
       html += '    </div>';
       html += '  </div>';
