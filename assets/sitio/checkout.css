@@ -1,0 +1,302 @@
+/* ===================================================================
+   assets/sitio/checkout.css · v17.0 · Checkout estilo Shopify adaptado
+   ===================================================================
+   Layout 2-col desktop: form (1fr) + summary (380px sticky)
+   Mobile: stack (form primero · summary debajo)
+   =================================================================== */
+
+.co-body {
+  margin: 0; padding: 0;
+  font-family: var(--font-display);
+  background: var(--bg-paper);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+.co-header {
+  height: 56px; flex: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-5);
+  background: var(--bg);
+  border-bottom: 1px solid var(--bg-line);
+  position: sticky; top: 0; z-index: 10;
+}
+.co-logo {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  text-decoration: none; color: var(--text-primary);
+  font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: 18px; letter-spacing: -0.02em;
+}
+.co-logo-back { color: var(--text-muted); font-weight: var(--fw-regular); }
+.co-back-link {
+  font-size: var(--fs-small); color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+.co-back-link:hover { color: var(--text-primary); }
+
+.co-main {
+  flex: 1;
+  max-width: 1280px; width: 100%;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-5);
+  display: grid;
+  gap: var(--sp-6);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .co-main { grid-template-columns: 1fr 380px; }
+}
+
+.co-loading {
+  grid-column: 1 / -1;
+  padding: var(--sp-7);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.co-section.co-form-section {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+}
+.co-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  letter-spacing: -0.02em; line-height: 1.1;
+  margin: 0 0 6px 0;
+}
+.co-subtitle {
+  margin: 0 0 var(--sp-5) 0;
+  font-size: var(--fs-base);
+  color: var(--text-secondary); line-height: 1.4;
+}
+
+.co-form { display: flex; flex-direction: column; gap: var(--sp-5); }
+.co-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.co-form-group { display: flex; flex-direction: column; gap: var(--sp-3); }
+.co-form-title {
+  font-family: var(--font-display); font-size: var(--fs-card-title);
+  font-weight: var(--fw-semibold); color: var(--text-primary);
+  letter-spacing: -0.01em; margin: 0;
+}
+.co-form-row {
+  display: grid; grid-template-columns: 1fr; gap: var(--sp-3);
+}
+@media (min-width: 600px) { .co-form-row { grid-template-columns: repeat(2, 1fr); } }
+
+.co-field { display: flex; flex-direction: column; gap: 6px; }
+.co-field-label {
+  font-size: var(--fs-small); font-weight: var(--fw-medium);
+  color: var(--text-primary);
+}
+.co-field-opt { color: var(--text-muted); font-weight: var(--fw-regular); }
+.co-field input,
+.co-field select,
+.co-field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: 1px solid var(--bg-line-strong);
+  border-radius: var(--radius-input);
+  font-family: var(--font-display); font-size: var(--fs-base);
+  color: var(--text-primary);
+  transition: border-color var(--dur-fast) var(--ease-out-quart),
+              box-shadow var(--dur-fast) var(--ease-out-quart);
+}
+.co-field textarea { resize: vertical; min-height: 96px; font-family: inherit; }
+.co-field input::placeholder,
+.co-field textarea::placeholder { color: var(--text-muted); }
+.co-field input:focus,
+.co-field select:focus,
+.co-field textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+.co-field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%2386868B' stroke-width='1.5'><path d='M1 1l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.co-form-actions {
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  align-items: stretch;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--bg-line);
+}
+.co-form-error {
+  font-size: var(--fs-small); color: var(--danger, #E5484D);
+  font-weight: var(--fw-medium);
+}
+.co-submit-btn {
+  background: var(--accent-blue); color: #fff;
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: var(--fs-base); letter-spacing: 0;
+  padding: 14px 20px; min-height: 48px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background var(--dur-fast) var(--ease-out-quart);
+}
+.co-submit-btn:hover { background: var(--accent-blue-hover, #0064CC); }
+.co-submit-btn:disabled { opacity: 0.6; cursor: wait; }
+.co-form-foot {
+  font-size: 12px; color: var(--text-muted); line-height: 1.5;
+  margin: 0; text-align: center;
+}
+.co-form-link {
+  color: var(--accent-blue); font-weight: var(--fw-medium);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+.co-summary {
+  position: relative;
+}
+@media (min-width: 900px) {
+  .co-summary {
+    position: sticky;
+    top: calc(56px + var(--sp-6));
+    align-self: start;
+  }
+}
+.co-summary-inner {
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+  display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.co-summary-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-small); font-weight: var(--fw-medium);
+  color: var(--text-muted);
+}
+.co-summary-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3); font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  letter-spacing: -0.015em; line-height: 1.15;
+  margin: 0;
+}
+.co-summary-cat {
+  margin: 0;
+  font-size: var(--fs-small); color: var(--text-muted);
+}
+
+.co-summary-list {
+  list-style: none; padding: 0; margin: 0;
+  border-top: 1px solid var(--bg-line);
+  padding-top: var(--sp-3);
+  display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.co-summary-item {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--sp-3);
+  font-size: var(--fs-small); color: var(--text-secondary);
+}
+.co-summary-item-name {
+  display: flex; flex-direction: column; gap: 2px;
+  color: var(--text-primary); font-weight: var(--fw-medium);
+}
+.co-summary-item-meta {
+  font-size: 11px; color: var(--text-muted); font-weight: var(--fw-regular);
+}
+.co-summary-item-price {
+  font-family: var(--font-display); font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.co-summary-item-price small { font-size: 10px; color: var(--text-muted); font-weight: var(--fw-regular); }
+.co-summary-item.is-powerup .co-summary-item-name { color: var(--accent-blue); }
+.co-summary-item.is-powerup .co-summary-item-price { color: var(--accent-blue); }
+.co-summary-item.is-recur .co-summary-item-price { color: var(--text-secondary); }
+
+.co-summary-totals {
+  border-top: 1px solid var(--bg-line);
+  padding-top: var(--sp-3);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.co-summary-total-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--sp-3);
+  font-family: var(--font-display); font-size: var(--fs-card-title);
+  font-weight: var(--fw-semibold); color: var(--text-primary);
+}
+.co-summary-total-row.is-sub {
+  font-size: var(--fs-small); color: var(--text-secondary);
+  font-weight: var(--fw-medium);
+}
+.co-summary-total-amt {
+  font-variant-numeric: tabular-nums;
+}
+.co-summary-total-amt small { font-size: 11px; color: var(--text-muted); font-weight: var(--fw-regular); }
+.co-summary-total-recur small { font-size: 10px; color: var(--text-muted); font-weight: var(--fw-regular); }
+
+.co-summary-foot {
+  border-top: 1px solid var(--bg-line);
+  padding-top: var(--sp-3);
+}
+.co-summary-foot p {
+  margin: 0;
+  font-size: 11px; color: var(--text-muted); line-height: 1.5;
+}
+
+.co-confirm {
+  grid-column: 1 / -1;
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: var(--radius);
+  padding: var(--sp-7);
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  align-items: center;
+}
+.co-confirm-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px;
+  background: var(--accent-blue); color: #fff;
+  border-radius: 50%;
+  margin-bottom: var(--sp-2);
+}
+.co-confirm-ic svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.co-confirm-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: var(--fw-semibold); color: var(--text-primary);
+  letter-spacing: -0.02em; margin: 0;
+}
+.co-confirm-sub {
+  margin: 0;
+  font-size: var(--fs-base); color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+.co-confirm-sub a { color: var(--accent-blue); font-weight: var(--fw-medium); text-decoration: underline; }
+.co-confirm-actions {
+  display: flex; gap: var(--sp-3); margin-top: var(--sp-3); flex-wrap: wrap; justify-content: center;
+}
+.co-confirm-btn {
+  background: var(--text-primary); color: var(--bg);
+  border: 1px solid var(--text-primary);
+  padding: 12px 20px; border-radius: var(--radius-btn);
+  text-decoration: none; font-weight: var(--fw-semibold); font-size: var(--fs-base);
+  transition: opacity var(--dur-fast) var(--ease-out-quart);
+}
+.co-confirm-btn:hover { opacity: 0.85; }
+.co-confirm-link {
+  color: var(--text-secondary); text-decoration: underline; font-size: var(--fs-small);
+  padding: 12px 0;
+}
+.co-confirm-link:hover { color: var(--text-primary); }

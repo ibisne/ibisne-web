@@ -6,7 +6,19 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v16.0.0) es una SPA landing única con pricing simplificado + Powerups ×4 + quiz inline 2-steps.** Páginas activas: `index.html` (SPA landing 11 secciones · sin segmented pago · Powerups features dentro de cada card · sin sección Mantenimiento en home) · `quiz.html` (cotizador completo · intacto desde v11.8). Categorías cubiertas en el pricing toggle: **Webs · Apps móviles · Ecommerce · CRM · ERP · SaaS · IA & Automatización** (7 categorías · 21 planes totales). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v17.0.0) es un funnel de 3 pantallas con propósito único.** Páginas activas: `index.html` (landing lead-gen con scroll · 9 secciones · convencer + capturar + dirigir al cotizador) · `quiz.html` (**cotizador guiado 1-viewport sin scroll** · sidebar 7 categorías + main planes + toggles Powerups/Mantenimiento) · `checkout.html` (estilo Shopify adaptado · form de captura + summary lateral · POST a /api/lead.js + WhatsApp prefill · sin pago real). Categorías: **Webs · Apps · Ecommerce · CRM · ERP · SaaS · IA & Automatización** (7 categorías · 21 planes desde `data/precios-v13.js`). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v17.0 · Pivot mayor · Landing lead-gen + Cotizador guiado 1-viewport + Checkout.** Cambio de arquitectura completo:
+- **Funnel directo**: landing convence → cotizador configura → checkout cierra.
+- **Cotizador NUEVO** (`quiz.html` reemplazado completamente · 56L HTML + 329L JS + 514L CSS): sidebar izq (7 categorías clickables) + main der (header + toggles Powerups ×4 / Mantenimiento Sin/Básico/Premium + grid de planes). Layout 1-viewport sin scroll en desktop (≥900px); mobile colapsa sidebar a tabs horizontales scroll-x + planes apilan abajo. Cada plan tiene botón **"Elegir plan"** que navega a `/checkout.html?cat=X&plan=Y&pwr=0/1&mant=sin/basico/premium`. Lee `data/precios-v13.js`.
+- **Checkout NUEVO** (`checkout.html` + 334L JS + 313L CSS): estilo Shopify adaptado · grid 2-col (form izq · summary lateral der sticky). Lee URL params, renderiza resumen del paquete (precio plan + Powerups si on + Mantenimiento si elegido). Form completo: nombre · email · teléfono · empresa · timeline · información adicional. Submit → POST `/api/lead.js` + `window.open(WhatsApp)` + confirmación inline. **Sin pago real** (Eduardo lo dejó "captura + asesor").
+- **Landing simplificada** (`index.html`): eliminadas §06 Pricing toggle y §07 Después del lanzamiento. Hero CTA "Cotizar mi proyecto" → `/quiz.html`. 7 cards de servicios linkean a `/quiz.html?cat=<categoria>` (deep-link con categoría preseleccionada). Sin pricing en el home. Resto similar a v16 (topbar utility + nav + hero + servicios + diferenciadores + cómo trabajamos + testimonios + FAQ + CTA final + footer).
+- **ELIMINADO** (~6000 líneas legacy): `data/pricing-v9.js` (2846L) · `data/precios-v12.js` (163L) · `assets/quiz/ui.js` (2003L) · `assets/quiz/{ambient,hud,prefs,loader,i18n}.js` · `assets/quiz/styles.css` (1205L) · `assets/sitio/pricing-table.{js,css}` (514L+582L) · `no.html`. El cotizador adaptativo viejo v9 (wizard de 6-9 preguntas con catálogo `pricing-v9.js` de 22 servicios + addOns) MUERTO. El motor era 2003L de JS — ya no.
+- **CONSERVADO**: `assets/quiz/icons.js` (set propio) + `assets/quiz/pwa.js` (install detection) + `assets/quiz/pwa-modal.css`. Datos: `data/precios-v13.js` (21 planes) único catálogo activo.
+- **404.html**: link a `/quiz.html` (sin hash legacy).
+- SW v17.0.0 + PRECACHE limpio (sin archivos eliminados).
+
+
 
 **v16.0 · Pricing simplificado + Powerups ×4 + features extensas.** Soluciona 6 puntos de feedback de Eduardo sobre v15.0:
 - **Powerups dentro de cada card**: cuando se activa el master toggle, las 5 capacidades aparecen como features adicionales con divider "Con Powerups activados" dentro de cada plan (CSS `display:none/flex` según `.pt-panel.is-powerups-on`).
@@ -222,7 +234,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios al design system VAULT v2 (`/design-system-v2/`):** requieren confirmación del usuario antes de tocar. El cotizador no toca esa carpeta · sólo la consume.
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
-- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador o de la SPA), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v16.0.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador, checkout o landing), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v17.0.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
 
 ## Voice & copy
 
