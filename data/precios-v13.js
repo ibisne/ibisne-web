@@ -34,31 +34,26 @@ window.IBISNE_PRECIOS_V13 = {
 
   /* ── Mantenimiento mensual (conservado en data para checkout futuro)
      v16.0 NO se renderiza en SPA · vive en api/checkout cuando se construya. */
+  /* v19.7 · Modelo nuevo: BÁSICO INCLUIDO (precio 0) · PREMIUM upgrade +$5k/mes */
   mantenimiento: [
     {
-      id: 'basico', precio: 5000, label: 'Mantenimiento Básico',
-      titulo: 'Tuyo que no muere',
-      desc: 'Para mantener tu desarrollo vivo, actualizado y con presencia constante.',
+      id: 'basico', precio: 0, label: 'Básico (incluido)',
+      titulo: 'Mantenimiento incluido',
+      desc: 'Mantenimiento básico incluido en todos los planes · sin costo extra.',
       features: [
         'Modificaciones y cambios simples',
-        '12 piezas gráficas mensuales (posts, banners)',
-        '2 redes sociales gestionadas',
-        '1 historia o reel mensual',
-        'Renovación de licencias incluida',
+        'Piezas gráficas mensuales para tus redes',
+        'Soporte WhatsApp + email · horario oficina',
         'Actualizaciones de seguridad',
-        'Soporte WhatsApp + email · horario oficina (10am-5pm)',
       ],
     },
     {
-      id: 'premium', precio: 10000, label: 'Mantenimiento Premium',
+      id: 'premium', precio: 5000, label: 'Premium',
       titulo: 'Acompañamiento 360°',
-      desc: 'Para crecer activamente con cambios urgentes y operación de marketing.',
+      desc: 'Soporte 24/7 + reportes mensuales + reuniones estratégicas. Upgrade desde Básico.',
       features: [
         'Todo lo del plan Básico',
         'Cambios urgentes priorizados (mismo día)',
-        '20 piezas gráficas mensuales',
-        '4 redes sociales gestionadas',
-        '3 historias o reels mensuales',
         'Reportes mensuales de performance',
         '2 reuniones estratégicas al mes',
         'Soporte teléfono + Google Meet · 24/7',

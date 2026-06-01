@@ -77,7 +77,8 @@
     var catId = params.get('cat') || 'webs';
     var planId = params.get('plan');
     var powerupsInit = params.get('pwr') === '1';
-    var mantIdInit = params.get('mant') || 'sin';
+    // v19.7 · default 'basico' (incluido) · si llega 'sin' del URL lo normalizo a 'basico'
+    var mantIdInit = params.get('mant') === 'premium' ? 'premium' : 'basico';
 
     var cat = DATA.categorias[catId];
     if (!cat) { window.location.href = '/quiz.html'; return; }
@@ -202,17 +203,16 @@
       html += '      </span>';
       html += '      <span class="co-summary-pro-switch" aria-hidden="true"><span class="co-summary-pro-knob"></span></span>';
       html += '    </button>';
-      // Mantenimiento mini-segmented
-      html += '    <div class="co-summary-mant" role="group" aria-label="Mantenimiento mensual">';
+      // v19.7 · Mantenimiento toggle Premium (Básico incluido · upgrade +$5k/mes)
+      html += '    <div class="co-summary-mant">';
       html += '      <span class="co-summary-mant-label">Mantenimiento</span>';
-      html += '      <div class="co-summary-mant-seg">';
-      html += '        <button type="button" class="co-summary-mant-opt' + (state.mantId === 'sin' ? ' is-on' : '') + '" data-mant="sin">Sin</button>';
-      mantList.forEach(function (m) {
-        var on = state.mantId === m.id;
-        var lbShort = m.id === 'basico' ? 'Básico' : 'Premium';
-        html += '        <button type="button" class="co-summary-mant-opt' + (on ? ' is-on' : '') + '" data-mant="' + escHtml(m.id) + '">' + escHtml(lbShort) + '</button>';
-      });
-      html += '      </div>';
+      html += '      <button type="button" class="co-summary-mant-toggle' + (state.mantId === 'premium' ? ' is-on' : '') + '" data-mant-toggle aria-pressed="' + (state.mantId === 'premium' ? 'true' : 'false') + '">';
+      html += '        <span class="co-summary-mant-info">';
+      html += '          <span class="co-summary-mant-name">' + (state.mantId === 'premium' ? 'Premium' : 'Básico incluido') + '</span>';
+      html += '          <span class="co-summary-mant-meta">' + (state.mantId === 'premium' ? '+$5,000/mes' : 'sin costo · upgrade a Premium') + '</span>';
+      html += '        </span>';
+      html += '        <span class="co-summary-mant-switch" aria-hidden="true"><span class="co-summary-mant-knob"></span></span>';
+      html += '      </button>';
       html += '    </div>';
 
       // v19.5.2 · MSI movido del form al summary · dropdown limpio (no cuadritos)
@@ -397,15 +397,14 @@
           updateSummary();
         });
       }
-      // Mantenimiento segmented dentro del summary
-      container.querySelectorAll('[data-mant]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var v = b.getAttribute('data-mant');
-          if (state.mantId === v) return;
-          state.mantId = v;
+      // v19.7 · Mantenimiento toggle Premium dentro del summary
+      var mantToggle = container.querySelector('[data-mant-toggle]');
+      if (mantToggle) {
+        mantToggle.addEventListener('click', function () {
+          state.mantId = state.mantId === 'premium' ? 'basico' : 'premium';
           updateSummary();
         });
-      });
+      }
       // v19.5.2 · MSI select dentro del summary
       var msiSelect = container.querySelector('[data-msi-select]');
       if (msiSelect) {
