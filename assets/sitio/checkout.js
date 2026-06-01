@@ -222,6 +222,26 @@
       });
       html += '      </div>';
       html += '    </div>';
+
+      // v19.5.2 · MSI movido del form al summary · dropdown limpio (no cuadritos)
+      var msiTotal = planPrice(plan, state.powerupsOn, powerupsTotalPct);
+      html += '    <div class="co-summary-msi">';
+      html += '      <label class="co-summary-msi-label" for="co-msi-select">Plazo de pago</label>';
+      html += '      <div class="co-summary-msi-wrap">';
+      html += '        <select id="co-msi-select" class="co-summary-msi-select" data-msi-select>';
+      MSI_OPTIONS.forEach(function (opt) {
+        var on = state.msi === opt.id;
+        html += '          <option value="' + opt.id + '"' + (on ? ' selected' : '') + '>' + escHtml(opt.label) + '</option>';
+      });
+      html += '        </select>';
+      html += '        <span class="co-summary-msi-arrow" aria-hidden="true">▾</span>';
+      html += '      </div>';
+      html += '      <p class="co-summary-msi-quota">' +
+              (state.msi > 1
+                ? fmt(msiTotal / state.msi) + '<small> /mes × ' + state.msi + ' meses</small>'
+                : '<small>Una sola exhibición</small>') +
+              '</p>';
+      html += '    </div>';
       html += '  </div>';
 
       // Desglose
@@ -339,8 +359,7 @@
       // Método de pago
       html += htmlPaySection();
 
-      // MSI
-      html += htmlMsiSection();
+      // v19.5.2 · MSI movido al summary lateral derecho (htmlMsiSection ya no se llama)
 
       // Form actions
       html += '    <div class="co-form-actions">';
@@ -384,7 +403,6 @@
         pwrBtn.addEventListener('click', function () {
           state.powerupsOn = !state.powerupsOn;
           updateSummary();
-          updateMsiQuota();
         });
       }
       // Mantenimiento segmented dentro del summary
@@ -396,6 +414,16 @@
           updateSummary();
         });
       });
+      // v19.5.2 · MSI select dentro del summary
+      var msiSelect = container.querySelector('[data-msi-select]');
+      if (msiSelect) {
+        msiSelect.addEventListener('change', function () {
+          var v = parseInt(msiSelect.value, 10);
+          if (state.msi === v) return;
+          state.msi = v;
+          updateSummary();
+        });
+      }
     }
 
     function updateMsiQuota() {

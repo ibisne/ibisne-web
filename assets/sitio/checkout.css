@@ -670,6 +670,62 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
+/* v19.5.2 · MSI dropdown dentro del summary · 1 fila limpia */
+.co-summary-msi {
+  display: flex; flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--bg-line);
+}
+.co-summary-msi-label {
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.co-summary-msi-wrap {
+  position: relative;
+}
+.co-summary-msi-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--bg-line);
+  border-radius: 8px;
+  padding: 8px 32px 8px 12px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out-quart);
+}
+.co-summary-msi-select:hover { border-color: var(--bg-line-strong); }
+.co-summary-msi-select:focus-visible {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(0,113,227,0.20);
+}
+.co-summary-msi-arrow {
+  position: absolute;
+  right: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.co-summary-msi-quota {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-blue);
+  font-weight: var(--fw-semibold);
+}
+.co-summary-msi-quota small {
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .co-submit-spinner { animation: none; }
 }
