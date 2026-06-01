@@ -130,8 +130,8 @@
       html += '      </span>';
       html += '      <span class="qg-pro-switch" aria-hidden="true"><span class="qg-pro-knob"></span></span>';
       html += '    </button>';
-      // v19.5 · Mantenimiento card · compacta + neutra
-      html += '    <div class="qg-mant-card" role="group" aria-label="Mantenimiento mensual">';
+      // v19.5.1 · Mantenimiento info card (col 2/3) · solo icono + título + sub
+      html += '    <div class="qg-mant-card qg-mant-info-only">';
       html += '      <span class="qg-mant-icon" aria-hidden="true">';
       html += '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3 a4 4 0 0 0 5 5 L17 14 L10 7 z"/><path d="M10 7 L3 14 l4 4 7-7"/></svg>';
       html += '      </span>';
@@ -139,6 +139,9 @@
       html += '        <span class="qg-mant-title">Mantenimiento</span>';
       html += '        <span class="qg-mant-sub">Cuida tu proyecto</span>';
       html += '      </span>';
+      html += '    </div>';
+      // v19.5.1 · Mantenimiento segmented card (col 3/3) · Sin/Básico/Premium standalone
+      html += '    <div class="qg-mant-seg-card" role="group" aria-label="Plan de mantenimiento mensual">';
       html += '      <div class="qg-mant-seg">';
       html += '        <button type="button" class="qg-mant-opt is-on" data-mant="sin">Sin</button>';
       html += '        <button type="button" class="qg-mant-opt" data-mant="basico">Básico</button>';
