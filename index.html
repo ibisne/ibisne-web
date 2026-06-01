@@ -101,12 +101,24 @@
     display: grid; grid-template-columns: 1fr auto 1fr;
     align-items: center; gap: var(--sp-4); height: 64px;
   }
-  .site-logo-link { justify-self: start; }
+  .site-logo-link {
+    justify-self: start;
+    display: inline-flex; align-items: center;
+    transition: opacity var(--dur-fast) var(--ease-out-quart);
+  }
+  .site-logo-link:hover { opacity: 0.7; }
   .site-logo {
     font-family: var(--font-display); font-size: 20px;
     font-weight: var(--fw-semibold); letter-spacing: -0.02em;
     color: var(--text-primary); line-height: 1;
   }
+  /* v18.0.2 · logo brand · iBisne_blanco.png es blanco · en light se invierte a negro */
+  .site-logo-img {
+    height: 26px; width: auto; display: block;
+    filter: invert(1);                          /* light: png blanco → negro */
+    transition: filter var(--dur-fast) var(--ease-out-quart);
+  }
+  [data-theme="dark"] .site-logo-img { filter: none; }   /* dark: png blanco queda blanco */
   .site-nav { display: none; gap: var(--sp-5); align-items: center; justify-self: center; }
   .site-nav a {
     font-size: var(--fs-base); font-weight: var(--fw-medium);
@@ -641,7 +653,9 @@
 <!-- ═══════════ § 00 · HEADER STICKY ═══════════ -->
 <header class="site-header">
   <div class="container site-header-inner">
-    <a href="#hero" class="site-logo-link"><span class="site-logo">iBisne</span></a>
+    <a href="#hero" class="site-logo-link" aria-label="iBisne · volver al inicio">
+      <img src="brand/iBisne_blanco.png" alt="iBisne" class="site-logo-img" width="120" height="32">
+    </a>
     <nav class="site-nav">
       <a href="#servicios">Servicios</a>
       <a href="#diferenciadores">Por qué</a>
@@ -677,7 +691,7 @@
     <div class="hero-overlay"></div>
     <div class="container">
       <div class="hero-inner">
-        <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">— HOLDING LATAM · CAPITAL + EJECUCIÓN</p>
+        <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">Cotiza tu proyecto en 3 minutos · sin compromiso</p>
         <h1 data-anim="hero-h1" data-split-text>Construye lo que <span class="hl">tu negocio merece.</span></h1>
         <p class="hero-lead" data-anim="hero-lead">
           Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo el stack digital de tu negocio.
@@ -685,7 +699,7 @@
         </p>
         <div class="hero-actions" data-anim="hero-actions">
           <a class="btn-blue" href="quiz.html">Cotizar mi proyecto →</a>
-          <a class="btn-ghost-light" href="quiz.html">Cotizar ahora →</a>
+          <button type="button" class="btn-ghost-light" id="hero-contact-btn">Hablar con un asesor</button>
         </div>
       </div>
     </div>
@@ -1056,11 +1070,14 @@
     });
   })();
 
-  // ── Modal Contacto (v15.0)
+  // ── Modal Contacto (v15.0 · extendido v18.0.2 con botón hero)
   (function () {
     var modal = document.getElementById('contact-modal');
-    var openBtn = document.getElementById('site-contact-btn');
-    if (!modal || !openBtn) return;
+    var openBtns = [
+      document.getElementById('site-contact-btn'),
+      document.getElementById('hero-contact-btn'),   // v18.0.2 · botón hero "Hablar con un asesor"
+    ].filter(Boolean);
+    if (!modal || !openBtns.length) return;
     function open() {
       modal.removeAttribute('hidden');
       document.body.style.overflow = 'hidden';
@@ -1069,7 +1086,7 @@
       modal.setAttribute('hidden', '');
       document.body.style.overflow = '';
     }
-    openBtn.addEventListener('click', open);
+    openBtns.forEach(function (btn) { btn.addEventListener('click', open); });
     modal.querySelectorAll('[data-modal-close]').forEach(function (el) {
       el.addEventListener('click', close);
     });
