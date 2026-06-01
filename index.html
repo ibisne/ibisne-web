@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/motion.css?v=3.2.0">
-<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=15.0.0">
+<link rel="stylesheet" href="assets/sitio/pricing-table.css?v=16.0.0">
 
 <style>
   /* ============================================================
@@ -488,7 +488,45 @@
     font-size: var(--fs-small); color: var(--text-secondary); line-height: 1.4;
   }
 
-  /* ── Mantenimiento · 2 cards ──────────────────────────────── */
+  /* ── Después del lanzamiento · 3 cards (v16.0) ────────────── */
+  .despues-grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--sp-4);
+    margin-top: var(--sp-6);
+  }
+  @media (min-width: 700px) { .despues-grid { grid-template-columns: repeat(3, 1fr); } }
+  .despues-card {
+    padding: var(--sp-5);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid transparent;
+    display: flex; flex-direction: column; gap: var(--sp-3);
+    transition: border-color var(--dur-fast) var(--ease-out-quart);
+  }
+  .despues-card:hover { border-color: var(--bg-line-strong); }
+  .despues-card-ic {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    background: var(--bg); border: 1px solid var(--bg-line-strong);
+    border-radius: var(--radius-input);
+    color: var(--text-primary);
+  }
+  .despues-card-ic svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .despues-card-title {
+    font-family: var(--font-display); font-size: var(--fs-card-title);
+    font-weight: var(--fw-semibold); color: var(--text-primary);
+    letter-spacing: -0.01em; line-height: 1.2;
+  }
+  .despues-card-desc {
+    font-size: var(--fs-small); color: var(--text-secondary); line-height: 1.5;
+  }
+  .despues-card-foot {
+    margin-top: auto; padding-top: var(--sp-3);
+    font-size: var(--fs-micro); color: var(--text-muted);
+    font-weight: var(--fw-medium);
+    border-top: 1px solid var(--bg-line);
+  }
+
+  /* ── Mantenimiento · 2 cards (legacy v15 · ya no se usa en home v16) ── */
   .manten-grid {
     display: grid; grid-template-columns: 1fr; gap: var(--sp-4);
     margin-top: var(--sp-6);
@@ -613,7 +651,7 @@
       <a href="#servicios">Servicios</a>
       <a href="#diferenciadores">Por qué</a>
       <a href="#pricing">Precios</a>
-      <a href="#mantenimiento">Mantenimiento</a>
+      <a href="#despues-lanzamiento">Después</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="site-header-actions">
@@ -808,58 +846,44 @@
       <span class="eyebrow">Precios</span>
       <h2 class="t-h2">Elige tu plan.</h2>
       <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3); margin-bottom: var(--sp-6);">
-        Activa <strong>pago en exhibición</strong> para -20% de descuento. Agrega <strong>Powerups todo-o-nada</strong> para subir el desarrollo a otro nivel.
+        Precio cerrado por categoría. Activa <strong>Powerups</strong> para sumar 5 capacidades premium y multiplicar tu precio por 4 (las features se ven dentro de cada card).
       </p>
       <!-- El componente pricing-table.js auto-inicializa este div en modo SPA -->
       <div data-pricing-spa="webs"></div>
     </div>
   </section>
 
-  <!-- ═══════════ § 07 · MANTENIMIENTO ═══════════ -->
-  <section class="section" id="mantenimiento" data-bg="base">
+  <!-- ═══════════ § 07 · DESPUÉS DEL LANZAMIENTO (v16.0 · reemplaza Mantenimiento) ═══════════ -->
+  <section class="section" id="despues-lanzamiento" data-bg="base">
     <div class="container">
-      <span class="eyebrow">Mantenimiento opcional</span>
-      <h2 class="t-h2">¿Quieres que lo mantengamos vivo?</h2>
+      <span class="eyebrow">Después del lanzamiento</span>
+      <h2 class="t-h2">Lo que sigue cuando ya estás en línea.</h2>
       <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
-        Opcional y mensual. Cancela cuando quieras. Tu desarrollo funciona aunque no contrates mantenimiento.
+        Tu desarrollo es 100% tuyo desde el día 1. Cuando lo decidas, en checkout definimos juntos los módulos opcionales que te acompañan después:
       </p>
-      <div class="manten-grid" data-reveal-stagger="60">
-        <div class="manten-card">
-          <div class="manten-head">
-            <span class="manten-name">Básico</span>
-            <span class="manten-price">$5,000<small>/mes</small></span>
-          </div>
-          <div class="manten-titulo">Tuyo que no muere</div>
-          <p class="manten-desc">Para mantener tu desarrollo vivo, actualizado y con presencia constante.</p>
-          <div class="manten-features">
-            <div class="manten-feature"><span data-icon="check"></span><span>Modificaciones y cambios simples</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>12 piezas gráficas mensuales (posts, banners)</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>2 redes sociales gestionadas</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>1 historia o reel mensual</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Renovación de licencias incluida</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Actualizaciones de seguridad</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Soporte WhatsApp + email · horario oficina (10am-5pm)</span></div>
-          </div>
+      <div class="despues-grid" data-reveal-stagger="60">
+        <div class="despues-card">
+          <span class="despues-card-ic" data-icon="wrench"></span>
+          <h3 class="despues-card-title">Mantenimiento mensual</h3>
+          <p class="despues-card-desc">Modificaciones, diseño gráfico y operación continua. Plan Básico o Premium, cancela cuando quieras.</p>
+          <span class="despues-card-foot">Desde $5,000 MXN / mes · opcional</span>
         </div>
-        <div class="manten-card">
-          <div class="manten-head">
-            <span class="manten-name">Premium</span>
-            <span class="manten-price">$10,000<small>/mes</small></span>
-          </div>
-          <div class="manten-titulo">Acompañamiento 360°</div>
-          <p class="manten-desc">Para crecer activamente con cambios urgentes y operación de marketing.</p>
-          <div class="manten-features">
-            <div class="manten-feature"><span data-icon="check"></span><span>Todo lo del plan Básico</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Cambios urgentes priorizados (mismo día)</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>20 piezas gráficas mensuales</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>4 redes sociales gestionadas</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>3 historias o reels mensuales</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Reportes mensuales de performance</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>2 reuniones estratégicas al mes</span></div>
-            <div class="manten-feature"><span data-icon="check"></span><span>Soporte teléfono + Google Meet · 24/7</span></div>
-          </div>
+        <div class="despues-card">
+          <span class="despues-card-ic" data-icon="headphones"></span>
+          <h3 class="despues-card-title">Soporte técnico</h3>
+          <p class="despues-card-desc">Email, WhatsApp, teléfono y Google Meet. Horario oficina por default; ampliable a 24/7 si tu operación lo exige.</p>
+          <span class="despues-card-foot">Definido por plan + mantenimiento</span>
+        </div>
+        <div class="despues-card">
+          <span class="despues-card-ic" data-icon="bell"></span>
+          <h3 class="despues-card-title">Marketing continuo</h3>
+          <p class="despues-card-desc">Piezas gráficas, posts, historias, reportes y reuniones estratégicas. Tu marca con presencia constante en redes.</p>
+          <span class="despues-card-foot">Incluido en mantenimiento Premium</span>
         </div>
       </div>
+      <p class="t-body t-muted" style="max-width: 60ch; margin-top: var(--sp-5); font-size: var(--fs-small);">
+        Lo definimos cuando estés listo. Sin compromiso ahora.
+      </p>
     </div>
   </section>
 
@@ -914,20 +938,16 @@
           <div class="faq-panel"><div class="faq-panel-inner">Sí. Cada plan incluye dominio + hosting por el primer año y cualquier licencia de terceros que tu proyecto requiera (Shopify, App Store, Play Store, OpenAI API base, etc. según aplique). No pagas nada extra para salir en línea.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si no contrato mantenimiento?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Nada. Tu desarrollo es 100% tuyo y sigue funcionando. El mantenimiento mensual es opcional: lo contratas solo si quieres que sigamos haciendo cambios, marketing y dándote soporte continuo.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Puedo agregar mantenimiento después del lanzamiento?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Sí. Mantenimiento mensual, soporte ampliado y marketing continuo son módulos opcionales que se definen en el checkout, después de elegir tu plan. Tu desarrollo es 100% tuyo desde el día 1: lo contratas solo si te sirve.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Cuál es la diferencia entre pago mes a mes y en exhibición?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">El precio base es el anual. "Pago mes a mes" lo divide en 12 cuotas mensuales (aceptamos Visa, Mastercard y American Express). "Pago en exhibición" es pagar el anual completo en una sola exhibición y obtienes 20% de descuento. Usa el toggle arriba de los planes para ver ambos precios.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué son los Powerups?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Cinco superpoderes técnicos que le dan otro nivel a tu desarrollo: animaciones premium, modo claro/oscuro, multi-idioma, multi-moneda y PWA (app-like instalable). Se activan todos a la vez (todo o nada) y suman +43% al precio del plan.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué son los Powerups y cómo funcionan?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Cinco superpoderes premium que transforman tu desarrollo: <strong>animaciones premium · dark/light mode · multi-idioma · multi-moneda · PWA instalable</strong>. Se activan todos a la vez (todo o nada) y al hacerlo el precio se multiplica por 4 (+300%). Cuando activas el toggle "Powerups" verás las 5 capacidades aparecer dentro de cada card como features adicionales — son cambios profundos que requieren más arquitectura, no extras superficiales.</div></div>
         </details>
         <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿Qué soporte técnico viene incluido?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Cada plan incluye soporte en su nivel correspondiente (email 48h en los más simples, WhatsApp + email en horario oficina en los intermedios, teléfono + Meet 24/7 en los enterprise y con mantenimiento Premium). El toggle de pricing detalla cada caso por categoría.</div></div>
+          <div class="faq-panel"><div class="faq-panel-inner">Cada plan tiene su nivel de soporte definido (email respuesta 48h en los más simples · WhatsApp + email en horario oficina en intermedios · teléfono + Meet ampliable a 24/7 en enterprise). El detalle exacto por plan se confirma en el checkout junto con la propuesta formal.</div></div>
         </details>
         <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿Apps móviles publican en App Store y Play Store?</span><span class="faq-icon"></span></summary>
@@ -981,7 +1001,7 @@
           <li><a href="#servicios">Servicios</a></li>
           <li><a href="#diferenciadores">Por qué iBisne</a></li>
           <li><a href="#pricing">Precios</a></li>
-          <li><a href="#mantenimiento">Mantenimiento</a></li>
+          <li><a href="#despues-lanzamiento">Después del lanzamiento</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
@@ -1042,11 +1062,11 @@
 </div>
 
 <!-- ── Scripts ── -->
-<script src="assets/quiz/icons.js?v=15.0.0"></script>
-<script src="data/precios-v13.js?v=15.0.0"></script>
-<script src="assets/sitio/pricing-table.js?v=15.0.0"></script>
+<script src="assets/quiz/icons.js?v=16.0.0"></script>
+<script src="data/precios-v13.js?v=16.0.0"></script>
+<script src="assets/sitio/pricing-table.js?v=16.0.0"></script>
 <script src="design-system-v2/motion.js?v=3.2.0"></script>
-<script src="/assets/quiz/pwa.js?v=15.0.0" defer></script>
+<script src="/assets/quiz/pwa.js?v=16.0.0" defer></script>
 <script>
   // Hidratar iconos estáticos (data-icon)
   (function () {

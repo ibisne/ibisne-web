@@ -1,22 +1,18 @@
 /* ===================================================================
-   assets/sitio/pricing-table.js · v15.0 · SPA quiz inline
+   assets/sitio/pricing-table.js · v16.0 · Pricing simplificado + Powerups ×4
    ===================================================================
    Render del Pricing Table de la landing SPA desde IBISNE_PRECIOS_V13.
-   Auto-inicializa cualquier `<div data-pricing-spa="categoria-inicial">`.
+   Auto-inicializa cualquier <div data-pricing-spa="categoria-inicial">.
 
-   v15.0 (Eduardo · pulido UX):
-   - Botón cada plan: 'Seleccionar' uniforme (en lugar de 'Empezar/Elegir XX').
-   - Click 'Seleccionar' → highlight card + STEP-2 aparece debajo con
-     3 cards de mantenimiento (Básico · Premium · Sin mantenimiento).
-   - Click mantenimiento → STEP-3 con form de captura (nombre, email,
-     empresa). Submit POST a /api/lead.js + abre WhatsApp con prefill
-     completo (categoría, plan, mantenimiento, pago, powerups, datos).
-   - switchCategoria limpia state.selectedPlanId + steps.
-   - Smooth scroll a cada step nuevo.
+   v16.0 (Eduardo · pricing simplificado):
+   - Eliminado segmented control de pago (mes/exhibición) · precio único.
+   - Powerups ×4 al precio base (+300%) cuando se activan.
+   - Powerups features aparecen DENTRO de cada card (sección visible
+     bajo las features base, con divider "Con Powerups activados").
+   - Quiz inline simplificado a 2 steps: Plan → Form (sin mantenimiento).
+   - Mantenimiento y soporte conservados en data para checkout futuro.
 
-   Hereda v14.0:
-   - Multi-categoría con tabs (7 categorías).
-   - Segmented mes/exhibición + master powerups todo-o-nada compacto.
+   Hereda v14/v15: multi-categoría tabs, render dinámico sin flicker.
    =================================================================== */
 (function () {
   'use strict';
@@ -52,11 +48,10 @@
     requestAnimationFrame(step);
   }
 
-  function planPrice(plan, exhibicion, powerupsOn, totalPct, exhMultiplier) {
+  /* v16.0 · planPrice simplificado · sin exhibicion */
+  function planPrice(plan, powerupsOn, totalPct) {
     var mult = 1 + (powerupsOn ? (totalPct || 0) : 0);
-    var price = plan.base * mult;
-    if (exhibicion) price *= (exhMultiplier || 0.80);
-    return price;
+    return plan.base * mult;
   }
 
   function renderSPA(container, initialCategoria) {
@@ -68,24 +63,17 @@
 
     var powerupsDef = DATA.powerups || [];
     var powerupsTotalPct = DATA.powerupsTotalPct || 0;
-    var exhMultiplier = (DATA.exhibicion && DATA.exhibicion.multiplier) || 0.80;
-    var exhBadge = (DATA.exhibicion && DATA.exhibicion.badge) || 'Ahorra 20%';
-    var exhLabel = (DATA.exhibicion && DATA.exhibicion.label) || 'Pago en exhibición';
-    var discountPctLabel = Math.round((1 - exhMultiplier) * 100);
     var powerupsTotalPctLabel = Math.round(powerupsTotalPct * 100);
-    var mantenimiento = DATA.mantenimiento || [];
 
     var state = {
       categoria: (initialCategoria && DATA.categorias[initialCategoria]) ? initialCategoria : 'webs',
-      exhibicion: false,
       powerupsOn: false,
-      selectedPlanId: null,           // v15.0
-      selectedMantenimiento: null,    // v15.0 · 'basico' | 'premium' | 'sin'
-      formData: { nombre: '', email: '', empresa: '' },  // v15.0
-      submitting: false,              // v15.0 · evita doble-submit
+      selectedPlanId: null,
+      formData: { nombre: '', email: '', empresa: '' },
+      submitting: false,
     };
 
-    // ── HTML del shell (tabs + controles + panel + quiz steps) ──
+    /* ── HTML del shell (tabs + controls + panel + quiz steps) ── */
     function htmlShell() {
       var html = '';
 
@@ -104,29 +92,23 @@
 
       html += '<div class="pt-cat-head" data-cat-head></div>';
 
-      // Controles globales (segmented pago + master powerups compacto)
+      // v16.0 · Controles · solo master Powerups (sin segmented mes/exhibición)
       html += '<div class="pt-controls">';
-      html += '  <div class="pt-seg" role="tablist" aria-label="Forma de pago">';
-      html += '    <button class="pt-seg-opt is-on" data-pay="mes" type="button" role="tab" aria-selected="true">Pago mes a mes</button>';
-      html += '    <button class="pt-seg-opt" data-pay="exhibicion" type="button" role="tab" aria-selected="false">' +
-              escHtml(exhLabel) + ' <span class="pt-seg-badge">' + escHtml(exhBadge) + '</span></button>';
-      html += '  </div>';
-
       if (powerupsDef.length) {
         html += '  <div class="pt-powerups" data-powerups-block>';
         html += '    <button class="pt-powerups-master-toggle" type="button" aria-pressed="false" data-powerups-toggle>';
         html += '      <span class="pt-pm-switch" aria-hidden="true"><span class="pt-pm-knob"></span></span>';
-        html += '      <span class="pt-pm-label">Powerups <span class="pt-pm-pct">+' + powerupsTotalPctLabel + '%</span></span>';
+        html += '      <span class="pt-pm-label">Activar Powerups <span class="pt-pm-pct">×4 precio</span></span>';
         html += '    </button>';
         html += '  </div>';
       }
       html += '</div>';
 
-      // Pills info-only
+      // Pills info-only (debajo · siempre visibles, se iluminan con master on)
       if (powerupsDef.length) {
         html += '<div class="pt-powerups-pills" data-powerups-pills aria-label="Los 5 Powerups">';
         powerupsDef.forEach(function (pu) {
-          html += '<span class="pt-pill" data-pill="' + pu.id + '">' +
+          html += '<span class="pt-pill" data-pill="' + pu.id + '" title="' + escHtml(pu.desc) + '">' +
                   '<span class="pt-pill-ic">' + icon(pu.icon) + '</span>' +
                   '<span class="pt-pill-name">' + escHtml(pu.label) + '</span>' +
                   '<span class="pt-pill-pct">+' + Math.round(pu.addPct * 100) + '%</span>' +
@@ -138,13 +120,13 @@
       // Panel dinámico (cards de planes)
       html += '<div class="pt-panel" data-cat-panel></div>';
 
-      // Quiz steps wrapper (v15.0)
+      // Quiz steps wrapper (v16.0 · solo step de captura)
       html += '<div class="pt-quiz-steps" data-quiz-steps></div>';
 
       return html;
     }
 
-    // ── HTML del PANEL (cards + tabla comparativa) ──
+    /* ── HTML del PANEL (cards + tabla comparativa) ── */
     function htmlPanel(catId) {
       var cat = DATA.categorias[catId];
       if (!cat) return '<p class="t-muted">Categoría no encontrada.</p>';
@@ -173,24 +155,38 @@
         html += '</div>';
         html += '<div class="pricing-card-tiempo">Entrega ' + escHtml(plan.tiempo) + '</div>';
 
-        // CTA v15.0 · botón "Seleccionar" uniforme
         html += '<div class="pricing-card-cta">';
         html += '  <button class="btn ' + (plan.recomendado ? 'btn-blue' : 'btn-dark') + ' pt-select-plan" type="button" data-select-plan="' + plan.id + '">' +
                 (isSel ? '✓ Seleccionado' : 'Seleccionar') +
                 '</button>';
         html += '</div>';
 
+        // Features base
         html += '<div class="pricing-card-features">';
         (plan.features || []).forEach(function (f) {
           html += '<div class="pricing-card-feature"><span class="pricing-card-feature-check">' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
         });
+
+        // v16.0 · Divider + features Powerups (visibles solo cuando master on)
+        if (powerupsDef.length) {
+          html += '<div class="pricing-card-features-divider">';
+          html += '  ' + icon('zap') + '<span>Con Powerups activados</span>';
+          html += '</div>';
+          powerupsDef.forEach(function (pu) {
+            html += '<div class="pricing-card-feature is-powerup">' +
+                    '<span class="pricing-card-feature-check">' + icon('check') + '</span>' +
+                    '<span>' + escHtml(pu.label) + '</span>' +
+                    '<span class="pricing-card-feature-pct">+' + Math.round(pu.addPct * 100) + '%</span>' +
+                    '</div>';
+          });
+        }
         html += '</div>';
 
         html += '</article>';
       });
       html += '</div>';
 
-      // Tabla comparativa
+      // Tabla comparativa (si la categoría la trae)
       if (cat.featureRows && cat.featureRows.length) {
         html += '<div class="pt-compare">';
         html += '  <button class="pt-compare-toggle" type="button" aria-expanded="false">';
@@ -230,55 +226,15 @@
              (tagline ? '<p class="pt-cat-tagline">' + escHtml(tagline) + '</p>' : '');
     }
 
-    // ── v15.0 · STEP-2 · cards de mantenimiento ──
-    function htmlStep2() {
-      var opts = [];
-      mantenimiento.forEach(function (m) { opts.push(m); });
-      opts.push({ id: 'sin', label: 'Sin mantenimiento', precio: 0, titulo: 'Por ahora no', desc: 'Tu desarrollo es 100% tuyo y sigue funcionando. Puedes contratar mantenimiento después si lo necesitas.', features: ['Sin compromiso mensual', 'Mantienes el control total', 'Puedes agregar Básico o Premium cuando quieras'] });
-
-      var html = '';
-      html += '<div class="pt-step pt-step-2" data-step="2">';
-      html += '  <div class="pt-step-head">';
-      html += '    <span class="pt-step-num">02</span>';
-      html += '    <div><h4 class="pt-step-title">¿Quieres que lo mantengamos vivo?</h4>';
-      html += '    <p class="pt-step-sub">Opcional. Marca lo que aplique para tu caso.</p></div>';
-      html += '  </div>';
-      html += '  <div class="pt-mant-grid">';
-      opts.forEach(function (m) {
-        var isSel = state.selectedMantenimiento === m.id;
-        var isFree = m.id === 'sin';
-        html += '<button type="button" class="pt-mant-card' + (isSel ? ' is-selected' : '') + (isFree ? ' is-free' : '') + '" data-select-mant="' + m.id + '">';
-        html += '  <div class="pt-mant-head">';
-        html += '    <span class="pt-mant-name">' + escHtml(m.label) + '</span>';
-        html += '    <span class="pt-mant-price">' + (isFree ? '$0' : fmt(m.precio) + '<small>/mes</small>') + '</span>';
-        html += '  </div>';
-        if (m.titulo) html += '<div class="pt-mant-titulo">' + escHtml(m.titulo) + '</div>';
-        if (m.desc)   html += '<p class="pt-mant-desc">' + escHtml(m.desc) + '</p>';
-        if (m.features && m.features.length) {
-          html += '<div class="pt-mant-features">';
-          m.features.slice(0, 4).forEach(function (f) {
-            html += '<div class="pt-mant-feature"><span>' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
-          });
-          if (m.features.length > 4) html += '<div class="pt-mant-more">+ ' + (m.features.length - 4) + ' más</div>';
-          html += '</div>';
-        }
-        html += '  <div class="pt-mant-cta">' + (isSel ? '✓ Seleccionado' : 'Elegir') + '</div>';
-        html += '</button>';
-      });
-      html += '  </div>';
-      html += '</div>';
-      return html;
-    }
-
-    // ── v15.0 · STEP-3 · form de captura ──
-    function htmlStep3() {
+    /* ── v16.0 · STEP-2 · form de captura (era step-3 en v15) ── */
+    function htmlForm() {
       var f = state.formData || {};
       var html = '';
-      html += '<div class="pt-step pt-step-3" data-step="3">';
+      html += '<div class="pt-step pt-step-form" data-step="2">';
       html += '  <div class="pt-step-head">';
-      html += '    <span class="pt-step-num">03</span>';
+      html += '    <span class="pt-step-num">02</span>';
       html += '    <div><h4 class="pt-step-title">¿A dónde te enviamos la propuesta?</h4>';
-      html += '    <p class="pt-step-sub">Datos para preparar tu cotización formal y reservar tiempo del equipo.</p></div>';
+      html += '    <p class="pt-step-sub">Datos para preparar tu cotización formal. Mantenimiento, soporte y marketing los definimos juntos en checkout.</p></div>';
       html += '  </div>';
       html += '  <form class="pt-form" data-quiz-form novalidate>';
       html += '    <input type="text" name="website" tabindex="-1" autocomplete="off" class="pt-honeypot" aria-hidden="true">';
@@ -307,48 +263,32 @@
       return html;
     }
 
-    // ── Construye mensaje de WhatsApp + payload del webhook ──
+    /* ── Construye mensaje WhatsApp + payload del webhook ── */
     function buildSummary() {
       var cat = DATA.categorias[state.categoria];
       var plan = cat.planes.find(function (p) { return p.id === state.selectedPlanId; });
       if (!plan) return null;
-      var precio = planPrice(plan, state.exhibicion, state.powerupsOn, powerupsTotalPct, exhMultiplier);
-      var mantId = state.selectedMantenimiento;
-      var mant = mantId === 'sin'
-        ? { id: 'sin', label: 'Sin mantenimiento', precio: 0 }
-        : mantenimiento.find(function (m) { return m.id === mantId; });
-      var pago = state.exhibicion
-        ? 'pago en exhibición · -' + discountPctLabel + '%'
-        : 'pago mes a mes · 12 cuotas';
-      var pwr = state.powerupsOn
-        ? ' · con 5 Powerups +' + powerupsTotalPctLabel + '%'
-        : '';
-      var mantTxt = mant.precio > 0
-        ? ' · mantenimiento ' + mant.label + ' (' + fmt(mant.precio) + '/mes)'
-        : ' · sin mantenimiento';
-      return {
-        cat: cat, plan: plan, mant: mant,
-        precio: precio,
-        pago: pago, pwr: pwr, mantTxt: mantTxt,
-      };
+      var precio = planPrice(plan, state.powerupsOn, powerupsTotalPct);
+      return { cat: cat, plan: plan, precio: precio };
     }
 
     function buildWhatsAppMsg(s, formData) {
       var name = formData.nombre ? 'Soy ' + formData.nombre + (formData.empresa ? ' de ' + formData.empresa : '') + '.\n' : '';
+      var pwr = state.powerupsOn
+        ? ' Con Powerups activados (+' + powerupsTotalPctLabel + '%).'
+        : '';
       return name +
         'Me interesa el plan *' + s.plan.label + '* (' + s.cat.label + ').\n' +
-        'Precio: ' + fmt(s.precio) + ' MXN · ' + s.pago + s.pwr + s.mantTxt + '.\n' +
+        'Precio: ' + fmt(s.precio) + ' MXN.' + pwr + '\n' +
         (formData.email ? 'Email: ' + formData.email + '\n' : '') +
-        '¿Cómo procedemos?';
+        'Quiero hablar para definir el alcance, mantenimiento y soporte.';
     }
 
     function buildLeadPayload(s, formData) {
       var seleccionesLines = [
         'Categoría: ' + s.cat.label,
         'Plan: ' + s.plan.label + ' (' + fmt(s.plan.base) + ' base)',
-        'Pago: ' + s.pago,
-        'Powerups: ' + (state.powerupsOn ? 'sí (+' + powerupsTotalPctLabel + '%)' : 'no'),
-        'Mantenimiento: ' + s.mant.label + (s.mant.precio > 0 ? ' (' + fmt(s.mant.precio) + '/mes)' : ''),
+        'Powerups: ' + (state.powerupsOn ? 'sí (×4 precio · +' + powerupsTotalPctLabel + '%)' : 'no'),
         'Precio efectivo: ' + fmt(s.precio) + ' MXN',
       ].join('\n');
       return {
@@ -361,48 +301,26 @@
         currency: 'MXN',
         selecciones: seleccionesLines,
         locale: 'es-MX',
-        website: '',  // honeypot vacío en honest submissions
+        website: '',
       };
     }
 
-    // ── Acciones del quiz inline ──
+    /* ── Acciones del quiz inline ── */
     function selectPlan(planId) {
       if (state.selectedPlanId === planId) return;
       state.selectedPlanId = planId;
-      state.selectedMantenimiento = null;   // reset mantenimiento al cambiar plan
-      // Actualizar highlights de las cards
+      // Highlight cards
       container.querySelectorAll('.pricing-card').forEach(function (card) {
         var sel = card.getAttribute('data-plan') === planId;
         card.classList.toggle('is-selected', sel);
         var btn = card.querySelector('[data-select-plan]');
         if (btn) btn.textContent = sel ? '✓ Seleccionado' : 'Seleccionar';
       });
-      // Render step-2 + scroll
+      // v16.0 · Salta directo al form (sin step de mantenimiento)
       var stepsEl = container.querySelector('[data-quiz-steps]');
-      stepsEl.innerHTML = htmlStep2();
+      stepsEl.innerHTML = htmlForm();
       bindQuizSteps();
-      smoothScrollTo(stepsEl.querySelector('.pt-step-2'));
-    }
-
-    function selectMantenimiento(mantId) {
-      if (state.selectedMantenimiento === mantId) return;
-      state.selectedMantenimiento = mantId;
-      // Highlight cards
-      container.querySelectorAll('[data-select-mant]').forEach(function (btn) {
-        var sel = btn.getAttribute('data-select-mant') === mantId;
-        btn.classList.toggle('is-selected', sel);
-        var ctaEl = btn.querySelector('.pt-mant-cta');
-        if (ctaEl) ctaEl.textContent = sel ? '✓ Seleccionado' : 'Elegir';
-      });
-      // Render step-3 (form) si no existe ya
-      var stepsEl = container.querySelector('[data-quiz-steps]');
-      var step2 = stepsEl.querySelector('.pt-step-2');
-      var step3 = stepsEl.querySelector('.pt-step-3');
-      if (!step3) {
-        step2.insertAdjacentHTML('afterend', htmlStep3());
-        bindQuizSteps();
-      }
-      smoothScrollTo(stepsEl.querySelector('.pt-step-3'));
+      smoothScrollTo(stepsEl.querySelector('.pt-step-form'));
     }
 
     function submitForm(formEl) {
@@ -420,7 +338,6 @@
       function showErr(msg) {
         if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; }
       }
-      // Validación básica
       if (formData.nombre.length < 2) return showErr('Tu nombre es obligatorio.');
       var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
       if (!emailOk) return showErr('Email inválido.');
@@ -432,10 +349,9 @@
       var msg = buildWhatsAppMsg(s, formData);
       var waUrl = 'https://wa.me/' + HUNTER_WA + '?text=' + encodeURIComponent(msg);
 
-      // Abre WhatsApp INMEDIATAMENTE (popup blocker friendly: en gesto del usuario)
+      // Abre WhatsApp inmediatamente (popup blocker friendly)
       window.open(waUrl, '_blank', 'noopener');
 
-      // Y dispara el webhook async (no esperamos respuesta para no bloquear UX)
       state.submitting = true;
       var submitBtn = formEl.querySelector('.pt-form-submit');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando…'; }
@@ -445,21 +361,19 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       }).then(function (r) {
-        // Independientemente del result, mostramos confirmación al usuario
         return r.json().catch(function () { return {}; });
-      }).catch(function () {
-        // Network fail · seguimos OK porque WhatsApp ya abrió
-      }).finally(function () {
-        state.submitting = false;
-        showConfirmation(formEl, s);
-      });
+      }).catch(function () { /* network fail · OK · WhatsApp ya abrió */ })
+        .finally(function () {
+          state.submitting = false;
+          showConfirmation(formEl, s);
+        });
     }
 
     function showConfirmation(formEl, s) {
       var stepsEl = container.querySelector('[data-quiz-steps]');
-      var step3 = stepsEl.querySelector('.pt-step-3');
-      if (step3) {
-        step3.innerHTML =
+      var stepEl = stepsEl.querySelector('.pt-step-form');
+      if (stepEl) {
+        stepEl.innerHTML =
           '<div class="pt-confirm">' +
           '  <span class="pt-confirm-ic">' + icon('check') + '</span>' +
           '  <h4 class="pt-confirm-title">¡Listo! Te abrimos WhatsApp</h4>' +
@@ -475,12 +389,12 @@
       if (!el) return;
       setTimeout(function () {
         var rect = el.getBoundingClientRect();
-        var top = rect.top + window.pageYOffset - 100;  // offset por sticky header
+        var top = rect.top + window.pageYOffset - 100;
         window.scrollTo({ top: top, behavior: 'smooth' });
       }, 60);
     }
 
-    // ── Recalcular precios ──
+    /* ── Recalcular precios ── */
     function recalc(animate) {
       var cat = DATA.categorias[state.categoria];
       if (!cat) return;
@@ -489,19 +403,17 @@
         if (!card) return;
         var amountEl = card.querySelector('[data-amount]');
         var prev = parseFloat((amountEl.textContent || '0').replace(/[^0-9.]/g, '')) || plan.base;
-        var next = planPrice(plan, state.exhibicion, state.powerupsOn, powerupsTotalPct, exhMultiplier);
+        var next = planPrice(plan, state.powerupsOn, powerupsTotalPct);
         if (animate) animateNumber(amountEl, prev, next);
         else amountEl.textContent = fmt(next);
       });
     }
 
-    // ── Cambiar de categoría ──
+    /* ── Cambiar de categoría ── */
     function switchCategoria(newCatId) {
       if (!DATA.categorias[newCatId] || newCatId === state.categoria) return;
       state.categoria = newCatId;
-      // Reset de selecciones · cambiar categoría reinicia el quiz
       state.selectedPlanId = null;
-      state.selectedMantenimiento = null;
       container.querySelectorAll('.pt-cat-tab').forEach(function (t) {
         var on = t.getAttribute('data-cat') === newCatId;
         t.classList.toggle('is-on', on);
@@ -511,13 +423,17 @@
       var panelEl = container.querySelector('[data-cat-panel]');
       var stepsEl = container.querySelector('[data-quiz-steps]');
       if (headEl) headEl.innerHTML = htmlHead(newCatId);
-      if (panelEl) panelEl.innerHTML = htmlPanel(newCatId);
-      if (stepsEl) stepsEl.innerHTML = '';   // limpia steps del quiz
+      if (panelEl) {
+        panelEl.innerHTML = htmlPanel(newCatId);
+        // v16.0 · re-aplicar estado de powerups visible en el panel nuevo
+        panelEl.classList.toggle('is-powerups-on', state.powerupsOn);
+      }
+      if (stepsEl) stepsEl.innerHTML = '';
       bindPanel();
       recalc(false);
     }
 
-    // ── Binds del panel (cards) ──
+    /* ── Binds del panel ── */
     function bindPanel() {
       var cmp = container.querySelector('.pt-compare');
       var cmpToggle = container.querySelector('.pt-compare-toggle');
@@ -527,7 +443,6 @@
           cmpToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
       }
-      // Botones "Seleccionar" de cada plan
       container.querySelectorAll('[data-select-plan]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           selectPlan(btn.getAttribute('data-select-plan'));
@@ -535,17 +450,8 @@
       });
     }
 
-    // ── Binds de los quiz steps (dynamic) ──
+    /* ── Binds de los quiz steps (dynamic) ── */
     function bindQuizSteps() {
-      // Click en card de mantenimiento
-      container.querySelectorAll('[data-select-mant]').forEach(function (btn) {
-        if (btn.dataset.bound === '1') return;
-        btn.dataset.bound = '1';
-        btn.addEventListener('click', function () {
-          selectMantenimiento(btn.getAttribute('data-select-mant'));
-        });
-      });
-      // Submit del form
       var form = container.querySelector('[data-quiz-form]');
       if (form && form.dataset.bound !== '1') {
         form.dataset.bound = '1';
@@ -556,7 +462,7 @@
       }
     }
 
-    // ── Binds del shell (no se re-renderizan) ──
+    /* ── Binds del shell (no se re-renderizan) ── */
     function bindShell() {
       // Tabs de categoría
       container.querySelectorAll('.pt-cat-tab').forEach(function (tab) {
@@ -565,36 +471,24 @@
         });
       });
 
-      // Segmented control de pago
-      container.querySelectorAll('.pt-seg-opt').forEach(function (opt) {
-        opt.addEventListener('click', function () {
-          var isExh = opt.getAttribute('data-pay') === 'exhibicion';
-          if (state.exhibicion === isExh) return;
-          state.exhibicion = isExh;
-          container.querySelectorAll('.pt-seg-opt').forEach(function (o) {
-            var on = (o.getAttribute('data-pay') === 'exhibicion') === isExh;
-            o.classList.toggle('is-on', on);
-            o.setAttribute('aria-selected', on ? 'true' : 'false');
-          });
-          recalc(true);
-        });
-      });
-
       // Master toggle Powerups
       var puToggle = container.querySelector('[data-powerups-toggle]');
       var puPills  = container.querySelector('[data-powerups-pills]');
+      var panelEl  = container.querySelector('[data-cat-panel]');
       if (puToggle) {
         puToggle.addEventListener('click', function () {
           state.powerupsOn = !state.powerupsOn;
           puToggle.classList.toggle('is-on', state.powerupsOn);
           puToggle.setAttribute('aria-pressed', state.powerupsOn ? 'true' : 'false');
           if (puPills) puPills.classList.toggle('is-on', state.powerupsOn);
+          // v16.0 · togglea visibility de features powerups dentro de cada card
+          if (panelEl) panelEl.classList.toggle('is-powerups-on', state.powerupsOn);
           recalc(true);
         });
       }
     }
 
-    // ── Mount ──
+    /* ── Mount ── */
     container.innerHTML = htmlShell();
     var headEl = container.querySelector('[data-cat-head]');
     var panelEl = container.querySelector('[data-cat-panel]');
