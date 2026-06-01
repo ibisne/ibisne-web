@@ -187,15 +187,41 @@
         html += '  </button>';
         html += '</div>';
 
-        // Features list compacta
+        // Features list · v19.4 expandida: base + Modo Pro + Mantenimiento (estados disabled/active vía clase en .qg-plan)
         html += '<div class="qg-plan-features">';
-        var visibleFeatures = (plan.features || []).slice(0, 6);
-        visibleFeatures.forEach(function (f) {
+        // 1. Features BASE (siempre activas · todas las del plan, sin slice)
+        (plan.features || []).forEach(function (f) {
           html += '<div class="qg-plan-feat"><span class="qg-plan-feat-check">' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
         });
-        if (plan.features && plan.features.length > 6) {
-          html += '<div class="qg-plan-feat-more">+ ' + (plan.features.length - 6) + ' más en checkout</div>';
-        }
+
+        // 2. Divider Modo Pro
+        html += '<div class="qg-plan-feat-divider"><span>Con Modo Pro</span></div>';
+        // 5 features Modo Pro (siempre presentes en DOM · CSS controla estado disabled/active)
+        var pwrFeats = [
+          'Animaciones premium',
+          'Modo claro y oscuro',
+          'Varios idiomas',
+          'Varias monedas',
+          'App instalable desde el navegador',
+        ];
+        pwrFeats.forEach(function (f) {
+          html += '<div class="qg-plan-feat qg-plan-feat-pwr"><span class="qg-plan-feat-check">' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
+        });
+
+        // 3. Divider Mantenimiento
+        html += '<div class="qg-plan-feat-divider"><span>Con Mantenimiento</span></div>';
+        // 4 features mantenimiento (highlights · siempre presentes · CSS controla estado)
+        var mantFeats = [
+          'Modificaciones y cambios al desarrollo',
+          'Piezas gráficas para tus redes',
+          'Soporte WhatsApp + email',
+          'Actualizaciones de seguridad',
+        ];
+        mantFeats.forEach(function (f) {
+          html += '<div class="qg-plan-feat qg-plan-feat-mant"><span class="qg-plan-feat-check">' + icon('check') + '</span><span>' + escHtml(f) + '</span></div>';
+        });
+        // Hint condicional para Premium · solo visible cuando .is-mant-premium
+        html += '<div class="qg-plan-feat-mant-extra">+ Soporte 24/7 y reportes mensuales en Premium</div>';
         html += '</div>';
 
         html += '</article>';
@@ -225,6 +251,12 @@
         } else {
           recurEl.hidden = true;
         }
+
+        // v19.4 · toggle clases para activar/desactivar features Modo Pro y Mantenimiento visualmente
+        card.classList.toggle('is-powerups-on', state.powerupsOn);
+        card.classList.remove('is-mant-basico', 'is-mant-premium');
+        if (state.mantenimiento === 'basico') card.classList.add('is-mant-basico');
+        if (state.mantenimiento === 'premium') card.classList.add('is-mant-premium');
       });
     }
 
