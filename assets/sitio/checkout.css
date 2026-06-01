@@ -670,6 +670,56 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
+/* v19.7 · Toggle Mantenimiento Premium en checkout summary */
+.co-summary-mant-toggle {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-subtle);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 8px 6px 8px 12px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  width: 100%;
+  text-align: left;
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+.co-summary-mant-toggle:hover:not(.is-on) { border-color: var(--bg-line-strong); }
+.co-summary-mant-toggle.is-on {
+  background: rgba(0,113,227,0.08);
+  border-color: rgba(0,113,227,0.30);
+}
+.co-summary-mant-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.co-summary-mant-name {
+  font-size: 12px; font-weight: var(--fw-semibold);
+  color: var(--text-primary); line-height: 1.15;
+}
+.co-summary-mant-toggle.is-on .co-summary-mant-name { color: var(--accent-blue); }
+.co-summary-mant-meta {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-muted);
+}
+.co-summary-mant-toggle.is-on .co-summary-mant-meta { color: var(--accent-blue); font-weight: var(--fw-medium); }
+.co-summary-mant-switch {
+  position: relative; flex: none;
+  width: 28px; height: 16px;
+  background: var(--bg-line-strong);
+  border-radius: 999px;
+  transition: background var(--dur-fast);
+}
+.co-summary-mant-knob {
+  position: absolute; top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: transform var(--dur-fast);
+}
+.co-summary-mant-toggle.is-on .co-summary-mant-switch { background: var(--accent-blue); }
+.co-summary-mant-toggle.is-on .co-summary-mant-knob { transform: translateX(12px); }
+
 /* v19.5.2 · MSI dropdown dentro del summary · 1 fila limpia */
 .co-summary-msi {
   display: flex; flex-direction: column;

@@ -78,7 +78,7 @@
     var state = {
       categoria: validCat,
       powerupsOn: false,
-      mantenimiento: 'sin',  // 'sin' | 'basico' | 'premium'
+      mantenimiento: 'basico',  // v19.7 · 'basico' (default · incluido) | 'premium' (+$5k/mes)
     };
 
     function htmlShell() {
@@ -124,22 +124,21 @@
       html += '      </span>';
       html += '      <span class="qg-pro-switch" aria-hidden="true"><span class="qg-pro-knob"></span></span>';
       html += '    </button>';
-      // Mantenimiento card (con segmented INTEGRADO debajo)
-      html += '    <div class="qg-mant-card" role="group" aria-label="Mantenimiento mensual">';
+      // v19.7 · Mantenimiento card · Básico INCLUIDO + toggle Premium ($5k/mes)
+      html += '    <div class="qg-mant-card" role="group" aria-label="Mantenimiento">';
       html += '      <div class="qg-mant-head">';
       html += '        <span class="qg-mant-icon" aria-hidden="true">';
       html += '          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3 a4 4 0 0 0 5 5 L17 14 L10 7 z"/><path d="M10 7 L3 14 l4 4 7-7"/></svg>';
       html += '        </span>';
       html += '        <span class="qg-mant-text">';
-      html += '          <span class="qg-mant-title">Mantenimiento</span>';
-      html += '          <span class="qg-mant-sub">Cuida tu proyecto</span>';
+      html += '          <span class="qg-mant-title">Mantenimiento incluido</span>';
+      html += '          <span class="qg-mant-sub">Upgrade a Premium +$5k/mes</span>';
       html += '        </span>';
       html += '      </div>';
-      html += '      <div class="qg-mant-seg">';
-      html += '        <button type="button" class="qg-mant-opt is-on" data-mant="sin">Sin</button>';
-      html += '        <button type="button" class="qg-mant-opt" data-mant="basico">Básico</button>';
-      html += '        <button type="button" class="qg-mant-opt" data-mant="premium">Premium</button>';
-      html += '      </div>';
+      html += '      <button class="qg-mant-toggle" type="button" data-mant-toggle aria-pressed="false">';
+      html += '        <span class="qg-mant-toggle-label">Upgrade a Premium</span>';
+      html += '        <span class="qg-mant-toggle-switch" aria-hidden="true"><span class="qg-mant-toggle-knob"></span></span>';
+      html += '      </button>';
       html += '    </div>';
       html += '  </div>';
       html += '  <div class="qg-panel" data-panel></div>';
@@ -257,10 +256,10 @@
         }
 
         // v19.4 · toggle clases para activar/desactivar features Modo Pro y Mantenimiento visualmente
+        // v19.7 · Básico siempre activo (incluido) · Premium opcional
         card.classList.toggle('is-powerups-on', state.powerupsOn);
-        card.classList.remove('is-mant-basico', 'is-mant-premium');
-        if (state.mantenimiento === 'basico') card.classList.add('is-mant-basico');
-        if (state.mantenimiento === 'premium') card.classList.add('is-mant-premium');
+        card.classList.add('is-mant-basico');  // siempre · básico incluido
+        card.classList.toggle('is-mant-premium', state.mantenimiento === 'premium');
       });
     }
 
@@ -320,18 +319,16 @@
           recalc(true);
         });
       }
-      // Mantenimiento segmented
-      container.querySelectorAll('.qg-mant-opt').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var v = b.getAttribute('data-mant');
-          if (state.mantenimiento === v) return;
-          state.mantenimiento = v;
-          container.querySelectorAll('.qg-mant-opt').forEach(function (o) {
-            o.classList.toggle('is-on', o.getAttribute('data-mant') === v);
-          });
+      // v19.7 · Mantenimiento toggle (Básico incluido · upgrade a Premium on/off)
+      var mantToggle = container.querySelector('[data-mant-toggle]');
+      if (mantToggle) {
+        mantToggle.addEventListener('click', function () {
+          state.mantenimiento = state.mantenimiento === 'premium' ? 'basico' : 'premium';
+          mantToggle.classList.toggle('is-on', state.mantenimiento === 'premium');
+          mantToggle.setAttribute('aria-pressed', state.mantenimiento === 'premium' ? 'true' : 'false');
           recalc(true);
         });
-      });
+      }
     }
 
     // Mount
