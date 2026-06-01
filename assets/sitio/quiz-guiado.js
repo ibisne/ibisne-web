@@ -109,14 +109,7 @@
 
       // MAIN
       html += '<section class="qg-content">';
-      // v19.0 · Stepper 1→2→3
-      html += '  <div class="qg-stepper" aria-label="Progreso de compra">';
-      html += '    <span class="qg-step is-active"><span class="qg-step-num">1</span><span class="qg-step-label">Cotizar</span></span>';
-      html += '    <span class="qg-step-line" aria-hidden="true"></span>';
-      html += '    <span class="qg-step"><span class="qg-step-num">2</span><span class="qg-step-label">Checkout</span></span>';
-      html += '    <span class="qg-step-line" aria-hidden="true"></span>';
-      html += '    <span class="qg-step"><span class="qg-step-num">3</span><span class="qg-step-label">Confirmación</span></span>';
-      html += '  </div>';
+      // v19.6.1 · Stepper removido (pasos NO lineales · ocupaba espacio sin valor)
       // v19.5.3 · Top row: header de categoría + Modo Pro + Mantenimiento EN LA MISMA FILA
       html += '  <div class="qg-toprow">';
       html += '    <header class="qg-content-head" data-content-head></header>';
