@@ -197,6 +197,33 @@
       html += '  <h3 class="co-summary-title">' + escHtml(plan.label) + '</h3>';
       html += '  <p class="co-summary-cat">' + escHtml(cat.label) + ' · entrega ' + escHtml(plan.tiempo) + '</p>';
 
+      // v19.5 · Ajustes compactos dentro del summary (movido del form izquierdo)
+      html += '  <div class="co-summary-config">';
+      // Modo Pro mini-toggle cyberpunk
+      html += '    <button type="button" class="co-summary-pro' + (state.powerupsOn ? ' is-on' : '') + '" data-toggle-pwr aria-pressed="' + (state.powerupsOn ? 'true' : 'false') + '">';
+      html += '      <span class="co-summary-pro-ic" aria-hidden="true">';
+      html += '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L4 14 h7 L11 22 L20 10 h-7 z"/></svg>';
+      html += '      </span>';
+      html += '      <span class="co-summary-pro-text">';
+      html += '        <span class="co-summary-pro-title">Modo Pro</span>';
+      html += '        <span class="co-summary-pro-delta" data-pwr-delta>+' + fmt(deltaPwr) + '</span>';
+      html += '      </span>';
+      html += '      <span class="co-summary-pro-switch" aria-hidden="true"><span class="co-summary-pro-knob"></span></span>';
+      html += '    </button>';
+      // Mantenimiento mini-segmented
+      html += '    <div class="co-summary-mant" role="group" aria-label="Mantenimiento mensual">';
+      html += '      <span class="co-summary-mant-label">Mantenimiento</span>';
+      html += '      <div class="co-summary-mant-seg">';
+      html += '        <button type="button" class="co-summary-mant-opt' + (state.mantId === 'sin' ? ' is-on' : '') + '" data-mant="sin">Sin</button>';
+      mantList.forEach(function (m) {
+        var on = state.mantId === m.id;
+        var lbShort = m.id === 'basico' ? 'Básico' : 'Premium';
+        html += '        <button type="button" class="co-summary-mant-opt' + (on ? ' is-on' : '') + '" data-mant="' + escHtml(m.id) + '">' + escHtml(lbShort) + '</button>';
+      });
+      html += '      </div>';
+      html += '    </div>';
+      html += '  </div>';
+
       // Desglose
       html += '  <ul class="co-summary-list">';
       html += '    <li class="co-summary-item">';
@@ -262,8 +289,8 @@
       html += '  <form class="co-form" data-form novalidate>';
       html += '    <input type="text" name="website" tabindex="-1" autocomplete="off" class="co-honeypot" aria-hidden="true">';
 
-      // Configuración (editable)
-      html += htmlConfigSection();
+      // v19.5 · Los toggles Modo Pro + Mantenimiento se movieron al summary lateral derecho · ya no aquí
+      // (htmlConfigSection() existe pero ya no se llama desde el form)
 
       // Información de contacto
       html += '    <div class="co-form-group">';
@@ -346,6 +373,29 @@
     function updateSummary() {
       var summaryEl = container.querySelector('[data-summary]');
       if (summaryEl) summaryEl.innerHTML = htmlSummary();
+      // v19.5 · re-bind los toggles que viven DENTRO del summary
+      bindSummaryControls();
+    }
+
+    function bindSummaryControls() {
+      // Modo Pro toggle dentro del summary
+      var pwrBtn = container.querySelector('[data-toggle-pwr]');
+      if (pwrBtn) {
+        pwrBtn.addEventListener('click', function () {
+          state.powerupsOn = !state.powerupsOn;
+          updateSummary();
+          updateMsiQuota();
+        });
+      }
+      // Mantenimiento segmented dentro del summary
+      container.querySelectorAll('[data-mant]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var v = b.getAttribute('data-mant');
+          if (state.mantId === v) return;
+          state.mantId = v;
+          updateSummary();
+        });
+      });
     }
 
     function updateMsiQuota() {
@@ -502,30 +552,9 @@
     // BIND
     // ─────────────────────────────────────────────────────────
     function bindAll() {
-      // Powerups toggle
-      var pwrBtn = container.querySelector('[data-toggle-pwr]');
-      if (pwrBtn) {
-        pwrBtn.addEventListener('click', function () {
-          state.powerupsOn = !state.powerupsOn;
-          pwrBtn.classList.toggle('is-on', state.powerupsOn);
-          pwrBtn.setAttribute('aria-pressed', state.powerupsOn ? 'true' : 'false');
-          updateSummary();
-          updateMsiQuota();
-        });
-      }
-
-      // Mantenimiento segmented
-      container.querySelectorAll('[data-mant]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var v = b.getAttribute('data-mant');
-          if (state.mantId === v) return;
-          state.mantId = v;
-          container.querySelectorAll('[data-mant]').forEach(function (o) {
-            o.classList.toggle('is-on', o.getAttribute('data-mant') === v);
-          });
-          updateSummary();
-        });
-      });
+      // v19.5 · Modo Pro y Mantenimiento se bindea via bindSummaryControls()
+      // porque ahora viven dentro del summary lateral (no el form izquierdo)
+      bindSummaryControls();
 
       // Método de pago
       container.querySelectorAll('[data-pay]').forEach(function (b) {
