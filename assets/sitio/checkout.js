@@ -101,15 +101,7 @@
     // ─────────────────────────────────────────────────────────
     // RENDERS
     // ─────────────────────────────────────────────────────────
-    function htmlStepper() {
-      return '<div class="qg-stepper" aria-label="Progreso de compra">' +
-             '  <span class="qg-step is-done"><span class="qg-step-num">1</span><span class="qg-step-label">Cotizar</span></span>' +
-             '  <span class="qg-step-line" aria-hidden="true"></span>' +
-             '  <span class="qg-step is-active"><span class="qg-step-num">2</span><span class="qg-step-label">Checkout</span></span>' +
-             '  <span class="qg-step-line" aria-hidden="true"></span>' +
-             '  <span class="qg-step"><span class="qg-step-num">3</span><span class="qg-step-label">Confirmación</span></span>' +
-             '</div>';
-    }
+    // v19.6.1 · htmlStepper() removida (pasos NO lineales · ocupaba espacio sin valor)
 
     function htmlConfigSection() {
       var deltaPwr = Math.round(plan.base * powerupsTotalPct);
@@ -299,7 +291,7 @@
 
     function htmlShell() {
       var html = '';
-      html += htmlStepper();
+      // v19.6.1 · stepper removido
 
       // FORM SECTION (izq)
       html += '<section class="co-section co-form-section">';
@@ -556,14 +548,7 @@
 
     function showConfirmation(formData) {
       container.innerHTML =
-        // Stepper paso 3 done
-        '<div class="qg-stepper" aria-label="Progreso de compra">' +
-        '  <span class="qg-step is-done"><span class="qg-step-num">1</span><span class="qg-step-label">Cotizar</span></span>' +
-        '  <span class="qg-step-line" aria-hidden="true"></span>' +
-        '  <span class="qg-step is-done"><span class="qg-step-num">2</span><span class="qg-step-label">Checkout</span></span>' +
-        '  <span class="qg-step-line" aria-hidden="true"></span>' +
-        '  <span class="qg-step is-active"><span class="qg-step-num">3</span><span class="qg-step-label">Confirmación</span></span>' +
-        '</div>' +
+        // v19.6.1 · stepper removido (pasos NO lineales)
         '<div class="co-confirm">' +
         '  <span class="co-confirm-ic">' + icon('check') + '</span>' +
         '  <h2 class="co-confirm-title">¡Listo, ' + escHtml(formData.nombre.split(' ')[0]) + '!</h2>' +
