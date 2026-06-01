@@ -11,15 +11,15 @@
 <meta name="apple-mobile-web-app-title" content="iBisne">
 <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
 <meta name="description" content="iBisne · Holding LATAM. Construimos web, apps, ecommerce, CRM, ERP, SaaS e IA. Precio cerrado, sin sorpresas, con un año de seguimiento.">
-<meta property="og:title" content="iBisne · Construye lo que tu negocio merece">
-<meta property="og:description" content="Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo tu stack digital.">
+<meta property="og:title" content="iBisne · Tu stack digital completo. Precio cerrado.">
+<meta property="og:description" content="Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo tu stack digital. Precio cerrado, sin sorpresas.">
 <meta property="og:image" content="/assets/og-default.png">
 <meta property="og:url" content="https://www.ibisne.com/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_MX">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="iBisne · Construye lo que tu negocio merece">
-<meta name="twitter:description" content="Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo tu stack digital.">
+<meta name="twitter:title" content="iBisne · Tu stack digital completo. Precio cerrado.">
+<meta name="twitter:description" content="Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo tu stack digital. Precio cerrado, sin sorpresas.">
 <meta name="twitter:image" content="/assets/og-default.png">
 <meta name="twitter:site" content="@ibisne">
 <link rel="canonical" href="https://www.ibisne.com/">
@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/motion.css?v=3.2.0">
-<link rel="stylesheet" href="assets/sitio/landing.css?v=18.0.0">
+<link rel="stylesheet" href="assets/sitio/landing.css?v=19.0.0">
 
 <!-- GSAP + ScrollTrigger via jsdelivr CDN (v18.0 · animaciones premium) -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
@@ -186,12 +186,17 @@
   .contact-modal-panel {
     position: relative;
     background: var(--bg);
+    border: 1px solid var(--bg-line);                            /* v19.0 · border en ambos modos */
     border-radius: var(--radius);
     padding: var(--sp-6);
     max-width: 720px; width: 100%;
     max-height: 90vh; overflow-y: auto;
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
     animation: cm-slide-up var(--dur-reg) var(--ease-out-expo);
+  }
+  [data-theme="dark"] .contact-modal-panel {                     /* v19.0 · contraste dark · shadow invisible */
+    border-color: var(--bg-line-strong);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--bg-line);
   }
   @keyframes cm-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @keyframes cm-slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -692,7 +697,7 @@
     <div class="container">
       <div class="hero-inner">
         <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">Cotiza tu proyecto en 3 minutos · sin compromiso</p>
-        <h1 data-anim="hero-h1" data-split-text>Construye lo que <span class="hl">tu negocio merece.</span></h1>
+        <h1 data-anim="hero-h1" data-split-text>Tu stack digital completo. <span class="hl">Precio cerrado.</span></h1>
         <p class="hero-lead" data-anim="hero-lead">
           Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo el stack digital de tu negocio.
           Precio cerrado, sin sorpresas, con un año de seguimiento incluido.
@@ -791,27 +796,27 @@
         <div class="diff-card">
           <span class="diff-icon" data-icon="partnership"></span>
           <h3 class="diff-title">Soporte dedicado</h3>
-          <p class="diff-desc">Una persona asignada a tu proyecto desde el día 1.</p>
+          <p class="diff-desc">Una persona asignada a tu proyecto desde el día 1, no un ticket en una cola.</p>
         </div>
         <div class="diff-card">
           <span class="diff-icon" data-icon="shield"></span>
-          <h3 class="diff-title">Acompañamiento 24/7</h3>
-          <p class="diff-desc">Respuesta en horas, no en días. Por WhatsApp directo.</p>
+          <h3 class="diff-title">Precio cerrado</h3>
+          <p class="diff-desc">El número que ves es el número que pagas. Sin sorpresas, sin cambios de alcance que escalan factura.</p>
         </div>
         <div class="diff-card">
           <span class="diff-icon" data-icon="bolt"></span>
-          <h3 class="diff-title">De 0 al lanzamiento</h3>
-          <p class="diff-desc">Discovery, diseño, código, deploy. Sin proveedores externos.</p>
+          <h3 class="diff-title">Velocidad de entrega</h3>
+          <p class="diff-desc">De 1 semana (web simple) a 12 semanas (SaaS enterprise). Kickoff en 5 días hábiles.</p>
         </div>
         <div class="diff-card">
-          <span class="diff-icon" data-icon="clock"></span>
-          <h3 class="diff-title">Un año de seguimiento</h3>
-          <p class="diff-desc">Ajustes incluidos. No vendemos y desaparecemos.</p>
+          <span class="diff-icon" data-icon="serverapp"></span>
+          <h3 class="diff-title">Stack completo in-house</h3>
+          <p class="diff-desc">Discovery, diseño, código, infraestructura y deploy bajo un solo techo. Cero proveedores externos.</p>
         </div>
         <div class="diff-card">
           <span class="diff-icon" data-icon="star"></span>
           <h3 class="diff-title">Imperios, no proyectos</h3>
-          <p class="diff-desc">Pensamos en tu negocio a 5 años. No en cerrar la venta.</p>
+          <p class="diff-desc">Pensamos en tu negocio a 5 años. Un año de seguimiento incluido. No vendemos y desaparecemos.</p>
         </div>
       </div>
     </div>
@@ -902,6 +907,26 @@
           <div class="faq-panel"><div class="faq-panel-inner">Sí. Mantenimiento mensual, soporte ampliado y marketing continuo son módulos opcionales que se definen en el checkout, después de elegir tu plan. Tu desarrollo es 100% tuyo desde el día 1: lo contratas solo si te sirve.</div></div>
         </details>
         <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Cómo son los pagos? ¿Hay meses sin intereses?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Trabajamos con 50% al firmar + 50% al entregar como default. En el checkout puedes elegir 3, 6, 9 o 12 meses sin intereses con tarjeta (Visa, Mastercard, Amex). También aceptamos SPEI, Mercado Pago, OXXO Spin y criptomonedas — el asesor confirma disponibilidad según tu caso. Sin recargos por la forma de pago que elijas.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si no quedo satisfecho con el resultado?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Cada plan incluye revisiones formales en cada hito (wireframes, diseño, integración, lanzamiento). Si el entregable no cumple el alcance acordado, lo ajustamos sin costo. Tienes 30 días post-entrega para reportar bugs o desviaciones del scope — cubierto. Cambios de scope (features nuevas) sí se cotizan aparte para no romper el "precio cerrado".</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Cuánto tarda en arrancar mi proyecto después de contratar?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Kickoff en 5 días hábiles desde la firma del contrato. En ese plazo te asignamos PM dedicado, agendamos discovery, te damos acceso al canal de Slack/WhatsApp del proyecto y arrancamos diseño. Si la urgencia lo amerita, podemos arrancar el mismo día con un fee de prioridad.</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿El código y los activos son míos al terminar?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Sí, 100%. Al cierre del proyecto te entregamos: repositorio Git completo (GitHub/GitLab a tu nombre), credenciales de hosting, dominio transferido, archivos de diseño Figma, documentación técnica y manuales de operación. No hay vendor lock-in: si mañana decides cambiar de proveedor, te llevas todo. Cero "código propietario nuestro".</div></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-trigger"><span class="faq-q">¿Trabajan fuera de México o solo LATAM?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Sí. Aunque nuestra base es Guadalajara, trabajamos con clientes en todo LATAM (México, Colombia, Argentina, Chile, Perú, Centroamérica) y también atendemos proyectos en USA en español o inglés. Facturamos en MXN o USD según convenga. Equipo distribuido, reuniones por Meet, comunicación 24/7 ajustable a tu zona horaria.</div></div>
+        </details>
+        <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿Qué son los Powerups y cómo funcionan?</span><span class="faq-icon"></span></summary>
           <div class="faq-panel"><div class="faq-panel-inner">Cinco superpoderes premium que transforman tu desarrollo: <strong>animaciones premium · dark/light mode · multi-idioma · multi-moneda · PWA instalable</strong>. Se activan todos a la vez (todo o nada) y al hacerlo el precio se multiplica por 4 (+300%). Cuando activas el toggle "Powerups" verás las 5 capacidades aparecer dentro de cada card como features adicionales — son cambios profundos que requieren más arquitectura, no extras superficiales.</div></div>
         </details>
@@ -940,7 +965,7 @@
       <p class="cta-final-sub">3 minutos en el cotizador y un WhatsApp. Eso es todo lo que separa a tu proyecto del primer commit.</p>
       <div class="cta-foot" style="margin-top: var(--sp-6); display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap;">
         <a class="btn-blue" href="quiz.html">Cotizar ahora →</a>
-        <a class="btn-ghost-light" href="https://wa.me/523329575274?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor%20de%20iBisne" target="_blank" rel="noopener">Hablar con un asesor</a>
+        <button type="button" class="btn-ghost-light" id="cta-final-contact-btn">Hablar con un asesor</button>
       </div>
     </div>
   </section>
@@ -981,7 +1006,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 · iBisne SAS DE CV</span>
-      <span>v14.0.0 · construido en LATAM</span>
+      <span>v19.0.0 · construido en LATAM</span>
     </div>
   </div>
 </footer>
@@ -1025,10 +1050,9 @@
 </a>
 
 <!-- ── Scripts ── -->
-<script src="assets/quiz/icons.js?v=18.0.0"></script>
-<script src="assets/sitio/landing-animations.js?v=18.0.1" defer></script>
-<script src="design-system-v2/motion.js?v=3.2.0"></script>
-<script src="/assets/quiz/pwa.js?v=18.0.0" defer></script>
+<script src="assets/quiz/icons.js?v=19.0.0"></script>
+<script src="assets/sitio/landing-animations.js?v=19.0.0" defer></script>
+<script src="/assets/quiz/pwa.js?v=19.0.0" defer></script>
 <script>
   // Hidratar iconos estáticos (data-icon)
   (function () {
@@ -1076,6 +1100,7 @@
     var openBtns = [
       document.getElementById('site-contact-btn'),
       document.getElementById('hero-contact-btn'),   // v18.0.2 · botón hero "Hablar con un asesor"
+      document.getElementById('cta-final-contact-btn'),  // v19.0 · CTA final "Hablar con un asesor" → modal (era wa.me directo)
     ].filter(Boolean);
     if (!modal || !openBtns.length) return;
     function open() {

@@ -13,13 +13,24 @@
 <meta name="description" content="Confirma tu paquete iBisne y nos contactamos contigo en horas.">
 <meta name="robots" content="noindex">
 
+<!-- v19.0 · Restore theme inline ANTES del CSS · evita FOUC -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('ibisne-site-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (_) {}
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.3.0">
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
-<link rel="stylesheet" href="assets/sitio/checkout.css?v=17.0.0">
+<link rel="stylesheet" href="assets/sitio/quiz-guiado.css?v=19.0.0">
+<link rel="stylesheet" href="assets/sitio/checkout.css?v=19.0.0">
 </head>
 <body class="co-body">
 
@@ -40,9 +51,9 @@
 </main>
 
 <!-- ═══════════ Scripts ═══════════ -->
-<script src="assets/quiz/icons.js?v=17.0.0"></script>
-<script src="data/precios-v13.js?v=17.0.0"></script>
-<script src="assets/sitio/checkout.js?v=17.0.0"></script>
-<script src="/assets/quiz/pwa.js?v=17.0.0" defer></script>
+<script src="assets/quiz/icons.js?v=19.0.0"></script>
+<script src="data/precios-v13.js?v=19.0.0"></script>
+<script src="assets/sitio/checkout.js?v=19.0.0"></script>
+<script src="/assets/quiz/pwa.js?v=19.0.0" defer></script>
 </body>
 </html>

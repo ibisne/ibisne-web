@@ -6,16 +6,26 @@
 // hay error de red (offline). Cambios visibles instantáneo.
 
 // Bump esta versión cada vez que cambie un asset crítico para invalidar caché viejo
-const CACHE = 'ibisne-v18.0.2';
+const CACHE = 'ibisne-v19.0.0';
 
 const PRECACHE = [
   '/',
   '/index.html',
   '/quiz.html',
+  '/checkout.html',
   '/legal/privacidad.html',
   '/legal/terminos.html',
   '/manifest.webmanifest',
   '/design-system-v2/tokens.css',
+  '/design-system-v2/components.css',
+  '/design-system-v2/components-extra.css',
+  '/assets/sitio/landing.css',
+  '/assets/sitio/landing-animations.js',
+  '/assets/sitio/quiz-guiado.css',
+  '/assets/sitio/quiz-guiado.js',
+  '/assets/sitio/checkout.css',
+  '/assets/sitio/checkout.js',
+  '/data/precios-v13.js',
   '/assets/quiz/icons.js',
   '/assets/quiz/pwa.js',
   '/assets/quiz/pwa-modal.css',
