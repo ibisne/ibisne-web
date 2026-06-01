@@ -724,3 +724,85 @@
   }
   .qg-mobile-asesor svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 }
+
+/* ═════════════════════ MOBILE HYPER-COMPACTO (v19.6 ≤599px) ═════════════════════ */
+@media (max-width: 599px) {
+  /* HEADER · logo + asesor compactos */
+  .qg-header {
+    padding: 10px var(--sp-3) !important;
+  }
+  .qg-header .qg-logo { font-size: 14px; gap: 4px; }
+  .qg-header .qg-logo-img { height: 18px !important; }
+  .qg-asesor-link { font-size: 12px; padding: 6px 10px !important; }
+
+  /* MAIN container · padding mínimo */
+  .qg-main {
+    padding: 12px var(--sp-3) !important;
+    gap: var(--sp-3) !important;
+  }
+
+  /* STEPPER compacto */
+  .qg-stepper { gap: 6px !important; padding: 6px 0 !important; }
+  .qg-step-num {
+    width: 22px !important; height: 22px !important;
+    font-size: 11px !important;
+  }
+  .qg-step-label { font-size: 11px !important; }
+  .qg-step-line { min-width: 16px; }
+
+  /* TOPROW · stack vertical (ya está en ≤600 pero refuerzo + reduzco aire) */
+  .qg-toprow {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding: var(--sp-2) 0 !important;
+  }
+  .qg-toprow .qg-content-head { grid-column: auto !important; padding: 0 !important; }
+  .qg-content-head .qg-cat-title { font-size: 20px !important; line-height: 1.15; }
+  .qg-content-head .qg-cat-tagline { font-size: 12px !important; line-height: 1.4; margin-top: 2px; }
+
+  /* CARDS Modo Pro + Mantenimiento mobile · padding reducido */
+  .qg-pro-card,
+  .qg-mant-card {
+    padding: 8px 12px !important;
+  }
+  .qg-pro-icon,
+  .qg-mant-icon {
+    width: 26px !important; height: 26px !important;
+  }
+  .qg-pro-icon svg,
+  .qg-mant-icon svg { width: 14px !important; height: 14px !important; }
+  .qg-pro-title,
+  .qg-mant-title { font-size: 14px !important; }
+  .qg-pro-sub,
+  .qg-mant-sub { font-size: 11px !important; }
+
+  /* CARDS DE PLAN · padding interno reducido */
+  .qg-plans { gap: 12px !important; }
+  .qg-plan {
+    padding: var(--sp-3) !important;
+    border-radius: 12px;
+  }
+  .qg-plan-name { font-size: 15px !important; }
+  .qg-plan-sub { font-size: 11px !important; }
+  .qg-plan-amount { font-size: clamp(24px, 8vw, 28px) !important; }
+  .qg-plan-amt-meta { font-size: 10px !important; }
+  .qg-plan-tiempo { font-size: 11px !important; }
+  .qg-plan-btn { padding: 10px 14px !important; font-size: 14px !important; }
+  .qg-plan-feat { font-size: 11px !important; line-height: 1.35 !important; }
+  .qg-plan-feat-divider > span { font-size: 8px !important; }
+
+  /* SIDEBAR tabs horizontales · más compacto */
+  .qg-sidebar { padding: 8px var(--sp-3) !important; }
+  .qg-sidebar-title { display: none !important; }
+  .qg-cat-item { padding: 8px 10px !important; min-height: 0 !important; gap: 6px !important; }
+  .qg-cat-ic svg { width: 16px !important; height: 16px !important; }
+  .qg-cat-label { font-size: 12px !important; }
+  .qg-cat-arrow { display: none !important; }
+
+  /* MOBILE ASESOR sticky · más compacto */
+  .qg-mobile-asesor {
+    bottom: 12px !important; right: 12px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+}

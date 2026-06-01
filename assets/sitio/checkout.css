@@ -729,3 +729,89 @@
 @media (prefers-reduced-motion: reduce) {
   .co-submit-spinner { animation: none; }
 }
+
+/* ═════════════════════ MOBILE HYPER-COMPACTO (v19.6 ≤599px) ═════════════════════ */
+@media (max-width: 599px) {
+  /* HEADER · logo + back link compactos */
+  .co-header { padding: 10px var(--sp-3) !important; }
+  .co-logo-img { height: 18px !important; }
+  .co-back-link { font-size: 12px !important; }
+
+  /* MAIN · stack vertical · summary primero (configura → ve precio → llena form) */
+  .co-main {
+    grid-template-columns: 1fr !important;
+    gap: var(--sp-3) !important;
+    padding: var(--sp-3) !important;
+  }
+  .co-summary { order: -1 !important; position: static !important; }
+
+  /* TITLE + SUBTITLE form · compactos */
+  .co-title { font-size: 22px !important; line-height: 1.15; }
+  .co-subtitle { font-size: 13px !important; line-height: 1.4; }
+
+  /* FORM groups · spacing reducido */
+  .co-form-group { padding: var(--sp-3) !important; gap: var(--sp-2) !important; }
+  .co-form-title { font-size: 15px !important; }
+  .co-form-help { font-size: 12px !important; line-height: 1.4; }
+
+  /* INPUTS · font-size 16px evita zoom auto iOS · padding cómodo */
+  .co-field input,
+  .co-field select,
+  .co-field textarea {
+    font-size: 16px !important;
+    padding: 12px 14px !important;
+  }
+  .co-field-label { font-size: 13px !important; }
+  .co-form-row { grid-template-columns: 1fr !important; gap: var(--sp-2) !important; }
+
+  /* PAY CARDS · responsive 1col en pantallas chicas (<480) · 2col 480-599 */
+  .co-pay-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .co-pay-card { padding: 10px !important; gap: 6px !important; }
+  .co-pay-ic svg { width: 18px !important; height: 18px !important; }
+  .co-pay-label { font-size: 12px !important; }
+  .co-pay-desc { font-size: 10px !important; line-height: 1.3; }
+
+  /* SUBMIT button · full-width fácil tap */
+  .co-form-actions { padding-top: var(--sp-2) !important; }
+  .co-submit-btn {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+  }
+  .co-form-foot { font-size: 11px !important; line-height: 1.45; margin-top: 8px; }
+
+  /* SUMMARY · padding interno reducido · no sticky en mobile */
+  .co-summary-inner {
+    padding: var(--sp-3) !important;
+    gap: var(--sp-2) !important;
+  }
+  .co-summary-eyebrow { font-size: 11px !important; }
+  .co-summary-title { font-size: 18px !important; }
+  .co-summary-cat { font-size: 12px !important; }
+
+  /* SUMMARY CONFIG block · compactado */
+  .co-summary-config { padding: var(--sp-2) !important; gap: 8px !important; }
+  .co-summary-pro { padding: 6px 10px !important; gap: 8px !important; }
+  .co-summary-pro-ic { width: 24px !important; height: 24px !important; }
+  .co-summary-pro-ic svg { width: 13px !important; height: 13px !important; }
+  .co-summary-pro-title { font-size: 12px !important; }
+  .co-summary-pro-delta { font-size: 10px !important; }
+  .co-summary-mant-label { font-size: 10px !important; }
+  .co-summary-mant-opt { font-size: 11px !important; padding: 4px 6px !important; }
+  .co-summary-msi-label { font-size: 10px !important; }
+  .co-summary-msi-select { font-size: 13px !important; padding: 7px 28px 7px 10px !important; }
+  .co-summary-msi-quota { font-size: 11px !important; }
+
+  /* TOTALES summary · compactos */
+  .co-summary-list { gap: 6px !important; }
+  .co-summary-item-name { font-size: 12px !important; }
+  .co-summary-item-price { font-size: 13px !important; }
+  .co-summary-total-amt { font-size: 22px !important; }
+
+  /* MSI section LEGACY (sin usar pero por si renderiza) compact */
+  .co-msi-section { display: none !important; } /* movido al summary v19.5.2 */
+  .co-config-section { display: none !important; } /* movido al summary v19.5 */
+}

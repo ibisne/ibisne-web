@@ -504,3 +504,129 @@ html:not([data-gsap-ready]) [data-anim-stagger] > * {
   border-color: #FFFFFF;
   color: #FFFFFF;
 }
+
+/* ═════════════════════ 11 · MOBILE-FIRST HYPER-COMPACTO (v19.6) ═════════════════════
+   Pase quirúrgico: TODOS los overrides mobile aquí para no esparcirlos.
+   Solo aplica ≤599px · cero impacto desktop. */
+@media (max-width: 599px) {
+
+  /* HERO compacto */
+  .hero-spa {
+    min-height: 80vh !important;
+    padding: var(--sp-7) 0 var(--sp-6) !important;
+  }
+  .hero-spa h1 {
+    font-size: clamp(28px, 9vw, 36px) !important;
+    line-height: 1.05 !important;
+  }
+  .hero-spa .hero-lead {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+  .hero-spa .hero-eyebrow-spa {
+    font-size: 11px !important;
+  }
+  .hero-particles { display: none !important; } /* particles off mobile · mesh+grid mantienen */
+  .hero-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-top: var(--sp-4);
+  }
+  .hero-actions .btn-blue,
+  .hero-actions .btn-ghost-light {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+  }
+
+  /* SECCIONES generales · respiración reducida */
+  main > .section,
+  main > section.section {
+    padding-top: var(--sp-7) !important;     /* 64px */
+    padding-bottom: var(--sp-7) !important;
+  }
+  .container {
+    padding-left: var(--sp-3);
+    padding-right: var(--sp-3);
+  }
+  .t-h2 { font-size: clamp(22px, 7vw, 28px) !important; line-height: 1.15; }
+
+  /* CARDS · servicios + diferenciadores + somos · padding interno reducido */
+  .servicio-card,
+  .diff-card {
+    padding: var(--sp-3) !important;
+  }
+  .servicio-card .servicio-name,
+  .diff-card .diff-title { font-size: 15px !important; }
+  .servicio-card .servicio-desc,
+  .diff-card .diff-desc { font-size: 13px !important; line-height: 1.45 !important; }
+
+  /* Servicios grid: stay 1col · gap reducido */
+  .servicios-grid,
+  .diff-grid,
+  .somos-grid,
+  .pasos-grid,
+  .testi-grid { gap: var(--sp-3) !important; }
+
+  /* PASOS · numerito + título + desc compactos */
+  .paso { padding: var(--sp-3); }
+  .paso-num { font-size: 24px !important; }
+  .paso-title { font-size: 15px !important; }
+  .paso-desc { font-size: 13px !important; }
+
+  /* FAQ compacto */
+  .faq-item { padding: 10px 0 !important; }
+  .faq-trigger { padding: 4px 0 !important; }
+  .faq-q { font-size: 15px !important; line-height: 1.35; }
+  .faq-panel-inner { font-size: 13px; line-height: 1.55; padding-top: 6px; }
+
+  /* CTA FINAL · padding muy reducido */
+  .section.cta-final {
+    padding-top: var(--sp-7) !important;
+    padding-bottom: var(--sp-7) !important;
+  }
+  .cta-final h2 { font-size: clamp(28px, 9vw, 40px) !important; line-height: 1.05; }
+  .cta-final-sub { font-size: 14px !important; }
+  .cta-foot { flex-direction: column !important; gap: 10px !important; }
+  .cta-foot .btn-blue,
+  .cta-foot .btn-ghost-light { width: 100% !important; }
+
+  /* STICKY CTA flotante · compacto bottom right */
+  .cta-floating {
+    bottom: 16px !important; right: 16px !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    gap: 6px !important;
+  }
+  .cta-floating .cf-arrow { display: none; }
+
+  /* TOPBAR utility · oculto mobile (ya estaba pero refuerzo) */
+  .nav-topbar { display: none !important; }
+  .site-header { top: 0 !important; }
+
+  /* MODAL contacto · panel ajustado mobile */
+  .contact-modal-panel {
+    width: calc(100vw - 32px) !important;
+    max-width: 100% !important;
+    padding: var(--sp-4) !important;
+  }
+  .contact-modal-list { gap: 8px !important; }
+  .contact-modal-item { padding: 10px var(--sp-3) !important; }
+
+  /* QUIENES SOMOS section · h2 + sub compactos */
+  #somos .t-body { font-size: 14px !important; }
+
+  /* MARQUEE social proof · velocidad ajustada (no romper · solo si existe animación) */
+  .marquee-spa-track { animation-duration: 40s !important; }
+}
+
+/* ═════════════════════ 12 · TABLET HYPER-COMPACTO (≤899px) ═════════════════════ */
+@media (max-width: 899px) {
+  /* Secciones intermedias entre desktop y mobile */
+  main > .section,
+  main > section.section {
+    padding-top: var(--sp-8) !important;     /* 80px */
+    padding-bottom: var(--sp-8) !important;
+  }
+}
