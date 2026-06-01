@@ -19,9 +19,9 @@
      para errores, azules para CTAs específicos, lo más parecido a Apple".
      Superficies en grises Apple (#F5F5F7) para contraste limpio sin
      depender de bordes. CERO verde en el sistema. */
-  --bg:         #FFFFFF;   /* base · secciones blancas */
-  --bg-deep:    #F5F5F7;   /* Apple gray · secciones alternas */
-  --bg-paper:   #FFFFFF;   /* cards crisp blanco */
+  --bg:         #FFFFFF;   /* base · secciones blancas crisp */
+  --bg-deep:    #F5F5F7;   /* Apple gray · sin cambio (backward compat: 404, toggle-switch) */
+  --bg-paper:   #FAFAFA;   /* v15.0 · gris papel sutil · secciones alternas (jerarquía visual) */
   --bg-subtle:  #F5F5F7;   /* card tenue, zebra de tabla, hover */
   --bg-line:    #E5E5E7;   /* hairlines 1px */
   --bg-line-strong: #D2D2D7;  /* hairline de énfasis */
