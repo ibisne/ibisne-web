@@ -118,12 +118,12 @@
       html += '  <h2 class="co-form-title">Ajusta tu paquete</h2>';
       html += '  <p class="co-form-help">Activa o desactiva opciones · el resumen se actualiza al instante.</p>';
 
-      // Powerups switch
+      // Modo Pro switch · v19.3 sin porcentajes
       html += '  <button type="button" class="co-toggle' + (state.powerupsOn ? ' is-on' : '') + '" data-toggle-pwr aria-pressed="' + (state.powerupsOn ? 'true' : 'false') + '">';
       html += '    <span class="co-toggle-switch" aria-hidden="true"><span class="co-toggle-knob"></span></span>';
       html += '    <span class="co-toggle-copy">';
-      html += '      <span class="co-toggle-title">Activar Powerups</span>';
-      html += '      <span class="co-toggle-sub">5 capacidades premium · animaciones · dark/light · multi-idioma · multi-moneda · PWA</span>';
+      html += '      <span class="co-toggle-title">Activar Modo Pro</span>';
+      html += '      <span class="co-toggle-sub">Tu proyecto destaca · animaciones · claro y oscuro · varios idiomas · varias monedas · app instalable</span>';
       html += '    </span>';
       html += '    <span class="co-toggle-delta" data-pwr-delta>+' + fmt(deltaPwr) + '</span>';
       html += '  </button>';
@@ -205,7 +205,7 @@
       html += '    </li>';
       if (state.powerupsOn) {
         html += '    <li class="co-summary-item is-powerup">';
-        html += '      <span class="co-summary-item-name">Powerups premium <span class="co-summary-item-meta">5 capacidades · +300%</span></span>';
+        html += '      <span class="co-summary-item-name">Modo Pro <span class="co-summary-item-meta">5 capacidades · destaca tu proyecto</span></span>';
         html += '      <span class="co-summary-item-price">+' + fmt(deltaPwr) + '</span>';
         html += '    </li>';
       }
@@ -244,7 +244,7 @@
       html += '  </div>';
 
       html += '  <div class="co-summary-foot">';
-      html += '    <p>Precio cerrado. Sin sorpresas. Te confirmamos al hablar.</p>';
+      html += '    <p>Sin sorpresas en la factura. Te confirmamos al hablar.</p>';
       html += '  </div>';
       html += '</div>';
       return html;
@@ -373,7 +373,7 @@
       var lbMant = mantLabel(state.mantId, mantList);
 
       var name = formData.nombre ? 'Soy ' + formData.nombre + (formData.empresa ? ' de ' + formData.empresa : '') + '.\n' : '';
-      var pwrTxt = state.powerupsOn ? ' + Powerups premium (+300%)' : '';
+      var pwrTxt = state.powerupsOn ? ' + Modo Pro' : '';
       var mantTxt = precioMant > 0 ? ' + ' + lbMant + ' (' + fmt(precioMant) + '/mes)' : '';
       var msiTxt = state.msi > 1 ? '\nPlazo: ' + state.msi + ' MSI · cuota ' + fmt(precioPlan / state.msi) + '/mes' : '\nPlazo: pago único';
       var pagoTxt = '\nMétodo de pago: ' + metodoLabel(state.metodoPago);
@@ -397,7 +397,7 @@
       var seleccionesLines = [
         'Categoría: ' + cat.label,
         'Plan: ' + plan.label + ' (' + fmt(plan.base) + ' base)',
-        'Powerups: ' + (state.powerupsOn ? 'sí · ×4 (+' + powerupsTotalPctLabel + '%)' : 'no'),
+        'Modo Pro: ' + (state.powerupsOn ? 'sí · activado' : 'no'),
         'Mantenimiento: ' + lbMant + (precioMant > 0 ? ' · ' + fmt(precioMant) + '/mes' : ''),
         'Total inicial: ' + fmt(precioPlan) + ' MXN',
         'Método de pago: ' + metodoLabel(state.metodoPago),
