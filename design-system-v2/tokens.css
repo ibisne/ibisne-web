@@ -136,16 +136,17 @@
    de marca sube luminosidad SIN llegar a neón.
    ════════════════════════════════════════════════════════════ */
 :root[data-theme="dark"] {
-  --bg:         #000000;   /* Apple dark · negro puro */
-  --bg-deep:    #1D1D1F;   /* sección alterna */
-  --bg-paper:   #1D1D1F;   /* cards */
-  --bg-subtle:  #1D1D1F;   /* card tenue, zebra */
+  /* v18.0 · jerarquía de superficies en dark (3 niveles distintos) */
+  --bg:         #000000;   /* base · más profundo */
+  --bg-deep:    #0A0A0C;   /* secciones de impacto (hero, CTA final) */
+  --bg-paper:   #161618;   /* sección alterna sutil */
+  --bg-subtle:  #1F1F22;   /* cards y zebra · más claro */
   --bg-line:    #2D2D2F;
   --bg-line-strong: #424245;
 
   --text-primary:   #F5F5F7;
   --text-secondary: #A1A1A6;
-  --text-muted:     #6E6E73;
+  --text-muted:     #8E8E93;   /* v18.0 · subido de #6E6E73 para mejor AA ratio */
 
   /* CTA = blanco sólido · azul Apple sube luminosidad */
   --accent:        #F5F5F7;

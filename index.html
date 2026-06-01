@@ -28,10 +28,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.2.0">
+<link rel="stylesheet" href="design-system-v2/tokens.css?v=3.3.0">
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/motion.css?v=3.2.0">
+<link rel="stylesheet" href="assets/sitio/landing.css?v=18.0.0">
+
+<!-- GSAP + ScrollTrigger via jsdelivr CDN (v18.0 · animaciones premium) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
 
 <style>
   /* ============================================================
@@ -338,16 +343,7 @@
   .hero-actions {
     display: flex; gap: var(--sp-3); margin-top: var(--sp-6); flex-wrap: wrap;
   }
-  .hero-actions .btn-blue {
-    background: #FFFFFF; color: var(--text-primary); border-color: #FFFFFF;
-  }
-  .hero-actions .btn-blue:hover { background: rgba(255,255,255,0.92); }
-  .hero-actions .btn-ghost-light {
-    color: #FFFFFF; border-color: rgba(255,255,255,0.4);
-  }
-  .hero-actions .btn-ghost-light:hover {
-    border-color: #FFFFFF; color: #FFFFFF;
-  }
+  /* v18.0 · Botones del hero ahora viven en landing.css (premium gradient + bug fix dark mode) */
 
   /* ── Social proof · marquee logos ─────────────────────────── */
   .social-proof {
@@ -681,13 +677,13 @@
     <div class="hero-overlay"></div>
     <div class="container">
       <div class="hero-inner">
-        <p class="hero-eyebrow-spa">— HOLDING LATAM · CAPITAL + EJECUCIÓN</p>
-        <h1>Construye lo que <span class="hl">tu negocio merece.</span></h1>
-        <p class="hero-lead">
+        <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">— HOLDING LATAM · CAPITAL + EJECUCIÓN</p>
+        <h1 data-anim="hero-h1" data-split-text>Construye lo que <span class="hl">tu negocio merece.</span></h1>
+        <p class="hero-lead" data-anim="hero-lead">
           Web, apps, ecommerce, CRM, ERP, SaaS e IA. Una sola casa para todo el stack digital de tu negocio.
           Precio cerrado, sin sorpresas, con un año de seguimiento incluido.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions" data-anim="hero-actions">
           <a class="btn-blue" href="quiz.html">Cotizar mi proyecto →</a>
           <a class="btn-ghost-light" href="quiz.html">Cotizar ahora →</a>
         </div>
@@ -1009,10 +1005,16 @@
   </div>
 </div>
 
+<!-- ═══════════ STICKY CTA flotante · v18.0 ═══════════ -->
+<a href="quiz.html" class="cta-floating" id="cta-floating" data-cta-floating aria-label="Cotizar mi proyecto">
+  Cotizar mi proyecto <span class="cf-arrow" aria-hidden="true">→</span>
+</a>
+
 <!-- ── Scripts ── -->
-<script src="assets/quiz/icons.js?v=17.0.0"></script>
+<script src="assets/quiz/icons.js?v=18.0.0"></script>
+<script src="assets/sitio/landing-animations.js?v=18.0.0" defer></script>
 <script src="design-system-v2/motion.js?v=3.2.0"></script>
-<script src="/assets/quiz/pwa.js?v=17.0.0" defer></script>
+<script src="/assets/quiz/pwa.js?v=18.0.0" defer></script>
 <script>
   // Hidratar iconos estáticos (data-icon)
   (function () {
