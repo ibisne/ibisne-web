@@ -956,3 +956,37 @@
     border-radius: 8px !important;
   }
 }
+
+/* ═════════════ SAFETY NET v19.8.3 · CERO OVERFLOW HORIZONTAL ═════════════
+   El problema: el cotizador tenía scroll horizontal en mobile · contenido
+   se salía del viewport (visible en screenshots Eduardo).
+   Solución: encerramos TODO con max-width 100% + overflow-x hidden global
+   + box-sizing border-box en cualquier card. */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+body * { box-sizing: border-box; }
+
+/* Cotizador layout principal · todo contenido al viewport */
+.qg-body, .qg-main, .qg-header, .qg-sidebar, .qg-content,
+.qg-toprow, .qg-panel, .qg-plans, .qg-plan,
+.qg-pro-card, .qg-mant-card, .qg-mant-toggle {
+  max-width: 100% !important;
+}
+
+/* Sidebar tabs mobile · scroll-x INTERNO sin empujar el body */
+@media (max-width: 899px) {
+  .qg-sidebar {
+    width: 100vw;
+    max-width: 100vw !important;
+    overflow: hidden;
+  }
+  .qg-cat-list {
+    overflow-x: auto !important;
+    max-width: 100%;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  .qg-cat-item { flex: 0 0 auto !important; }
+}

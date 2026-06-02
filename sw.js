@@ -6,7 +6,7 @@
 // hay error de red (offline). Cambios visibles instantáneo.
 
 // Bump esta versión cada vez que cambie un asset crítico para invalidar caché viejo
-const CACHE = 'ibisne-v19.8.2';
+const CACHE = 'ibisne-v19.8.3';
 
 const PRECACHE = [
   '/',
