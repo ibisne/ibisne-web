@@ -64,6 +64,95 @@ main > section.section {
 @media (max-width: 1099px) { #somos { padding-top: var(--sp-8) !important; padding-bottom: var(--sp-8) !important; } }
 @media (max-width: 599px)  { #somos { padding-top: var(--sp-7) !important; padding-bottom: var(--sp-7) !important; } }
 
+/* v19.8 · Sección DOLOR + SOLUCIÓN · narrativa empática */
+#dolor { padding-top: var(--sp-9) !important; padding-bottom: var(--sp-9) !important; }
+@media (max-width: 1099px) { #dolor { padding-top: var(--sp-8) !important; padding-bottom: var(--sp-8) !important; } }
+@media (max-width: 599px)  { #dolor { padding-top: var(--sp-7) !important; padding-bottom: var(--sp-7) !important; } }
+
+.dolor-grid, .solucion-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+}
+@media (min-width: 700px) { .dolor-grid, .solucion-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.dolor-card {
+  background: var(--bg-paper);
+  border: 1px solid var(--bg-line);
+  border-left: 3px solid #E5484D;
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.dolor-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba(229,72,77,0.08);
+  color: #E5484D;
+  margin-bottom: var(--sp-2);
+}
+.dolor-ic svg { width: 20px; height: 20px; }
+.dolor-title {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: var(--fw-semibold);
+  color: var(--text-primary); margin: 0;
+  letter-spacing: -0.01em;
+}
+.dolor-desc { font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin: 0; }
+
+.transicion-narrativa {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: var(--sp-8) 0 var(--sp-5);
+}
+.transicion-narrativa::before,
+.transicion-narrativa::after {
+  content: ''; display: block;
+  width: 48px; height: 1px;
+  background: var(--bg-line-strong);
+  margin: var(--sp-3) auto;
+}
+
+.solucion-card {
+  background: linear-gradient(135deg, rgba(0,113,227,0.06), rgba(0,113,227,0.02));
+  border: 1px solid rgba(0,113,227,0.18);
+  border-left: 3px solid var(--accent-blue);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.solucion-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba(0,113,227,0.12);
+  color: var(--accent-blue);
+  margin-bottom: var(--sp-2);
+}
+.solucion-ic svg { width: 20px; height: 20px; }
+.solucion-title {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: var(--fw-semibold);
+  color: var(--text-primary); margin: 0;
+  letter-spacing: -0.01em;
+}
+.solucion-desc { font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin: 0; }
+
+@media (max-width: 599px) {
+  .dolor-card, .solucion-card { padding: var(--sp-3); }
+  .dolor-ic, .solucion-ic { width: 30px; height: 30px; }
+  .dolor-ic svg, .solucion-ic svg { width: 16px; height: 16px; }
+  .dolor-title, .solucion-title { font-size: 15px; }
+  .dolor-desc, .solucion-desc { font-size: 13px; }
+  .transicion-narrativa { margin: var(--sp-5) 0 var(--sp-4); }
+  .dolor-grid, .solucion-grid { gap: var(--sp-3); margin-top: var(--sp-4); }
+}
+
 .somos-grid {
   display: grid;
   grid-template-columns: 1fr;
