@@ -783,42 +783,45 @@
   .qg-header .qg-logo-img { height: 18px !important; }
   .qg-asesor-link { font-size: 12px; padding: 6px 10px !important; }
 
-  /* MAIN container · padding mínimo */
+  /* MAIN container · padding mínimo · v19.7.2 reducido */
   .qg-main {
-    padding: 12px var(--sp-3) !important;
-    gap: var(--sp-3) !important;
+    padding: 8px var(--sp-3) !important;
+    gap: 10px !important;
   }
+  /* qg-content · padding ya no necesario en mobile (queda como wrapper) */
+  .qg-content { padding: 0 !important; gap: 10px !important; }
 
-  /* STEPPER compacto */
-  .qg-stepper { gap: 6px !important; padding: 6px 0 !important; }
-  .qg-step-num {
-    width: 22px !important; height: 22px !important;
-    font-size: 11px !important;
-  }
-  .qg-step-label { font-size: 11px !important; }
-  .qg-step-line { min-width: 16px; }
+  /* STEPPER eliminado en v19.6.1 · CSS legacy */
+  .qg-stepper { display: none !important; }
 
-  /* TOPROW · stack vertical (ya está en ≤600 pero refuerzo + reduzco aire) */
+  /* TOPROW · stack vertical · gaps mínimos · v19.7.2 más compacto */
   .qg-toprow {
     grid-template-columns: 1fr !important;
-    gap: 8px !important;
-    padding: var(--sp-2) 0 !important;
+    gap: 6px !important;
+    padding: 0 !important;
   }
   .qg-toprow .qg-content-head { grid-column: auto !important; padding: 0 !important; }
-  .qg-content-head .qg-cat-title { font-size: 20px !important; line-height: 1.15; }
-  .qg-content-head .qg-cat-tagline { font-size: 12px !important; line-height: 1.4; margin-top: 2px; }
+  .qg-content-head .qg-cat-title { font-size: 18px !important; line-height: 1.15; margin: 0 !important; }
+  .qg-content-head .qg-cat-tagline { font-size: 12px !important; line-height: 1.35; margin-top: 1px !important; }
 
-  /* CARDS Modo Pro + Mantenimiento mobile · padding reducido */
+  /* CARDS Modo Pro + Mantenimiento mobile · padding muy reducido v19.7.2 */
   .qg-pro-card,
   .qg-mant-card {
-    padding: 8px 12px !important;
+    padding: 6px 10px !important;
   }
+  .qg-mant-card { gap: 6px !important; }
   .qg-pro-icon,
   .qg-mant-icon {
-    width: 26px !important; height: 26px !important;
+    width: 22px !important; height: 22px !important;
   }
   .qg-pro-icon svg,
-  .qg-mant-icon svg { width: 14px !important; height: 14px !important; }
+  .qg-mant-icon svg { width: 12px !important; height: 12px !important; }
+  /* Toggle Premium mant · más compacto */
+  .qg-mant-toggle { padding: 6px 4px 6px 10px !important; }
+  .qg-mant-toggle-label { font-size: 12px !important; }
+  .qg-mant-toggle-switch { width: 28px !important; height: 16px !important; }
+  .qg-mant-toggle-knob { width: 12px !important; height: 12px !important; }
+  .qg-mant-toggle.is-on .qg-mant-toggle-knob { transform: translateX(12px) !important; }
   .qg-pro-title,
   .qg-mant-title { font-size: 14px !important; }
   .qg-pro-sub,
@@ -826,17 +829,23 @@
 
   /* CARDS DE PLAN · padding interno reducido */
   .qg-plans { gap: 12px !important; }
+  .qg-plans { gap: 8px !important; }
   .qg-plan {
-    padding: var(--sp-3) !important;
-    border-radius: 12px;
+    padding: 12px !important;
+    border-radius: 10px;
   }
-  .qg-plan-name { font-size: 15px !important; }
+  .qg-plan-head { gap: 6px !important; margin-bottom: 8px !important; }
+  .qg-plan-name { font-size: 14px !important; }
   .qg-plan-sub { font-size: 11px !important; }
-  .qg-plan-amount { font-size: clamp(24px, 8vw, 28px) !important; }
+  .qg-plan-amount { font-size: clamp(22px, 7vw, 26px) !important; }
   .qg-plan-amt-meta { font-size: 10px !important; }
-  .qg-plan-tiempo { font-size: 11px !important; }
-  .qg-plan-btn { padding: 10px 14px !important; font-size: 14px !important; }
-  .qg-plan-feat { font-size: 11px !important; line-height: 1.35 !important; }
+  .qg-plan-tiempo { font-size: 11px !important; margin-bottom: 8px !important; }
+  /* CTA · compacto · NO full-width gigante */
+  .qg-plan-cta { margin-top: 6px !important; }
+  .qg-plan-btn { padding: 8px 12px !important; font-size: 13px !important; }
+  /* Features compactas */
+  .qg-plan-features { gap: 3px !important; padding-top: 8px !important; margin-top: 8px !important; }
+  .qg-plan-feat { font-size: 11px !important; line-height: 1.3 !important; }
   .qg-plan-feat-divider > span { font-size: 8px !important; }
 
   /* SIDEBAR tabs horizontales · más compacto */

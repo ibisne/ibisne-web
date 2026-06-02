@@ -510,11 +510,16 @@ html:not([data-gsap-ready]) [data-anim-stagger] > * {
    Solo aplica ≤599px · cero impacto desktop. */
 @media (max-width: 599px) {
 
-  /* HERO compacto */
+  /* HERO compacto v19.7.2 · sin min-height forzado · contenido determina altura */
   .hero-spa {
-    min-height: 80vh !important;
-    padding: var(--sp-7) 0 var(--sp-6) !important;
+    min-height: auto !important;
+    padding: var(--sp-5) 0 var(--sp-6) !important;   /* 32px arriba (era 64) · 48 abajo */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
   }
+  .hero-spa .container { padding-top: 0 !important; }
+  .hero-inner { padding-top: 0 !important; margin-top: 0 !important; }
   .hero-spa h1 {
     font-size: clamp(28px, 9vw, 36px) !important;
     line-height: 1.05 !important;
