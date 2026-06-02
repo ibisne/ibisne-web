@@ -289,6 +289,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 - **Cambios de pricing/catálogo:** `data/pricing-v9.js` es la fuente única.
 - **Imágenes:** siempre placeholders de color sólido + label hasta que el usuario provea assets reales. No generar imágenes random.
 - **SW bump:** al cambiar assets críticos (HTML/CSS/JS del cotizador, checkout o landing), bumpear `CACHE = 'ibisne-vX.Y.Z'` en `sw.js` línea 5 para invalidar PWA instaladas. Actual: `v18.0.0`. Desde v11.3 el SW es **network-first** y al activar nueva versión notifica a clientes que disparan `location.reload()` automático.
+- **CACHE BUST CRÍTICO (lección v19.8.2):** el SW bump SOLO invalida el cache del SW · NO el HTTP cache del browser. Si el HTML carga `quiz-guiado.css?v=19.1.0` y no cambias ese query string, el browser usa cache local aunque el SW haya cambiado. **En CADA PR que toque CSS/JS hay que actualizar TAMBIÉN los `?v=` de los HTMLs** (index.html, quiz.html, checkout.html) a la versión nueva. Patrón: `grep -rn "?v=" *.html` antes de commit · si no coinciden con la nueva versión = bug invisible (subes pero nadie ve cambios). Esto causó que TODOS los cambios mobile de v19.2-v19.8.1 NO llegaran a los browsers de usuarios existentes hasta v19.8.2.
 
 ## Voice & copy
 
