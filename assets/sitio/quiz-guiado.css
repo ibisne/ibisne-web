@@ -863,3 +863,96 @@
     font-size: 12px !important;
   }
 }
+
+/* ═════════════ MOBILE FIX QUIRÚRGICO v19.8.1 · specificity alta (body prefix) ═════════════
+   Sobrescribe TODO lo del mobile · selectores body·X·Y ganan a las reglas base. */
+@media (max-width: 599px) {
+  /* Cards de plan · padding interno mínimo */
+  body .qg-plan { padding: 10px !important; border-radius: 10px !important; }
+  body .qg-plan-head { gap: 6px !important; margin-bottom: 6px !important; }
+  body .qg-plan-ic { width: 26px !important; height: 26px !important; }
+  body .qg-plan-ic svg { width: 14px !important; height: 14px !important; }
+  body .qg-plan-name { font-size: 14px !important; line-height: 1.1 !important; }
+  body .qg-plan-sub { font-size: 11px !important; line-height: 1.25 !important; }
+  body .qg-plan-amount { font-size: 22px !important; }
+  body .qg-plan-amt-meta { font-size: 9.5px !important; }
+  body .qg-plan-tiempo { font-size: 10.5px !important; margin-bottom: 6px !important; }
+
+  /* CTA "Elegir plan" · CHICO realmente */
+  body .qg-plan-cta { margin-top: 4px !important; }
+  body .qg-plan-btn {
+    padding: 7px 10px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Features con menos aire · más legibles */
+  body .qg-plan-features {
+    padding-top: 6px !important;
+    margin-top: 6px !important;
+    gap: 2px !important;
+  }
+  body .qg-plan-feat { font-size: 10.5px !important; line-height: 1.3 !important; }
+  body .qg-plan-feat-check svg { width: 9px !important; height: 9px !important; }
+  body .qg-plan-feat-divider { padding-top: 4px !important; margin-top: 4px !important; }
+  body .qg-plan-feat-divider > span { font-size: 8px !important; }
+  body .qg-plan-feat-mant-extra { font-size: 10px !important; padding-left: 14px !important; }
+
+  /* Cards Modo Pro + Mantenimiento · padding mínimo · iconos chicos */
+  body .qg-pro-card,
+  body .qg-mant-card {
+    padding: 6px 10px !important;
+  }
+  body .qg-pro-icon,
+  body .qg-mant-icon {
+    width: 22px !important; height: 22px !important;
+    border-radius: 6px !important;
+  }
+  body .qg-pro-icon svg,
+  body .qg-mant-icon svg { width: 12px !important; height: 12px !important; }
+  body .qg-pro-title,
+  body .qg-mant-title { font-size: 13px !important; line-height: 1.1 !important; }
+  body .qg-pro-sub,
+  body .qg-mant-sub { font-size: 11px !important; line-height: 1.25 !important; }
+  body .qg-pro-switch { width: 28px !important; height: 16px !important; }
+  body .qg-pro-knob { width: 12px !important; height: 12px !important; }
+  body .qg-pro-card.is-on .qg-pro-knob { transform: translateX(12px) !important; }
+
+  /* Toggle Mantenimiento Premium · MUY compacto · no botón gigante */
+  body .qg-mant-toggle {
+    padding: 5px 4px 5px 10px !important;
+    border-radius: 999px !important;
+    grid-template-columns: 1fr auto !important;
+  }
+  body .qg-mant-toggle-label { font-size: 11px !important; }
+  body .qg-mant-toggle-switch { width: 28px !important; height: 16px !important; }
+  body .qg-mant-toggle-knob { width: 12px !important; height: 12px !important; }
+  body .qg-mant-toggle.is-on .qg-mant-toggle-knob { transform: translateX(12px) !important; }
+  body .qg-mant-card { gap: 6px !important; }
+
+  /* Cards de plan · gap entre cards reducido */
+  body .qg-plans { gap: 8px !important; }
+
+  /* Toprow · gaps mínimos · stack sin aire */
+  body .qg-toprow { gap: 6px !important; padding: 0 !important; }
+  body .qg-content-head .qg-cat-title { font-size: 17px !important; margin: 0 !important; }
+  body .qg-content-head .qg-cat-tagline { font-size: 11.5px !important; margin-top: 1px !important; }
+
+  /* Main + content · zero padding extra */
+  body .qg-main { padding: 8px 12px !important; gap: 8px !important; }
+  body .qg-content { padding: 0 !important; gap: 8px !important; }
+
+  /* Header del quiz */
+  body .qg-header { padding: 8px 12px !important; }
+  body .qg-asesor-link { font-size: 11px !important; padding: 5px 9px !important; }
+
+  /* SIDEBAR tabs · ancho útil · scroll sin cortar último item raro */
+  body .qg-sidebar { padding: 6px 12px !important; }
+  body .qg-cat-list { gap: 6px !important; }
+  body .qg-cat-item {
+    padding: 7px 10px !important;
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    border-radius: 8px !important;
+  }
+}
