@@ -6,7 +6,45 @@ Instrucciones permanentes para cualquier sesión de Claude Code en este repo.
 
 iBisne es un **holding LATAM** con vocación operativa (no fondo VC tradicional). El sitio web debe transmitir: capital + ejecución, mentalidad operadora, autoridad.
 
-**El sitio web actual (v19.0.0) es un funnel de 3 pantallas con propósito único.** Páginas activas: `index.html` (landing lead-gen con scroll · 9 secciones · convencer + capturar + dirigir al cotizador) · `quiz.html` (**cotizador guiado 1-viewport sin scroll** · sidebar DARK con cards verticales grandes 1/7 altura + main planes + toggles Powerups/Mantenimiento + stepper 1→2→3) · `checkout.html` (estilo Shopify adaptado · form izq con toggles editables + métodos de pago + MSI + summary lateral der · POST a /api/lead.js + WhatsApp prefill · sin pago real). Categorías: **Webs · Apps · Ecommerce · CRM · ERP · SaaS · IA & Automatización** (7 categorías · 21 planes desde `data/precios-v13.js`). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+**El sitio web actual (v20.0.0) es un funnel de 3 pantallas con propósito único.** Páginas activas: `index.html` (landing lead-gen con scroll · 9 secciones · convencer + capturar + dirigir al cotizador) · `quiz.html` (**cotizador guiado 1-viewport sin scroll** · sidebar DARK con cards verticales grandes 1/7 altura + main planes + toggles Powerups/Mantenimiento + stepper 1→2→3) · `checkout.html` (estilo Shopify adaptado · form izq con toggles editables + métodos de pago + MSI + summary lateral der · POST a /api/lead.js + WhatsApp prefill · sin pago real). Categorías: **Webs · Apps · Ecommerce · CRM · ERP · SaaS · IA & Automatización** (7 categorías · 21 planes desde `data/precios-v13.js`). Cualquier referencia histórica a marketplace 3-sided, portal inversor, co-financiamiento Spark/Build/Grow/Scale o "3 puertas" pertenece al modelo v4 que fue MATADO en v5.0 (2026-05) · esas pantallas se purgaron en v8.1.0. Si necesitas rescatar algo, vive en git history.
+
+**v20.0 · Rework mobile + visual + animaciones (PR mega-atómico).** Eduardo reportó 2 problemas críticos: (a) "10+ chats intentando consistencia mobile sin éxito · menú superior demasiado espaciado", (b) "sitio se siente muerto, secciones repetitivas, ocupa más vida". Diagnóstico: 8 breakpoints distintos (599/600/700/768/899/900/1099/1100) en 4 archivos + 41 `!important` en `landing.css` (estratificación de chats previos) + 5 secciones consecutivas con el mismo patrón "grid de cards + icono + título + sub" (Dolor, Solución, Somos, Servicios, Diferenciadores). Sistema YA TIENE `.split`, `.metrics-row`, `.editorial-card`, `.scroll-stack`, `.blockquote` en components-extra.css pero el landing NO los usaba.
+
+**Foundation mobile (Phase A):**
+- **Sistema único de 3 breakpoints** (≤599 mobile · 600-899 tablet · ≥900 desktop). Eliminados todos los breakpoints raros (700/768/1099/1100). Header literario `REGLAS DURAS MOBILE — NO ROMPER` al inicio del bloque mobile en `landing.css` para que el siguiente chat NO vuelva a estratificar.
+- **Header verdaderamente compacto en mobile** (`index.html` inline styles): height 48px (era 64), gap `var(--sp-2)` 8px (era `--sp-4` 24px), logo img 22px (era 26), theme toggle 32×32 (era 38×38), Contact CTA `padding: 8px 14px` (era 10/18), font-size `--fs-small`. Desktop intacto.
+- **Hero padding simétrico** (`var(--section-pad-xl) 0` desktop · `var(--sp-9) 0` tablet · `var(--sp-7) 0` mobile) sin `!important`. min-height `auto` en tablet+mobile, `92vh` desktop.
+- **--section-pad-xl reducido 200→160px** (`var(--sp-10)`). --section-pad-sm subido 64→80 (`var(--sp-8)`). Mejor respiración mobile sin perder densidad. Cadencia visual de secciones más balanceada.
+- **CTA-final con tokens** (`--sp-11` / `--sp-10` / `--sp-9`) en lugar de magic numbers (250/160/100 con !important).
+- **Tabla de verdad mobile** organizada por componente en bloque único `@media (max-width: 599px)` al final de landing.css.
+- **Limpieza !important**: de 41 → 9 declaraciones justificadas (solo conflictos reales con inline styles de index.html + reduced-motion guards + GSAP progressive enhancement guards). Eliminados 32 defensivos.
+- **Eliminado CSS muerto `.manten-grid`** (legacy v15 · no se usa desde v16). ~30 líneas menos.
+
+**Rework visual · 8 secciones (Phase B):**
+- **§01 Hero amplificado**: mesh + particles + grid + nuevo trust strip (3 chips bajo CTAs · "Shopify Partner certificado · Sin sorpresas en la factura · 1 año de acompañamiento") + 4 corner-marks SVG decorativos animados con stroke-dashoffset draw (GSAP). Dot azul con micro glow `box-shadow: 0 0 8px rgba(0,113,227,0.55)` (único glow permitido).
+- **§02.3 NUEVA · KPI strip** entre marquee y dolor (`--bg-paper` · continuidad sin border): 4 métricas con counter animado 0→valor al entrar viewport. Placeholders razonables: `100%` proyectos entregados · `4h` entrega mínima · `12 meses` acompañamiento · `7 categorías` (esta como `.is-key` azul Apple). Eduardo las reemplaza cuando tenga datos reales.
+- **§02.7 Dolor+Solución → split-stack lado-a-lado** (rompe la repetición de 2 grids gemelos): lado izq rojo `var(--danger)` con 3 items dolor + lado der azul `var(--accent-blue)` con 3 items solución + flecha SVG central animada con stroke-dashoffset al scroll. Mobile colapsa 1-col con flecha rotada 90deg.
+- **§02.5 Somos → 3 editorial-cards apiladas** (rompe el grid 3-col gemelo): cada row con número mono grande "01/02/03" + body (h3 + p) + SVG geométrico lateral (shield abstracto · 4 círculos overlap · outline LATAM con dot GDL).
+- **§03 Servicios → mockup-first**: cada card sustituye su icon 44px por mini-mockup SVG inline 16:10 con halo radial azul detrás. 8 SVGs únicos (browser frame · phone bezel · cart con badge · CRM dashboard · ERP hexágonos · SaaS cloud + satellites · IA brain network · wrench + chip).
+- **§04 Diferenciadores → timeline zigzag 2-col**: cards alternadas is-left/is-right con línea vertical central + dots circulares + número mono. Mobile colapsa 1-col con línea pegada al borde izq.
+- **§05 Cómo trabajamos → scroll-stack pinned 100vh** (la sección estrella): viewport sticky con sidebar izq (número grande "01 / 04" + progress bar + labels) + 4 layers que avanzan con scrub. Cada layer tiene mockup SVG distinto (wizard stepper · WhatsApp bubbles · documento + firma · progress bar + pipeline cards). Mobile: cae a stack vertical normal sin pin.
+- **§06 Testimonios → blockquote-first**: 1 blockquote enorme central (clamp 20-32px Inter Tight) con mark `"` decorativo azul + 2 testimonios secundarios minimal sin border ni bg (rompe la simetría 3-col gemela).
+
+**Ritmo backgrounds alternantes**: dark hero → paper marquee → paper KPI → base dolor (con tintes 3-5%) → paper somos → base servicios → paper diferenciadores → base trabajamos → paper testimonios → base FAQ → paper CTA → dark footer. El ojo nunca ve 2 secciones consecutivas idénticas.
+
+**6 animaciones GSAP nuevas** en `landing-animations.js` (de 346L → ~470L):
+1. **Counter** (`[data-counter-to]`): interpola 0→target 1.6s power2.out · scrollTrigger top 85% once · `font-variant-numeric: tabular-nums`.
+2. **Eyebrow typewriter** (`[data-anim-eyebrow]`): letra por letra 60ms + cursor blink azul.
+3. **Scroll-stack pinning** (`.como-trabajamos-stack`): pin `.ct-viewport` durante 400vh · scrub 0.6 · toggle is-active en layers/labels + actualiza número + progress bar. Solo isDesktop.
+4. **Magnetic cursor en CTAs hero**: `gsap.quickTo` x/y spring · max ±6px · solo desktop + `pointer: fine`.
+5. **Stroke-dashoffset draw** (`[data-anim-draw]`): calcula `getTotalLength()`, gsap.to 1.4s power2.out. Aplica a hero corner-marks + flecha del split.
+6. **Card lift+tilt sutil** (`.servicio-card`): rotateX/Y max ±1.2deg + translateY -4px. `transformPerspective: 800px`. Solo desktop + fine pointer.
+
+**Todas las animaciones respetan `prefers-reduced-motion: reduce`**: counters van directo al valor final, eyebrows mantienen texto completo, SVG draws revelados full, scroll-stack muestra todos los layers sin pin, magnetic + tilt desactivados.
+
+**Cache busting (lección v19.8.2)**: bumps `?v=20.0.0` en imports CSS/JS de `index.html` (landing.css, landing-animations.js, icons.js, pwa.js). Footer `v20.0.0 · construido en LATAM`. `sw.js` cache `'ibisne-v20.0.0'`.
+
+**NO se tocaron**: design system v2 (tokens.css, components.css, components-extra.css), quiz.html, checkout.html, sus assets ni el cotizador. PR puramente landing.
 
 **v19.4 · Cotizador con cards expandidas (Modo Pro + Mantenimiento inline) + visual hero premium + logo real.** Eduardo bajó 5 puntos al ver el cotizador. Cambios:
 - **Logo real en quiz + checkout** (`quiz.html` + `checkout.html`): reemplaza `<span>iBisne</span>` por `<img src="brand/iBisne_blanco.png" class="qg-logo-img/co-logo-img">` con filter invert(1) en light · none en dark (mismo patrón landing).
