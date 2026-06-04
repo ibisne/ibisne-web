@@ -324,16 +324,7 @@
     background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%);
     pointer-events: none;
   }
-  /* Si <video> está presente y reproduce, queda encima del CSS fallback */
-  .hero-video-wrap video,
-  .hero-video-wrap img.hero-poster {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    z-index: 1; /* encima del bg + dots */
-  }
-  /* Overlay para contraste de texto sobre todo (video o fallback) */
+  /* Overlay para contraste de texto sobre todo (mesh + particles) */
   .hero-overlay {
     position: absolute; inset: 0; z-index: -1;
     background:
