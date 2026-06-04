@@ -60,9 +60,6 @@
   color: var(--text-muted);
 }
 
-/* v19.0 · Stepper ocupa full width arriba */
-.co-main > .qg-stepper { grid-column: 1 / -1; margin-top: 0; }
-
 .co-section.co-form-section {
   background: var(--bg);
   border: 1px solid var(--bg-line);
@@ -314,9 +311,7 @@
   margin: 0 0 var(--sp-2) 0;
   font-size: 12px; color: var(--text-muted); line-height: 1.5;
 }
-.co-config-section,
-.co-pay-section,
-.co-msi-section {
+.co-pay-section {
   background: var(--bg-paper);
   border: 1px solid var(--bg-line);
   border-radius: var(--radius);
@@ -479,50 +474,6 @@
   padding: 3px 8px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   v19.0 · MSI segmented + cuota inline
-   ═══════════════════════════════════════════════════════════════ */
-.co-msi-seg {
-  display: flex;
-  background: var(--bg);
-  border: 1px solid var(--bg-line-strong);
-  border-radius: var(--radius-input);
-  padding: 3px;
-  gap: 2px;
-  margin-top: var(--sp-2);
-}
-.co-msi-opt {
-  background: transparent; border: 0;
-  font-family: var(--font-display);
-  font-size: var(--fs-small); font-weight: var(--fw-medium);
-  color: var(--text-secondary);
-  padding: 8px 10px;
-  border-radius: calc(var(--radius-input) - 2px);
-  cursor: pointer;
-  flex: 1;
-  display: inline-flex; align-items: center; justify-content: center;
-  white-space: nowrap;
-  transition: background var(--dur-fast) var(--ease-out-quart),
-              color var(--dur-fast) var(--ease-out-quart);
-}
-.co-msi-opt:hover:not(.is-on) { color: var(--text-primary); }
-.co-msi-opt.is-on {
-  background: var(--accent-blue); color: #fff;
-}
-.co-msi-quota {
-  margin: var(--sp-3) 0 0 0;
-  font-family: var(--font-display); font-size: var(--fs-card-title);
-  font-weight: var(--fw-semibold);
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.015em;
-}
-.co-msi-quota small {
-  font-family: var(--font-display); font-size: 12px;
-  color: var(--text-muted); font-weight: var(--fw-regular);
-  letter-spacing: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -861,7 +812,4 @@
   .co-summary-item-price { font-size: 13px !important; }
   .co-summary-total-amt { font-size: 22px !important; }
 
-  /* MSI section LEGACY (sin usar pero por si renderiza) compact */
-  .co-msi-section { display: none !important; } /* movido al summary v19.5.2 */
-  .co-config-section { display: none !important; } /* movido al summary v19.5 */
 }

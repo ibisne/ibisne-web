@@ -445,38 +445,6 @@
 .qg-mant-toggle.is-on .qg-mant-toggle-switch { background: var(--accent-blue); }
 .qg-mant-toggle.is-on .qg-mant-toggle-knob { transform: translateX(14px); }
 
-/* legacy .qg-mant-seg (segmented Sin/Básico/Premium · ya no se renderiza) — preservo CSS por si algún flujo lo invoca, pero no aplica */
-.qg-mant-seg {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2px;
-  background: var(--bg-subtle);
-  border-radius: 999px;
-  padding: 3px;
-}
-.qg-mant-opt {
-  background: transparent; border: 0;
-  font-family: var(--font-display);
-  font-size: 12px; font-weight: var(--fw-medium);
-  color: var(--text-secondary);
-  padding: 5px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease-out-quart),
-              color var(--dur-fast) var(--ease-out-quart);
-}
-.qg-mant-opt:hover:not(.is-on) { color: var(--text-primary); }
-.qg-mant-opt.is-on {
-  background: var(--bg);
-  color: var(--text-primary);
-  font-weight: var(--fw-semibold);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.qg-mant-opt {
-  text-align: center;
-  font-size: 12px;
-}
-
 /* v19.5.3 · qg-mant-seg-card y qg-mant-info-only fueron eliminados · segmented vive dentro de .qg-mant-card */
 
 /* ── PLANS grid · adapta a 2/3/4 cards ─────────────────────── */
@@ -677,73 +645,10 @@
   font-size: var(--fs-small);
 }
 
-/* ── Responsive · controles wrap en pantallas estrechas ────── */
-@media (max-width: 767px) {
-  .qg-controls { flex-direction: column; align-items: stretch; }
-  .qg-toggle { width: 100%; }
-  .qg-mant { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
-  .qg-mant-seg { width: 100%; }
-  .qg-mant-opt { flex: 1; justify-content: center; }
-}
-
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .qg-plan, .qg-plan:hover { transform: none; }
   .qg-loading-spinner { animation: none; }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   v19.0 · STEPPER component · 1→2→3 progress (quiz/checkout/confirm)
-   compartido con checkout.css (mismas clases)
-   ═══════════════════════════════════════════════════════════════ */
-.qg-stepper {
-  display: flex; align-items: center; justify-content: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) 0;
-  margin-bottom: var(--sp-2);
-}
-.qg-step {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-display);
-  font-size: var(--fs-small); font-weight: var(--fw-medium);
-  color: var(--text-muted);
-  letter-spacing: -0.005em;
-}
-.qg-step-num {
-  width: 24px; height: 24px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-subtle);
-  color: var(--text-muted);
-  border: 1px solid var(--bg-line-strong);
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: var(--fw-semibold);
-  font-variant-numeric: tabular-nums;
-  flex: none;
-  transition: background var(--dur-fast) var(--ease-out-quart),
-              color var(--dur-fast) var(--ease-out-quart),
-              border-color var(--dur-fast) var(--ease-out-quart);
-}
-.qg-step.is-active .qg-step-num {
-  background: var(--accent-blue);
-  color: #fff;
-  border-color: var(--accent-blue);
-}
-.qg-step.is-active { color: var(--text-primary); font-weight: var(--fw-semibold); }
-.qg-step.is-done .qg-step-num {
-  background: var(--text-primary);
-  color: var(--bg);
-  border-color: var(--text-primary);
-}
-.qg-step-line {
-  width: 32px; height: 1px;
-  background: var(--bg-line-strong);
-  flex: none;
-}
-@media (max-width: 600px) {
-  .qg-stepper { gap: var(--sp-2); padding: var(--sp-2) 0; }
-  .qg-step-label { display: none; }
-  .qg-step-line { width: 16px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -790,9 +695,6 @@
   }
   /* qg-content · padding ya no necesario en mobile (queda como wrapper) */
   .qg-content { padding: 0 !important; gap: 10px !important; }
-
-  /* STEPPER eliminado en v19.6.1 · CSS legacy */
-  .qg-stepper { display: none !important; }
 
   /* TOPROW · stack vertical · gaps mínimos · v19.7.2 más compacto */
   .qg-toprow {
