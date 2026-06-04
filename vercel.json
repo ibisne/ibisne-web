@@ -49,12 +49,6 @@
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
-    },
-    {
-      "source": "/demos/(.*)",
-      "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; script-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" }
-      ]
     }
   ],
   "redirects": [
