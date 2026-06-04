@@ -1,26 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es-MX">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>iBisne · Web, Apps, Ecommerce, CRM, ERP, SaaS, IA</title>
+<title>iBisne · Construimos imperios, no paginitas</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="iBisne">
 <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
-<meta name="description" content="iBisne · No te entregamos un proyecto · te acompañamos todo el año. Mantenimiento básico incluido, mejoras proactivas, soporte humano. Sabemos cómo se siente cuando tu agencia te abandona.">
-<meta property="og:title" content="iBisne · No te entregamos un proyecto. Te acompañamos todo el año.">
-<meta property="og:description" content="Construimos tu proyecto digital y nos quedamos contigo. Un año de acompañamiento incluido. Mantenimiento básico sin cobrarte extra. Sabemos lo difícil que es cuando tu agencia te abandona.">
-<meta property="og:image" content="/assets/og-default.png">
+<meta name="description" content="Arquitectos de software para marcas selectas. MVP antes de programar · acompañamiento 12 meses incluido · cero sorpresas en la factura. iBisne · Holding LATAM con vocación operativa.">
+<meta property="og:title" content="iBisne · Construimos imperios, no paginitas.">
+<meta property="og:description" content="Arquitectos de software para marcas selectas. MVP antes de programar · acompañamiento 12 meses incluido · cero sorpresas en la factura.">
+<meta property="og:image" content="/assets/pwa/icon-512.png">
 <meta property="og:url" content="https://www.ibisne.com/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_MX">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="iBisne · No te entregamos un proyecto. Te acompañamos todo el año.">
-<meta name="twitter:description" content="Construimos tu proyecto digital y nos quedamos contigo. Un año de acompañamiento incluido. Mantenimiento básico sin cobrarte extra. Sabemos lo difícil que es cuando tu agencia te abandona.">
-<meta name="twitter:image" content="/assets/og-default.png">
+<meta name="twitter:title" content="iBisne · Construimos imperios, no paginitas.">
+<meta name="twitter:description" content="Arquitectos de software para marcas selectas. MVP antes de programar · acompañamiento 12 meses incluido · cero sorpresas en la factura.">
+<meta name="twitter:image" content="/assets/pwa/icon-512.png">
 <meta name="twitter:site" content="@ibisne">
 <link rel="canonical" href="https://www.ibisne.com/">
 
@@ -31,21 +31,110 @@
 <link rel="stylesheet" href="design-system-v2/tokens.css?v=3.3.0">
 <link rel="stylesheet" href="design-system-v2/components.css?v=3.2.0">
 <link rel="stylesheet" href="design-system-v2/components-extra.css?v=3.2.0">
-<!-- v19.1 · quitado motion.css (depende de motion.js que no cargamos · GSAP cubre los reveals) -->
 <link rel="stylesheet" href="assets/sitio/landing.css?v=20.1.0">
 
-<!-- GSAP + ScrollTrigger via jsdelivr CDN (v18.0 · animaciones premium) -->
+<!-- GSAP + ScrollTrigger via jsdelivr CDN -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
 
-<!-- v20.1.0 · inline <style> movido a assets/sitio/landing.css (sección 27) -->
+<!-- v21.0 · MVP visual · ajustes inline para nuevas secciones -->
+<style>
+  /* §05 Siempre incluido · grid 7 axes */
+  .siempre-grid {
+    display: grid; gap: var(--sp-3);
+    grid-template-columns: 1fr;
+    margin-top: var(--sp-6);
+  }
+  @media (min-width: 600px) { .siempre-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .siempre-grid { grid-template-columns: repeat(4, 1fr); } }
+  .siempre-item {
+    padding: var(--sp-4);
+    background: var(--bg-paper);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius);
+    display: flex; flex-direction: column; gap: var(--sp-2);
+  }
+  .siempre-item-ic {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: var(--radius-input);
+    background: var(--bg);
+    border: 1px solid var(--bg-line-strong);
+    color: var(--accent-blue);
+  }
+  .siempre-item-ic svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .siempre-item h3 {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: var(--fw-semibold);
+    color: var(--text-primary); letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .siempre-item p {
+    font-size: 13px; line-height: 1.45;
+    color: var(--text-secondary); margin: 0;
+  }
+  .siempre-foot {
+    margin-top: var(--sp-5);
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 15px; color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* §09 Capital · 3 verticales · gradient subtle */
+  .capital-grid {
+    display: grid; gap: var(--sp-4);
+    grid-template-columns: 1fr;
+    margin-top: var(--sp-6);
+  }
+  @media (min-width: 800px) { .capital-grid { grid-template-columns: repeat(3, 1fr); } }
+  .capital-card {
+    display: flex; flex-direction: column; gap: var(--sp-3);
+    padding: var(--sp-5);
+    background: linear-gradient(140deg, rgba(0,113,227,0.04), rgba(0,113,227,0.01));
+    border: 1px solid rgba(0,113,227,0.16);
+    border-radius: var(--radius);
+    transition: border-color var(--dur-fast) var(--ease-out-quart),
+                transform var(--dur-fast) var(--ease-out-quart);
+  }
+  .capital-card:hover { border-color: var(--accent-blue); transform: translateY(-3px); }
+  .capital-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent-blue);
+  }
+  .capital-card h3 {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: var(--fw-semibold);
+    color: var(--text-primary); letter-spacing: -0.015em;
+    line-height: 1.2; margin: 0;
+  }
+  .capital-card p {
+    font-size: 14px; line-height: 1.5;
+    color: var(--text-secondary); margin: 0;
+  }
+  .capital-link {
+    margin-top: auto; font-size: 13px;
+    color: var(--accent-blue); font-weight: var(--fw-medium);
+  }
+
+  /* Trust strip · ajuste copy nuevo */
+  .hero-trust-chip { white-space: nowrap; }
+
+  /* MVP-first highlight en scroll-stack */
+  .ct-layer.is-highlight h3::after {
+    content: ' ★';
+    color: var(--accent-blue);
+    font-size: 0.8em;
+  }
+</style>
 </head>
 <body>
 
-<!-- ═══════════ § -1 · TOPBAR utility v15.0 ═══════════ -->
+<!-- ═══════════ § -1 · TOPBAR utility ═══════════ -->
 <div class="site-topbar">
   <div class="container site-topbar-inner">
-    <span class="tb-message">Cotiza tu proyecto en 3 min · sin compromiso</span>
+    <span class="tb-message">Trabajamos con marcas selectas · cotiza tu proyecto</span>
     <div class="tb-right">
       <div class="tb-toggle" role="group" aria-label="Idioma">
         <button type="button" class="is-active" aria-pressed="true">ES</button>
@@ -60,17 +149,19 @@
   </div>
 </div>
 
-<!-- ═══════════ § 00 · HEADER STICKY ═══════════ -->
+<!-- ═══════════ § 00 · HEADER STICKY · nueva nav sitemap 2.0 (sin dropdowns en MVP) ═══════════ -->
 <header class="site-header">
   <div class="container site-header-inner">
     <a href="#hero" class="site-logo-link" aria-label="iBisne · volver al inicio">
       <img src="brand/iBisne_blanco.png" alt="iBisne" class="site-logo-img" width="120" height="32">
     </a>
     <nav class="site-nav">
-      <a href="#somos">Quiénes somos</a>
-      <a href="#servicios">Servicios</a>
-      <a href="#diferenciadores">Por qué</a>
-      <a href="#faq">FAQ</a>
+      <a href="#servicios">Webs</a>
+      <a href="#servicios">Apps</a>
+      <a href="#servicios">eCommerce</a>
+      <a href="#servicios">IA</a>
+      <a href="#servicios">Plataformas</a>
+      <a href="#capital">Nosotros</a>
     </nav>
     <div class="site-header-actions">
       <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
@@ -88,10 +179,9 @@
 
 <main>
 
-  <!-- ═══════════ § 01 · HERO amplificado (v20.0) ═══════════ -->
+  <!-- ═══════════ § 01 · HERO · master phrase ═══════════ -->
   <section class="hero-spa" id="hero">
     <div class="hero-video-wrap" aria-hidden="true">
-      <!-- Mesh gradient animado + grid + particles · 0 KB extra -->
       <div class="hero-mesh"></div>
       <div class="hero-grid-pattern"></div>
       <svg class="hero-particles" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
@@ -111,7 +201,6 @@
     </div>
     <div class="hero-overlay"></div>
 
-    <!-- v20.0 · 4 corner-marks SVG decorativos · GSAP los dibuja al cargar -->
     <svg class="hero-corner-mark is-tl" data-anim-draw aria-hidden="true" viewBox="0 0 64 64"><path d="M2 24 L2 2 L24 2" /><path d="M2 12 L12 12 L12 2" /></svg>
     <svg class="hero-corner-mark is-tr" data-anim-draw aria-hidden="true" viewBox="0 0 64 64"><path d="M2 24 L2 2 L24 2" /><path d="M2 12 L12 12 L12 2" /></svg>
     <svg class="hero-corner-mark is-bl" data-anim-draw aria-hidden="true" viewBox="0 0 64 64"><path d="M2 24 L2 2 L24 2" /><path d="M2 12 L12 12 L12 2" /></svg>
@@ -119,35 +208,34 @@
 
     <div class="container">
       <div class="hero-inner">
-        <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">Cotiza tu proyecto en 3 minutos · sin compromiso</p>
-        <h1 data-anim="hero-h1" data-split-text>No te entregamos un proyecto. <span class="hl">Te acompañamos todo el año.</span></h1>
+        <p class="hero-eyebrow-spa" data-anim="hero-eyebrow">Holding LATAM · marcas selectas</p>
+        <h1 data-anim="hero-h1" data-split-text>Construimos imperios, <span class="hl">no paginitas.</span></h1>
         <p class="hero-lead" data-anim="hero-lead">
-          Sabemos lo difícil que es lanzar un proyecto digital y que tu agencia desaparezca al día siguiente.
-          En iBisne construimos contigo, te acompañamos cada mes y buscamos mejoras que te ayuden a vender más.
+          Arquitectos de software para marcas selectas. Analizamos tu proyecto, te escuchamos, y valoramos
+          si construimos contigo. Si entras, sales con un imperio digital. Si no, te lo decimos al inicio.
         </p>
         <div class="hero-actions" data-anim="hero-actions">
           <a class="btn-blue" href="quiz.html">Cotizar mi proyecto →</a>
           <button type="button" class="btn-ghost-light" id="hero-contact-btn">Hablar con un asesor</button>
         </div>
 
-        <!-- v20.0 · Trust strip · 3 chips bajo CTAs · GSAP fade-in al final del timeline -->
         <div class="hero-trust-strip" data-anim="hero-trust">
           <span class="hero-trust-chip"><span class="hero-trust-chip-dot" aria-hidden="true"></span>Shopify Partner certificado</span>
-          <span class="hero-trust-chip"><span class="hero-trust-chip-dot" aria-hidden="true"></span>Sin sorpresas en la factura</span>
-          <span class="hero-trust-chip"><span class="hero-trust-chip-dot" aria-hidden="true"></span>1 año de acompañamiento</span>
+          <span class="hero-trust-chip"><span class="hero-trust-chip-dot" aria-hidden="true"></span>MVP antes de programar</span>
+          <span class="hero-trust-chip"><span class="hero-trust-chip-dot" aria-hidden="true"></span>Acompañamiento 12 meses · sin extras</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ § 02.3 · KPI STRIP (v20.0 NUEVA) ═══════════ -->
+  <!-- ═══════════ § 02 · KPI STRIP ═══════════ -->
   <section class="kpi-strip-section" aria-label="Métricas iBisne">
     <div class="container">
       <span class="kpi-strip-eyebrow">iBisne en números</span>
       <div class="kpi-strip-grid">
         <div class="kpi-item">
           <div class="kpi-num"><span data-counter-to="100">0</span><span class="kpi-suffix">%</span></div>
-          <div class="kpi-label">Proyectos entregados a tiempo</div>
+          <div class="kpi-label">Proyectos entregados en plazo</div>
         </div>
         <div class="kpi-item">
           <div class="kpi-num"><span data-counter-to="4">0</span><span class="kpi-suffix">h</span></div>
@@ -155,7 +243,7 @@
         </div>
         <div class="kpi-item">
           <div class="kpi-num"><span data-counter-to="12">0</span><span class="kpi-suffix">meses</span></div>
-          <div class="kpi-label">Acompañamiento incluido</div>
+          <div class="kpi-label">Acompañamiento sin extras</div>
         </div>
         <div class="kpi-item is-key">
           <div class="kpi-num"><span data-counter-to="7">0</span></div>
@@ -165,15 +253,14 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 02 · SOCIAL PROOF · MARQUEE ═══════════ -->
+  <!-- ═══════════ § 03 · SOCIAL PROOF · MARQUEE ═══════════ -->
   <section class="social-proof">
     <div class="container">
-      <p class="social-proof-label">Empresas que ya construyen con nosotros</p>
+      <p class="social-proof-label">Marcas que ya construyen su imperio con nosotros</p>
       <div class="marquee-spa">
         <div class="marquee-spa-track">
           <span>ProFutbol</span><span>Medical Mexicanna</span><span>SEM Endomap</span>
           <span>Semillas Endémicas</span><span>DCI Península</span><span>Hidrosite</span>
-          <!-- duplicado para loop seamless -->
           <span>ProFutbol</span><span>Medical Mexicanna</span><span>SEM Endomap</span>
           <span>Semillas Endémicas</span><span>DCI Península</span><span>Hidrosite</span>
         </div>
@@ -181,111 +268,15 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 02.7 · COMPARATIVO DOLOR ↔ SOLUCIÓN (v20.0 split-stack) ═══════════ -->
-  <section class="section" id="dolor" data-bg="base">
-    <div class="container">
-      <span class="eyebrow" data-anim-eyebrow>Lo que nadie te dice</span>
-      <h2 class="t-h2">Sabemos cómo se siente.</h2>
-      <p class="t-body t-secondary" style="max-width: 64ch; margin-top: var(--sp-3);">
-        Llevas meses pagando por un proyecto digital. Lo recibes. Y al día siguiente, tu agencia desaparece
-        como si nada hubiera pasado. Hemos visto esto cien veces — y construimos iBisne exactamente al revés.
-      </p>
-
-      <div class="split-stack" data-anim-stagger="80">
-        <!-- LADO DOLOR (izq) -->
-        <div class="split-side is-dolor">
-          <div class="split-side-header">
-            <span class="split-side-tag">Lo que pasa</span>
-            <h3>Con cualquier otra agencia</h3>
-          </div>
-          <ul class="split-side-list">
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 L14 20 L4 20 L4 4 Z"/><path d="M14 4 L20 4 L20 20 L14 20"/><circle cx="11" cy="12" r="1" fill="currentColor"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Tu agencia desaparece</span>
-                <span class="split-side-item-desc">Lanzas. Te entregan. Y nadie contesta cuando algo deja de funcionar.</span>
-              </div>
-            </li>
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L12 22 M17 6 L7 6 L7 11 L17 11 L17 18 L7 18"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Cada cambio te cuesta extra</span>
-                <span class="split-side-item-desc">Una modificación mínima · una nueva cotización · semanas de espera.</span>
-              </div>
-            </li>
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 L9 11 L13 15 L21 7"/><path d="M14 7 L21 7 L21 14"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Tu proyecto envejece solo</span>
-                <span class="split-side-item-desc">A los 6 meses se ve viejo · ya no carga rápido · nadie te avisa qué actualizar.</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <!-- FLECHA CENTRAL -->
-        <div class="split-arrow" aria-hidden="true" data-anim-draw>
-          <svg viewBox="0 0 56 56" fill="none">
-            <path d="M8 28 L48 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M36 16 L48 28 L36 40" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <!-- LADO SOLUCIÓN (der) -->
-        <div class="split-side is-solucion">
-          <div class="split-side-header">
-            <span class="split-side-tag">Con iBisne</span>
-            <h3>Hacemos lo opuesto</h3>
-          </div>
-          <ul class="split-side-list">
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Un año contigo, por escrito</span>
-                <span class="split-side-item-desc">Acompañamiento completo el primer año. En el contrato. Sin letra chica.</span>
-              </div>
-            </li>
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Mantenimiento básico incluido</span>
-                <span class="split-side-item-desc">Modificaciones, soporte y actualizaciones sin cobrarte aparte.</span>
-              </div>
-            </li>
-            <li class="split-side-item">
-              <span class="split-side-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
-              </span>
-              <div>
-                <span class="split-side-item-title">Mejoras proactivas cada mes</span>
-                <span class="split-side-item-desc">Te avisamos qué actualizar y por qué · antes de que sea problema.</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ § 02.5 · SOMOS editorial (v20.0) ═══════════ -->
+  <!-- ═══════════ § 04 · QUIÉNES SOMOS · selectivos ═══════════ -->
   <section class="section bg-paper" id="somos" data-bg="paper">
     <div class="container">
       <span class="eyebrow" data-anim-eyebrow>Quiénes somos</span>
-      <h2 class="t-h2">Un equipo de arquitectos de software detrás de cada proyecto.</h2>
+      <h2 class="t-h2">Arquitectos de software. Selectivos por diseño.</h2>
       <p class="t-body t-secondary" style="max-width: 64ch; margin-top: var(--sp-3);">
         No te asignamos un freelance. Te asignamos un equipo dedicado de expertos certificados que
-        diseña, construye y lanza tu proyecto bajo un solo techo — desde una bio en 4 horas hasta
-        un sistema empresarial completo.
+        diseña, construye y lanza tu imperio bajo un solo techo. Y antes de aceptar tu proyecto,
+        lo evaluamos. Si no encaja con cómo trabajamos, te lo decimos.
       </p>
 
       <div class="somos-editorial" data-anim-stagger="80">
@@ -293,10 +284,9 @@
           <span class="somos-num">01</span>
           <div class="somos-body">
             <h3>Shopify Partner certificado</h3>
-            <p>Socios oficiales de Shopify para tiendas en línea. Acceso a herramientas, soporte y partners-only features que un freelance no tiene.</p>
+            <p>Socios oficiales de Shopify · acceso a herramientas y soporte que un freelance no tiene.</p>
           </div>
           <div class="somos-mockup" aria-hidden="true">
-            <!-- Shield abstracto con bolt central -->
             <svg viewBox="0 0 100 100">
               <path d="M50 8 L82 22 L82 50 Q82 78 50 92 Q18 78 18 50 L18 22 Z"/>
               <path d="M52 32 L40 56 L52 56 L48 70 L62 46 L50 46 Z" fill="currentColor" stroke="none"/>
@@ -307,11 +297,10 @@
         <div class="somos-row">
           <span class="somos-num">02</span>
           <div class="somos-body">
-            <h3>Equipo dedicado por proyecto</h3>
-            <p>Líder de proyecto, diseñador, desarrollador y arquitecto técnico asignados desde el día 1. Comunicación directa por WhatsApp o Slack.</p>
+            <h3>Arquitectos · no contratistas</h3>
+            <p>Diseño, código, infraestructura y lanzamiento bajo un mismo techo. Cero coordinación de terceros para ti.</p>
           </div>
           <div class="somos-mockup" aria-hidden="true">
-            <!-- 4 círculos overlap (equipo) -->
             <svg viewBox="0 0 100 100">
               <circle cx="34" cy="42" r="16"/>
               <circle cx="60" cy="36" r="14"/>
@@ -325,11 +314,10 @@
         <div class="somos-row">
           <span class="somos-num">03</span>
           <div class="somos-body">
-            <h3>Operamos toda LATAM</h3>
-            <p>Base en Guadalajara, México. Trabajamos con clientes en todo LATAM y atendemos proyectos en USA. Facturamos en MXN o USD.</p>
+            <h3>LATAM · base GDL</h3>
+            <p>Operamos toda LATAM y atendemos USA. Facturamos en MXN o USD. Reuniones en tu zona horaria.</p>
           </div>
           <div class="somos-mockup" aria-hidden="true">
-            <!-- Outline simplificado LATAM + dot en GDL -->
             <svg viewBox="0 0 100 100">
               <path d="M30 14 Q38 12 46 18 Q58 16 62 26 L66 38 Q64 46 60 50 L56 60 Q60 68 56 74 L52 84 Q46 90 40 86 L36 76 Q32 70 36 62 L32 52 Q28 44 30 36 L26 26 Q26 18 30 14 Z"/>
               <circle cx="38" cy="34" r="2.5" fill="currentColor" stroke="none"/>
@@ -345,20 +333,88 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 03 · SERVICIOS mockup-first (v20.0) ═══════════ -->
-  <section class="section" id="servicios" data-bg="base">
+  <!-- ═══════════ § 05 · LO QUE SIEMPRE INCLUYE CADA PROYECTO (NUEVA v21.0) ═══════════ -->
+  <section class="section" id="siempre-incluido" data-bg="base">
+    <div class="container">
+      <span class="eyebrow" data-anim-eyebrow>Estándar iBisne</span>
+      <h2 class="t-h2">Esto viene incluido. Sin asteriscos.</h2>
+      <p class="t-body t-secondary" style="max-width: 64ch; margin-top: var(--sp-3);">
+        Lo que otras agencias venden como upgrade Pro, aquí es el piso mínimo. Si no cumple este estándar,
+        no sale al aire con nuestro nombre.
+      </p>
+
+      <div class="siempre-grid" data-anim-stagger="50">
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 v18"/></svg>
+          </span>
+          <h3>Modo claro y oscuro</h3>
+          <p>Tu marca se ve impecable de día y de noche.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 18 h6"/></svg>
+          </span>
+          <h3>App instalable (PWA)</h3>
+          <p>Tu sitio se instala como app sin pasar por App Store ni Play Store.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 12 h18 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0 -18 z M3 12 a15 15 0 0 1 18 0"/></svg>
+          </span>
+          <h3>Español e inglés</h3>
+          <p>Multi-idioma listo desde el día 1. Más idiomas a la medida.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9 q3 -3 6 0 q-3 3 -6 0 m0 6 q3 -3 6 0 q-3 3 -6 0"/></svg>
+          </span>
+          <h3>Multi-moneda</h3>
+          <p>MXN, USD y la que tu mercado requiera. Conversión transparente para tu cliente.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 6 h16 v10 h-6 l-4 4 v-4 H4 z"/><circle cx="9" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="11" r="1" fill="currentColor"/><circle cx="15" cy="11" r="1" fill="currentColor"/></svg>
+          </span>
+          <h3>Chatbot automatizado</h3>
+          <p>Asistente que responde 24/7 y enruta a tu equipo cuando hace falta humano.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 21 L8 16 L11 19 L21 9 M14 9 H21 V16"/></svg>
+          </span>
+          <h3>Diseño a la medida</h3>
+          <p>Cero templates. Cero "lo armamos con un constructor". Cada pixel se diseña para tu marca.</p>
+        </div>
+        <div class="siempre-item">
+          <span class="siempre-item-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 8 h14 v10 h-14 z M5 8 v-2 h14 v2 M9 12 h6 M9 15 h4"/></svg>
+          </span>
+          <h3>MVP antes de programar</h3>
+          <p>Validamos el alcance contigo antes de tocar código. Tú firmas el MVP · nosotros lo construimos.</p>
+        </div>
+        <div class="siempre-item" style="background: var(--bg); border-color: transparent; align-items: center; text-align: center; justify-content: center;">
+          <p style="font-family: var(--font-display); font-size: 14px; color: var(--text-primary); font-weight: var(--fw-semibold); margin: 0;">
+            Estos 7 puntos no son extras.<br>Son nuestra línea de salida.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 06 · LO QUE HACEMOS · 5 cards alineadas al sitemap ═══════════ -->
+  <section class="section bg-paper" id="servicios" data-bg="paper">
     <div class="container">
       <span class="eyebrow" data-anim-eyebrow>Lo que hacemos</span>
-      <h2 class="t-h2">Todo lo que tu negocio necesita en línea.</h2>
+      <h2 class="t-h2">Todo lo que tu imperio digital necesita.</h2>
       <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
-        Desde una página simple hasta un sistema empresarial completo. Lo construimos todo y te acompañamos.
+        Desde una bio en 4 horas hasta un sistema empresarial multi-región. Lo construimos completo y te acompañamos 12 meses.
       </p>
       <div class="servicios-grid" data-anim-stagger="60">
 
         <a class="servicio-card" href="quiz.html?cat=webs">
           <div class="servicio-mockup-wrap" aria-hidden="true">
             <div class="servicio-mockup">
-              <!-- Browser frame con address bar + content blocks + CTA azul -->
               <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
                 <rect x="20" y="20" width="200" height="110" rx="6"/>
                 <line x1="20" y1="38" x2="220" y2="38"/>
@@ -375,15 +431,14 @@
               </svg>
             </div>
           </div>
-          <span class="servicio-name">Páginas web</span>
-          <span class="servicio-desc">Bio en <strong>4 horas</strong>, sitio básico en <strong>2 días</strong>, sitio completo con CMS en 1-2 semanas. Dominio y hosting incluidos.</span>
+          <span class="servicio-name">Webs</span>
+          <span class="servicio-desc">Bio en <strong>4 horas</strong> · landing en <strong>2 días</strong> · sitio básico en 1-2 semanas · sitio premium en 2-4 semanas. Dominio y hosting incluidos el primer año.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
 
         <a class="servicio-card" href="quiz.html?cat=apps">
           <div class="servicio-mockup-wrap" aria-hidden="true">
             <div class="servicio-mockup">
-              <!-- Phone bezel + grid de app icons -->
               <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
                 <rect x="90" y="14" width="60" height="122" rx="10"/>
                 <rect x="108" y="20" width="24" height="3" rx="1.5" class="fill-soft"/>
@@ -403,15 +458,14 @@
               </svg>
             </div>
           </div>
-          <span class="servicio-name">Apps móviles</span>
-          <span class="servicio-desc">Apps para iPhone y Android publicadas en App Store y Google Play. De <strong>4 a 8 semanas</strong> según funcionalidades.</span>
+          <span class="servicio-name">Apps</span>
+          <span class="servicio-desc">PWA instalable sin tiendas · <strong>Android</strong> nativa en Google Play · <strong>iOS</strong> nativa en App Store. De 1 a 8 semanas según el alcance.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
 
         <a class="servicio-card" href="quiz.html?cat=ecommerce">
           <div class="servicio-mockup-wrap" aria-hidden="true">
             <div class="servicio-mockup">
-              <!-- Cart con badge + product cards laterales -->
               <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
                 <rect x="34" y="36" width="60" height="78" rx="4" class="fill-soft"/>
                 <rect x="38" y="40" width="52" height="40" rx="2" class="fill-soft"/>
@@ -430,129 +484,16 @@
               </svg>
             </div>
           </div>
-          <span class="servicio-name">Tienda en línea</span>
-          <span class="servicio-desc">Shopify lista en <strong>3-5 días</strong>. Tienda a tu medida en 2-4 semanas. Somos Shopify Partner certificados.</span>
-          <span class="servicio-link">Ver planes →</span>
-        </a>
-
-        <a class="servicio-card" href="quiz.html?cat=crm">
-          <div class="servicio-mockup-wrap" aria-hidden="true">
-            <div class="servicio-mockup">
-              <!-- Dashboard CRM: bar chart + contact list -->
-              <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="20" width="200" height="110" rx="6"/>
-                <rect x="34" y="34" width="60" height="2" rx="1" class="fill-soft"/>
-                <!-- Bar chart -->
-                <rect x="34" y="60" width="10" height="40" class="fill-soft"/>
-                <rect x="50" y="50" width="10" height="50" class="fill-soft"/>
-                <rect x="66" y="42" width="10" height="58" class="fill-accent"/>
-                <rect x="82" y="56" width="10" height="44" class="fill-soft"/>
-                <rect x="98" y="48" width="10" height="52" class="fill-soft"/>
-                <line x1="32" y1="102" x2="112" y2="102"/>
-                <!-- Contact list -->
-                <g transform="translate(130, 38)">
-                  <circle cx="6" cy="6" r="5" class="fill-soft"/>
-                  <rect x="16" y="3" width="50" height="3" rx="1"/>
-                  <rect x="16" y="9" width="34" height="2" rx="1" class="fill-soft"/>
-                </g>
-                <g transform="translate(130, 58)">
-                  <circle cx="6" cy="6" r="5" class="fill-soft"/>
-                  <rect x="16" y="3" width="50" height="3" rx="1"/>
-                  <rect x="16" y="9" width="40" height="2" rx="1" class="fill-soft"/>
-                </g>
-                <g transform="translate(130, 78)">
-                  <circle cx="6" cy="6" r="5" class="fill-accent"/>
-                  <rect x="16" y="3" width="50" height="3" rx="1"/>
-                  <rect x="16" y="9" width="30" height="2" rx="1" class="fill-soft"/>
-                </g>
-                <g transform="translate(130, 98)">
-                  <circle cx="6" cy="6" r="5" class="fill-soft"/>
-                  <rect x="16" y="3" width="50" height="3" rx="1"/>
-                  <rect x="16" y="9" width="36" height="2" rx="1" class="fill-soft"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <span class="servicio-name">Sistema de ventas (CRM)</span>
-          <span class="servicio-desc">Gestiona prospectos, clientes y atención sin perder un mensaje. Operando en <strong>2-3 semanas</strong> con tus datos cargados.</span>
-          <span class="servicio-link">Ver planes →</span>
-        </a>
-
-        <a class="servicio-card" href="quiz.html?cat=erp">
-          <div class="servicio-mockup-wrap" aria-hidden="true">
-            <div class="servicio-mockup">
-              <!-- 6 hexágonos conectados (módulos ERP) -->
-              <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
-                <g stroke-linejoin="round">
-                  <polygon points="120,30 138,40 138,60 120,70 102,60 102,40" class="fill-accent" stroke="none"/>
-                  <polygon points="60,40 78,50 78,70 60,80 42,70 42,50"/>
-                  <polygon points="180,40 198,50 198,70 180,80 162,70 162,50"/>
-                  <polygon points="60,90 78,100 78,120 60,130 42,120 42,100"/>
-                  <polygon points="180,90 198,100 198,120 180,130 162,120 162,100"/>
-                  <polygon points="120,100 138,110 138,130 120,140 102,130 102,110"/>
-                  <!-- Conexiones -->
-                  <line x1="102" y1="50" x2="78" y2="60" stroke-dasharray="2 2"/>
-                  <line x1="138" y1="50" x2="162" y2="60" stroke-dasharray="2 2"/>
-                  <line x1="60" y1="80" x2="60" y2="90" stroke-dasharray="2 2"/>
-                  <line x1="180" y1="80" x2="180" y2="90" stroke-dasharray="2 2"/>
-                  <line x1="78" y1="110" x2="102" y2="120" stroke-dasharray="2 2"/>
-                  <line x1="162" y1="110" x2="138" y2="120" stroke-dasharray="2 2"/>
-                  <line x1="120" y1="70" x2="120" y2="100" stroke-dasharray="2 2"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <span class="servicio-name">Sistema de operación (ERP)</span>
-          <span class="servicio-desc">Inventario, contabilidad, ventas y RH conectados en una sola plataforma. De <strong>4 a 12 semanas</strong> según los módulos.</span>
-          <span class="servicio-link">Ver planes →</span>
-        </a>
-
-        <a class="servicio-card" href="quiz.html?cat=saas">
-          <div class="servicio-mockup-wrap" aria-hidden="true">
-            <div class="servicio-mockup">
-              <!-- Cloud central + 4 satellites -->
-              <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
-                <path d="M90 84 Q78 84 78 72 Q78 60 90 60 Q92 48 108 48 Q124 48 128 60 Q142 60 142 72 Q142 84 130 84 Z" class="fill-soft"/>
-                <circle cx="110" cy="70" r="6" class="fill-accent"/>
-                <path d="M114 66 Q116 64 116 70 Q116 74 112 74" stroke="#fff" fill="none" stroke-width="1.5"/>
-                <!-- Satellites -->
-                <g stroke-linejoin="round">
-                  <rect x="20" y="24" width="32" height="20" rx="3"/>
-                  <line x1="24" y1="32" x2="48" y2="32" class="fill-soft"/>
-                  <line x1="24" y1="38" x2="40" y2="38" class="fill-soft"/>
-                  <line x1="50" y1="40" x2="78" y2="62" stroke-dasharray="2 2"/>
-                </g>
-                <g>
-                  <rect x="188" y="24" width="32" height="20" rx="3"/>
-                  <circle cx="198" cy="34" r="3" class="fill-soft"/>
-                  <line x1="206" y1="34" x2="216" y2="34"/>
-                  <line x1="186" y1="40" x2="142" y2="62" stroke-dasharray="2 2"/>
-                </g>
-                <g>
-                  <rect x="20" y="110" width="32" height="20" rx="3"/>
-                  <path d="M28 122 L34 116 L40 122 L46 118"/>
-                  <line x1="50" y1="114" x2="78" y2="82" stroke-dasharray="2 2"/>
-                </g>
-                <g>
-                  <rect x="188" y="110" width="32" height="20" rx="3"/>
-                  <path d="M196 120 L204 116 L212 122" stroke-linecap="round"/>
-                  <line x1="186" y1="114" x2="142" y2="82" stroke-dasharray="2 2"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <span class="servicio-name">Software propio (SaaS)</span>
-          <span class="servicio-desc">Tu propia plataforma para vender por suscripción. Primera versión lista en <strong>4-6 semanas</strong>. Te acompañamos hasta tu primer cliente pagando.</span>
+          <span class="servicio-name">eCommerce</span>
+          <span class="servicio-desc"><strong>Shopify Partner certificado.</strong> Tiendas que crecen hasta imperio. 1 producto · sitio personalizado · Shopify · migración. Fulfillment in-house cuando tu volumen lo amerita.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
 
         <a class="servicio-card" href="quiz.html?cat=ia">
           <div class="servicio-mockup-wrap" aria-hidden="true">
             <div class="servicio-mockup">
-              <!-- Brain network: nodes con líneas curvas -->
               <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
                 <g>
-                  <!-- Líneas curvas conectando nodos -->
                   <path d="M60 40 Q90 30 120 40 T180 40" stroke-dasharray="2 2"/>
                   <path d="M50 75 Q85 65 120 75 T190 75" stroke-dasharray="2 2"/>
                   <path d="M60 110 Q90 100 120 110 T180 110" stroke-dasharray="2 2"/>
@@ -576,88 +517,144 @@
               </svg>
             </div>
           </div>
-          <span class="servicio-name">IA y automatización</span>
-          <span class="servicio-desc">Tu chatbot con <strong>el poder de la IA</strong> en 3-5 días. Integraciones y asistentes a medida en 2-3 semanas. Ahorran horas de trabajo cada semana.</span>
+          <span class="servicio-name">IA</span>
+          <span class="servicio-desc">Chatbot con LLM en <strong>3-5 días</strong>. Automatizaciones y agentes a medida en 2-3 semanas. Ahorran horas de trabajo cada semana.</span>
           <span class="servicio-link">Ver planes →</span>
         </a>
 
-        <a class="servicio-card" href="quiz.html">
+        <a class="servicio-card" href="quiz.html?cat=plataformas">
           <div class="servicio-mockup-wrap" aria-hidden="true">
             <div class="servicio-mockup">
-              <!-- Wrench + screwdriver cruzados con chip detrás -->
               <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
-                <rect x="78" y="38" width="84" height="74" rx="4" class="fill-soft"/>
-                <g class="fill-soft">
-                  <rect x="68" y="48" width="6" height="3"/>
-                  <rect x="68" y="60" width="6" height="3"/>
-                  <rect x="68" y="72" width="6" height="3"/>
-                  <rect x="68" y="84" width="6" height="3"/>
-                  <rect x="68" y="96" width="6" height="3"/>
-                  <rect x="166" y="48" width="6" height="3"/>
-                  <rect x="166" y="60" width="6" height="3"/>
-                  <rect x="166" y="72" width="6" height="3"/>
-                  <rect x="166" y="84" width="6" height="3"/>
-                  <rect x="166" y="96" width="6" height="3"/>
-                </g>
-                <rect x="90" y="50" width="60" height="50" rx="2"/>
-                <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2">
-                  <path d="M58 24 L82 48 M76 18 Q92 26 82 36 Q72 46 60 38 Z" class="accent"/>
-                  <path d="M178 122 L160 104 M168 134 L178 124 L188 134 L178 144 Z M186 116 L168 116" />
+                <g stroke-linejoin="round">
+                  <polygon points="120,30 138,40 138,60 120,70 102,60 102,40" class="fill-accent" stroke="none"/>
+                  <polygon points="60,40 78,50 78,70 60,80 42,70 42,50"/>
+                  <polygon points="180,40 198,50 198,70 180,80 162,70 162,50"/>
+                  <polygon points="60,90 78,100 78,120 60,130 42,120 42,100"/>
+                  <polygon points="180,90 198,100 198,120 180,130 162,120 162,100"/>
+                  <polygon points="120,100 138,110 138,130 120,140 102,130 102,110"/>
+                  <line x1="102" y1="50" x2="78" y2="60" stroke-dasharray="2 2"/>
+                  <line x1="138" y1="50" x2="162" y2="60" stroke-dasharray="2 2"/>
+                  <line x1="60" y1="80" x2="60" y2="90" stroke-dasharray="2 2"/>
+                  <line x1="180" y1="80" x2="180" y2="90" stroke-dasharray="2 2"/>
+                  <line x1="78" y1="110" x2="102" y2="120" stroke-dasharray="2 2"/>
+                  <line x1="162" y1="110" x2="138" y2="120" stroke-dasharray="2 2"/>
+                  <line x1="120" y1="70" x2="120" y2="100" stroke-dasharray="2 2"/>
                 </g>
               </svg>
             </div>
           </div>
-          <span class="servicio-name">A la medida</span>
-          <span class="servicio-desc">¿Tu proyecto es único? Arma una cotización personalizada en 3 minutos.</span>
-          <span class="servicio-link">Cotizar →</span>
+          <span class="servicio-name">Plataformas</span>
+          <span class="servicio-desc"><strong>CRM</strong> en 2-3 semanas · <strong>ERP</strong> modular en 4-12 semanas · <strong>SaaS propio</strong> en 4-6 semanas. Sistema de operación sin licencias por usuario · sin lock-in.</span>
+          <span class="servicio-link">Ver planes →</span>
         </a>
+
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ § 04 · DIFERENCIADORES · timeline zigzag (v20.0) ═══════════ -->
-  <section class="section bg-paper" id="diferenciadores" data-bg="paper">
+  <!-- ═══════════ § 07 · CÓMO NOS DIFERENCIAMOS · split-stack (ellos vs nosotros) ═══════════ -->
+  <section class="section" id="diferenciamos" data-bg="base">
     <div class="container">
       <span class="eyebrow" data-anim-eyebrow>Por qué iBisne</span>
-      <h2 class="t-h2">No vendemos y desaparecemos.</h2>
-      <div class="razones-timeline" data-anim-stagger="80">
-        <div class="razon-card is-left">
-          <span class="razon-num">01</span>
-          <h3>No hablas con un bot</h3>
-          <p>Tu mensaje llega a un humano que conoce tu proyecto · responde en horas, no en días.</p>
+      <h2 class="t-h2">Las demás te entregan. Nosotros te acompañamos.</h2>
+      <p class="t-body t-secondary" style="max-width: 64ch; margin-top: var(--sp-3);">
+        Tres formas en que iBisne no se parece a las agencias del montón.
+      </p>
+
+      <div class="split-stack" data-anim-stagger="80">
+        <!-- LADO IZQ · Las agencias del montón -->
+        <div class="split-side is-dolor">
+          <div class="split-side-header">
+            <span class="split-side-tag">Las agencias del montón</span>
+            <h3>Te entregan</h3>
+          </div>
+          <ul class="split-side-list">
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 L14 20 L4 20 L4 4 Z"/><path d="M14 4 L20 4 L20 20 L14 20"/><circle cx="11" cy="12" r="1" fill="currentColor"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Te entregan y desaparecen</span>
+                <span class="split-side-item-desc">Lanzan, te facturan y el WhatsApp deja de responder.</span>
+              </div>
+            </li>
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L12 22 M17 6 L7 6 L7 11 L17 11 L17 18 L7 18"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Te cobran lo básico como Pro</span>
+                <span class="split-side-item-desc">Dark mode, multi-idioma, PWA · todo es upsell.</span>
+              </div>
+            </li>
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 L9 11 L13 15 L21 7"/><path d="M14 7 L21 7 L21 14"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Trabajan con quien sea</span>
+                <span class="split-side-item-desc">Aceptan todo · entregan templates copiados.</span>
+              </div>
+            </li>
+          </ul>
         </div>
-        <div class="razon-card is-right">
-          <span class="razon-num">02</span>
-          <h3>El precio del primer día es el del último</h3>
-          <p>Sin facturas que crecen · sin "ah, eso es extra" · sin cambios de alcance que te toman por sorpresa.</p>
+
+        <div class="split-arrow" aria-hidden="true" data-anim-draw>
+          <svg viewBox="0 0 56 56" fill="none">
+            <path d="M8 28 L48 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M36 16 L48 28 L36 40" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <div class="razon-card is-left">
-          <span class="razon-num">03</span>
-          <h3>Arrancamos en días, no en meses</h3>
-          <p>Bio en 4 horas · web en 2 días · sistema completo en semanas. Hoy cotizas, esta semana arrancamos.</p>
-        </div>
-        <div class="razon-card is-right">
-          <span class="razon-num">04</span>
-          <h3>Un solo equipo, una sola responsabilidad</h3>
-          <p>Tú no coordinas freelancers · nosotros sí. Diseño, código, servidores, lanzamiento · todo en casa.</p>
-        </div>
-        <div class="razon-card is-left">
-          <span class="razon-num">05</span>
-          <h3>Pensamos en 5 años, no en 5 meses</h3>
-          <p>Tu proyecto crece con tu negocio · no muere al lanzarse. Acompañamiento de un año incluido.</p>
+
+        <!-- LADO DER · iBisne -->
+        <div class="split-side is-solucion">
+          <div class="split-side-header">
+            <span class="split-side-tag">iBisne</span>
+            <h3>Te acompañamos</h3>
+          </div>
+          <ul class="split-side-list">
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Te acompañamos 12 meses · escrito</span>
+                <span class="split-side-item-desc">Mantenimiento básico incluido. En el contrato. Cero letra chica.</span>
+              </div>
+            </li>
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Lo básico es estándar · no upsell</span>
+                <span class="split-side-item-desc">Los 7 puntos del estándar iBisne vienen incluidos en cualquier proyecto.</span>
+              </div>
+            </li>
+            <li class="split-side-item">
+              <span class="split-side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L10 17 L20 7"/></svg>
+              </span>
+              <div>
+                <span class="split-side-item-title">Trabajamos con marcas selectas</span>
+                <span class="split-side-item-desc">Analizamos tu proyecto antes de aceptar. Si no encaja, te lo decimos. Si encaja, construimos.</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ § 05 · CÓMO TRABAJAMOS · scroll-stack pinned (v20.0) ═══════════ -->
-  <section class="section como-trabajamos-stack" id="como-trabajamos" data-bg="base">
+  <!-- ═══════════ § 08 · CÓMO TRABAJAMOS · MVP-first (scroll-stack pinned) ═══════════ -->
+  <section class="section como-trabajamos-stack bg-paper" id="como-trabajamos" data-bg="paper">
     <div class="ct-viewport">
       <div class="container">
         <span class="eyebrow" data-anim-eyebrow>Cómo trabajamos</span>
-        <h2 class="t-h2">Sin sorpresas, paso a paso.</h2>
+        <h2 class="t-h2">Definimos antes de programar. Siempre.</h2>
         <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
-          De la primera cotización hasta el lanzamiento · y todo el año después. Esto es lo que pasa cuando trabajas con nosotros.
+          Cuatro pasos. Sin sorpresas. Sin "ah, eso es extra". Cero código hasta que tú firmes el MVP.
         </p>
 
         <div class="ct-inner" style="margin-top: var(--sp-6);">
@@ -669,7 +666,7 @@
               <div class="ct-progress-bar"><div class="ct-progress-fill" data-ct-progress></div></div>
               <div class="ct-progress-labels">
                 <span data-ct-label="0" class="is-active">01 · Cotizas</span>
-                <span data-ct-label="1">02 · WhatsApp</span>
+                <span data-ct-label="1">02 · MVP</span>
                 <span data-ct-label="2">03 · Firmamos</span>
                 <span data-ct-label="3">04 · Construimos</span>
               </div>
@@ -677,12 +674,10 @@
           </div>
 
           <div class="ct-layers">
-            <!-- Paso 01 · Cotizas online -->
             <div class="ct-layer is-active" data-ct-index="0">
-              <h3>Cotizas online en 3 minutos</h3>
-              <p>Configura tu paquete con nuestro cotizador (o eliges directo aquí). Precio claro al instante. Cero compromiso · cero presión.</p>
+              <h3>Cotizas en 3 minutos</h3>
+              <p>Configura tu paquete en el cotizador (o pídelo directo aquí). Precio claro al instante. Cero compromiso.</p>
               <div class="ct-layer-mockup" aria-hidden="true">
-                <!-- Wizard mockup: stepper 1→2→3 + form + total tag -->
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
                   <rect x="20" y="20" width="280" height="160" rx="8"/>
                   <g class="accent">
@@ -704,46 +699,40 @@
               </div>
             </div>
 
-            <!-- Paso 02 · WhatsApp -->
-            <div class="ct-layer" data-ct-index="1">
-              <h3>Hablamos por WhatsApp</h3>
-              <p>Validamos alcance, resolvemos dudas y ajustamos contigo. Sin formularios eternos. Sin tickets que nadie contesta.</p>
+            <div class="ct-layer is-highlight" data-ct-index="1">
+              <h3>MVP antes de programar</h3>
+              <p>Te entregamos un MVP funcional del proyecto: alcance exacto, flows, pantallas clave y plan técnico. Lo revisas. Lo discutimos. Solo cuando tú firmas el MVP, escribimos la primera línea de código.</p>
               <div class="ct-layer-mockup" aria-hidden="true">
-                <!-- WhatsApp chat bubbles -->
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
                   <rect x="20" y="20" width="280" height="160" rx="8" class="fill-soft"/>
-                  <!-- Header chat -->
                   <rect x="20" y="20" width="280" height="32" rx="8"/>
-                  <circle cx="42" cy="36" r="9" class="fill-accent"/>
-                  <text x="38" y="40" font-size="8" fill="#fff" stroke="none" font-family="JetBrains Mono, monospace">iB</text>
-                  <rect x="58" y="32" width="60" height="3" rx="1"/>
-                  <rect x="58" y="40" width="40" height="2" rx="1" class="fill-soft"/>
-                  <!-- Mensajes -->
-                  <g>
-                    <rect x="40" y="68" width="160" height="22" rx="10" class="fill-soft"/>
-                    <line x1="50" y1="76" x2="180" y2="76"/>
-                    <line x1="50" y1="82" x2="140" y2="82"/>
+                  <text x="40" y="40" font-size="10" font-family="JetBrains Mono, monospace" fill="#fff" stroke="none">MVP · Sprint 0</text>
+                  <g transform="translate(40, 70)">
+                    <rect width="116" height="48" rx="4"/>
+                    <rect x="8" y="8" width="100" height="3" rx="1" class="fill-soft"/>
+                    <rect x="8" y="16" width="70" height="3" rx="1" class="fill-soft"/>
+                    <rect x="8" y="28" width="48" height="12" rx="2" class="fill-accent"/>
                   </g>
-                  <g>
-                    <rect x="120" y="100" width="160" height="22" rx="10" class="fill-accent"/>
-                    <line x1="130" y1="108" x2="260" y2="108" stroke="#fff"/>
-                    <line x1="130" y1="114" x2="220" y2="114" stroke="#fff"/>
+                  <g transform="translate(164, 70)">
+                    <rect width="116" height="48" rx="4"/>
+                    <rect x="8" y="8" width="100" height="3" rx="1" class="fill-soft"/>
+                    <rect x="8" y="16" width="84" height="3" rx="1" class="fill-soft"/>
+                    <rect x="8" y="28" width="60" height="12" rx="2" class="fill-soft"/>
                   </g>
-                  <g>
-                    <rect x="40" y="132" width="120" height="22" rx="10" class="fill-soft"/>
-                    <line x1="50" y1="140" x2="140" y2="140"/>
-                    <line x1="50" y1="146" x2="110" y2="146"/>
+                  <g transform="translate(40, 128)">
+                    <rect width="240" height="40" rx="4" class="fill-accent"/>
+                    <text x="14" y="18" font-size="9" fill="#fff" stroke="none" font-family="Inter Tight, sans-serif">Plan técnico aprobado</text>
+                    <path d="M218 20 L222 24 L230 16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <text x="14" y="32" font-size="7" fill="#fff" stroke="none" font-family="JetBrains Mono, monospace" opacity="0.7">SIGN · firmado por cliente</text>
                   </g>
                 </svg>
               </div>
             </div>
 
-            <!-- Paso 03 · Firmamos -->
             <div class="ct-layer" data-ct-index="2">
               <h3>Firmamos en 24 horas</h3>
-              <p>Contrato simple, tiempos claros y plan de pagos a tu medida. Cero letra chica. Cero asterisco oculto.</p>
+              <p>Contrato simple, plazos firmes y plan de pagos a tu medida. Lo que firmas es lo que pagas. Cero sorpresas en la factura final.</p>
               <div class="ct-layer-mockup" aria-hidden="true">
-                <!-- Documento con checkmark + firma squiggle -->
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
                   <rect x="80" y="22" width="160" height="156" rx="6"/>
                   <line x1="100" y1="48" x2="220" y2="48"/>
@@ -754,29 +743,24 @@
                   <line x1="100" y1="100" x2="208" y2="100" class="fill-soft"/>
                   <line x1="100" y1="108" x2="220" y2="108" class="fill-soft"/>
                   <line x1="100" y1="116" x2="190" y2="116" class="fill-soft"/>
-                  <!-- Firma squiggle -->
                   <path d="M104 144 Q112 132 122 142 Q132 152 142 140 Q152 130 162 144 Q172 158 184 142" class="accent" stroke-linecap="round" stroke-width="1.8"/>
                   <line x1="100" y1="160" x2="160" y2="160" class="fill-soft"/>
-                  <!-- Checkmark badge -->
                   <circle cx="220" cy="42" r="12" class="fill-accent"/>
                   <path d="M214 42 L218 46 L226 38" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
               </div>
             </div>
 
-            <!-- Paso 04 · Construimos -->
             <div class="ct-layer" data-ct-index="3">
-              <h3>Construimos y te acompañamos un año</h3>
-              <p>Investigación, diseño, desarrollo, lanzamiento. Y todo el año siguiente con mantenimiento incluido. No te dejamos solo.</p>
+              <h3>Construimos y acompañamos 12 meses</h3>
+              <p>Diseño, desarrollo, lanzamiento. Y los 12 meses siguientes con mantenimiento básico incluido y mejoras proactivas avisadas antes de que sean problema.</p>
               <div class="ct-layer-mockup" aria-hidden="true">
-                <!-- Progress bar 80% + icons satellite -->
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
                   <rect x="20" y="20" width="280" height="160" rx="8"/>
                   <text x="40" y="58" font-size="10" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none">Construyendo · sprint 3</text>
                   <rect x="40" y="70" width="240" height="10" rx="5" class="fill-soft"/>
                   <rect x="40" y="70" width="192" height="10" rx="5" class="fill-accent"/>
                   <text x="246" y="78" font-size="9" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none">80%</text>
-                  <!-- Pipeline items -->
                   <g transform="translate(40, 110)">
                     <rect width="56" height="50" rx="4"/>
                     <circle cx="28" cy="20" r="9" class="fill-accent"/>
@@ -808,18 +792,49 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 06 · TESTIMONIOS · blockquote-first (v20.0) ═══════════ -->
+  <!-- ═══════════ § 09 · CAPITAL · 3 verticales (NUEVA v21.0) ═══════════ -->
+  <section class="section" id="capital" data-bg="base">
+    <div class="container">
+      <span class="eyebrow" data-anim-eyebrow>Más allá del desarrollo</span>
+      <h2 class="t-h2">Si tu proyecto rebasa el código, también invertimos.</h2>
+      <p class="t-body t-secondary" style="max-width: 60ch; margin-top: var(--sp-3);">
+        iBisne no es solo agencia. También colocamos capital cuando el proyecto lo amerita.
+      </p>
+
+      <div class="capital-grid" data-anim-stagger="80">
+        <div class="capital-card">
+          <span class="capital-eyebrow">iBisne Capital · VC</span>
+          <h3>Venture Capital</h3>
+          <p>Apostamos por proyectos prometedores. Equity, mentoría operativa, y nuestro stack técnico al servicio del proyecto.</p>
+          <span class="capital-link">Conocer Venture Capital →</span>
+        </div>
+        <div class="capital-card">
+          <span class="capital-eyebrow">iBisne Capital · diversificación</span>
+          <h3>Smart Capital</h3>
+          <p>Diversificación para empresarios establecidos. Vehículos de inversión con curaduría iBisne y transparencia total.</p>
+          <span class="capital-link">Conocer Smart Capital →</span>
+        </div>
+        <div class="capital-card">
+          <span class="capital-eyebrow">iBisne Capital · incubadora</span>
+          <h3>Incubadora</h3>
+          <p>Incubamos proyectos desde la idea. Co-construimos contigo y compartimos riesgo y crecimiento.</p>
+          <span class="capital-link">Conocer Incubadora →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ § 10 · TESTIMONIOS · operadores con imperio en marcha ═══════════ -->
   <section class="section bg-paper" data-bg="paper">
     <div class="container">
-      <span class="eyebrow" data-anim-eyebrow>Lo que dicen</span>
-      <h2 class="t-h2">Operadores como tú.</h2>
+      <span class="eyebrow" data-anim-eyebrow>Operadores que ya construyeron con nosotros</span>
+      <h2 class="t-h2">Lo que dicen quienes ya tienen su imperio en marcha.</h2>
 
       <div class="testimonios-hero">
-        <!-- Blockquote enorme central · uno de los testimonios principales -->
         <blockquote class="testi-blockquote">
           <span class="testi-blockquote-mark" aria-hidden="true">"</span>
           <div class="testi-blockquote-body">
-            <p>Veníamos de 3 freelancers que renunciaron. iBisne tomó todo, lo estabilizó y desde entonces no hemos tenido sustos.</p>
+            <p>Sabíamos lo que queríamos · ellos nos hicieron decidir mejor. El MVP que nos entregaron antes de programar nos ahorró 3 meses de iteraciones.</p>
             <div class="testi-blockquote-attr">
               <span class="testi-blockquote-avatar">MM</span>
               <div>
@@ -830,10 +845,9 @@
           </div>
         </blockquote>
 
-        <!-- 2 testimonios secundarios minimal -->
         <div class="testimonios-secondary" data-anim-stagger="100">
           <div class="testi-mini">
-            <p class="testi-mini-quote">"En 3 semanas teníamos sitio funcionando, integración con WhatsApp y leads cayendo. No tuvimos que perseguir a nadie."</p>
+            <p class="testi-mini-quote">"3 semanas y teníamos plataforma con leads cayendo. Sin perseguir a nadie. Ese es el estándar."</p>
             <div class="testi-mini-attr">
               <span class="testi-mini-avatar">PF</span>
               <div>
@@ -843,7 +857,7 @@
             </div>
           </div>
           <div class="testi-mini">
-            <p class="testi-mini-quote">"El soporte 24/7 es real. Hemos llamado un domingo a las 9pm con un problema y respondieron en 12 minutos."</p>
+            <p class="testi-mini-quote">"Cuando llamamos un domingo · respondieron en 12 minutos. Por eso pagamos lo que pagamos."</p>
             <div class="testi-mini-attr">
               <span class="testi-mini-avatar">DCI</span>
               <div>
@@ -857,81 +871,53 @@
     </div>
   </section>
 
-  <!-- ═══════════ § 09 · FAQ ═══════════ -->
+  <!-- ═══════════ § 11 · FAQ · marcas selectas preguntan ═══════════ -->
   <section class="section" id="faq" data-bg="base">
     <div class="container">
       <span class="eyebrow" data-anim-eyebrow>Preguntas frecuentes</span>
-      <h2 class="t-h2" style="margin-bottom: var(--sp-6);">Lo que todos preguntan.</h2>
+      <h2 class="t-h2" style="margin-bottom: var(--sp-6);">Lo que las marcas selectas preguntan antes de firmar.</h2>
       <div class="faq" data-reveal-stagger="30">
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si mi agencia anterior me abandonó y necesito retomar el proyecto?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Lo vemos seguido. Auditamos lo que tienes (código, diseño, dominio, hosting), te decimos qué se puede rescatar y qué conviene reconstruir. Si decides quedarte con nosotros, ese diagnóstico es <strong>gratis</strong>. No te cobramos por el trauma de la agencia anterior.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Cómo deciden con qué marcas trabajan?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Evaluamos tres cosas en cada proyecto: alcance real, capacidad de inversión, y química con el equipo cliente. Si las tres están alineadas, firmamos. Si una falla, te lo decimos al inicio · no te hacemos perder el tiempo.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿El precio que me cotizan incluye dominio, hosting y licencias?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí. Cada plan incluye dominio + hosting por el primer año y cualquier licencia de terceros que tu proyecto requiera (Shopify, App Store, Play Store, OpenAI API base, etc. según aplique). No pagas nada extra para salir en línea.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué incluye exactamente cada proyecto?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Los 7 puntos del <strong>estándar iBisne</strong> (dark/light, PWA, multi-idioma, multi-moneda, chatbot, diseño a la medida, MVP-first) más los específicos del plan que elijas. Todo viene en la cotización · sin letra chica.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Puedo agregar mantenimiento después del lanzamiento?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí. Mantenimiento mensual, soporte ampliado y marketing continuo son módulos opcionales que se definen en el checkout, después de elegir tu plan. Tu desarrollo es 100% tuyo desde el día 1: lo contratas solo si te sirve.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué es el MVP antes de programar?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Es nuestro método. Antes de tocar código entregamos un MVP funcional del proyecto: alcance exacto, flows, pantallas clave, plan técnico. Tú lo firmas. Solo entonces empezamos a programar. Te ahorra meses de iteración y nos asegura construir lo correcto.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Cómo son los pagos? ¿Hay meses sin intereses?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Trabajamos con 50% al firmar + 50% al entregar como default. En el checkout puedes elegir 3, 6, 9 o 12 meses sin intereses con tarjeta (Visa, Mastercard, Amex). También aceptamos SPEI, Mercado Pago, OXXO Spin y criptomonedas — el asesor confirma disponibilidad según tu caso. Sin recargos por la forma de pago que elijas.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Y si necesito migrar mi tienda actual a Shopify?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Ese es uno de nuestros servicios. Migramos desde cualquier CMS o plataforma (WooCommerce, Magento, plataformas custom, Mercado Shops, etc.) hacia Shopify · con datos, pedidos, clientes y SEO intactos. Somos <strong>Shopify Partner certificados</strong>.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si no quedo satisfecho con el resultado?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Cada plan incluye revisiones formales en cada etapa (bocetos, diseño, integración, lanzamiento). Si el entregable no cumple lo acordado, lo ajustamos sin costo. Tienes 30 días después de la entrega para reportar errores o desviaciones — todo cubierto. Los cambios de alcance (funcionalidades nuevas) sí se cotizan aparte para mantener el precio inicial sin sorpresas.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Hacen fulfillment también?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Sí, cuando el volumen lo amerita. Operamos fulfillment in-house desde nuestras instalaciones para ecommerce que escala a imperio. Te quitamos el dolor logístico para que tú te concentres en vender.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Cuánto tarda en arrancar mi proyecto después de contratar?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Arrancamos en 5 días hábiles desde la firma del contrato. En ese plazo te asignamos un líder de proyecto dedicado, agendamos la primera reunión de investigación, te damos acceso al chat del proyecto (WhatsApp o Slack) y empezamos a diseñar. Si tu urgencia lo amerita, podemos arrancar el mismo día con un costo de prioridad.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué es Capital iBisne? ¿Cómo funciona la inversión?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Tres caminos: <strong>Venture Capital</strong> (invertimos en proyectos prometedores · equity + mentoría), <strong>Smart Capital</strong> (diversificación con curaduría para empresarios establecidos), <strong>Incubadora</strong> (co-construimos contigo desde la idea). Cada uno tiene su propia página · ahí está el detalle.</div></div>
         </details>
         <details class="faq-item">
           <summary class="faq-trigger"><span class="faq-q">¿El código y los activos son míos al terminar?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí, 100%. Al cierre del proyecto te entregamos: el código completo (en GitHub o GitLab a tu nombre), las credenciales del servidor, el dominio transferido, los archivos de diseño en Figma, la documentación técnica y los manuales de operación. No quedas atado a nosotros: si mañana decides cambiar de proveedor, te llevas todo. Cero "código que solo nosotros podamos tocar".</div></div>
+          <div class="faq-panel"><div class="faq-panel-inner">100%. GitHub a tu nombre, dominio transferido, Figma compartido, manuales de operación. Si mañana decides cambiar de proveedor, te llevas todo. Cero código que solo nosotros podamos tocar.</div></div>
         </details>
         <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Trabajan fuera de México o solo LATAM?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí. Aunque nuestra base es Guadalajara, trabajamos con clientes en todo LATAM (México, Colombia, Argentina, Chile, Perú, Centroamérica) y también atendemos proyectos en USA en español o inglés. Facturamos en MXN o USD según convenga. Equipo distribuido, reuniones por Meet, comunicación 24/7 ajustable a tu zona horaria.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué es el Modo Pro y cuándo me conviene?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Modo Pro es nuestro paquete premium que transforma tu proyecto en algo que destaca de tu competencia. Activa cinco mejoras profundas a la vez: <strong>animaciones avanzadas · modo claro y oscuro · varios idiomas · varias monedas · app instalable desde el navegador</strong>. El costo del proyecto aumenta porque son cambios profundos de arquitectura (no añadidos superficiales), pero el resultado es un producto que se ve y se siente como los de Apple, Stripe o Linear. Te conviene si tu marca compite contra empresas grandes o si quieres que tu producto luzca premium desde el día uno.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué soporte técnico viene incluido?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Cada plan tiene su nivel de soporte definido (email respuesta 48h en los más simples · WhatsApp + email en horario oficina en intermedios · teléfono + Meet ampliable a 24/7 en enterprise). El detalle exacto por plan se confirma en el checkout junto con la propuesta formal.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Apps móviles publican en App Store y Play Store?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí. Los planes de app móvil incluyen los trámites completos de publicación. Solo necesitas tu cuenta de desarrollador (Apple cobra $99 USD/año, Google $25 una sola vez) — esos costos los explicamos antes de empezar.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Cómo funciona un proyecto de CRM o ERP?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Empezamos con una investigación profunda de tus procesos actuales (1-2 semanas). Configuramos los módulos necesarios, migramos tus datos existentes, entrenamos a tu equipo y te acompañamos los primeros 30 días en vivo. Cero costo oculto.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Construyen software propio (SaaS) desde cero?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Sí. Desde una primera versión rápida para validar mercado ($45k MXN, 4-6 semanas) hasta una plataforma empresarial multi-región con inicio de sesión corporativo ($280k+). Te acompañamos en el diseño técnico, los cobros recurrentes, el alta de clientes y hasta tu primer cliente pagando.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Qué hace exactamente un Agente Autónomo de IA?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Es un sistema con LLM (GPT-4 o Claude) que ejecuta workflows complejos solo: prospecta clientes, responde tickets, analiza datos, genera reportes. Tiene acceso a tus herramientas (CRM, email, web, APIs) y memoria persistente. Puede operar con o sin supervisión humana según el caso.</div></div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-trigger"><span class="faq-q">¿Y si necesito algo que no cabe en ningún plan?</span><span class="faq-icon"></span></summary>
-          <div class="faq-panel"><div class="faq-panel-inner">Usa nuestro <a href="quiz.html" style="color: var(--accent-blue); font-weight: var(--fw-medium);">cotizador online</a> para armar un plan personalizado en 3 minutos, o háblalo directo con un asesor por WhatsApp. Hacemos proyectos a la medida todo el tiempo.</div></div>
+          <summary class="faq-trigger"><span class="faq-q">¿Qué pasa si los 12 meses de acompañamiento no me bastan?</span><span class="faq-icon"></span></summary>
+          <div class="faq-panel"><div class="faq-panel-inner">Se renueva por años subsiguientes con planes de mantenimiento mensual. El detalle se define en el checkout con el asesor según tu volumen de uso. Cero compromiso de continuidad si decides operar tú solo.</div></div>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ § 10 · CTA FINAL ═══════════ -->
+  <!-- ═══════════ § 12 · CTA FINAL ═══════════ -->
   <section class="section cta-final" id="contacto" data-bg="paper">
     <div class="container cta-final-inner">
-      <h2>Tu próximo proyecto<br>merece un equipo que se quede.</h2>
-      <p class="cta-final-sub">Cotiza en 3 minutos. Hablamos contigo el mismo día. Y este sí no te abandonamos.</p>
+      <h2>Tu imperio digital<br>empieza esta semana.</h2>
+      <p class="cta-final-sub">Cotiza en 3 minutos · te respondemos el mismo día · evaluamos juntos si encajamos.</p>
       <div class="cta-foot" style="margin-top: var(--sp-6); display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap;">
         <a class="btn-blue" href="quiz.html">Cotizar ahora →</a>
         <button type="button" class="btn-ghost-light" id="cta-final-contact-btn">Hablar con un asesor</button>
@@ -941,33 +927,38 @@
 
 </main>
 
-<!-- ═══════════ § 11 · FOOTER 4 COLS ═══════════ -->
+<!-- ═══════════ § 13 · FOOTER · sitemap 2.0 ═══════════ -->
 <footer class="site-footer">
   <div class="container">
     <div class="site-footer-inner">
       <div class="footer-col">
         <div class="footer-brand">iBisne</div>
-        <p class="footer-bio">Holding LATAM con vocación operativa. Construimos imperios, no proyectos. Base en Guadalajara.</p>
+        <p class="footer-bio">Holding LATAM con vocación operativa. Construimos imperios. Base en Guadalajara.</p>
       </div>
       <div class="footer-col">
-        <h4>Sitio</h4>
+        <h4>Producto</h4>
         <ul>
-          <li><a href="#servicios">Servicios</a></li>
-          <li><a href="#diferenciadores">Por qué iBisne</a></li>
+          <li><a href="#servicios">Webs</a></li>
+          <li><a href="#servicios">Apps</a></li>
+          <li><a href="#servicios">eCommerce</a></li>
+          <li><a href="#servicios">IA</a></li>
+          <li><a href="#servicios">Plataformas</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Capital</h4>
+        <ul>
+          <li><a href="#capital">Venture Capital</a></li>
+          <li><a href="#capital">Smart Capital</a></li>
+          <li><a href="#capital">Incubadora</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>iBisne</h4>
+        <ul>
+          <li><a href="quiz.html">Cotizador</a></li>
           <li><a href="#faq">FAQ</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Empezar</h4>
-        <ul>
-          <li><a href="quiz.html">Cotizador online</a></li>
-          <li><a href="https://wa.me/523329575274" target="_blank" rel="noopener">WhatsApp asesor</a></li>
           <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
           <li><a href="legal/privacidad.html">Aviso de privacidad</a></li>
           <li><a href="legal/terminos.html">Términos y condiciones</a></li>
         </ul>
@@ -975,12 +966,12 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 · iBisne SAS DE CV</span>
-      <span>v20.1.0 · construido en LATAM</span>
+      <span>v21.0.0-mvp · construido en LATAM</span>
     </div>
   </div>
 </footer>
 
-<!-- ═══════════ MODAL · Contacto (v15.0) ═══════════ -->
+<!-- ═══════════ MODAL · Contacto (v21.0 · marcas selectas) ═══════════ -->
 <div class="contact-modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" hidden>
   <div class="contact-modal-backdrop" data-modal-close></div>
   <div class="contact-modal-panel" role="document">
@@ -988,13 +979,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
     <span class="eyebrow" style="display:block; margin-bottom: var(--sp-3);">Contacto</span>
-    <h3 id="contact-modal-title" class="contact-modal-title">Hablemos de tu proyecto.</h3>
-    <p class="contact-modal-sub">Tres formas de empezar. Responde la que más te acomode.</p>
+    <h3 id="contact-modal-title" class="contact-modal-title">Hablamos contigo si encajas.</h3>
+    <p class="contact-modal-sub">Cuéntanos del proyecto. Si es para nosotros, te respondemos el mismo día.</p>
     <div class="contact-modal-grid">
       <a class="contact-card" href="https://wa.me/523329575274?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor%20de%20iBisne" target="_blank" rel="noopener">
         <span class="contact-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21 L4.5 16 A8 8 0 1 1 8 19.5 Z"/><path d="M9 9 q0 4 6 6"/></svg></span>
         <span class="contact-card-title">WhatsApp</span>
-        <span class="contact-card-desc">Respondemos en horas</span>
+        <span class="contact-card-desc">Respuesta el mismo día</span>
         <span class="contact-card-cta">+52 33 2957 5274</span>
       </a>
       <a class="contact-card" href="mailto:proyectos@ibisne.com">
@@ -1006,14 +997,14 @@
       <a class="contact-card" href="tel:+523329575274">
         <span class="contact-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
         <span class="contact-card-title">Teléfono</span>
-        <span class="contact-card-desc">Lun-Vie · 10am-5pm</span>
+        <span class="contact-card-desc">Lun-Vie · 10am-5pm CDT</span>
         <span class="contact-card-cta">+52 33 2957 5274</span>
       </a>
     </div>
   </div>
 </div>
 
-<!-- ═══════════ STICKY CTA flotante · v18.0 ═══════════ -->
+<!-- ═══════════ STICKY CTA flotante ═══════════ -->
 <a href="quiz.html" class="cta-floating" id="cta-floating" data-cta-floating aria-label="Cotizar mi proyecto">
   Cotizar mi proyecto <span class="cf-arrow" aria-hidden="true">→</span>
 </a>
@@ -1023,7 +1014,6 @@
 <script src="assets/sitio/landing-animations.js?v=20.1.0" defer></script>
 <script src="/assets/quiz/pwa.js?v=20.1.0" defer></script>
 <script>
-  // Hidratar iconos estáticos (data-icon)
   (function () {
     if (!window.IBISNE_ICONS) return;
     document.querySelectorAll('[data-icon]').forEach(function (el) {
@@ -1032,7 +1022,6 @@
     });
   })();
 
-  // Smooth scroll para anchors internos (UX)
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener('click', function (e) {
       var hash = link.getAttribute('href');
@@ -1044,7 +1033,6 @@
     });
   });
 
-  // ── Theme toggle (v15.0 · localStorage key dedicada `ibisne-site-theme`)
   (function () {
     var saved = localStorage.getItem('ibisne-site-theme');
     var html = document.documentElement;
@@ -1063,13 +1051,12 @@
     });
   })();
 
-  // ── Modal Contacto (v15.0 · extendido v18.0.2 con botón hero)
   (function () {
     var modal = document.getElementById('contact-modal');
     var openBtns = [
       document.getElementById('site-contact-btn'),
-      document.getElementById('hero-contact-btn'),   // v18.0.2 · botón hero "Hablar con un asesor"
-      document.getElementById('cta-final-contact-btn'),  // v19.0 · CTA final "Hablar con un asesor" → modal (era wa.me directo)
+      document.getElementById('hero-contact-btn'),
+      document.getElementById('cta-final-contact-btn'),
     ].filter(Boolean);
     if (!modal || !openBtns.length) return;
     function open() {
@@ -1089,7 +1076,6 @@
     });
   })();
 
-  // ── Topbar toggles "próximamente" (v15.0 · solo tooltip al click)
   document.querySelectorAll('.tb-toggle button[aria-disabled="true"]').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       e.preventDefault();
