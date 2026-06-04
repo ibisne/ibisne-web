@@ -104,38 +104,6 @@
     // ─────────────────────────────────────────────────────────
     // v19.6.1 · htmlStepper() removida (pasos NO lineales · ocupaba espacio sin valor)
 
-    function htmlConfigSection() {
-      var deltaPwr = Math.round(plan.base * powerupsTotalPct);
-      var html = '';
-      html += '<div class="co-form-group co-config-section">';
-      html += '  <h2 class="co-form-title">Ajusta tu paquete</h2>';
-      html += '  <p class="co-form-help">Activa o desactiva opciones · el resumen se actualiza al instante.</p>';
-
-      // Modo Pro switch · v19.3 sin porcentajes
-      html += '  <button type="button" class="co-toggle' + (state.powerupsOn ? ' is-on' : '') + '" data-toggle-pwr aria-pressed="' + (state.powerupsOn ? 'true' : 'false') + '">';
-      html += '    <span class="co-toggle-switch" aria-hidden="true"><span class="co-toggle-knob"></span></span>';
-      html += '    <span class="co-toggle-copy">';
-      html += '      <span class="co-toggle-title">Activar Modo Pro</span>';
-      html += '      <span class="co-toggle-sub">Tu proyecto destaca · animaciones · claro y oscuro · varios idiomas · varias monedas · app instalable</span>';
-      html += '    </span>';
-      html += '    <span class="co-toggle-delta" data-pwr-delta>+' + fmt(deltaPwr) + '</span>';
-      html += '  </button>';
-
-      // Mantenimiento segmented
-      html += '  <div class="co-mant" role="group" aria-label="Mantenimiento mensual">';
-      html += '    <span class="co-mant-label">Mantenimiento mensual</span>';
-      html += '    <div class="co-mant-seg">';
-      html += '      <button type="button" class="co-mant-opt' + (state.mantId === 'sin' ? ' is-on' : '') + '" data-mant="sin">Sin <span class="co-mant-pct">$0</span></button>';
-      mantList.forEach(function (m) {
-        var on = state.mantId === m.id;
-        html += '      <button type="button" class="co-mant-opt' + (on ? ' is-on' : '') + '" data-mant="' + escHtml(m.id) + '">' + escHtml(m.label) + ' <span class="co-mant-pct">' + fmt(m.precio) + '/mes</span></button>';
-      });
-      html += '    </div>';
-      html += '  </div>';
-      html += '</div>';
-      return html;
-    }
-
     function htmlPaySection() {
       var html = '';
       html += '<div class="co-form-group co-pay-section">';
@@ -154,26 +122,6 @@
         html += '    </button>';
       });
       html += '  </div>';
-      html += '</div>';
-      return html;
-    }
-
-    function htmlMsiSection() {
-      var totalInicial = planPrice(plan, state.powerupsOn, powerupsTotalPct);
-      var html = '';
-      html += '<div class="co-form-group co-msi-section">';
-      html += '  <h2 class="co-form-title">Meses sin intereses</h2>';
-      html += '  <p class="co-form-help">Confirmamos disponibilidad de MSI con el asesor según el método de pago elegido.</p>';
-      html += '  <div class="co-msi-seg" role="group" aria-label="Plazo de pago">';
-      MSI_OPTIONS.forEach(function (opt) {
-        var on = state.msi === opt.id;
-        html += '    <button type="button" class="co-msi-opt' + (on ? ' is-on' : '') + '" data-msi="' + opt.id + '">' + escHtml(opt.label) + '</button>';
-      });
-      html += '  </div>';
-      var cuota = state.msi > 1 ? totalInicial / state.msi : 0;
-      html += '  <p class="co-msi-quota" data-msi-quota>' +
-              (state.msi > 1 ? fmt(cuota) + '/mes <small>× ' + state.msi + ' meses · total ' + fmt(totalInicial) + '</small>' : 'Pago único de ' + fmt(totalInicial)) +
-              '</p>';
       html += '</div>';
       return html;
     }
@@ -301,8 +249,7 @@
       html += '  <form class="co-form" data-form novalidate>';
       html += '    <input type="text" name="website" tabindex="-1" autocomplete="off" class="co-honeypot" aria-hidden="true">';
 
-      // v19.5 · Los toggles Modo Pro + Mantenimiento se movieron al summary lateral derecho · ya no aquí
-      // (htmlConfigSection() existe pero ya no se llama desde el form)
+      // v19.5 · Los toggles Modo Pro + Mantenimiento se movieron al summary lateral derecho
 
       // Información de contacto
       html += '    <div class="co-form-group">';
@@ -351,7 +298,7 @@
       // Método de pago
       html += htmlPaySection();
 
-      // v19.5.2 · MSI movido al summary lateral derecho (htmlMsiSection ya no se llama)
+      // v19.5.2 · MSI movido al summary lateral derecho
 
       // Form actions
       html += '    <div class="co-form-actions">';
@@ -415,22 +362,6 @@
           updateSummary();
         });
       }
-    }
-
-    function updateMsiQuota() {
-      var quotaEl = container.querySelector('[data-msi-quota]');
-      if (!quotaEl) return;
-      var total = planPrice(plan, state.powerupsOn, powerupsTotalPct);
-      if (state.msi > 1) {
-        quotaEl.innerHTML = fmt(total / state.msi) + '/mes <small>× ' + state.msi + ' meses · total ' + fmt(total) + '</small>';
-      } else {
-        quotaEl.textContent = 'Pago único de ' + fmt(total);
-      }
-    }
-
-    function updatePwrDelta() {
-      var deltaEl = container.querySelector('[data-pwr-delta]');
-      if (deltaEl) deltaEl.textContent = '+' + fmt(Math.round(plan.base * powerupsTotalPct));
     }
 
     // ─────────────────────────────────────────────────────────
@@ -580,20 +511,6 @@
             o.setAttribute('aria-pressed', on ? 'true' : 'false');
           });
           updateSummary();
-        });
-      });
-
-      // MSI segmented
-      container.querySelectorAll('[data-msi]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var v = parseInt(b.getAttribute('data-msi'), 10);
-          if (state.msi === v) return;
-          state.msi = v;
-          container.querySelectorAll('[data-msi]').forEach(function (o) {
-            o.classList.toggle('is-on', parseInt(o.getAttribute('data-msi'), 10) === v);
-          });
-          updateSummary();
-          updateMsiQuota();
         });
       });
 
