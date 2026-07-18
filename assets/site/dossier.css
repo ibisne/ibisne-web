@@ -372,6 +372,11 @@ section { position:relative; }
 
   /* 1 columna, gaps compactos */
   .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid{ grid-template-columns:1fr; gap:1rem; }
+  /* El estándar: en desktop es rejilla con divisores (gap 1px + fondo hairline);
+     en móvil ese fondo con gap grande dejaba bandas grises. Aquí cada highlight
+     es una card con borde propio, sin bandas ni encimado. */
+  .std-grid{ background:transparent; border:0; border-radius:0; overflow:visible; gap:.7rem; }
+  .std-grid .it{ border:1px solid var(--line); border-radius:var(--r-md); padding:1.2rem 1.15rem; }
   .form .two{ grid-template-columns:1fr; }
   .hero .cta{ margin-top:1.8rem; }
   .hero .proof{ margin-top:2rem; gap:1.1rem 1.6rem; }

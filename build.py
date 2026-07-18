@@ -274,7 +274,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=8">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=9">
 </head>
 <body>
 {LOADER}
@@ -395,16 +395,20 @@ VENTAJAS = [
 # ---------------------------------------------------------------- projects
 # Frente fijo del portafolio (mismo que el home): buque insignia + los de descanso con link.
 FRONT = ["ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife"]
+# Se mandan al final (por indicación de Eduardo), justo antes de Hotel Panamera.
+BACK = ["vg", "farmacia-hdz", "sem"]
 
 def order_projects(projs):
-    # FRONT explicito primero; luego descanso+link, Shopify+link, con link, arte,
-    # sin link, y Hotel Panamera al final. OJO: descanso SIN link no se prioriza.
+    # FRONT primero; luego descanso+link, Shopify+link, con link, arte, sin link,
+    # BACK (al final) y Hotel Panamera de cierre. OJO: descanso SIN link no se prioriza.
     def key(p):
         s = p.get("slug")
         if s in FRONT:
             return (0, FRONT.index(s))
         if s == "hotel-panamera":
             return (9, 0)
+        if s in BACK:
+            return (8, BACK.index(s))
         has_url = bool(p.get("url", "").strip())
         is_shop = "shopify" in (p.get("tipo", "") + " " + p.get("vertical", "")).lower()
         if p.get("descanso") and has_url:
@@ -420,7 +424,9 @@ def order_projects(projs):
 
 def load_projects():
     data = json.loads(CV.read_text(encoding="utf-8"))
-    return order_projects(data["proyectos"])
+    # "ibisne" somos nosotros: no va en el portafolio.
+    projs = [p for p in data["proyectos"] if p.get("slug") != "ibisne"]
+    return order_projects(projs)
 
 STACK_MAP = [
     ("shopify", ["Shopify", "Liquid", "Checkout", "Integraciones"]),
@@ -507,7 +513,7 @@ def build_home(projects):
   <h1>Construimos imperios digitales.</h1>
   <p class="lede">Creamos y escalamos productos digitales de alto impacto para un grupo selecto de marcas. En los proyectos con mayor potencial, además invertimos y nos volvemos socios de su crecimiento.</p>
   <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/portafolio/" class="btn btn-secondary btn-lg">Ver portafolio</a></div>
-  <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">32<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
+  <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">{len(projects)}<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
     <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Invertimos</span></div></div>
 </div></section>
 
@@ -527,9 +533,9 @@ def build_home(projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Portafolio</span><h2>Negocios que ya están en la cancha.</h2>
-  <p>Una muestra de lo que construimos y operamos. El portafolio completo suma 32 proyectos en más de una docena de verticales.</p></div>
+  <p>Una muestra de lo que construimos y operamos. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
   <div class="pf-grid">{cards}</div>
-  <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los 32 proyectos {ic('arw')}</a></div>
+  <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -808,7 +814,7 @@ def build_portfolio_hub(projects):
 <section class="phero"><div class="wrap">
   {crumb("Portafolio")}
   <span class="eyebrow">Portafolio</span>
-  <h1>32 negocios digitales, en más de una docena de verticales.</h1>
+  <h1>{len(projects)} negocios digitales, en más de una docena de verticales.</h1>
   <p class="lede">Lo que construimos, operamos e invertimos. Filtra por estado para ver lo que ya está en línea, en desarrollo o por lanzar.</p>
 </div></section>
 <section class="sec"><div class="wrap">
@@ -827,7 +833,7 @@ def build_portfolio_hub(projects):
 }})();
 </script>
 """
-    return base("Portafolio — iBisne", "32 negocios digitales que iBisne ha construido, operado e invertido.", body, active="portafolio", canonical="/portafolio/")
+    return base("Portafolio — iBisne", f"{len(projects)} negocios digitales que iBisne ha construido, operado e invertido.", body, active="portafolio", canonical="/portafolio/")
 
 
 def build_project(p, projects):
