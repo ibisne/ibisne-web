@@ -350,3 +350,29 @@ section { position:relative; }
   .mob.open{ display:block; border-top:1px solid var(--hair); padding:1rem var(--gutter) 1.4rem; }
   .mob a{ display:block; padding:.7rem 0; color:var(--muted); border-bottom:1px solid var(--hair); }
 }
+
+/* ---- v5: fixes ajustes ---- */
+/* Botones en grupos .cta fuera del hero (paginas de proyecto, 404, servicios) */
+.cta { display:flex; flex-wrap:wrap; align-items:center; gap:.9rem; }
+
+/* Iconos de marca rellenos (Apple/Android/Windows) */
+svg.ic-fill { fill:currentColor; stroke:none; }
+
+/* Banda de mockup / descanso visual en pagina de proyecto */
+.proj-mockup { margin-top:var(--sp-7); border:1px solid var(--line); border-radius:var(--r-xl); overflow:hidden; background:var(--surface-2); box-shadow:var(--e3); }
+.proj-mockup img { display:block; width:100%; height:auto; }
+.proj-mockup .cap { padding:.7rem 1rem; font-size:.8rem; color:var(--faint); border-top:1px solid var(--hair); background:var(--surface); }
+
+/* Modal PWA (instalar app) */
+.pwa-modal { position:fixed; inset:0; z-index:600; display:none; align-items:center; justify-content:center; padding:1.25rem; background:rgba(8,10,14,.62); backdrop-filter:blur(6px); }
+.pwa-modal.open { display:flex; }
+.pwa-modal .card { position:relative; width:100%; max-width:26rem; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); box-shadow:var(--e3); padding:2rem 1.75rem 1.75rem; text-align:left; }
+.pwa-modal .badge-ico { width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; border-radius:var(--r-lg); background:var(--surface-2); border:1px solid var(--line); font-size:1.5rem; color:var(--ink); margin-bottom:1.1rem; }
+.pwa-modal h3 { font-family:var(--serif); font-weight:500; font-size:1.4rem; letter-spacing:-.02em; line-height:1.12; }
+.pwa-modal p { color:var(--muted); font-size:.95rem; line-height:1.6; margin-top:.7rem; }
+.pwa-modal ul { list-style:none; margin:1rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.4rem; }
+.pwa-modal ul li { font-size:.74rem; font-weight:600; letter-spacing:.02em; color:var(--link); border:1px solid var(--line); border-radius:var(--r-pill); padding:.28rem .7rem; }
+.pwa-modal .ios { margin-top:1.1rem; font-size:.88rem; color:var(--muted); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); padding:.8rem .9rem; display:none; }
+.pwa-modal .acts { margin-top:1.5rem; display:flex; flex-wrap:wrap; gap:.7rem; }
+.pwa-modal .x { position:absolute; top:.8rem; right:.8rem; width:2rem; height:2rem; display:flex; align-items:center; justify-content:center; border:0; background:transparent; color:var(--faint); font-size:1.4rem; line-height:1; cursor:pointer; border-radius:var(--r-sm); }
+.pwa-modal .x:hover { color:var(--ink); background:var(--surface-2); }

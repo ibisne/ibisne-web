@@ -52,6 +52,9 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+<symbol id="i-apple" viewBox="0 0 24 24"><path d="M17.05 12.04c-.03-2.6 2.12-3.84 2.22-3.9-1.21-1.78-3.1-2.02-3.77-2.05-1.6-.16-3.13.94-3.94.94-.82 0-1.72-.92-2.84-.9-1.46.02-2.81.85-3.56 2.16-1.52 2.63-.39 6.53 1.09 8.67.72 1.05 1.58 2.22 2.71 2.18 1.09-.04 1.5-.7 2.82-.7 1.31 0 1.68.7 2.83.68 1.17-.02 1.91-1.06 2.62-2.11.83-1.21 1.17-2.38 1.19-2.44-.03-.01-2.28-.87-2.3-3.46zM14.9 4.6c.6-.73 1.01-1.75.9-2.76-.87.03-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.22z"/></symbol>
+<symbol id="i-android" viewBox="0 0 24 24"><path d="M6 8.5v7.2a1 1 0 0 0 1 1h.9v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h3.6v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h.9a1 1 0 0 0 1-1V8.5H6zM3.6 8.5a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 3.6 8.5zm16.8 0a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 20.4 8.5zM15.5 3.4l1.1-1.1a.35.35 0 0 0-.5-.5l-1.24 1.25A5.6 5.6 0 0 0 12 2.4c-.86 0-1.68.2-2.4.55L8.36 1.7a.35.35 0 1 0-.5.5l1.1 1.1A4.7 4.7 0 0 0 6.3 7.5h11.4a4.7 4.7 0 0 0-2.2-4.1zM9.6 5.8a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44zm4.8 0a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44z"/></symbol>
+<symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.75 10.4 4.6v6.9H3zM11.35 4.45 21 3v8.5h-9.65zM3 12.5h7.4v6.9L3 18.25zM11.35 12.5H21V21l-9.65-1.45z"/></symbol>
 </svg>"""
 
 def ic(name):
@@ -83,7 +86,7 @@ def header(active=""):
         <button aria-pressed="true" data-lang="es">ES</button>
         <button aria-pressed="false" data-lang="en">EN</button>
       </div>
-      <button class="ubtn" id="pwaInstall" hidden>{ic('down')} Instalar app</button>
+      <button class="ubtn" id="pwaInstall" hidden><span id="pwaIco" class="pwaico">{ic('down')}</span><span>Instalar app</span></button>
     </div>
   </div></div>
   <header class="shead"><div class="wrap row">
@@ -125,6 +128,20 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
   <a href="https://www.facebook.com/ibisnecom" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">{ic('fb')}</a>
   <a href="https://www.instagram.com/ibisnemx" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">{ic('ig')}</a>
+</div>
+<div class="pwa-modal" id="pwaModal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+  <div class="card">
+    <button class="x" id="pwaClose" aria-label="Cerrar">&times;</button>
+    <div class="badge-ico" id="pwaModalIco">{ic('down')}</div>
+    <h3 id="pwaTitle">Instala iBisne en tu dispositivo</h3>
+    <p>Quédate cerca de lo que viene. Al instalar la app recibes primero nuestras novedades y no te pierdes nada de lo que estamos publicando y evaluando para participar.</p>
+    <ul><li>Nuevos proyectos</li><li>Convocatorias</li><li>Torneos</li><li>Lanzamientos</li><li>Novedades</li></ul>
+    <div class="ios" id="pwaIos">En iPhone o iPad: toca el botón <strong>Compartir</strong> y luego <strong>Añadir a pantalla de inicio</strong>.</div>
+    <div class="acts">
+      <button class="btn btn-primary" id="pwaGo">Instalar app {ic('down')}</button>
+      <button class="btn btn-secondary" id="pwaLater">Ahora no</button>
+    </div>
+  </div>
 </div>"""
 
 
@@ -145,9 +162,34 @@ SCRIPTS = """<script>
   setMode(root.getAttribute('data-mode')||'dark');
   document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
     if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
-  var deferred, pb=document.getElementById('pwaInstall');
-  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; if(pb) pb.hidden=false; });
-  if(pb) pb.addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred=null; pb.hidden=true; } });
+  // PWA: icono por plataforma + modal de invitacion
+  var deferred=null, pb=document.getElementById('pwaInstall'), modal=document.getElementById('pwaModal');
+  var ua=navigator.userAgent||'';
+  var isIOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var isAndroid=/android/i.test(ua), isWin=/windows/i.test(ua), isMac=/macintosh/i.test(ua)&&!isIOS;
+  var standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  var picoId=isIOS||isMac?'i-apple':(isAndroid?'i-android':(isWin?'i-windows':'i-down'));
+  function icoSvg(id){ return '<svg class="ic ic-fill"><use href="#'+id+'"/></svg>'; }
+  var pico=document.getElementById('pwaIco'); if(pico) pico.innerHTML=icoSvg(picoId);
+  var mico=document.getElementById('pwaModalIco'); if(mico) mico.innerHTML=icoSvg(picoId);
+  if(pb && !standalone) pb.hidden=false;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; if(pb&&!standalone) pb.hidden=false; });
+  function openModal(){ if(!modal) return;
+    var go=document.getElementById('pwaGo'), ios=document.getElementById('pwaIos');
+    if(deferred){ if(go)go.style.display=''; if(ios)ios.style.display='none'; }
+    else if(isIOS){ if(go)go.style.display='none'; if(ios){ios.style.display='block'; ios.innerHTML='En iPhone o iPad: toca <strong>Compartir</strong> y luego <strong>Anadir a pantalla de inicio</strong>.';} }
+    else { if(go)go.style.display='none'; if(ios){ios.style.display='block'; ios.innerHTML='Para instalarla, abre el menu de tu navegador (Chrome o Edge) y elige <strong>Instalar app</strong>.';} }
+    modal.classList.add('open');
+  }
+  function closeModal(){ if(modal) modal.classList.remove('open'); }
+  if(pb) pb.addEventListener('click',openModal);
+  var goB=document.getElementById('pwaGo');
+  if(goB) goB.addEventListener('click',function(){ if(deferred){ deferred.prompt(); if(deferred.userChoice) deferred.userChoice.then(function(){ deferred=null; if(pb) pb.hidden=true; closeModal(); }); } else { closeModal(); } });
+  var laterB=document.getElementById('pwaLater'); if(laterB) laterB.addEventListener('click',closeModal);
+  var closeB=document.getElementById('pwaClose'); if(closeB) closeB.addEventListener('click',closeModal);
+  if(modal) modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  window.addEventListener('appinstalled',function(){ if(pb) pb.hidden=true; closeModal(); });
   // Loader: SOLO enhancement visual. El ocultado lo garantiza el CSS (@keyframes ldout a 2.4s).
   try{
     var L=document.getElementById('loader');
@@ -196,7 +238,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=4">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=5">
 </head>
 <body>
 {LOADER}
@@ -315,9 +357,28 @@ VENTAJAS = [
 
 
 # ---------------------------------------------------------------- projects
+def order_projects(projs):
+    # Front: proyectos con imagen de descanso + link, luego Shopify + link,
+    # luego el resto con link, luego arte sin link, luego sin link. Hotel al final.
+    def key(p):
+        if p.get("slug") == "hotel-panamera":
+            return 9
+        has_url = bool(p.get("url", "").strip())
+        is_shop = "shopify" in (p.get("tipo", "") + " " + p.get("vertical", "")).lower()
+        if p.get("descanso") and has_url:
+            return 0
+        if is_shop and has_url:
+            return 1
+        if has_url:
+            return 2
+        if p.get("art"):
+            return 3
+        return 4
+    return sorted(projs, key=key)  # estable: conserva orden original dentro del mismo grupo
+
 def load_projects():
     data = json.loads(CV.read_text(encoding="utf-8"))
-    return data["proyectos"]
+    return order_projects(data["proyectos"])
 
 STACK_MAP = [
     ("shopify", ["Shopify", "Liquid", "Checkout", "Integraciones"]),
@@ -334,6 +395,8 @@ STACK_MAP = [
 ]
 
 def stack_for(p):
+    if p.get("stack"):
+        return p["stack"]
     t = (p.get("tipo", "") + " " + p.get("vertical", "")).lower()
     for key, st in STACK_MAP:
         if key in t:
@@ -350,10 +413,18 @@ ESTADO_VERBO = {
 }
 
 def reto_for(p):
+    if p.get("reto"):
+        return p["reto"]
     return f"Llevar {p['nombre']} a una plataforma digital que estuviera a la altura de la marca y lista para escalar, no un sitio de paso."
 
 def resultado_for(p):
+    if p.get("resultado"):
+        return p["resultado"]
     return ESTADO_VERBO.get(p["estado"], "Un producto sólido, listo para crecer.")
+
+# Rótulo del bloque central segun el rol (por defecto "Lo que construimos")
+def enfoque_lab(p):
+    return p.get("enfoque_lab", "Lo que construimos")
 
 
 ASSET = ROOT / "assets" / "portfolio"
@@ -725,6 +796,12 @@ def build_project(p, projects):
     hero = (f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
             if img.exists() else '<div class="proj-hero" style="display:flex;align-items:center;justify-content:center;color:var(--faint)">Próximamente</div>')
     stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
+    desc = p.get("descanso")
+    mockup = ""
+    if desc and (ASSET / f"{desc}.jpg").exists():
+        cap = p.get("descanso_cap", "Muestra visual del proyecto")
+        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{desc}.jpg" '
+                  f'alt="{p["nombre"]} · diseño" loading="lazy"><div class="cap">{cap}</div></div>')
     rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
     if len(rel) < 3:
         for x in projects:
@@ -746,10 +823,11 @@ def build_project(p, projects):
 <section class="sec" style="border-top:0;padding-top:1rem"><div class="wrap">{hero}
   <div class="rrr">
     <div class="blk"><div class="lab">El reto</div><h3>Lo que había que lograr</h3><p>{reto_for(p)}</p></div>
-    <div class="blk"><div class="lab">Lo que construimos</div><h3>Nuestro enfoque</h3><p>{p["resumen"]}</p></div>
+    <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h3>Nuestro enfoque</h3><p>{p["resumen"]}</p></div>
     <div class="blk"><div class="lab">El resultado</div><h3>Lo que entregamos</h3><p>{resultado_for(p)}</p></div>
   </div>
-  <div style="margin-top:var(--sp-7)"><span class="eyebrow" style="color:var(--link)">Stack tecnológico</span><div class="stack">{stack}</div></div>
+  {mockup}
+  <div style="margin-top:var(--sp-7)"><span class="eyebrow" style="color:var(--link)">{p.get("stack_lab","Stack tecnológico")}</span><div class="stack">{stack}</div></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
