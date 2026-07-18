@@ -1,0 +1,919 @@
+#!/usr/bin/env python3
+"""
+Generador estático del sitio iBisne (System D · Dossier oscuro).
+Ensambla HTML estático desde plantillas + data. Salida 100% estática (Vercel).
+
+Uso:  python build.py
+Salida: home-dossier.html + /servicios /portafolio /inversion /por-que-ibisne
+        /estudio /insights /contacto /legal (carpetas con index.html = URLs limpias).
+No toca index.html (mantenimiento live) hasta el switch final.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).parent
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+CV = ROOT.parent / "ibisne-cv" / "cv-data.json"
+
+# ---------------------------------------------------------------- sprite
+SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-arw" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+<symbol id="i-arwr" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m2 12.5 9.17 4.17a2 2 0 0 0 1.66 0L22 12.5"/><path d="m2 17.5 9.17 4.17a2 2 0 0 0 1.66 0L22 17.5"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol>
+<symbol id="i-cms" viewBox="0 0 24 24"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></symbol>
+<symbol id="i-contrast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-lang" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+<symbol id="i-blocks" viewBox="0 0 24 24"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></symbol>
+<symbol id="i-wa" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+<symbol id="i-fb" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
+<symbol id="i-ig" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+</svg>"""
+
+def ic(name):
+    return f'<svg class="ic"><use href="#i-{name}"/></svg>'
+
+# ---------------------------------------------------------------- nav / base
+NAV = [
+    ("Servicios", "/servicios/", "servicios"),
+    ("Inversión", "/inversion/", "inversion"),
+    ("Portafolio", "/portafolio/", "portafolio"),
+    ("Estudio", "/estudio/", "estudio"),
+    ("Insights", "/insights/", "insights"),
+]
+HOME = "/"
+
+
+TOPMSG = "Creamos, escalamos e invertimos en negocios digitales de alto impacto."
+
+def header(active=""):
+    links = "".join(
+        f'<a href="{u}"{" aria-current=\"page\"" if a==active else ""}>{n}</a>'
+        for n, u, a in NAV
+    )
+    mob = "".join(f'<a href="{u}">{n}</a>' for n, u, a in NAV)
+    return f"""<div class="topbar"><div class="wrap row">
+    <div class="msg"><span class="dot"></span>{TOPMSG}</div>
+    <div class="util">
+      <div class="lang" role="group" aria-label="Idioma">
+        <button aria-pressed="true" data-lang="es">ES</button>
+        <button aria-pressed="false" data-lang="en">EN</button>
+      </div>
+      <button class="ubtn" id="pwaInstall" hidden>{ic('down')} Instalar app</button>
+    </div>
+  </div></div>
+  <header class="shead"><div class="wrap row">
+    <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"></a>
+    <nav class="nav-lk">{links}</nav>
+    <div class="actions">
+      <button class="iconbtn" id="themeToggle" aria-label="Cambiar tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+      <a href="/contacto/" class="btn btn-primary">Hablemos</a>
+      <button class="hamb" aria-label="Menú" onclick="document.getElementById('mobnav').classList.toggle('open')">{ic('blocks')}</button>
+    </div>
+  </div>
+  <div class="mob" id="mobnav">{mob}<a href="/contacto/">Hablemos</a></div>
+  </header>"""
+
+
+FOOTER = f"""<footer class="foot"><div class="wrap">
+  <div class="cols">
+    <div>
+      <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne">
+      <p class="about">Venture builder. Creamos, escalamos e invertimos en negocios digitales de alto impacto desde Zapopan, Jalisco, con mira en toda Latinoamérica.</p>
+    </div>
+    <div><div class="gl">Firma</div><ul>
+      <li><a href="/servicios/">Servicios</a></li><li><a href="/inversion/">Inversión</a></li>
+      <li><a href="/portafolio/">Portafolio</a></li><li><a href="/por-que-ibisne/">Por qué iBisne</a></li></ul></div>
+    <div><div class="gl">Compañía</div><ul>
+      <li><a href="/estudio/">Estudio</a></li><li><a href="/insights/">Insights</a></li>
+      <li><a href="/contacto/">Contacto</a></li></ul></div>
+    <div><div class="gl">Contacto</div><ul>
+      <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
+      <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
+      <li><a href="/legal/privacidad/">Privacidad</a></li><li><a href="/legal/terminos/">Términos</a></li>
+      <li><a href="/legal/aviso-legal/">Aviso legal</a></li><li><a href="/legal/cookies/">Cookies</a></li></ul></div>
+  </div>
+  <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Del concepto al liderazgo de su categoría.</span></div>
+</div></footer>
+<div class="sdock" aria-label="Redes y contacto">
+  <a href="tel:+523337237525" aria-label="Llamar" title="Llamar">{ic('phone')}</a>
+  <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
+  <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
+  <a href="https://www.facebook.com/ibisnecom" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">{ic('fb')}</a>
+  <a href="https://www.instagram.com/ibisnemx" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">{ic('ig')}</a>
+</div>"""
+
+
+LOADER = """<div id="loader"><canvas id="lcv"></canvas><div class="lwrap">
+  <img class="llogo" src="/brand/iBisne_blanco.png" alt="iBisne">
+  <div class="bits" id="lbits">01001001 01000010</div>
+  <div class="qbar"><i></i></div>
+  <div class="qlabel">Cargando</div>
+</div></div>"""
+
+SCRIPTS = """<script>
+(function(){
+  var root=document.documentElement;
+  function setMode(m){ root.setAttribute('data-mode',m); try{localStorage.setItem('ib_mode',m);}catch(e){}
+    var b=document.getElementById('themeToggle'); if(b) b.innerHTML = m==='dark' ? '<svg class="ic"><use href="#i-moon"/></svg>' : '<svg class="ic"><use href="#i-sun"/></svg>'; }
+  var tb=document.getElementById('themeToggle');
+  if(tb) tb.addEventListener('click',function(){ setMode(root.getAttribute('data-mode')==='dark'?'light':'dark'); });
+  setMode(root.getAttribute('data-mode')||'dark');
+  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
+    if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
+  var deferred, pb=document.getElementById('pwaInstall');
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; if(pb) pb.hidden=false; });
+  if(pb) pb.addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred=null; pb.hidden=true; } });
+  // Loader: SOLO enhancement visual. El ocultado lo garantiza el CSS (@keyframes ldout a 2.4s).
+  try{
+    var L=document.getElementById('loader');
+    if(!L || root.classList.contains('ldskip')){ if(L&&L.parentNode) L.parentNode.removeChild(L); return; }
+    var bits=document.getElementById('lbits');
+    var bi=setInterval(function(){ if(!bits) return; var s=''; for(var i=0;i<24;i++){ s+=(Math.random()<.5?'0':'1'); if(i%8===7)s+=' '; } bits.textContent=s.trim(); },70);
+    var raf, cv=document.getElementById('lcv');
+    if(cv && cv.getContext){ var cx=cv.getContext('2d'), W,H,pts;
+      function rz(){ W=cv.width=cv.offsetWidth||window.innerWidth; H=cv.height=cv.offsetHeight||window.innerHeight; pts=[]; var n=Math.min(72,Math.floor(W*H/15000));
+        for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45}); }
+      rz(); window.addEventListener('resize',rz);
+      function draw(){ cx.clearRect(0,0,W,H);
+        for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy;
+          if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+          cx.fillStyle='rgba(200,203,212,.55)'; cx.fillRect(p.x,p.y,1.7,1.7);
+          for(var j=i+1;j<pts.length;j++){ var q=pts[j],dx=p.x-q.x,dy=p.y-q.y,d=dx*dx+dy*dy;
+            if(d<9500){ cx.strokeStyle='rgba(154,160,174,'+((1-d/9500)*.16).toFixed(3)+')'; cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(q.x,q.y); cx.stroke(); } } }
+        raf=requestAnimationFrame(draw); }
+      raf=requestAnimationFrame(draw);
+    }
+    function stop(){ clearInterval(bi); if(raf) cancelAnimationFrame(raf); if(L&&L.parentNode) L.parentNode.removeChild(L); }
+    L.addEventListener('animationend',function(ev){ if(ev.animationName==='ldout') stop(); });
+    setTimeout(stop, 4200); // respaldo si animationend no dispara
+  }catch(e){ var l=document.getElementById('loader'); if(l){ l.style.opacity='0'; l.style.visibility='hidden'; l.style.pointerEvents='none'; } }
+})();
+</script>"""
+
+
+def base(title, desc, body, active="", canonical="/"):
+    return f"""<!doctype html>
+<html lang="es" data-theme="d" data-mode="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta name="theme-color" content="#12151C">
+<link rel="canonical" href="https://www.ibisne.com{canonical}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
+<meta property="og:type" content="website"><meta property="og:image" content="/assets/og-default.png">
+<script>(function(){{var h=document.documentElement;try{{var s=location.search;if(s.indexOf('noloader')>-1){{h.className+=' ldskip';}}else if(s.indexOf('loader')>-1){{h.className+=' ldhold';}}else{{if(sessionStorage.getItem('ib_loaded')){{h.className+=' ldskip';}}sessionStorage.setItem('ib_loaded','1');}}var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}}catch(e){{}}}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=4">
+</head>
+<body>
+{LOADER}
+{SPRITE}
+{header(active)}
+{body}
+{FOOTER}
+{SCRIPTS}
+</body>
+</html>"""
+
+
+def crumb(*parts):
+    out = ['<a href="' + HOME + '">Inicio</a>']
+    for label, url in parts[:-1]:
+        out.append(f'<span class="sepp">/</span><a href="{url}">{label}</a>')
+    out.append(f'<span class="sepp">/</span><span>{parts[-1]}</span>')
+    return '<div class="crumb">' + "".join(out) + "</div>"
+
+
+def contacto_band():
+    return f"""<section class="sec"><div class="wrap"><div class="ctaband">
+      <div><span class="eyebrow" style="color:var(--link)">Contacto</span>
+        <h2 style="margin-top:.8rem;">¿Estás construyendo algo con potencial de liderar?</h2></div>
+      <a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a>
+    </div></div></section>"""
+
+
+ESTANDAR = [
+    ("cms", "CMS autoadministrable", "Edita textos, imágenes y contenido sin depender de nadie."),
+    ("contrast", "Dark / White", "Modo claro y oscuro, cuidados ambos al detalle."),
+    ("lang", "Multi-idioma", "Español e inglés listos desde el día uno."),
+    ("phone", "PWA instalable", "Se instala como app en iOS y Android sobre la misma base."),
+    ("gauge", "PageSpeed optimizado", "Las métricas de Google ajustadas para velocidad y SEO."),
+    ("chart", "Analytics + SEO", "Alta en analítica y metadatos, para medir y crecer."),
+]
+
+def estandar_grid():
+    its = "".join(f'<div class="it"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in ESTANDAR)
+    return f'<div class="std-grid">{its}</div>'
+
+
+# ---------------------------------------------------------------- data: servicios
+SERVICIOS = [
+    dict(slug="sitios-web", icon="monitor", nombre="Sitios y plataformas web",
+         tag="Presencia que convierte",
+         lede="Sitios corporativos, institucionales y plataformas a la medida, diseñados para posicionar y para escalar.",
+         resuelve="Marcas que necesitan una presencia digital seria: rápida, clara y lista para crecer con el negocio.",
+         stack=["Next.js", "React", "Tailwind", "CMS headless", "Vercel"]),
+    dict(slug="ecommerce", icon="cart", nombre="E-commerce",
+         tag="Tiendas que venden",
+         lede="Tiendas B2B y B2C que convierten, con catálogo, checkout y operación pensados para el volumen.",
+         resuelve="Negocios que venden en línea y necesitan una tienda que aguante crecer, no un template más.",
+         stack=["Shopify", "Checkout propio", "Pasarelas", "Integraciones", "SEO"]),
+    dict(slug="apps", icon="phone", nombre="Apps y PWA",
+         tag="Producto en la mano del usuario",
+         lede="Aplicaciones instalables multiplataforma sobre una base web sólida, sin duplicar esfuerzo.",
+         resuelve="Productos que necesitan estar en el bolsillo del usuario, en iOS y Android, sin doble desarrollo.",
+         stack=["PWA", "Service Workers", "React", "APIs", "Push"]),
+    dict(slug="crm", icon="users", nombre="CRM",
+         tag="Cada prospecto, bajo control",
+         lede="Gestión de leads y clientes, automatización de seguimiento y paneles de operación a la medida.",
+         resuelve="Equipos comerciales que pierden prospectos por falta de proceso y visibilidad.",
+         stack=["Next.js", "PostgreSQL", "Automatización", "Roles", "Dashboards"]),
+    dict(slug="erp", icon="db", nombre="ERP",
+         tag="El negocio completo, en un panel",
+         lede="Plataformas que operan el negocio de punta a punta: datos, roles, reportes y control operativo.",
+         resuelve="Operaciones que viven en hojas de cálculo y necesitan un sistema único de verdad.",
+         stack=["Next.js", "PostgreSQL", "Reportería", "Roles/permisos", "APIs"]),
+    dict(slug="saas", icon="cloud", nombre="SaaS",
+         tag="Producto que escala solo",
+         lede="Plataformas en la nube multi-tenant, con suscripción, métricas y arquitectura para crecer.",
+         resuelve="Founders que quieren convertir una solución en un producto recurrente y escalable.",
+         stack=["Next.js", "Multi-tenant", "Stripe", "PostgreSQL", "Observabilidad"]),
+    dict(slug="ia", icon="cpu", nombre="IA y agentes",
+         tag="Inteligencia con criterio",
+         lede="Integraciones de IA y agentes inteligentes que suman valor real a la operación, no ruido.",
+         resuelve="Negocios que quieren aplicar IA donde de verdad mueve la aguja, con criterio.",
+         stack=["Python", "APIs de modelos", "Agentes", "RAG", "Integraciones"]),
+    dict(slug="web3", icon="blocks", nombre="Web3 y Blockchain",
+         tag="La siguiente frontera",
+         lede="Aplicaciones descentralizadas, tokens y ecosistemas on-chain construidos con seriedad de ingeniería.",
+         resuelve="Proyectos que apuestan por blockchain y necesitan ejecución sólida, no promesas.",
+         stack=["Solidity", "Smart contracts", "Wallets", "dApps", "Indexers"]),
+]
+
+PROCESO = [
+    ("01", "Diagnóstico", "Entendemos el negocio, sus números y su potencial de escala."),
+    ("02", "Arquitectura", "Diseñamos el sistema completo: alcance, hoja de ruta y stack."),
+    ("03", "Construcción", "Ingeniería y diseño de punta a punta, con el estándar incluido."),
+    ("04", "Lanzamiento y escala", "Publicamos, medimos y optimizamos para que lidere su categoría."),
+]
+
+# ---------------------------------------------------------------- data: insights
+INSIGHTS = [
+    ("como-disenamos-para-escalar", "Cómo diseñamos para escalar desde el día uno", "Producto"),
+    ("el-estandar-que-todo-negocio-deberia-exigir", "El estándar que todo negocio digital debería exigir", "Estrategia"),
+    ("cuando-invertir-en-lugar-de-construir", "Cuándo conviene invertir en lugar de solo construir", "Inversión"),
+    ("de-la-idea-al-liderazgo", "De la idea al liderazgo: nuestra fundición digital", "Método"),
+    ("skin-in-the-game", "Skin in the game: por qué compartimos el riesgo", "Filosofía"),
+    ("el-filtro", "El filtro: cómo elegimos los proyectos que construimos", "Método"),
+    ("tecnologia-propia-vs-terceros", "Tecnología propia frente a depender de terceros", "Ingeniería"),
+    ("pwa-cms-dark-mode-incluidos", "PWA, CMS y dark mode: por qué van incluidos", "Producto"),
+    ("ia-y-web3-con-criterio", "IA y Web3 con criterio: cuándo suman y cuándo son ruido", "Tecnología"),
+    ("latinoamerica-mercado-digital", "Latinoamérica: el mercado digital que estamos construyendo", "Visión"),
+]
+
+VENTAJAS = [
+    ("shield", "Skin in the game", "Socios operativos: nuestro éxito se alinea con el tuyo, no con una factura."),
+    ("cpu", "Tecnología propia", "Somos dueños de la infraestructura, de punta a punta, sin cabos sueltos."),
+    ("trend", "Escalabilidad por diseño", "Construimos para crecer: arquitectura sólida desde el día uno."),
+    ("check", "El estándar incluido", "CMS, dark/white, idioma, PWA, PageSpeed y analytics: siempre."),
+    ("zap", "Velocidad de fábrica", "Del concepto al lanzamiento sin fricción, como una digital foundry."),
+    ("spark", "Selectividad premium", "Trabajamos con un número limitado de proyectos, elegidos por su potencial."),
+]
+
+
+# ---------------------------------------------------------------- projects
+def load_projects():
+    data = json.loads(CV.read_text(encoding="utf-8"))
+    return data["proyectos"]
+
+STACK_MAP = [
+    ("shopify", ["Shopify", "Liquid", "Checkout", "Integraciones"]),
+    ("checkout", ["Next.js", "Checkout propio", "Animaciones", "PWA"]),
+    ("erp", ["Next.js", "PostgreSQL", "Reportería", "Roles"]),
+    ("crm", ["Next.js", "PostgreSQL", "Automatización", "Dashboards"]),
+    ("saas", ["Next.js", "Multi-tenant", "PostgreSQL", "Stripe"]),
+    ("api", ["Python", "API REST", "Integraciones", "Datos"]),
+    ("blockchain", ["Solidity", "Smart contracts", "Wallets", "dApp"]),
+    ("cms", ["Next.js", "CMS headless", "React", "Vercel"]),
+    ("landing", ["Next.js", "React", "Tailwind", "SEO"]),
+    ("sitio", ["Next.js", "React", "CMS", "Vercel"]),
+    ("app", ["PWA", "React", "APIs", "Push"]),
+]
+
+def stack_for(p):
+    t = (p.get("tipo", "") + " " + p.get("vertical", "")).lower()
+    for key, st in STACK_MAP:
+        if key in t:
+            return st
+    return ["Next.js", "React", "Tailwind", "CMS", "Vercel"]
+
+ESTADO_VERBO = {
+    "LANZADO": "Hoy está en línea y operando.",
+    "MVP": "Hoy funciona como MVP, listo para validarse y crecer.",
+    "EN REVISIÓN": "Hoy está en revisión final antes de publicar.",
+    "EN DESARROLLO": "Hoy está en desarrollo activo.",
+    "PRÓXIMO LANZAMIENTO": "Hoy se prepara para su próximo lanzamiento.",
+    "EN RENOVACIÓN": "Hoy está en renovación.",
+}
+
+def reto_for(p):
+    return f"Llevar {p['nombre']} a una plataforma digital que estuviera a la altura de la marca y lista para escalar, no un sitio de paso."
+
+def resultado_for(p):
+    return ESTADO_VERBO.get(p["estado"], "Un producto sólido, listo para crecer.")
+
+
+ASSET = ROOT / "assets" / "portfolio"
+
+def pf_card(p, href_prefix="/portafolio/"):
+    img = ASSET / f"{p['slug']}.png"
+    if img.exists():
+        visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
+    else:
+        visual = '<div class="ph">Próximamente</div>'
+    return (f'<a class="pcard" href="{href_prefix}{p["slug"]}/">{visual}'
+            f'<div class="meta"><div class="top"><span class="vert">{p.get("vertical","")}</span>'
+            f'<span class="badge">{p["estado"].title()}</span></div><h3>{p["nombre"]}</h3></div></a>')
+
+
+# ---------------------------------------------------------------- HOME
+def build_home(projects):
+    feat = [x for x in projects if x["slug"] in
+            ("digitalife", "geneticas", "medical-mexicana", "batauro", "dci", "rancho-contento")]
+    cards = "".join(pf_card(p) for p in feat)
+    verbos = f"""<div class="verbos">
+      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas y sitios, apps y PWA, CRM, ERP, SaaS, IA y agentes, Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
+      <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer, el estándar incluido y performance medible. Construimos para durar y para liderar, no para salir del paso.</p></div>
+      <div class="verbo"><div class="ico">{ic('coins')}</div><h3>Invertimos</h3><p>Smart Capital: cuando vemos el potencial, co-construimos y financiamos. Nos sentamos del mismo lado de la mesa, con criterio de inversionista.</p></div>
+    </div>"""
+    ventajas = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
+    ins = "".join(
+        f'<a class="icard" href="/insights/{s}/"><div class="cover"><span>Insight</span></div>'
+        f'<div class="body"><div class="date">{cat}</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
+        for s, t, cat in INSIGHTS[:3])
+    body = f"""
+<section class="hero bg"><div class="wrap">
+  <span class="eyebrow">Venture builder · Latinoamérica</span>
+  <h1>Del concepto al liderazgo <span class="serif-it">de su categoría</span>.</h1>
+  <p class="lede">Creamos, escalamos e invertimos en negocios digitales de alto impacto. Elegimos un número limitado de proyectos cada año, los que están hechos para liderar su categoría, y nos volvemos socios de su crecimiento.</p>
+  <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/portafolio/" class="btn btn-secondary btn-lg">Ver portafolio</a></div>
+  <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">32<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
+    <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Invertimos</span></div></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Qué hacemos</span><h2>Creamos, escalamos e invertimos.</h2>
+  <p>Somos una fábrica de negocios digitales de alto impacto. Llevamos productos de punta a punta, y en los que vemos potencial, entramos como socios.</p></div>
+  {verbos}
+  <div style="margin-top:var(--sp-6)"><a href="/servicios/" class="btn btn-secondary">Ver todos los servicios {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Cada proyecto nace con lo esencial. Siempre incluido.</h2>
+  <p>Lo que debería ser el estándar, lo damos por hecho. Cada plataforma llega lista para durar, escalar y competir.</p></div>
+  {estandar_grid()}
+  <div class="std-note">{ic('arw')} Seis estándares, <span class="free">incluidos siempre</span>, porque un proyecto se hace para liderar.</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Portafolio</span><h2>Negocios que ya están en la cancha.</h2>
+  <p>Una muestra de lo que construimos y operamos. El portafolio completo suma 32 proyectos en más de una docena de verticales.</p></div>
+  <div class="pf-grid">{cards}</div>
+  <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los 32 proyectos {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre un proveedor y un socio.</h2>
+  <p>No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia y criterio de negocio.</p></div>
+  <div class="why-grid">{ventajas}</div>
+  <div style="margin-top:var(--sp-6)"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="vent">
+  <div class="head"><div><span class="eyebrow">Inversión · Smart Capital</span>
+  <h2 style="margin-top:1rem;">Cuando vemos el potencial, entramos con capital.</h2></div>
+  <p>No todo es servicio. En los proyectos con futuro claro, co-construimos y financiamos: los llevamos del concepto al lanzamiento como propios.</p></div>
+  <div class="vent-grid">
+    <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+    <div class="vcard"><div class="nm">iFutbol</div><div class="ty">SaaS deportivo · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+    <div class="vcard"><div class="nm">iPool</div><div class="ty">SaaS de albercas · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+  </div>
+  <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
+</div></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
+  <p>Ideas, aprendizajes y notas de los proyectos que construimos.</p></div>
+  <div class="ins-grid">{ins}</div>
+  <div style="margin-top:var(--sp-6)"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
+</div></section>
+
+{contacto_band()}
+"""
+    return base("iBisne — Del concepto al liderazgo de su categoría",
+                "iBisne es una fábrica de negocios digitales de alto impacto: creamos, escalamos e invertimos en los proyectos destinados a liderar su categoría.",
+                body, active="", canonical="/")
+
+
+# ---------------------------------------------------------------- SERVICIOS
+def build_servicios_hub(projects):
+    cards = "".join(
+        f'<a class="card" href="/servicios/{s["slug"]}/"><div class="ico">{ic(s["icon"])}</div>'
+        f'<h3>{s["nombre"]}</h3><p>{s["lede"]}</p><span class="more">Ver servicio {ic("arwr")}</span></a>'
+        for s in SERVICIOS)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Servicios")}
+  <span class="eyebrow">Servicios</span>
+  <h1>Todo lo que un negocio digital necesita, de punta a punta.</h1>
+  <p class="lede">Diseño, ingeniería, datos y estrategia bajo un mismo techo. Elegimos el alcance por el potencial del negocio, no por vender un paquete.</p>
+</div></section>
+<section class="sec"><div class="wrap"><div class="grid-3">{cards}</div></div></section>
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Incluido en todo lo que construimos.</h2></div>
+  {estandar_grid()}
+</div></section>
+{contacto_band()}
+"""
+    return base("Servicios — iBisne", "Sitios, e-commerce, apps, CRM, ERP, SaaS, IA y Web3 de punta a punta.", body, active="servicios", canonical="/servicios/")
+
+
+SERVICE_PROJECTS = {
+    "sitios-web": ["emergente", "hotel-panamera", "grupo-rmc", "dci"],
+    "ecommerce": ["batauro", "albercasopia", "medical-mexicana", "vg", "farmacia-hdz"],
+    "apps": ["ifutbol", "otomi", "breakit"],
+    "crm": ["ibroker", "rancho-contento", "gocer"],
+    "erp": ["gocer", "ibroker", "dci"],
+    "saas": ["ipool", "ifutbol", "eleva"],
+    "ia": ["sem", "semendomap", "ibroker"],
+    "web3": ["breakit", "otomi", "ifutbol"],
+}
+
+
+def build_servicio(s, projects):
+    by = {p["slug"]: p for p in projects}
+    mapped = [by[sl] for sl in SERVICE_PROJECTS.get(s["slug"], []) if sl in by]
+    steps = "".join(f'<div class="st"><div class="no">{n}</div><h3>{t}</h3><p>{d}</p></div>' for n, t, d in PROCESO)
+    stack = "".join(f'<span class="chip">{x}</span>' for x in s["stack"])
+    rel = "".join(pf_card(p) for p in mapped[:3]) or "".join(pf_card(p) for p in projects[:3])
+    # visual: primer proyecto mapeado con captura
+    vis_p = next((p for p in mapped if (ASSET / f"{p['slug']}.png").exists()), None)
+    if vis_p:
+        visual = (f'<a class="studio-photo" href="/portafolio/{vis_p["slug"]}/" style="display:block">'
+                  f'<img src="/assets/portfolio/{vis_p["slug"]}.png" alt="{vis_p["nombre"]}"></a>')
+    else:
+        visual = '<div class="ph-photo"><div class="lbl">Imagen del servicio</div><div class="sub">Próximamente.</div></div>'
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb(("Servicios", "/servicios/"), s["nombre"])}
+  <span class="eyebrow">{s["tag"]}</span>
+  <h1>{s["nombre"]}</h1>
+  <p class="lede">{s["lede"]}</p>
+  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="grid-2">
+  <div><span class="eyebrow" style="color:var(--link)">Qué resolvemos</span>
+    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{s["resuelve"]}</h2></div>
+  {visual}
+</div></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Cómo lo hacemos</span><h2>Un método, cuatro etapas.</h2></div>
+  <div class="steps">{steps}</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">El estándar incluido</span><h2>Nace listo para durar y escalar.</h2></div>
+  {estandar_grid()}
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Stack tecnológico</span><h2>Con qué lo construimos.</h2></div>
+  <div class="stack">{stack}</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
+  <div class="pf-grid">{rel}</div>
+</div></section>
+{contacto_band()}
+"""
+    return base(f"{s['nombre']} — iBisne", s["lede"], body, active="servicios", canonical=f"/servicios/{s['slug']}/")
+
+
+# ---------------------------------------------------------------- INVERSIÓN
+def build_inversion():
+    crit = [("trend", "Tracción", "Buscamos negocios con demanda real y clientes dispuestos a pagar."),
+            ("chart", "Márgenes", "Unidad económica sana: potencial de rentabilidad, no vanidad."),
+            ("layers", "Producto", "Madurez y diferenciación. Algo que merezca escalarse."),
+            ("zap", "Mentalidad", "Fundadores dispuestos a ejecutar y a jugar en grande.")]
+    cg = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in crit)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Inversión")}
+  <span class="eyebrow">Inversión · Smart Capital</span>
+  <h1>Cuando vemos el potencial, entramos con capital.</h1>
+  <p class="lede">No todo es servicio. En los proyectos con futuro claro, co-construimos y financiamos: los llevamos del concepto al lanzamiento como propios, con criterio de inversionista.</p>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Qué buscamos</span><h2>El potencial, antes que la promesa.</h2>
+  <p>Elegimos con criterio. Cada proyecto en el que invertimos pasa por una lectura honesta de su realidad y su potencial.</p></div>
+  <div class="why-grid">{cg}</div>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="vent">
+  <div class="head"><div><span class="eyebrow">Casos propios</span>
+  <h2 style="margin-top:1rem;">Proyectos que financiamos para desarrollar y lanzar.</h2></div>
+  <p>Skin in the game hecho tangible: negocios donde no solo construimos, también invertimos.</p></div>
+  <div class="vent-grid">
+    <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+    <div class="vcard"><div class="nm">iFutbol</div><div class="ty">SaaS deportivo · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+    <div class="vcard"><div class="nm">iPool</div><div class="ty">SaaS de albercas · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+  </div>
+</div></div></section>
+{contacto_band()}
+"""
+    return base("Inversión · Smart Capital — iBisne", "Co-construimos e invertimos en negocios digitales con potencial de liderar su categoría.", body, active="inversion", canonical="/inversion/")
+
+
+# ---------------------------------------------------------------- POR QUÉ
+def build_porque():
+    adv = "".join(
+        f'<div class="card"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>'
+        for i, t, d in VENTAJAS)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Por qué iBisne")}
+  <span class="eyebrow">Por qué iBisne</span>
+  <h1>La diferencia entre un proveedor y un socio.</h1>
+  <p class="lede">No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia, criterio de negocio y responsabilidad sobre lo que construimos.</p>
+</div></section>
+<section class="sec"><div class="wrap"><div class="grid-3">{adv}</div></div></section>
+{contacto_band()}
+"""
+    return base("Por qué iBisne", "Skin in the game, tecnología propia, escalabilidad por diseño y el estándar incluido.", body, active="", canonical="/por-que-ibisne/")
+
+
+# ---------------------------------------------------------------- ESTUDIO
+def build_estudio():
+    valores = [("Ejecución sobre teoría", "Concebimos, construimos y entregamos ecosistemas completos, no reportes de esfuerzo."),
+               ("Skin in the game", "Nuestro ingreso es consecuencia de la riqueza que ayudamos a generar."),
+               ("Selectividad", "Reservamos tiempo y tecnología para proyectos con potencial real de liderazgo."),
+               ("Honestidad operativa", "Decimos la verdad de los datos, con claridad y respeto."),
+               ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
+               ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
+    vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
+    equipo = [
+        ("Eddy", "Arquitecto de tecnologías", "eduardo@ibisne.com"),
+        ("Lizette", "Key Account Manager", "proyectos@ibisne.com"),
+        ("Axel", "QA", "qa@ibisne.com"),
+        ("Memo", "Analista financiero e inversionista", "guillemor@ibisne.com"),
+        ("Willy", "Representante de marca", "willy@ibisne.com"),
+    ]
+    team = "".join(
+        f'<div class="tcard"><div class="mono">{n[0]}</div>'
+        f'<div class="info"><div class="nm">{n}</div><div class="role">{r}</div>'
+        f'<a class="mail" href="mailto:{e}">{e}</a></div></div>'
+        for n, r, e in equipo)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Estudio")}
+  <span class="eyebrow">El estudio</span>
+  <h1>Un equipo obsesionado con lo que perdura.</h1>
+  <p class="lede">Diseñadores, ingenieros y operadores con más de 15 años construyendo en el ecosistema digital latinoamericano. Detrás de cada proyecto hay personas que asumen el resultado como propio.</p>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="grid-2">
+  <div><span class="eyebrow" style="color:var(--link)">Nuestra historia</span>
+  <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:400;margin-top:1rem;letter-spacing:-.02em;">De estudio a venture builder.</h2>
+  <p style="color:var(--muted);margin-top:1rem;">Empezamos diseñando y lanzando plataformas para terceros. Con los años entendimos que el reto no era técnico, sino de estrategia y ejecución. Evolucionamos: dejamos de entregar proyectos para empezar a construir negocios, y a invertir en los que tienen potencial de liderar.</p></div>
+  <div class="studio-photo"><img src="/assets/equipo.jpg" alt="Equipo iBisne en el estudio"></div>
+</div></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">El Código iBisne</span><h2>Los principios que nos guían.</h2></div>
+  <div class="grid-3">{vg}</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Equipo</span><h2>Las personas detrás de cada proyecto.</h2>
+  <p>Un equipo pequeño y senior. Cada quien responde por su parte del resultado.</p></div>
+  <div class="team-grid">{team}</div>
+</div></section>
+{contacto_band()}
+"""
+    return base("Estudio — iBisne", "Quiénes somos, nuestra historia y el Código iBisne.", body, active="estudio", canonical="/estudio/")
+
+
+# ---------------------------------------------------------------- INSIGHTS
+def build_insights_hub():
+    cards = "".join(
+        f'<a class="icard" href="/insights/{s}/"><div class="cover"><span>{cat}</span></div>'
+        f'<div class="body"><div class="date">Próximamente</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
+        for s, t, cat in INSIGHTS)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Insights")}
+  <span class="eyebrow">Insights</span>
+  <h1>Perspectivas desde la trinchera.</h1>
+  <p class="lede">Ideas, aprendizajes y notas sobre cómo construimos, escalamos e invertimos en negocios digitales de alto impacto.</p>
+</div></section>
+<section class="sec"><div class="wrap"><div class="ins-grid">{cards}</div></div></section>
+{contacto_band()}
+"""
+    return base("Insights — iBisne", "Perspectivas sobre construir, escalar e invertir en negocios digitales.", body, active="insights", canonical="/insights/")
+
+
+def build_insight(slug, title, cat):
+    body = f"""
+<section class="phero"><div class="wrap" style="max-width:44rem">
+  {crumb(("Insights", "/insights/"), cat)}
+  <span class="eyebrow">{cat}</span>
+  <h1 style="font-size:clamp(1.9rem,4vw,3rem)">{title}</h1>
+  <p class="lede">por el equipo iBisne</p>
+</div></section>
+<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">
+  <p><strong>Nota:</strong> este es el borrador inicial de un artículo del blog de iBisne. El contenido se ampliará; la estructura y el tono ya están listos.</p>
+  <p>En iBisne partimos de una idea simple: un negocio digital no se hace para un rato, se hace para liderar su categoría. Eso cambia cada decisión, desde la arquitectura hasta la manera de medir el éxito.</p>
+  <h2>Por qué importa</h2>
+  <p>La mayoría de los proyectos digitales no fracasan por falta de tecnología, sino por falta de estructura y ejecución. Aquí es donde entra nuestra forma de trabajar.</p>
+  <ul><li>Construimos pensando en la escala desde el día uno.</li><li>Incluimos el estándar que otros cobran aparte.</li><li>Cuando vemos potencial, invertimos y co-construimos.</li></ul>
+  <h2>Lo que sigue</h2>
+  <p>Iremos publicando aprendizajes concretos de los proyectos que construimos y operamos. Si estás construyendo algo con potencial de liderar, <a href="/contacto/">hablemos</a>.</p>
+</div></div></section>
+{contacto_band()}
+"""
+    return base(f"{title} — iBisne", f"{title}. Perspectiva de iBisne.", body, active="insights", canonical=f"/insights/{slug}/")
+
+
+# ---------------------------------------------------------------- PORTAFOLIO
+def build_portfolio_hub(projects):
+    estados = []
+    for p in projects:
+        if p["estado"] not in estados:
+            estados.append(p["estado"])
+    fbtns = '<button aria-pressed="true" data-f="all">Todos</button>' + "".join(
+        f'<button aria-pressed="false" data-f="{e}">{e.title()}</button>' for e in estados)
+    cards = "".join(
+        f'<div class="pf-item" data-estado="{p["estado"]}">{pf_card(p)}</div>' for p in projects)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Portafolio")}
+  <span class="eyebrow">Portafolio</span>
+  <h1>32 negocios digitales, en más de una docena de verticales.</h1>
+  <p class="lede">Lo que construimos, operamos e invertimos. Filtra por estado para ver lo que ya está en línea, en desarrollo o por lanzar.</p>
+</div></section>
+<section class="sec"><div class="wrap">
+  <div class="filters" id="pf-filters">{fbtns}</div>
+  <div class="pf-grid" id="pf-grid">{cards}</div>
+</div></section>
+{contacto_band()}
+<script>
+(function(){{
+  var btns=document.querySelectorAll('#pf-filters button'), items=document.querySelectorAll('.pf-item');
+  btns.forEach(function(b){{ b.addEventListener('click',function(){{
+    btns.forEach(function(x){{x.setAttribute('aria-pressed','false');}}); b.setAttribute('aria-pressed','true');
+    var f=b.getAttribute('data-f');
+    items.forEach(function(it){{ it.style.display=(f==='all'||it.getAttribute('data-estado')===f)?'':'none'; }});
+  }});}});
+}})();
+</script>
+"""
+    return base("Portafolio — iBisne", "32 negocios digitales que iBisne ha construido, operado e invertido.", body, active="portafolio", canonical="/portafolio/")
+
+
+def build_project(p, projects):
+    tags = f'<span class="chip">{p["tipo"]}</span><span class="chip">{p.get("vertical","")}</span><span class="badge">{p["estado"].title()}</span>'
+    url = p.get("url", "").strip()
+    live = f'<a href="{url}" class="btn btn-secondary" target="_blank" rel="noopener">Ver en vivo {ic("arw")}</a>' if url else ""
+    img = ASSET / f"{p['slug']}.png"
+    hero = (f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
+            if img.exists() else '<div class="proj-hero" style="display:flex;align-items:center;justify-content:center;color:var(--faint)">Próximamente</div>')
+    stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
+    rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
+    if len(rel) < 3:
+        for x in projects:
+            if x["slug"] != p["slug"] and x not in rel:
+                rel.append(x)
+            if len(rel) == 3:
+                break
+    relc = "".join(pf_card(x) for x in rel[:3])
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb(("Portafolio", "/portafolio/"), p["nombre"])}
+  <span class="eyebrow">{p.get("vertical","")}</span>
+  <h1>{p["nombre"]}</h1>
+  <p class="lede">{p["resumen"]}</p>
+  <div class="proj-tags">{tags}</div>
+  <div class="cta" style="margin-top:1.6rem">{live}<a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec" style="border-top:0;padding-top:1rem"><div class="wrap">{hero}
+  <div class="rrr">
+    <div class="blk"><div class="lab">El reto</div><h3>Lo que había que lograr</h3><p>{reto_for(p)}</p></div>
+    <div class="blk"><div class="lab">Lo que construimos</div><h3>Nuestro enfoque</h3><p>{p["resumen"]}</p></div>
+    <div class="blk"><div class="lab">El resultado</div><h3>Lo que entregamos</h3><p>{resultado_for(p)}</p></div>
+  </div>
+  <div style="margin-top:var(--sp-7)"><span class="eyebrow" style="color:var(--link)">Stack tecnológico</span><div class="stack">{stack}</div></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
+  <div class="pf-grid">{relc}</div>
+</div></section>
+{contacto_band()}
+"""
+    return base(f"{p['nombre']} — Portafolio iBisne", p["resumen"][:150], body, active="portafolio", canonical=f"/portafolio/{p['slug']}/")
+
+
+# ---------------------------------------------------------------- CONTACTO
+def build_contacto():
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Contacto")}
+  <span class="eyebrow">Contacto</span>
+  <h1>Cuéntanos tu proyecto.</h1>
+  <p class="lede">Si estás construyendo algo con potencial de liderar su categoría, hablemos. Nos sentamos del mismo lado de la mesa.</p>
+</div></section>
+<section class="sec" style="border-top:0"><div class="wrap"><div class="apply">
+  <div><span class="eyebrow">Escríbenos</span>
+    <h2 style="margin-top:1rem;">Del concepto al liderazgo.</h2>
+    <p class="sub">Cuéntanos qué estás construyendo, en qué vertical y qué buscas escalar. Respondemos a los proyectos que encajan con lo que hacemos.</p>
+    <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Zapopan, Jalisco · México</p>
+  </div>
+  <form class="form" id="applyForm" novalidate>
+    <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name"></div>
+    <div class="field"><label for="empresa">Empresa / proyecto</label><input class="input" id="empresa" name="empresa"></div></div>
+    <div class="two"><div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email"></div>
+    <div class="field"><label for="telefono">Teléfono</label><input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel"></div></div>
+    <div class="field"><label for="mensaje">¿Qué estás construyendo?</label><textarea class="ta" id="mensaje" name="mensaje" placeholder="Vertical, tracción actual y qué buscas escalar."></textarea></div>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <button type="submit" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</button>
+    <div class="fine" id="formMsg">Respondemos a los proyectos que encajan con lo que construimos.</div>
+  </form>
+</div></div></section>
+<script>
+var f=document.getElementById('applyForm');
+f.addEventListener('submit',function(e){{e.preventDefault();var m=document.getElementById('formMsg');
+var d=Object.fromEntries(new FormData(f).entries());
+if(!d.email&&!d.telefono){{m.textContent='Déjanos al menos un email o teléfono.';m.style.color='#E5766B';return;}}
+if(d.website){{return;}} m.textContent='Enviando…';m.style.color='var(--muted)';
+fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(Object.assign({{}},d,{{vertical:'contacto',locale:'es-MX'}}))}})
+.then(function(r){{return r.json().catch(function(){{return{{}};}});}})
+.then(function(){{f.reset();m.textContent='Recibido. Te contactamos muy pronto.';m.style.color='var(--ok)';}})
+.catch(function(){{m.textContent='Escríbenos a proyectos@ibisne.com.';m.style.color='var(--muted)';}});}});
+</script>
+"""
+    return base("Contacto — iBisne", "Cuéntanos tu proyecto. Del concepto al liderazgo de su categoría.", body, active="", canonical="/contacto/")
+
+
+# ---------------------------------------------------------------- LEGAL
+def build_404():
+    body = """
+<section class="phero"><div class="wrap" style="max-width:44rem">
+  <span class="eyebrow">Error 404</span>
+  <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Esta página no existe.</h1>
+  <p class="lede" style="margin-top:1.2rem">El enlace que seguiste no lleva a ningún lugar, o la página cambió de sitio. Volvamos a terreno firme.</p>
+  <div class="cta" style="margin-top:2rem"><a class="btn btn-primary" href="/">Ir al inicio <svg class="ic"><use href="#i-arw"/></svg></a>
+  <a class="btn btn-secondary" href="/portafolio/">Ver portafolio</a></div>
+</div></section>
+"""
+    return base("Página no encontrada — iBisne", "La página que buscas no existe.", body, active="", canonical="/404")
+
+
+def build_legal(slug, title, prose):
+    body = f"""
+<section class="phero"><div class="wrap" style="max-width:44rem">
+  {crumb(("Legal", "/legal/privacidad/"), title)}
+  <span class="eyebrow">Legal</span><h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">{title}</h1>
+</div></section>
+<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">{prose}</div></div></section>
+"""
+    return base(f"{title} — iBisne", title, body, active="", canonical=f"/legal/{slug}/")
+
+
+AVISO_LEGAL = """<p><strong>Marco general, no constituye asesoría jurídica.</strong> iBisne S.A.P.I. de C.V. valida estos textos con su asesor legal.</p>
+<h2>Titular</h2><p>Este sitio es operado por iBisne S.A.P.I. de C.V., con domicilio en Zapopan, Jalisco, México. Contacto: proyectos@ibisne.com.</p>
+<h2>Objeto</h2><p>El sitio tiene fines informativos sobre los servicios y actividad de iBisne. La información puede actualizarse sin previo aviso.</p>
+<h2>Propiedad intelectual</h2><p>Las marcas, logotipos, textos, diseños y contenidos son propiedad de iBisne o de sus respectivos titulares y no pueden reproducirse sin autorización.</p>
+<h2>Responsabilidad</h2><p>iBisne procura que la información sea correcta y esté actualizada, sin garantizar la ausencia de errores. Los enlaces a terceros no implican responsabilidad sobre sus contenidos.</p>
+<h2>Legislación aplicable</h2><p>Este aviso se rige por la legislación mexicana aplicable.</p>"""
+
+COOKIES = """<p><strong>Marco general, no constituye asesoría jurídica.</strong></p>
+<h2>Qué son las cookies</h2><p>Las cookies son pequeños archivos que un sitio guarda en tu dispositivo para recordar información y mejorar la experiencia.</p>
+<h2>Cómo las usamos</h2><ul><li><strong>Esenciales:</strong> necesarias para el funcionamiento del sitio.</li><li><strong>Analíticas:</strong> nos ayudan a entender el uso del sitio de forma agregada.</li></ul>
+<h2>Tu control</h2><p>Puedes aceptar o rechazar las cookies no esenciales, y gestionarlas desde la configuración de tu navegador en cualquier momento.</p>
+<h2>Contacto</h2><p>Para dudas sobre esta política, escríbenos a proyectos@ibisne.com.</p>"""
+
+PRIVACIDAD = """<p><strong>Marco general, no constituye asesoría jurídica.</strong> iBisne valida estos textos con su asesor legal.</p>
+<h2>Responsable</h2><p>iBisne S.A.P.I. de C.V., con domicilio en Zapopan, Jalisco, México, es responsable del tratamiento y protección de los datos personales que recibe a través de este sitio, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Contacto: proyectos@ibisne.com.</p>
+<h2>Datos que recabamos</h2><p>Cuando nos escribes o completas el formulario de contacto: nombre, empresa, correo electrónico, teléfono o WhatsApp y el mensaje que nos envías. De forma automática, datos técnicos como dirección IP, navegador, sistema operativo y páginas visitadas, mediante cookies.</p>
+<h2>Finalidad</h2><p>Atender tus solicitudes de contacto y preparar propuestas, dar seguimiento comercial, mejorar el sitio y su contenido, y cumplir obligaciones legales. No vendemos ni transferimos tus datos a terceros con fines comerciales sin tu consentimiento expreso.</p>
+<h2>Derechos ARCO</h2><p>Puedes Acceder, Rectificar, Cancelar u Oponerte al tratamiento de tus datos. Para ejercerlos, escribe a proyectos@ibisne.com con asunto "Solicitud ARCO", tu nombre completo, un medio de contacto y una descripción de la solicitud.</p>
+<h2>Cookies</h2><p>El sitio usa cookies esenciales y analíticas. Consulta la <a href="/legal/cookies/">Política de cookies</a> para más detalle.</p>
+<h2>Cambios</h2><p>Este aviso puede actualizarse. La versión vigente es la publicada en este sitio.</p>"""
+
+TERMINOS = """<p><strong>Marco general, no constituye asesoría jurídica.</strong> iBisne valida estos textos con su asesor legal.</p>
+<h2>Aceptación</h2><p>El acceso y uso de este sitio implica la aceptación de estos términos. Si no estás de acuerdo, te pedimos no utilizarlo.</p>
+<h2>Sobre iBisne</h2><p>iBisne es un venture builder: creamos, escalamos e invertimos en negocios digitales. La información del sitio es de carácter informativo; el alcance, los tiempos y el precio de cada proyecto se definen en una propuesta firmable por separado.</p>
+<h2>Propuestas y precios</h2><p>Cualquier cifra o estimación compartida en el sitio o en conversaciones previas es indicativa. El alcance y precio finales se confirman en la propuesta. Los precios se expresan en pesos mexicanos (MXN) y el IVA se aplica adicional cuando así se indique.</p>
+<h2>Propiedad intelectual</h2><p>Las marcas, logotipos, textos, diseños y contenidos del sitio son propiedad de iBisne o de sus respectivos titulares y no pueden reproducirse sin autorización.</p>
+<h2>Enlaces y proyectos de terceros</h2><p>El sitio puede enlazar a proyectos y sitios de terceros. No somos responsables de sus contenidos ni de sus políticas.</p>
+<h2>Responsabilidad</h2><p>Procuramos que la información sea correcta y esté actualizada, sin garantizar la ausencia de errores. El uso del sitio es bajo tu propia responsabilidad.</p>
+<h2>Legislación aplicable</h2><p>Estos términos se rigen por la legislación mexicana aplicable.</p>"""
+
+
+# ---------------------------------------------------------------- write / main
+def write(path, html):
+    p = ROOT / path
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(html, encoding="utf-8")
+
+
+def strip_dashes(html):
+    # regla global: cero em/en dash. Reemplaza por coma o quita.
+    return html.replace(" — ", ", ").replace("—", ",").replace(" – ", ", ").replace("–", "-")
+
+
+def sitemap(urls):
+    items = "".join(f"<url><loc>https://www.ibisne.com{u}</loc></url>" for u in urls)
+    return f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{items}</urlset>'
+
+
+def main():
+    projects = load_projects()
+    urls = ["/"]
+    pages = {
+        "index.html": build_home(projects),
+        "404.html": build_404(),
+        "servicios/index.html": build_servicios_hub(projects),
+        "inversion/index.html": build_inversion(),
+        "por-que-ibisne/index.html": build_porque(),
+        "estudio/index.html": build_estudio(),
+        "insights/index.html": build_insights_hub(),
+        "portafolio/index.html": build_portfolio_hub(projects),
+        "contacto/index.html": build_contacto(),
+        "legal/privacidad/index.html": build_legal("privacidad", "Aviso de privacidad", PRIVACIDAD),
+        "legal/terminos/index.html": build_legal("terminos", "Términos y condiciones", TERMINOS),
+        "legal/aviso-legal/index.html": build_legal("aviso-legal", "Aviso legal", AVISO_LEGAL),
+        "legal/cookies/index.html": build_legal("cookies", "Política de cookies", COOKIES),
+    }
+    for s in SERVICIOS:
+        pages[f"servicios/{s['slug']}/index.html"] = build_servicio(s, projects)
+        urls.append(f"/servicios/{s['slug']}/")
+    for p in projects:
+        pages[f"portafolio/{p['slug']}/index.html"] = build_project(p, projects)
+        urls.append(f"/portafolio/{p['slug']}/")
+    for slug, title, cat in INSIGHTS:
+        pages[f"insights/{slug}/index.html"] = build_insight(slug, title, cat)
+        urls.append(f"/insights/{slug}/")
+    urls += ["/servicios/", "/inversion/", "/portafolio/", "/estudio/", "/insights/", "/contacto/", "/por-que-ibisne/",
+             "/legal/privacidad/", "/legal/terminos/", "/legal/aviso-legal/", "/legal/cookies/"]
+
+    n = 0
+    for path, html in pages.items():
+        write(path, strip_dashes(html))
+        n += 1
+    write("sitemap.xml", sitemap(sorted(set(urls))))
+    print(f"  OK: {n} páginas + sitemap.xml")
+    print(f"  Servicios: {len(SERVICIOS)} · Proyectos: {len(projects)} · Insights: {len(INSIGHTS)}")
+
+
+if __name__ == "__main__":
+    main()
+

@@ -30,5 +30,6 @@ node_modules/
 ~$*
 *.tmp
 
-# Claude Code worktrees (local-only, no commitear)
+# Claude Code (local-only, no commitear)
 .claude/worktrees/
+.claude/settings.local.json

@@ -1,54 +1,19 @@
 {
-  "name": "iBisne — Holding LATAM",
+  "name": "iBisne",
   "short_name": "iBisne",
-  "description": "Capital operativo. Mentalidad operadora. LATAM.",
+  "description": "Venture builder. Creamos, escalamos e invertimos en negocios digitales de alto impacto.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0D1117",
-  "theme_color": "#0D1117",
+  "background_color": "#12151C",
+  "theme_color": "#12151C",
   "orientation": "any",
   "lang": "es-MX",
   "dir": "ltr",
   "categories": ["business", "finance", "productivity"],
   "icons": [
-    {
-      "src": "/assets/pwa/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/assets/pwa/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/assets/pwa/apple-touch-icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Cotizador",
-      "short_name": "Cotizador",
-      "description": "Abrir el cotizador de iBisne",
-      "url": "/quiz.html",
-      "icons": [
-        { "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png" }
-      ]
-    },
-    {
-      "name": "Inicio",
-      "short_name": "Inicio",
-      "description": "Ir al inicio",
-      "url": "/",
-      "icons": [
-        { "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png" }
-      ]
-    }
+    { "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/pwa/apple-touch-icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }
   ]
 }
