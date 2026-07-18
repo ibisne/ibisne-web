@@ -10,7 +10,7 @@
   --accent:#EAEBEF; --accent-hover:#FFFFFF; --accent-text:#DDDFE4;
   --link:#C7CBD4; --accent-soft:#232834; --accent-line:#3A4150; --accent-ink:#191D27;
   --halo:rgba(255,255,255,.05); --ok:#5CBE88;
-  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --serif:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; /* fuente de TÍTULOS (minimal, sin itálica). El nombre var se conserva por compatibilidad. */
   --sans:"Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --fs-hero:clamp(2.6rem,6.4vw,5.25rem);
   --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem; --sp-5:1.5rem; --sp-6:2rem;
@@ -46,7 +46,7 @@ a { color:var(--link); text-decoration:none; transition:color var(--t-fast); }
 a:hover { color:var(--ink); }
 img { display:block; max-width:100%; }
 .wrap { max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
-.serif-it { font-family:var(--serif); font-style:italic; font-weight:400; }
+.serif-it { font-family:var(--serif); font-weight:600; color:var(--accent-text); }
 .eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); display:inline-block; }
 svg.ic { width:1em; height:1em; flex:none; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.13em; }
 
@@ -123,7 +123,7 @@ section { position:relative; }
 /* ---- hero (home) ---- */
 .hero { padding:clamp(3.5rem,8vw,7rem) 0 clamp(3rem,6vw,5rem); }
 .hero .eyebrow { color:var(--link); margin-bottom:1.6rem; }
-.hero h1 { font-size:var(--fs-hero); font-weight:400; letter-spacing:-.03em; line-height:1.02; max-width:16ch; }
+.hero h1 { font-size:var(--fs-hero); font-weight:600; letter-spacing:-.035em; line-height:1.0; max-width:16ch; }
 .hero .lede { margin-top:1.8rem; font-size:clamp(1.05rem,1.6vw,1.3rem); color:var(--muted); max-width:44rem; line-height:1.55; }
 .hero .cta { margin-top:2.6rem; display:flex; gap:.85rem; flex-wrap:wrap; }
 .hero .proof { margin-top:3rem; display:flex; flex-wrap:wrap; gap:1.4rem 2.2rem; align-items:center; padding-top:1.8rem; border-top:1px solid var(--hair); }
@@ -240,7 +240,7 @@ section { position:relative; }
 /* ---- proceso (pasos) ---- */
 .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--hair); border-radius:var(--r-lg); overflow:hidden; background:var(--hair); margin-top:var(--sp-6); }
 .steps .st { background:var(--surface); padding:1.6rem 1.5rem; }
-.steps .st .no { font-family:var(--serif); font-style:italic; color:var(--accent-text); font-size:1.2rem; }
+.steps .st .no { font-family:var(--serif); font-weight:600; color:var(--accent-text); font-size:1.2rem; }
 .steps .st h3 { font-family:var(--sans); font-size:1rem; font-weight:700; margin-top:.5rem; }
 .steps .st p { color:var(--faint); font-size:.85rem; margin-top:.35rem; line-height:1.45; }
 

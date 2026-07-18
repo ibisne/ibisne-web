@@ -120,7 +120,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
       <li><a href="/legal/privacidad/">Privacidad</a></li><li><a href="/legal/terminos/">Términos</a></li>
       <li><a href="/legal/aviso-legal/">Aviso legal</a></li><li><a href="/legal/cookies/">Cookies</a></li></ul></div>
   </div>
-  <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Del concepto al liderazgo de su categoría.</span></div>
+  <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
 <div class="sdock" aria-label="Redes y contacto">
   <a href="tel:+523337237525" aria-label="Llamar" title="Llamar">{ic('phone')}</a>
@@ -237,8 +237,8 @@ def base(title, desc, body, active="", canonical="/"):
 <script>(function(){{var h=document.documentElement;try{{var s=location.search;if(s.indexOf('noloader')>-1){{h.className+=' ldskip';}}else if(s.indexOf('loader')>-1){{h.className+=' ldhold';}}else{{if(sessionStorage.getItem('ib_loaded')){{h.className+=' ldskip';}}sessionStorage.setItem('ib_loaded','1');}}var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}}catch(e){{}}}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=6">
 </head>
 <body>
 {LOADER}
@@ -434,7 +434,7 @@ def pf_card(p, href_prefix="/portafolio/"):
     if img.exists():
         visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
     else:
-        visual = '<div class="ph">Próximamente</div>'
+        visual = f'<div class="ph">{p["estado"].title()}</div>'
     return (f'<a class="pcard" href="{href_prefix}{p["slug"]}/">{visual}'
             f'<div class="meta"><div class="top"><span class="vert">{p.get("vertical","")}</span>'
             f'<span class="badge">{p["estado"].title()}</span></div><h3>{p["nombre"]}</h3></div></a>')
@@ -458,8 +458,8 @@ def build_home(projects):
     body = f"""
 <section class="hero bg"><div class="wrap">
   <span class="eyebrow">Venture builder · Latinoamérica</span>
-  <h1>Del concepto al liderazgo <span class="serif-it">de su categoría</span>.</h1>
-  <p class="lede">Creamos, escalamos e invertimos en negocios digitales de alto impacto. Elegimos un número limitado de proyectos cada año, los que están hechos para liderar su categoría, y nos volvemos socios de su crecimiento.</p>
+  <h1>Construimos imperios digitales.</h1>
+  <p class="lede">Creamos y escalamos productos digitales de alto impacto para un grupo selecto de marcas. En los proyectos con mayor potencial, además invertimos y nos volvemos socios de su crecimiento.</p>
   <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/portafolio/" class="btn btn-secondary btn-lg">Ver portafolio</a></div>
   <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">32<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
     <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Invertimos</span></div></div>
@@ -514,8 +514,8 @@ def build_home(projects):
 
 {contacto_band()}
 """
-    return base("iBisne — Del concepto al liderazgo de su categoría",
-                "iBisne es una fábrica de negocios digitales de alto impacto: creamos, escalamos e invertimos en los proyectos destinados a liderar su categoría.",
+    return base("iBisne — Construimos imperios digitales",
+                "iBisne es un venture builder: creamos y escalamos productos digitales de alto impacto para marcas selectas, y en los de mayor potencial invertimos y nos volvemos socios.",
                 body, active="", canonical="/")
 
 
@@ -715,7 +715,7 @@ def build_estudio():
 def build_insights_hub():
     cards = "".join(
         f'<a class="icard" href="/insights/{s}/"><div class="cover"><span>{cat}</span></div>'
-        f'<div class="body"><div class="date">Próximamente</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
+        f'<div class="body"><div class="date">Perspectiva</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
         for s, t, cat in INSIGHTS)
     body = f"""
 <section class="phero"><div class="wrap">
@@ -731,6 +731,8 @@ def build_insights_hub():
 
 
 def build_insight(slug, title, cat):
+    # Contenido real por artículo en content/insights/<slug>.html (redactado, sin placeholders).
+    article = (ROOT / "content" / "insights" / f"{slug}.html").read_text(encoding="utf-8").strip()
     body = f"""
 <section class="phero"><div class="wrap" style="max-width:44rem">
   {crumb(("Insights", "/insights/"), cat)}
@@ -739,13 +741,7 @@ def build_insight(slug, title, cat):
   <p class="lede">por el equipo iBisne</p>
 </div></section>
 <section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">
-  <p><strong>Nota:</strong> este es el borrador inicial de un artículo del blog de iBisne. El contenido se ampliará; la estructura y el tono ya están listos.</p>
-  <p>En iBisne partimos de una idea simple: un negocio digital no se hace para un rato, se hace para liderar su categoría. Eso cambia cada decisión, desde la arquitectura hasta la manera de medir el éxito.</p>
-  <h2>Por qué importa</h2>
-  <p>La mayoría de los proyectos digitales no fracasan por falta de tecnología, sino por falta de estructura y ejecución. Aquí es donde entra nuestra forma de trabajar.</p>
-  <ul><li>Construimos pensando en la escala desde el día uno.</li><li>Incluimos el estándar que otros cobran aparte.</li><li>Cuando vemos potencial, invertimos y co-construimos.</li></ul>
-  <h2>Lo que sigue</h2>
-  <p>Iremos publicando aprendizajes concretos de los proyectos que construimos y operamos. Si estás construyendo algo con potencial de liderar, <a href="/contacto/">hablemos</a>.</p>
+{article}
 </div></div></section>
 {contacto_band()}
 """
@@ -794,7 +790,7 @@ def build_project(p, projects):
     live = f'<a href="{url}" class="btn btn-secondary" target="_blank" rel="noopener">Ver en vivo {ic("arw")}</a>' if url else ""
     img = ASSET / f"{p['slug']}.png"
     hero = (f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
-            if img.exists() else '<div class="proj-hero" style="display:flex;align-items:center;justify-content:center;color:var(--faint)">Próximamente</div>')
+            if img.exists() else f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem"><span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span><span style="font-family:var(--serif);font-size:1.5rem;color:var(--ink)">{p["estado"].title()}</span></div>')
     stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
     desc = p.get("descanso")
     mockup = ""
