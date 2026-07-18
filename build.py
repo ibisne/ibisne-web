@@ -504,7 +504,7 @@ def build_home(projects):
     </div>"""
     ventajas = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
     ins = "".join(
-        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg" alt="" loading="lazy"><span>{cat}</span></div>'
+        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
         f'<div class="body"><div class="date">{cat}</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
         for s, t, cat in INSIGHTS[:3])
     body = f"""
@@ -766,7 +766,7 @@ def build_estudio():
 # ---------------------------------------------------------------- INSIGHTS
 def build_insights_hub():
     cards = "".join(
-        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg" alt="" loading="lazy"><span>{cat}</span></div>'
+        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
         f'<div class="body"><div class="date">Perspectiva</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
         for s, t, cat in INSIGHTS)
     body = f"""
@@ -792,7 +792,7 @@ def build_insight(slug, title, cat):
   <h1 style="font-size:clamp(1.9rem,4vw,3rem)">{title}</h1>
   <p class="lede">por el equipo iBisne</p>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:1rem;padding-bottom:0"><div class="wrap" style="max-width:44rem"><div class="ins-hero"><img src="/assets/insights/{slug}.jpg" alt="{title}"></div></div></section>
+<section class="sec" style="border-top:0;padding-top:1rem;padding-bottom:0"><div class="wrap" style="max-width:44rem"><div class="ins-hero"><img src="/assets/insights/{slug}.jpg?2" alt="{title}"></div></div></section>
 <section class="sec" style="border-top:0;padding-top:2rem"><div class="wrap"><div class="prose">
 {article}
 </div></div></section>
