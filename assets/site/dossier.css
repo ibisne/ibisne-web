@@ -85,7 +85,24 @@ svg.ic { width:1em; height:1em; flex:none; stroke:currentColor; fill:none; strok
 .iconbtn { width:2.3rem; height:2.3rem; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--r-sm); background:transparent; color:var(--muted); cursor:pointer; font-size:1.05rem; transition:all var(--t-fast); }
 .iconbtn:hover { color:var(--ink); border-color:var(--accent-line); }
 .hamb { display:none; width:2.3rem; height:2.3rem; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--r-sm); background:transparent; color:var(--ink); font-size:1.05rem; }
-.mob { display:none; }
+/* ---- Menu movil: overlay unico con TODAS las acciones (sin scroll) ---- */
+.mmenu { position:fixed; inset:0; z-index:400; display:none; flex-direction:column; background:var(--bg); }
+.mmenu.open { display:flex; }
+.mmenu-top { flex:none; display:flex; align-items:center; justify-content:space-between; height:3.6rem; padding:0 1.15rem; border-bottom:1px solid var(--hair); }
+.mmenu-top .logo { height:1.4rem; width:auto; }
+.mmenu-links { flex:1 1 auto; min-height:0; overflow-y:auto; display:flex; flex-direction:column; justify-content:center; gap:.1rem; padding:1rem 1.15rem; }
+.mmenu-links a { display:block; font-family:var(--serif); font-weight:600; font-size:clamp(1.5rem,6.5vw,2.05rem); letter-spacing:-.02em; color:var(--ink); padding:clamp(.3rem,1.5vh,.7rem) 0; }
+.mmenu-links a[aria-current="page"] { color:var(--link); }
+.mmenu-foot { flex:none; display:flex; flex-direction:column; gap:.85rem; padding:1rem 1.15rem calc(1.1rem + env(safe-area-inset-bottom)); border-top:1px solid var(--hair); }
+.mmenu-cta { width:100%; justify-content:center; }
+.mmenu-tools { display:flex; align-items:center; gap:.55rem; }
+.mmenu-tools .theme-toggle, .mmenu-tools .lang { flex:none; }
+.mmenu-tools .mmenu-install { flex:1 1 auto; justify-content:center; height:2.3rem; }
+.mmenu-social { display:flex; align-items:center; gap:.5rem; }
+.mmenu-social a { flex:1 1 0; height:2.85rem; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--r-sm); color:var(--muted); font-size:1.15rem; transition:all var(--t-fast); }
+.mmenu-social a:hover { color:var(--ink); border-color:var(--accent-line); }
+.mmenu-social a.wa { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+body.menu-lock { overflow:hidden; }
 
 /* ---- loader cinematográfico ---- */
 #loader { position:fixed; inset:0; z-index:9999; background:#0B0D12; display:flex; align-items:center; justify-content:center; transition:opacity .7s ease, visibility .7s; animation:ldout .8s cubic-bezier(.22,.68,.24,1) 2.4s forwards; }
@@ -336,19 +353,30 @@ section { position:relative; }
   .topbar .row{ justify-content:flex-end; }
 }
 @media (max-width:640px){
-  #pwaInstall{ display:none !important; }
-}
-@media (max-width:640px){
-  .shead .row{ grid-template-columns:1fr auto; }
-  .actions .btn-primary{ display:none; }
+  /* Header movil = logo + hamburguesa. Todo lo demas vive en el menu overlay. */
+  .topbar{ display:none; }
+  .shead .row{ grid-template-columns:1fr auto; height:3.6rem; }
   .nav-lk{ display:none; }
+  .actions .btn-primary{ display:none; }
+  .actions .theme-toggle{ display:none; }
   .hamb{ display:flex; }
-  .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid{ grid-template-columns:1fr; }
+  .sdock{ display:none; }
+
+  /* Mobile-first: mas ancho util (gutter menor) + ritmo vertical compacto */
+  .wrap{ padding:0 1.15rem; }
+  .sec{ padding:2.4rem 0; }
+  .hero{ padding:2.6rem 0 2rem; }
+  .phero{ padding-top:1.7rem; padding-bottom:.4rem; }
+  .sec-h{ margin-bottom:1.4rem; }
+
+  /* 1 columna, gaps compactos */
+  .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid{ grid-template-columns:1fr; gap:1rem; }
   .form .two{ grid-template-columns:1fr; }
+  .hero .cta{ margin-top:1.8rem; }
+  .hero .proof{ margin-top:2rem; gap:1.1rem 1.6rem; }
   .hero .proof .tags{ margin-left:0; }
-  .foot .cols{ grid-template-columns:1fr; }
-  .mob.open{ display:block; border-top:1px solid var(--hair); padding:1rem var(--gutter) 1.4rem; }
-  .mob a{ display:block; padding:.7rem 0; color:var(--muted); border-bottom:1px solid var(--hair); }
+  .foot .cols{ grid-template-columns:1fr; gap:1.6rem; }
+  .foot{ padding-bottom:2rem; }
 }
 
 /* ---- v5: fixes ajustes ---- */
