@@ -270,11 +270,11 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
 <meta property="og:type" content="website"><meta property="og:image" content="/assets/og-default.png">
-<script>(function(){{var h=document.documentElement;try{{var s=location.search;if(s.indexOf('noloader')>-1){{h.className+=' ldskip';}}else if(s.indexOf('loader')>-1){{h.className+=' ldhold';}}else{{if(sessionStorage.getItem('ib_loaded')){{h.className+=' ldskip';}}sessionStorage.setItem('ib_loaded','1');}}var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}}catch(e){{}}}})();</script>
+<script>(function(){{var h=document.documentElement;try{{var s=location.search;if(s.indexOf('noloader')>-1){{h.className+=' ldskip';}}else if(s.indexOf('loader')>-1){{h.className+=' ldhold';}}var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}}catch(e){{}}}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=7">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=8">
 </head>
 <body>
 {LOADER}
@@ -393,23 +393,29 @@ VENTAJAS = [
 
 
 # ---------------------------------------------------------------- projects
+# Frente fijo del portafolio (mismo que el home): buque insignia + los de descanso con link.
+FRONT = ["ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife"]
+
 def order_projects(projs):
-    # Front: proyectos con imagen de descanso + link, luego Shopify + link,
-    # luego el resto con link, luego arte sin link, luego sin link. Hotel al final.
+    # FRONT explicito primero; luego descanso+link, Shopify+link, con link, arte,
+    # sin link, y Hotel Panamera al final. OJO: descanso SIN link no se prioriza.
     def key(p):
-        if p.get("slug") == "hotel-panamera":
-            return 9
+        s = p.get("slug")
+        if s in FRONT:
+            return (0, FRONT.index(s))
+        if s == "hotel-panamera":
+            return (9, 0)
         has_url = bool(p.get("url", "").strip())
         is_shop = "shopify" in (p.get("tipo", "") + " " + p.get("vertical", "")).lower()
         if p.get("descanso") and has_url:
-            return 0
+            return (1, 0)
         if is_shop and has_url:
-            return 1
+            return (2, 0)
         if has_url:
-            return 2
+            return (3, 0)
         if p.get("art"):
-            return 3
-        return 4
+            return (4, 0)
+        return (5, 0)
     return sorted(projs, key=key)  # estable: conserva orden original dentro del mismo grupo
 
 def load_projects():
@@ -466,9 +472,12 @@ def enfoque_lab(p):
 ASSET = ROOT / "assets" / "portfolio"
 
 def pf_card(p, href_prefix="/portafolio/"):
-    img = ASSET / f"{p['slug']}.png"
-    if img.exists():
-        visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
+    # Prioriza la imagen de descanso visual sobre la captura del sitio.
+    desc = p.get("descanso")
+    if desc and (ASSET / f"{desc}.jpg").exists():
+        visual = f'<div class="shot"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}" loading="lazy"></div>'
+    elif (ASSET / f"{p['slug']}.png").exists():
+        visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}" loading="lazy"></div>'
     else:
         visual = f'<div class="ph">{p["estado"].title()}</div>'
     return (f'<a class="pcard" href="{href_prefix}{p["slug"]}/">{visual}'
@@ -478,8 +487,9 @@ def pf_card(p, href_prefix="/portafolio/"):
 
 # ---------------------------------------------------------------- HOME
 def build_home(projects):
-    feat = [x for x in projects if x["slug"] in
-            ("digitalife", "geneticas", "medical-mexicana", "batauro", "dci", "rancho-contento")]
+    # Destacados del home, en orden exacto (5 con descanso visual + el buque insignia iBroker).
+    by = {x["slug"]: x for x in projects}
+    feat = [by[s] for s in ("ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife") if s in by]
     cards = "".join(pf_card(p) for p in feat)
     verbos = f"""<div class="verbos">
       <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas y sitios, apps y PWA, CRM, ERP, SaaS, IA y agentes, Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
@@ -825,15 +835,24 @@ def build_project(p, projects):
     url = p.get("url", "").strip()
     live = f'<a href="{url}" class="btn btn-secondary" target="_blank" rel="noopener">Ver en vivo {ic("arw")}</a>' if url else ""
     img = ASSET / f"{p['slug']}.png"
-    hero = (f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
-            if img.exists() else f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem"><span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span><span style="font-family:var(--serif);font-size:1.5rem;color:var(--ink)">{p["estado"].title()}</span></div>')
-    stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
     desc = p.get("descanso")
+    has_desc = bool(desc) and (ASSET / f"{desc}.jpg").exists()
+    has_shot = img.exists()
+    # Lidera el descanso visual; si no hay, la captura del sitio; si no, un estado branded.
+    if has_desc:
+        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}"></div>'
+    elif has_shot:
+        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
+    else:
+        hero = (f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem">'
+                f'<span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span>'
+                f'<span style="font-family:var(--serif);font-size:1.5rem;color:var(--ink)">{p["estado"].title()}</span></div>')
+    stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
+    # Banda secundaria: la captura del sitio en vivo (cuando ya lideramos con el descanso).
     mockup = ""
-    if desc and (ASSET / f"{desc}.jpg").exists():
-        cap = p.get("descanso_cap", "Muestra visual del proyecto")
-        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{desc}.jpg" '
-                  f'alt="{p["nombre"]} · diseño" loading="lazy"><div class="cap">{cap}</div></div>')
+    if has_desc and has_shot:
+        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{p["slug"]}.png" '
+                  f'alt="{p["nombre"]} · en vivo" loading="lazy"><div class="cap">El sitio en vivo</div></div>')
     rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
     if len(rel) < 3:
         for x in projects:
