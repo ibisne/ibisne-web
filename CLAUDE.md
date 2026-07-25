@@ -348,7 +348,7 @@ catalog → servicio → tipo → q (×6-9) → addons → confirm
 ## Workflow git/deploy
 
 - **Producción**: branch `main` de https://github.com/ibisne/ibisne-web · Vercel auto-deploya · URL https://www.ibisne.com.
-- **Trabajo**: branch `claude/<sufijo>` → PR a `main` → merge `--merge` → verificar deploy.
-- **Reglas duras**: NUNCA commitear sin autorización explícita ("dale", "adelante", "commit"). NUNCA `git add -A`/`.`. NUNCA push directo a `main`. NUNCA `--force` ni `--amend` salvo petición explícita.
+- **Trabajo**: commit + push directo a `main` (autorización permanente de Eduardo desde 2026-07-25 · "sube todo no me preguntes ya solo yo reviso"). Eduardo revisa después del push, no antes. Sigue disponible el flujo `claude/<sufijo>` → PR si un cambio amerita revisión previa.
+- **Reglas duras**: NUNCA `git add -A`/`.` (usar `git add -u` o archivos específicos). NUNCA `--force` ni `--amend` salvo petición explícita.
 - **Co-Authored-By trailer obligatorio**: `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`.
 - Estilo de commit: `tipo(scope): mensaje` · tipos: `feat`, `fix`, `docs`, `chore`, `copy`. Scope: `vX.Y.Z` o `pwa`/`mobile`/`result`/etc.
