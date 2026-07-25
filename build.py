@@ -176,6 +176,14 @@ LOADER = """<div id="loader"><canvas id="lcv"></canvas><div class="lwrap">
   <div class="qlabel">Cargando</div>
 </div></div>"""
 
+GTAG = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-XEW1TZEMNL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XEW1TZEMNL');
+</script>"""
+
 SCRIPTS = """<script>
 (function(){
   var root=document.documentElement;
@@ -273,6 +281,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site/dossier.css?v=10">
+{GTAG}
 </head>
 <body>
 {LOADER}
