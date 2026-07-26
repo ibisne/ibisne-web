@@ -6,15 +6,40 @@
 ## Posicionamiento (1 frase)
 iBisne es una **fábrica de negocios digitales de alto impacto**: **creamos, escalamos e invertimos** en los proyectos destinados a liderar su categoría.
 
+## ⛔ REGLA DE NEGOCIO INQUEBRANTABLE · la Homepage es un Tech Studio
+
+**La Homepage NO menciona "invertimos", "socios", "ponemos capital", "financiamos" ni
+"Smart Capital" en ningún párrafo narrativo. Cero.**
+
+Razón comercial, no estilística: hablar de inversión en la portada **espanta a los clientes
+corporativos** (solo quieren pagar por desarrollo) y **genera paranoia en los emprendedores**
+(creen que iBisne quiere quedarse con su idea). Se pierden los dos públicos a la vez.
+
+La Homepage vende **capacidad técnica**: SaaS, CRM, ERP, apps, metodologías ágiles, MVPs,
+viabilidad técnica y escalabilidad. Nada más.
+
+Las divisiones de inversión sobreviven en el home **solo como pills limpios sin explicación**:
+`Tech Studio` → `/servicios/` · `Smart Capital` → `/inversion/` · `Venture Builder` → `/portafolio/`.
+Los links del nav y del footer también están permitidos: son navegación, no narrativa.
+
+Corolarios que ya mordieron una vez:
+- El **topbar** y el **footer** son globales y aparecen EN la home: también deben estar limpios.
+- La sección de **insights destacados del home** filtra la categoría "Inversión" y el artículo
+  `skin-in-the-game`. Siguen publicados y visibles en `/insights/`.
+- Cuidado con **"socio"** en cualquier acepción: "la diferencia entre un proveedor y un socio"
+  también rompía la regla.
+- `/inversion/`, `/como-trabajamos/`, `/estudio/` y `/por-que-ibisne/` **sí** pueden hablar de
+  inversión. La regla aplica a la Homepage.
+
 ## Idea central (hero)
-- Eyebrow: `VENTURE BUILDER · LATINOAMÉRICA`
-- H1: **Convertimos ideas en imperios digitales.**
-- Sub: *Diseñamos, construimos y escalamos productos de software de alto impacto. En los proyectos destinados a liderar su categoría, además ponemos capital y nos volvemos socios.*
+- Eyebrow: `TECH STUDIO · LATINOAMÉRICA`
+- H1: **Construimos imperios digitales.**
+- Sub: *Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.*
 
 ## Narrativa · los 3 verbos
-1. **Creamos** — productos de software de punta a punta, agrupados en 3 dominios (ver abajo). Nunca enumerar los 8 tipos de sistema: eso reconstruye el catálogo de agencia.
-2. **Escalamos** — arquitectura pensada para crecer, el estándar incluido, performance medible.
-3. **Invertimos** — Smart Capital: cuando vemos el potencial, co-construimos y financiamos (iBroker · iFutbol · iPool).
+1. **Creamos** — productos digitales de punta a punta: e-commerce, plataformas, apps, CRM, ERP, SaaS, IA y Web3. Diseño, ingeniería y estrategia bajo un mismo techo.
+2. **Escalamos** — arquitectura pensada para crecer. Performance medible y seguridad de nivel empresarial.
+3. **Optimizamos** — auditorías de viabilidad, diseño de flujos y MVPs ágiles para mitigar riesgos antes de un lanzamiento a gran escala.
 
 ## Capacidades · 3 dominios (v21, sustituyen al catálogo de 8 servicios)
 1. **Producto y plataformas** (`/servicios/producto/`) — SaaS multi-tenant, CRM, ERP, apps y PWA.

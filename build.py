@@ -74,7 +74,7 @@ NAV = [
 HOME = "/"
 
 
-TOPMSG = "Creamos, escalamos e invertimos en negocios digitales de alto impacto."
+TOPMSG = "Arquitectos de software. Construimos productos digitales de alto impacto."
 
 def header(active=""):
     links = "".join(
@@ -132,7 +132,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   <div class="cols">
     <div>
       <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne">
-      <p class="about">Venture builder. Creamos, escalamos e invertimos en negocios digitales de alto impacto desde Zapopan, Jalisco, con mira en toda Latinoamérica.</p>
+      <p class="about">Tech Studio y arquitectos de software. Diseñamos, construimos y escalamos productos digitales de alto impacto desde Zapopan, Jalisco, con mira en toda Latinoamérica.</p>
     </div>
     <div><div class="gl">Qué hacemos</div><ul>
       <li><a href="/servicios/">Capacidades</a></li><li><a href="/como-trabajamos/">Cómo trabajamos</a></li>
@@ -417,7 +417,7 @@ INSIGHTS = [
 ]
 
 VENTAJAS = [
-    ("shield", "Skin in the game", "Socios operativos: nuestro éxito se alinea con el tuyo, no con una factura."),
+    ("shield", "Compromiso con el resultado", "Nos medimos por lo que tu plataforma logra en producción, no por la entrega de una factura."),
     ("cpu", "Tecnología propia", "Somos dueños de la infraestructura, de punta a punta, sin cabos sueltos."),
     ("trend", "Escalabilidad por diseño", "Construimos para crecer: arquitectura sólida desde el día uno."),
     ("check", "El estándar incluido", "CMS, dark/white, idioma, PWA, PageSpeed y analytics: siempre."),
@@ -532,9 +532,15 @@ def build_home(projects):
     feat = [by[s] for s in ("ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife") if s in by]
     cards = "".join(pf_card(p) for p in feat)
     verbos = f"""<div class="verbos">
-      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos de software de punta a punta: plataformas que operan negocios, comercio digital y sistemas de inteligencia artificial. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
-      <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer, el estándar incluido y performance medible. Construimos para durar y para liderar, no para salir del paso.</p></div>
-      <div class="verbo"><div class="ico">{ic('coins')}</div><h3>Invertimos</h3><p>Smart Capital: cuando vemos el potencial, co-construimos y financiamos. Nos sentamos del mismo lado de la mesa, con criterio de inversionista.</p></div>
+      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas, apps, CRM, ERP, SaaS, IA y Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
+      <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer. Performance medible y seguridad de nivel empresarial. Construimos para durar, no para salir del paso.</p></div>
+      <div class="verbo"><div class="ico">{ic('gauge')}</div><h3>Optimizamos</h3><p>Aterrizamos ideas complejas mediante auditorías de viabilidad, diseño de flujos de usuario y creación de MVPs ágiles para mitigar riesgos antes de un lanzamiento a gran escala.</p></div>
+    </div>"""
+    # Divisiones: pills limpios sin explicación (regla de negocio v23, ver MESSAGING.md).
+    pills = f"""<div class="cta" style="margin-top:var(--sp-6)">
+      <a href="/servicios/" class="btn btn-secondary">{ic('cpu')} Tech Studio</a>
+      <a href="/inversion/" class="btn btn-secondary">{ic('trend')} Smart Capital</a>
+      <a href="/portafolio/" class="btn btn-secondary">{ic('blocks')} Venture Builder</a>
     </div>"""
     ventajas = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
     doms = "".join(
@@ -543,23 +549,27 @@ def build_home(projects):
         for d in DOMINIOS)
     pledges = "".join(f'<div class="adv">{ic(i)}<h3>{corto}</h3><p>{sust}</p></div>'
                       for i, corto, _t, sust in COMPROMISOS)
+    # v23: el home no exhibe contenido de inversión (regla de negocio, ver MESSAGING.md).
+    # Los artículos de esa categoría siguen publicados y visibles en /insights/.
+    ins_home = [x for x in INSIGHTS if x[2] != "Inversión" and x[0] != "skin-in-the-game"][:3]
     ins = "".join(
         f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
         f'<div class="body"><div class="date">{cat}</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
-        for s, t, cat in INSIGHTS[:3])
+        for s, t, cat in ins_home)
     body = f"""
 <section class="hero bg"><div class="wrap">
-  <span class="eyebrow">Venture builder · Latinoamérica</span>
-  <h1>Convertimos ideas en imperios digitales.</h1>
-  <p class="lede">Diseñamos, construimos y escalamos productos de software de alto impacto. En los proyectos destinados a liderar su categoría, además ponemos capital y nos volvemos socios.</p>
+  <span class="eyebrow">Tech Studio · Latinoamérica</span>
+  <h1>Construimos imperios digitales.</h1>
+  <p class="lede">Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.</p>
   <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
   <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">{len(projects)}<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
-    <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Invertimos</span></div></div>
+    <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Optimizamos</span></div></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Qué hacemos</span><h2>Creamos, escalamos e invertimos.</h2>
-  <p>Somos una fábrica de negocios digitales de alto impacto. Llevamos productos de punta a punta, y en los que vemos potencial, entramos como socios.</p></div>
+  <div class="sec-h"><span class="eyebrow">Qué hacemos</span><h2>Tecnología y escalabilidad de punta a punta.</h2>
+  <p>Somos una fábrica de negocios digitales. Construimos la arquitectura de software de tu empresa con los más altos estándares tecnológicos de la industria.</p></div>
+  {pills}
   {verbos}
 </div></section>
 
@@ -572,7 +582,7 @@ def build_home(projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
-  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado antes de cualquier conversación de capital.</p></div>
+  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado desde el inicio.</p></div>
   <div class="why-grid">{pledges}</div>
   <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
@@ -592,22 +602,22 @@ def build_home(projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre un proveedor y un socio.</h2>
+  <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre contratar un proveedor y contratar arquitectos.</h2>
   <p>No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia y criterio de negocio.</p></div>
   <div class="why-grid">{ventajas}</div>
   <div style="margin-top:var(--sp-6)"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="vent">
-  <div class="head"><div><span class="eyebrow">Inversión · Smart Capital</span>
-  <h2 style="margin-top:1rem;">Cuando vemos el potencial, entramos con capital.</h2></div>
-  <p>No todo es servicio. En los proyectos con futuro claro, co-construimos y financiamos: los llevamos del concepto al lanzamiento como propios.</p></div>
+  <div class="head"><div><span class="eyebrow">Venture Builder</span>
+  <h2 style="margin-top:1rem;">Hemos construido imperios en su propio nicho.</h2></div>
+  <p>A través de nuestra división de Venture Builder identificamos y desarrollamos productos de alto impacto. Los diseñamos, los construimos y los operamos.</p></div>
   <div class="vent-grid">
-    <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
-    <div class="vcard"><div class="nm">iFutbol</div><div class="ty">SaaS deportivo · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
-    <div class="vcard"><div class="nm">iPool</div><div class="ty">SaaS de albercas · Próximo a lanzar</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
+    <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
+    <div class="vcard"><div class="nm">iFutbol</div><div class="ty">SaaS deportivo · Próximo a lanzar</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
+    <div class="vcard"><div class="nm">iPool</div><div class="ty">SaaS de albercas · Próximo a lanzar</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
   </div>
-  <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
+  <div style="margin-top:var(--sp-6)"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
 </div></div></section>
 
 <section class="sec"><div class="wrap">
@@ -619,8 +629,8 @@ def build_home(projects):
 
 {contacto_band()}
 """
-    return base("iBisne — Convertimos ideas en imperios digitales",
-                "iBisne es un venture builder: diseñamos, construimos y escalamos productos de software de alto impacto, y en los proyectos destinados a liderar ponemos capital y nos volvemos socios.",
+    return base("iBisne — Construimos imperios digitales",
+                "Tech Studio y arquitectos de software. Diseñamos, desarrollamos y escalamos productos digitales de alto impacto: SaaS, CRM, ERP, apps, IA y Web3.",
                 body, active="", canonical="/")
 
 

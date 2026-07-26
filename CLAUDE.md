@@ -51,6 +51,30 @@ legal/nda-mutuo.md    ← borrador de NDA (documento de trabajo, no se publica)
 - Datos: `DOMINIOS` (3), `PROTOCOLO` (5 fases), `COMPROMISOS` (4), `ESTANDAR`, `VENTAJAS`,
   `INSIGHTS`, `DOMAIN_PROJECTS`.
 
+## ⛔ Regla de negocio #1 · la Homepage es un Tech Studio
+
+**La Homepage no menciona "invertimos", "socios", "ponemos capital", "financiamos" ni
+"Smart Capital" en ningún párrafo narrativo.** Es una regla de negocio de Eduardo, no una
+preferencia de estilo: hablar de inversión en la portada espanta a los clientes corporativos
+(solo quieren pagar desarrollo) y genera paranoia en los emprendedores (creen que iBisne
+quiere su idea). Se pierden ambos públicos.
+
+Las divisiones aparecen en el home solo como **pills sin explicación** (`Tech Studio`,
+`Smart Capital`, `Venture Builder`) y como links de nav/footer. `/inversion/`,
+`/como-trabajamos/`, `/estudio/` y `/por-que-ibisne/` sí pueden hablar de inversión.
+
+Ojo con los efectos colaterales: `TOPMSG` y `FOOTER` son globales y salen en la home; los
+insights destacados del home filtran la categoría "Inversión"; y "socio" en cualquier
+acepción también rompe la regla. Detalle completo en `MESSAGING.md`.
+
+**Antes de dar por terminado cualquier cambio en el home, corre esta prueba:**
+
+```bash
+grep -oiE "invertimos|socios|ponemos capital|financiamos|financiado|skin in the game" index.html
+```
+
+Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del pill.
+
 ## Reglas duras
 
 1. **Nunca editar los `.html` generados a mano.** Se sobreescriben en el siguiente build.

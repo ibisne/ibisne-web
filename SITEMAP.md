@@ -7,18 +7,19 @@
 
 ---
 
-## 1. Inicio · `/` (home robusto → `home-dossier.html`)
-Resume todo el sitio.
+## 1. Inicio · `/` **(estrictamente un Tech Studio, ver la regla en `MESSAGING.md`)**
 1. Header + CTA **Hablemos**.
-2. **Hero** — "Del concepto al liderazgo de su categoría."
-3. **Creamos · Escalamos · Invertimos** — los 3 verbos.
-4. **El estándar iBisne** — highlights incluidos (breve).
-5. **Portafolio destacado** — proyectos fuertes → `/portafolio`.
-6. **Por qué iBisne** — diferenciadores (ventajas).
-7. **Inversión (Smart Capital)** — iBroker/iFutbol/iPool → `/inversion`.
-8. **Insights destacados** — 3 notas → `/insights` *(placeholder).*
-9. **Contacto** — "Cuéntanos tu proyecto".
-10. Footer + WhatsApp.
+2. **Hero** — "Construimos imperios digitales."
+3. **Qué hacemos** — 3 pills de división (Tech Studio · Smart Capital · Venture Builder) + los 3 verbos: Creamos · Escalamos · Optimizamos.
+4. **Qué construimos** — los 3 dominios de ingeniería → `/servicios`.
+5. **Protocolo iBisne** — las 4 reglas de operación → `/como-trabajamos`.
+6. **El estándar iBisne** — highlights incluidos.
+7. **Portafolio destacado** — proyectos fuertes → `/portafolio`.
+8. **Por qué iBisne** — diferenciadores (ventajas).
+9. **Venture Builder** — iBroker/iFutbol/iPool como producto propio ("Construido por iBisne"), sin mención de financiamiento → `/portafolio`.
+10. **Insights destacados** — 3 notas, filtrando la categoría "Inversión" → `/insights`.
+11. **Contacto** — "Cuéntanos tu proyecto".
+12. Footer + WhatsApp.
 
 ## 2. Capacidades · `/servicios`
 **3 dominios de ingeniería** (v21, sustituyen al catálogo plano de 8 servicios):
