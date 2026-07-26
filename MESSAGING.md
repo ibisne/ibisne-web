@@ -8,13 +8,38 @@ iBisne es una **fábrica de negocios digitales de alto impacto**: **creamos, esc
 
 ## Idea central (hero)
 - Eyebrow: `VENTURE BUILDER · LATINOAMÉRICA`
-- H1: **Del concepto al liderazgo de su categoría.**
-- Sub: *Creamos, escalamos e invertimos en negocios digitales de alto impacto. Reservamos nuestro tiempo para un número limitado de proyectos — los que están hechos para liderar.*
+- H1: **Convertimos ideas en imperios digitales.**
+- Sub: *Diseñamos, construimos y escalamos productos de software de alto impacto. En los proyectos destinados a liderar su categoría, además ponemos capital y nos volvemos socios.*
 
 ## Narrativa · los 3 verbos
-1. **Creamos** — productos digitales de punta a punta: e-commerce, plataformas y sitios, apps y PWA, CRM, ERP, SaaS, IA y agentes, Web3.
+1. **Creamos** — productos de software de punta a punta, agrupados en 3 dominios (ver abajo). Nunca enumerar los 8 tipos de sistema: eso reconstruye el catálogo de agencia.
 2. **Escalamos** — arquitectura pensada para crecer, el estándar incluido, performance medible.
 3. **Invertimos** — Smart Capital: cuando vemos el potencial, co-construimos y financiamos (iBroker · iFutbol · iPool).
+
+## Capacidades · 3 dominios (v21, sustituyen al catálogo de 8 servicios)
+1. **Producto y plataformas** (`/servicios/producto/`) — SaaS multi-tenant, CRM, ERP, apps y PWA.
+2. **Comercio digital** (`/servicios/comercio/`) — e-commerce, sitios, páginas de campaña, pagos.
+3. **IA y frontera** (`/servicios/frontera/`) — agentes, RAG, automatización, Web3 y contratos.
+
+> Regla: las webs y tiendas se nombran **dentro** de un dominio, nunca como gancho principal.
+
+## El Protocolo iBisne (`/como-trabajamos/`)
+Cinco fases: **01 Resguardo · 02 Sesión cero · 03 Lectura · 04 Sprint de Validación · 05 Dos puertas**.
+
+Existe para responder los dos miedos reales del fundador: que le roben la idea y que le
+inflen el precio para forzarlo a asociarse. Se responden con compromisos verificables, no con
+adjetivos:
+- NDA mutuo firmado **antes** de la primera llamada.
+- IP y código a nombre del cliente desde la primera línea (carve-out: frameworks previos de iBisne).
+- El diagnóstico se lo queda, contrate o no.
+- El precio se fija **antes** de hablar de sociedad, con vigencia de 60 días, y se sostiene.
+
+**Sprint de Validación: $25,000 MXN**, cobrado al inicio, acreditable íntegro. El precio se
+publica a propósito: es la señal anti-inflación. Aplica solo a productos de software; sitios y
+tiendas se cotizan directo.
+
+> **No prometer** no competencia por vertical hasta que Eduardo lo confirme con su abogado
+> (bloquearía a iBroker/iFutbol/iPool). Ver `legal/nda-mutuo.md`.
 
 ## Por qué iBisne (diferenciadores)
 - **Skin in the game** — socios operativos; nuestro retorno se alinea con el tuyo.
@@ -29,9 +54,14 @@ iBisne es una **fábrica de negocios digitales de alto impacto**: **creamos, esc
 Editorial · sereno · seguro · humano · **premium**. Siempre **afirmativo**. Frases claras, con aire. Bilingüe-ready (ES/EN).
 
 ## Léxico
-- **Usar:** negocios/productos digitales de alto impacto · escalar · de punta a punta · venture builder · co-construir · liderar su categoría · Smart Capital.
-- **Evitar:** "agencia" (ni para negarla) · "sitios web para un rato" · "cotizador/venta" · "postúlate" · "brutal/depredador/sin piedad".
+- **Usar:** negocios/productos digitales de alto impacto · escalar · de punta a punta · venture builder · co-construir · liderar su categoría · Smart Capital · dominio (no "servicio") · Protocolo · Sprint de Validación.
+- **Evitar:** "agencia" (ni para negarla) · "paquete" (ni para negarlo) · "sitios web para un rato" · "cotizador/venta" · "postúlate" · "brutal/depredador/sin piedad" · listas de 8 servicios.
+
+## Tratamiento
+**Tuteo**, siempre. ("Cuéntanos tu proyecto", "tu idea es tuya"). Nunca "usted".
 
 ## CTA
 - Botón (nav/hero): **"Hablemos"** — corto, ejecutivo, premium.
+- CTA secundario del hero: **"Cómo trabajamos"** → `/como-trabajamos/`.
+- Microcopy de cierre del Protocolo: **"Primero el NDA. Después la idea."**
 - Sección de contacto: **"Cuéntanos tu proyecto"** → `api/lead.js`.

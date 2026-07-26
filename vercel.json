@@ -67,6 +67,14 @@
       "source": "/webs",
       "destination": "/#pricing",
       "permanent": true
-    }
+    },
+    { "source": "/servicios/sitios-web", "destination": "/servicios/comercio/", "permanent": true },
+    { "source": "/servicios/ecommerce", "destination": "/servicios/comercio/", "permanent": true },
+    { "source": "/servicios/apps", "destination": "/servicios/producto/", "permanent": true },
+    { "source": "/servicios/crm", "destination": "/servicios/producto/", "permanent": true },
+    { "source": "/servicios/erp", "destination": "/servicios/producto/", "permanent": true },
+    { "source": "/servicios/saas", "destination": "/servicios/producto/", "permanent": true },
+    { "source": "/servicios/ia", "destination": "/servicios/frontera/", "permanent": true },
+    { "source": "/servicios/web3", "destination": "/servicios/frontera/", "permanent": true }
   ]
 }

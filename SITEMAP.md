@@ -3,7 +3,7 @@
 > Sistema de diseño: **UI kit Dossier · modo oscuro**. Voz: ver `MESSAGING.md` (positiva, premium, editorial tipo Index Ventures).
 > Iconografía: **Lucide inline, stroke 1.75** (la de las cotizaciones). Fotos de equipo/servicios: **placeholders** hasta que Eduardo las entregue.
 
-**Navegación (header):** Servicios · Inversión · Portafolio · Estudio · Insights · **[Hablemos]**
+**Navegación (header):** Capacidades · Cómo trabajamos · Portafolio · Inversión · Estudio · Insights · **[Hablemos]**
 
 ---
 
@@ -20,11 +20,21 @@ Resume todo el sitio.
 9. **Contacto** — "Cuéntanos tu proyecto".
 10. Footer + WhatsApp.
 
-## 2. Servicios / Qué hacemos · `/servicios`
-Capacidades de punta a punta, con enfoque de escalabilidad:
-- E-commerce · Sitios y plataformas web · Apps y PWA · CRM · ERP · SaaS · IA y agentes · Web3/Blockchain.
+## 2. Capacidades · `/servicios`
+**3 dominios de ingeniería** (v21, sustituyen al catálogo plano de 8 servicios):
+- `/servicios/producto` — SaaS multi-tenant · CRM · ERP · Apps y PWA.
+- `/servicios/comercio` — E-commerce · Sitios y plataformas · Páginas de campaña · Pagos.
+- `/servicios/frontera` — Agentes de IA · Datos y RAG · Web3 y contratos · Automatización.
 - **El estándar iBisne** (highlights) como refuerzo.
-- *(placeholder: imágenes/mockups de servicios.)*
+
+> Las 8 URLs viejas (`sitios-web`, `ecommerce`, `apps`, `crm`, `erp`, `saas`, `ia`, `web3`)
+> están redirigidas 301 a su dominio en `vercel.json`. No revivirlas.
+
+## 2b. Cómo trabajamos · `/como-trabajamos` **(pieza central de conversión)**
+El **Protocolo iBisne**: 5 fases (Resguardo · Sesión cero · Lectura · Sprint de Validación · Dos puertas),
+4 compromisos firmados, ancla de precio del Sprint ($25,000 MXN acreditable) y la bifurcación
+desarrollo/sociedad. Existe para responder los dos miedos del fundador: robo de idea e inflación
+de precio. Ver `MESSAGING.md` para el detalle de los compromisos publicables.
 
 ## 3. Inversión / Smart Capital · `/inversion`
 - Tesis: cuando vemos potencial, entramos con capital y co-construimos.

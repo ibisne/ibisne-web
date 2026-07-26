@@ -262,6 +262,31 @@ section { position:relative; }
 .steps .st h3 { font-family:var(--sans); font-size:1rem; font-weight:700; margin-top:.5rem; }
 .steps .st p { color:var(--faint); font-size:.85rem; margin-top:.35rem; line-height:1.45; }
 
+/* ---- protocolo: timeline vertical de fases ---- */
+.tl { margin-top:var(--sp-6); border-left:1px solid var(--line); padding-left:0; }
+.tl-item { display:grid; grid-template-columns:auto 1fr; gap:1.5rem; padding:0 0 var(--sp-7) 2rem; position:relative; }
+.tl-item:last-child { padding-bottom:0; }
+.tl-item::before { content:""; position:absolute; left:-4.5px; top:.55rem; width:8px; height:8px; border-radius:50%; background:var(--accent); }
+.tl-item .no { font-family:var(--serif); font-size:clamp(1.6rem,3vw,2.2rem); font-weight:500; color:var(--accent-text); letter-spacing:-.02em; line-height:1; min-width:2.2ch; }
+.tl-item .bd h3 { font-family:var(--serif); font-size:clamp(1.15rem,2.2vw,1.5rem); font-weight:500; letter-spacing:-.02em; }
+.tl-item .bd p { color:var(--muted); font-size:.98rem; margin-top:.5rem; line-height:1.6; max-width:60ch; }
+.tl-item .meta { margin-top:.9rem; display:inline-flex; align-items:center; font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--link); border:1px solid var(--line); border-radius:var(--r-pill); padding:.34rem .8rem; }
+
+/* ---- protocolo: compromisos firmados ---- */
+.pledges { margin-top:var(--sp-6); display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+.pledge { display:grid; grid-template-columns:auto 1fr; gap:1.1rem; align-items:start; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); padding:1.6rem; transition:border-color var(--t); }
+.pledge:hover { border-color:var(--accent-line); }
+.pledge .ico { font-size:1.35rem; color:var(--ink); line-height:1; }
+.pledge h3 { font-family:var(--sans); font-size:1.02rem; font-weight:700; letter-spacing:-.01em; line-height:1.35; }
+.pledge p { color:var(--faint); font-size:.88rem; margin-top:.5rem; line-height:1.55; }
+
+/* ---- protocolo: ancla de precio del sprint ---- */
+.price-anchor { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); background-image:radial-gradient(90% 140% at 0 0, var(--halo), transparent 55%); padding:clamp(2rem,4vw,3.2rem); display:grid; grid-template-columns:1.05fr 1fr; gap:clamp(1.6rem,3vw,3rem); align-items:start; }
+.price-anchor h2 { font-size:clamp(1.7rem,3.4vw,2.6rem); font-weight:400; letter-spacing:-.022em; margin-top:1rem; max-width:18ch; }
+.price-anchor .bd p { color:var(--muted); font-size:1.0125rem; line-height:1.65; }
+.price-anchor .bd p + p { margin-top:1rem; }
+.price-anchor .note { margin-top:1.5rem; display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--faint); border-top:1px solid var(--hair); padding-top:1.1rem; }
+
 /* ---- ficha de proyecto ---- */
 .proj-hero { aspect-ratio:16/9; border:1px solid var(--line); border-radius:var(--r-xl); overflow:hidden; background:var(--surface-2); box-shadow:var(--e3); }
 .proj-hero img { width:100%; height:100%; object-fit:cover; object-position:top center; }
@@ -351,6 +376,7 @@ section { position:relative; }
   .rrr{ grid-template-columns:1fr; }
   .vent-grid{ grid-template-columns:1fr; }
   .vent .head,.apply,.studio,.grid-2,.gallery{ grid-template-columns:1fr; }
+  .price-anchor{ grid-template-columns:1fr; }
   .foot .cols{ grid-template-columns:1fr 1fr; }
 }
 @media (max-width:760px){
@@ -375,7 +401,11 @@ section { position:relative; }
   .sec-h{ margin-bottom:1.4rem; }
 
   /* 1 columna, gaps compactos */
-  .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid{ grid-template-columns:1fr; gap:1rem; }
+  .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid,.pledges{ grid-template-columns:1fr; gap:1rem; }
+  /* Protocolo: el numero de fase pasa arriba del texto para ganar ancho util. */
+  .tl-item{ grid-template-columns:1fr; gap:.5rem; padding-left:1.35rem; padding-bottom:2rem; }
+  .tl-item .no{ font-size:1.4rem; }
+  .pledge{ padding:1.25rem 1.15rem; gap:.9rem; }
   /* El estándar: en desktop es rejilla con divisores (gap 1px + fondo hairline);
      en móvil ese fondo con gap grande dejaba bandas grises. Aquí cada highlight
      es una card con borde propio, sin bandas ni encimado. */

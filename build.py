@@ -64,9 +64,10 @@ def ic(name):
 
 # ---------------------------------------------------------------- nav / base
 NAV = [
-    ("Servicios", "/servicios/", "servicios"),
-    ("Inversión", "/inversion/", "inversion"),
+    ("Capacidades", "/servicios/", "servicios"),
+    ("Cómo trabajamos", "/como-trabajamos/", "como-trabajamos"),
     ("Portafolio", "/portafolio/", "portafolio"),
+    ("Inversión", "/inversion/", "inversion"),
     ("Estudio", "/estudio/", "estudio"),
     ("Insights", "/insights/", "insights"),
 ]
@@ -133,12 +134,12 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
       <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne">
       <p class="about">Venture builder. Creamos, escalamos e invertimos en negocios digitales de alto impacto desde Zapopan, Jalisco, con mira en toda Latinoamérica.</p>
     </div>
-    <div><div class="gl">Firma</div><ul>
-      <li><a href="/servicios/">Servicios</a></li><li><a href="/inversion/">Inversión</a></li>
-      <li><a href="/portafolio/">Portafolio</a></li><li><a href="/por-que-ibisne/">Por qué iBisne</a></li></ul></div>
-    <div><div class="gl">Compañía</div><ul>
-      <li><a href="/estudio/">Estudio</a></li><li><a href="/insights/">Insights</a></li>
-      <li><a href="/contacto/">Contacto</a></li></ul></div>
+    <div><div class="gl">Qué hacemos</div><ul>
+      <li><a href="/servicios/">Capacidades</a></li><li><a href="/como-trabajamos/">Cómo trabajamos</a></li>
+      <li><a href="/portafolio/">Portafolio</a></li><li><a href="/inversion/">Inversión</a></li></ul></div>
+    <div><div class="gl">La firma</div><ul>
+      <li><a href="/estudio/">Estudio</a></li><li><a href="/por-que-ibisne/">Por qué iBisne</a></li>
+      <li><a href="/insights/">Insights</a></li><li><a href="/contacto/">Contacto</a></li></ul></div>
     <div><div class="gl">Contacto</div><ul>
       <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
       <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
@@ -324,55 +325,78 @@ def estandar_grid():
     return f'<div class="std-grid">{its}</div>'
 
 
-# ---------------------------------------------------------------- data: servicios
-SERVICIOS = [
-    dict(slug="sitios-web", icon="monitor", nombre="Sitios y plataformas web",
-         tag="Presencia que convierte",
-         lede="Sitios corporativos, institucionales y plataformas a la medida, diseñados para posicionar y para escalar.",
-         resuelve="Marcas que necesitan una presencia digital seria: rápida, clara y lista para crecer con el negocio.",
-         stack=["Next.js", "React", "Tailwind", "CMS headless", "Vercel"]),
-    dict(slug="ecommerce", icon="cart", nombre="E-commerce",
-         tag="Tiendas que venden",
-         lede="Tiendas B2B y B2C que convierten, con catálogo, checkout y operación pensados para el volumen.",
-         resuelve="Negocios que venden en línea y necesitan una tienda que aguante crecer, no un template más.",
-         stack=["Shopify", "Checkout propio", "Pasarelas", "Integraciones", "SEO"]),
-    dict(slug="apps", icon="phone", nombre="Apps y PWA",
-         tag="Producto en la mano del usuario",
-         lede="Aplicaciones instalables multiplataforma sobre una base web sólida, sin duplicar esfuerzo.",
-         resuelve="Productos que necesitan estar en el bolsillo del usuario, en iOS y Android, sin doble desarrollo.",
-         stack=["PWA", "Service Workers", "React", "APIs", "Push"]),
-    dict(slug="crm", icon="users", nombre="CRM",
-         tag="Cada prospecto, bajo control",
-         lede="Gestión de leads y clientes, automatización de seguimiento y paneles de operación a la medida.",
-         resuelve="Equipos comerciales que pierden prospectos por falta de proceso y visibilidad.",
-         stack=["Next.js", "PostgreSQL", "Automatización", "Roles", "Dashboards"]),
-    dict(slug="erp", icon="db", nombre="ERP",
-         tag="El negocio completo, en un panel",
-         lede="Plataformas que operan el negocio de punta a punta: datos, roles, reportes y control operativo.",
-         resuelve="Operaciones que viven en hojas de cálculo y necesitan un sistema único de verdad.",
-         stack=["Next.js", "PostgreSQL", "Reportería", "Roles/permisos", "APIs"]),
-    dict(slug="saas", icon="cloud", nombre="SaaS",
-         tag="Producto que escala solo",
-         lede="Plataformas en la nube multi-tenant, con suscripción, métricas y arquitectura para crecer.",
-         resuelve="Founders que quieren convertir una solución en un producto recurrente y escalable.",
-         stack=["Next.js", "Multi-tenant", "Stripe", "PostgreSQL", "Observabilidad"]),
-    dict(slug="ia", icon="cpu", nombre="IA y agentes",
-         tag="Inteligencia con criterio",
-         lede="Integraciones de IA y agentes inteligentes que suman valor real a la operación, no ruido.",
-         resuelve="Negocios que quieren aplicar IA donde de verdad mueve la aguja, con criterio.",
-         stack=["Python", "APIs de modelos", "Agentes", "RAG", "Integraciones"]),
-    dict(slug="web3", icon="blocks", nombre="Web3 y Blockchain",
-         tag="La siguiente frontera",
-         lede="Aplicaciones descentralizadas, tokens y ecosistemas on-chain construidos con seriedad de ingeniería.",
-         resuelve="Proyectos que apuestan por blockchain y necesitan ejecución sólida, no promesas.",
-         stack=["Solidity", "Smart contracts", "Wallets", "dApps", "Indexers"]),
+# ---------------------------------------------------------------- data: dominios
+# Tres dominios de ingeniería. Sustituyen al catálogo plano de 8 servicios (v21).
+DOMINIOS = [
+    dict(slug="producto", icon="layers", nombre="Producto y plataformas",
+         tag="El software que opera el negocio",
+         lede="SaaS multi-tenant, CRM, ERP, apps y plataformas internas. Los sistemas que sostienen la operación y hacen posible el crecimiento.",
+         resuelve="Negocios cuyo techo lo pone su propia operación: hojas de cálculo, procesos manuales y datos que nunca cuadran.",
+         sistemas=[
+             ("cloud", "SaaS multi-tenant", "Producto en la nube con suscripción, métricas y arquitectura para servir a miles de cuentas."),
+             ("users", "CRM", "El pipeline comercial completo: seguimiento, automatización y visibilidad de cada oportunidad."),
+             ("db", "ERP", "Un sistema único de verdad para inventario, finanzas, roles y reportes."),
+             ("phone", "Apps y PWA", "Producto instalable en iOS y Android sobre una sola base, sin doble desarrollo."),
+         ],
+         stack=["Next.js", "PostgreSQL", "Multi-tenant", "Stripe", "Roles y permisos", "Observabilidad"]),
+    dict(slug="comercio", icon="cart", nombre="Comercio digital",
+         tag="Donde el negocio encuentra su mercado",
+         lede="Tiendas B2B y B2C, sitios institucionales y páginas de campaña. La superficie donde tu negocio se muestra, convence y cobra.",
+         resuelve="Marcas que necesitan vender en línea sobre una base que aguante el volumen y crezca con el catálogo.",
+         sistemas=[
+             ("cart", "E-commerce", "Catálogo, checkout y operación pensados para el volumen, no para la demo."),
+             ("monitor", "Sitios y plataformas", "Presencia institucional rápida y clara, lista para crecer con el negocio."),
+             ("zap", "Páginas de campaña", "Superficies de captura para lanzamientos, con analítica desde el primer clic."),
+             ("coins", "Pagos e integraciones", "Pasarelas, facturación y conexión con la operación que ya tienes."),
+         ],
+         stack=["Shopify", "Checkout propio", "Next.js", "CMS headless", "Pasarelas", "SEO"]),
+    dict(slug="frontera", icon="cpu", nombre="IA y frontera",
+         tag="Tecnología nueva, aplicada con criterio",
+         lede="Agentes, automatización con modelos de lenguaje y aplicaciones on-chain. Lo que apenas se está definiendo, construido con seriedad de ingeniería.",
+         resuelve="Equipos que quieren aplicar IA o blockchain donde de verdad mueve la aguja, y no donde solo suena bien.",
+         sistemas=[
+             ("spark", "Agentes de IA", "Sistemas que ejecutan trabajo real dentro de tu operación, con criterio y trazabilidad."),
+             ("chart", "Datos y RAG", "Modelos que responden sobre tu propia información, con las fuentes a la vista."),
+             ("blocks", "Web3 y contratos", "dApps, tokens y contratos inteligentes auditables, construidos como software serio."),
+             ("cms", "Automatización", "Procesos que dejan de consumir horas humanas y empiezan a correr solos."),
+         ],
+         stack=["Python", "APIs de modelos", "RAG", "Solidity", "Smart contracts", "Indexers"]),
 ]
 
-PROCESO = [
-    ("01", "Diagnóstico", "Entendemos el negocio, sus números y su potencial de escala."),
-    ("02", "Arquitectura", "Diseñamos el sistema completo: alcance, hoja de ruta y stack."),
-    ("03", "Construcción", "Ingeniería y diseño de punta a punta, con el estándar incluido."),
-    ("04", "Lanzamiento y escala", "Publicamos, medimos y optimizamos para que lidere su categoría."),
+# ---------------------------------------------------------------- data: el Protocolo
+# Las cinco fases del Protocolo iBisne. Viven en /como-trabajamos/ (v21).
+PROTOCOLO = [
+    ("01", "Resguardo",
+     "Firmamos un NDA mutuo antes de la primera llamada. No es trámite, es el orden correcto: tu idea queda protegida antes de que salga de tu boca.",
+     "Sin costo · 1 día"),
+    ("02", "Sesión cero",
+     "Noventa minutos sobre tu negocio: mercado, números, ambición y el problema real que quieres resolver. Escuchamos como inversionistas, no como proveedores.",
+     "Sin costo · 90 minutos"),
+    ("03", "Lectura",
+     "Analizamos tu proyecto como analizamos los nuestros: tesis, riesgos, unidad económica, arquitectura y alcance. Recibes el documento completo y es tuyo, contrates o no.",
+     "Sin costo · 5 a 10 días"),
+    ("04", "Sprint de Validación",
+     "Construimos una versión funcional del núcleo de tu producto. No una presentación: software que se usa. El código y la propiedad intelectual quedan a tu nombre desde la primera línea.",
+     "$25,000 MXN · se acredita íntegro · 2 a 4 semanas"),
+    ("05", "Dos puertas",
+     "Te mostramos lo construido y entregamos la cotización cerrada, con fecha y vigencia. Solo entonces, y solo si tu proyecto cumple nuestra tesis, hablamos de sociedad.",
+     "Tu decisión · 1 sesión"),
+]
+
+# (icono, título corto para el home, afirmación completa, sustento)
+COMPROMISOS = [
+    ("shield", "El NDA va primero",
+     "El NDA se firma antes de la primera llamada.",
+     "Mutuo y por escrito, con nombre y fecha de las dos partes. Hablamos después de firmar."),
+    ("cms", "La propiedad es tuya",
+     "Tu idea es tuya. El código también.",
+     "La titularidad de la propiedad intelectual y del desarrollo queda a tu nombre desde la primera línea. Conservamos únicamente nuestros frameworks y componentes previos, los que ya existían antes de conocerte."),
+    ("check", "El diagnóstico te lo quedas",
+     "El análisis es tuyo, contrates o no.",
+     "Al cerrar la fase de lectura recibes el documento completo: tesis, riesgos, arquitectura y alcance. Es tuyo, decidas lo que decidas."),
+    ("coins", "El precio se sostiene",
+     "El precio se fija antes de hablar de sociedad.",
+     "La cotización se entrega cerrada, con fecha y vigencia de 60 días. La conversación de inversión, si la hay, viene después. La misma cotización sigue en pie si prefieres contratarnos."),
 ]
 
 # ---------------------------------------------------------------- data: insights
@@ -505,11 +529,17 @@ def build_home(projects):
     feat = [by[s] for s in ("ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife") if s in by]
     cards = "".join(pf_card(p) for p in feat)
     verbos = f"""<div class="verbos">
-      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas y sitios, apps y PWA, CRM, ERP, SaaS, IA y agentes, Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
+      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos de software de punta a punta: plataformas que operan negocios, comercio digital y sistemas de inteligencia artificial. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
       <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer, el estándar incluido y performance medible. Construimos para durar y para liderar, no para salir del paso.</p></div>
       <div class="verbo"><div class="ico">{ic('coins')}</div><h3>Invertimos</h3><p>Smart Capital: cuando vemos el potencial, co-construimos y financiamos. Nos sentamos del mismo lado de la mesa, con criterio de inversionista.</p></div>
     </div>"""
     ventajas = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
+    doms = "".join(
+        f'<a class="card" href="/servicios/{d["slug"]}/"><div class="ico">{ic(d["icon"])}</div>'
+        f'<h3>{d["nombre"]}</h3><p>{d["lede"]}</p><span class="more">Ver el dominio {ic("arwr")}</span></a>'
+        for d in DOMINIOS)
+    pledges = "".join(f'<div class="adv">{ic(i)}<h3>{corto}</h3><p>{sust}</p></div>'
+                      for i, corto, _t, sust in COMPROMISOS)
     ins = "".join(
         f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
         f'<div class="body"><div class="date">{cat}</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
@@ -517,9 +547,9 @@ def build_home(projects):
     body = f"""
 <section class="hero bg"><div class="wrap">
   <span class="eyebrow">Venture builder · Latinoamérica</span>
-  <h1>Construimos imperios digitales.</h1>
-  <p class="lede">Creamos y escalamos productos digitales de alto impacto para un grupo selecto de marcas. En los proyectos con mayor potencial, además invertimos y nos volvemos socios de su crecimiento.</p>
-  <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/portafolio/" class="btn btn-secondary btn-lg">Ver portafolio</a></div>
+  <h1>Convertimos ideas en imperios digitales.</h1>
+  <p class="lede">Diseñamos, construimos y escalamos productos de software de alto impacto. En los proyectos destinados a liderar su categoría, además ponemos capital y nos volvemos socios.</p>
+  <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
   <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">{len(projects)}<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
     <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Invertimos</span></div></div>
 </div></section>
@@ -528,7 +558,20 @@ def build_home(projects):
   <div class="sec-h"><span class="eyebrow">Qué hacemos</span><h2>Creamos, escalamos e invertimos.</h2>
   <p>Somos una fábrica de negocios digitales de alto impacto. Llevamos productos de punta a punta, y en los que vemos potencial, entramos como socios.</p></div>
   {verbos}
-  <div style="margin-top:var(--sp-6)"><a href="/servicios/" class="btn btn-secondary">Ver todos los servicios {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Qué construimos</span><h2>Sistemas que operan un negocio, no piezas sueltas.</h2>
+  <p>Tres dominios de ingeniería. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p></div>
+  <div class="grid-3">{doms}</div>
+  <div style="margin-top:var(--sp-6)"><a href="/servicios/" class="btn btn-secondary">Ver capacidades {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Tu idea queda protegida antes de que nos la cuentes.</h2>
+  <p>NDA firmado antes de la primera llamada, propiedad intelectual a tu nombre, diagnóstico que te quedas y un precio que se fija antes de cualquier conversación de sociedad. Cinco fases, todo por escrito.</p></div>
+  <div class="why-grid">{pledges}</div>
+  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -573,77 +616,86 @@ def build_home(projects):
 
 {contacto_band()}
 """
-    return base("iBisne — Construimos imperios digitales",
-                "iBisne es un venture builder: creamos y escalamos productos digitales de alto impacto para marcas selectas, y en los de mayor potencial invertimos y nos volvemos socios.",
+    return base("iBisne — Convertimos ideas en imperios digitales",
+                "iBisne es un venture builder: diseñamos, construimos y escalamos productos de software de alto impacto, y en los proyectos destinados a liderar ponemos capital y nos volvemos socios.",
                 body, active="", canonical="/")
 
 
-# ---------------------------------------------------------------- SERVICIOS
+# ---------------------------------------------------------------- CAPACIDADES
 def build_servicios_hub(projects):
-    cards = "".join(
-        f'<a class="card" href="/servicios/{s["slug"]}/"><div class="ico">{ic(s["icon"])}</div>'
-        f'<h3>{s["nombre"]}</h3><p>{s["lede"]}</p><span class="more">Ver servicio {ic("arwr")}</span></a>'
-        for s in SERVICIOS)
+    bloques = ""
+    for d in DOMINIOS:
+        sis = "".join(f'<div class="it"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{p}</p></div>'
+                      for i, t, p in d["sistemas"])
+        bloques += f"""
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">{d["tag"]}</span><h2>{d["nombre"]}</h2><p>{d["lede"]}</p></div>
+  <div class="std-grid">{sis}</div>
+  <div style="margin-top:var(--sp-6)"><a href="/servicios/{d["slug"]}/" class="btn btn-secondary">Entrar a {d["nombre"]} {ic('arw')}</a></div>
+</div></section>"""
     body = f"""
 <section class="phero"><div class="wrap">
-  {crumb("Servicios")}
-  <span class="eyebrow">Servicios</span>
-  <h1>Todo lo que un negocio digital necesita, de punta a punta.</h1>
-  <p class="lede">Diseño, ingeniería, datos y estrategia bajo un mismo techo. Elegimos el alcance por el potencial del negocio, no por vender un paquete.</p>
+  {crumb("Capacidades")}
+  <span class="eyebrow">Capacidades</span>
+  <h1>Tres dominios de ingeniería, una sola casa.</h1>
+  <p class="lede">Diseño, ingeniería, datos y estrategia bajo un mismo techo. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="grid-3">{cards}</div></div></section>
+{bloques}
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Incluido en todo lo que construimos.</h2></div>
   {estandar_grid()}
 </div></section>
 {contacto_band()}
 """
-    return base("Servicios — iBisne", "Sitios, e-commerce, apps, CRM, ERP, SaaS, IA y Web3 de punta a punta.", body, active="servicios", canonical="/servicios/")
+    return base("Capacidades — iBisne",
+                "Producto y plataformas, comercio digital, IA y frontera. Tres dominios de ingeniería para construir y escalar negocios digitales.",
+                body, active="servicios", canonical="/servicios/")
 
 
-SERVICE_PROJECTS = {
-    "sitios-web": ["emergente", "hotel-panamera", "grupo-rmc", "dci"],
-    "ecommerce": ["batauro", "albercasopia", "medical-mexicana", "vg", "farmacia-hdz"],
-    "apps": ["ifutbol", "otomi", "breakit"],
-    "crm": ["ibroker", "rancho-contento", "gocer"],
-    "erp": ["gocer", "ibroker", "dci"],
-    "saas": ["ipool", "ifutbol", "eleva"],
-    "ia": ["sem", "semendomap", "ibroker"],
-    "web3": ["breakit", "otomi", "ifutbol"],
+DOMAIN_PROJECTS = {
+    "producto": ["ibroker", "ipool", "ifutbol", "gocer", "otomi", "eleva"],
+    "comercio": ["batauro", "medical-mexicana", "albercasopia", "vg", "farmacia-hdz", "hotel-panamera"],
+    "frontera": ["sem", "semendomap", "breakit", "otomi"],
 }
 
 
-def build_servicio(s, projects):
+def build_dominio(d, projects):
     by = {p["slug"]: p for p in projects}
-    mapped = [by[sl] for sl in SERVICE_PROJECTS.get(s["slug"], []) if sl in by]
-    steps = "".join(f'<div class="st"><div class="no">{n}</div><h3>{t}</h3><p>{d}</p></div>' for n, t, d in PROCESO)
-    stack = "".join(f'<span class="chip">{x}</span>' for x in s["stack"])
+    mapped = [by[sl] for sl in DOMAIN_PROJECTS.get(d["slug"], []) if sl in by]
+    sis = "".join(f'<div class="it"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{p}</p></div>'
+                  for i, t, p in d["sistemas"])
+    stack = "".join(f'<span class="chip">{x}</span>' for x in d["stack"])
     rel = "".join(pf_card(p) for p in mapped[:3]) or "".join(pf_card(p) for p in projects[:3])
-    # visual: primer proyecto mapeado con captura
     vis_p = next((p for p in mapped if (ASSET / f"{p['slug']}.png").exists()), None)
     if vis_p:
         visual = (f'<a class="studio-photo" href="/portafolio/{vis_p["slug"]}/" style="display:block">'
                   f'<img src="/assets/portfolio/{vis_p["slug"]}.png" alt="{vis_p["nombre"]}"></a>')
     else:
-        visual = '<div class="ph-photo"><div class="lbl">Imagen del servicio</div><div class="sub">Próximamente.</div></div>'
+        visual = '<div class="ph-photo"><div class="lbl">Imagen del dominio</div><div class="sub">Próximamente.</div></div>'
     body = f"""
 <section class="phero"><div class="wrap">
-  {crumb(("Servicios", "/servicios/"), s["nombre"])}
-  <span class="eyebrow">{s["tag"]}</span>
-  <h1>{s["nombre"]}</h1>
-  <p class="lede">{s["lede"]}</p>
-  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+  {crumb(("Capacidades", "/servicios/"), d["nombre"])}
+  <span class="eyebrow">{d["tag"]}</span>
+  <h1>{d["nombre"]}</h1>
+  <p class="lede">{d["lede"]}</p>
+  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary">Cómo trabajamos</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="grid-2">
   <div><span class="eyebrow" style="color:var(--link)">Qué resolvemos</span>
-    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{s["resuelve"]}</h2></div>
+    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{d["resuelve"]}</h2></div>
   {visual}
 </div></div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Cómo lo hacemos</span><h2>Un método, cuatro etapas.</h2></div>
-  <div class="steps">{steps}</div>
+  <div class="sec-h"><span class="eyebrow">Qué vive en este dominio</span><h2>Los sistemas que construimos aquí.</h2></div>
+  <div class="std-grid">{sis}</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Cómo empieza un proyecto.</h2>
+  <p>Con un NDA firmado antes de la primera llamada, un análisis que te quedas y un precio que se fija antes de cualquier conversación de sociedad.</p></div>
+  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cinco fases {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -657,12 +709,74 @@ def build_servicio(s, projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
+  <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos de este dominio.</h2></div>
   <div class="pf-grid">{rel}</div>
 </div></section>
 {contacto_band()}
 """
-    return base(f"{s['nombre']} — iBisne", s["lede"], body, active="servicios", canonical=f"/servicios/{s['slug']}/")
+    return base(f"{d['nombre']} — iBisne", d["lede"], body, active="servicios", canonical=f"/servicios/{d['slug']}/")
+
+
+# ---------------------------------------------------------------- CÓMO TRABAJAMOS
+def build_como_trabajamos():
+    fases = "".join(
+        f'<div class="tl-item"><div class="no">{n}</div><div class="bd">'
+        f'<h3>{t}</h3><p>{d}</p><div class="meta">{m}</div></div></div>'
+        for n, t, d, m in PROTOCOLO)
+    pledges = "".join(
+        f'<div class="pledge"><div class="ico">{ic(i)}</div><div><h3>{t}</h3><p>{sust}</p></div></div>'
+        for i, _c, t, sust in COMPROMISOS)
+    body = f"""
+<section class="phero"><div class="wrap">
+  {crumb("Cómo trabajamos")}
+  <span class="eyebrow">Protocolo iBisne</span>
+  <h1>Antes de que nos cuentes tu idea, ya está protegida.</h1>
+  <p class="lede">Cinco fases, reglas firmadas y un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
+  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Las cinco fases</span><h2>De la primera llamada al producto funcionando.</h2>
+  <p>Cada fase tiene un entregable, una duración y un costo definidos desde el inicio. Sin sorpresas a la mitad.</p></div>
+  <div class="tl">{fases}</div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Lo que firmamos</span><h2>Los acuerdos van por escrito, no por confianza.</h2>
+  <p>Cuatro compromisos que quedan en contrato antes de que empiece el trabajo.</p></div>
+  <div class="pledges">{pledges}</div>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="price-anchor">
+  <div class="head"><span class="eyebrow" style="color:var(--link)">Sprint de Validación</span>
+    <h2>$25,000 pesos por saber si vale la pena invertir dos millones.</h2></div>
+  <div class="bd">
+    <p>El Sprint de Validación es la fase donde construimos el núcleo funcional de tu producto. Tiene precio porque tiene valor: código real, titularidad tuya y algo que puedes enseñarle a un inversionista.</p>
+    <p>Se cobra al inicio y se acredita íntegro contra el desarrollo si decides continuar. El precio es el mismo para todos y está publicado aquí, que es la mejor garantía de que no lo calculamos según lo que parezcas poder pagar.</p>
+    <div class="note">{ic('spark')} Aplica a productos de software. Sitios, tiendas y presencia digital se cotizan directo, sin sprint.</div>
+  </div>
+</div></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">La bifurcación</span><h2>Dos puertas. Tú eliges.</h2>
+  <p>Con el producto en la mano y el precio ya fijo, hay dos formas de seguir.</p></div>
+  <div class="grid-2">
+    <div class="adv">{ic('layers')}<h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
+    <div class="adv">{ic('coins')}<h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
+  </div>
+  <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
+  <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap"><div class="ctaband">
+  <div><span class="eyebrow" style="color:var(--link)">Empezar</span>
+    <h2 style="margin-top:.8rem;">Primero el NDA. Después la idea.</h2></div>
+  <a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a>
+</div></div></section>
+"""
+    return base("Cómo trabajamos — iBisne",
+                "El Protocolo iBisne: NDA antes de la primera llamada, análisis que te quedas, Sprint de Validación con precio publicado y una cotización que se fija antes de hablar de sociedad.",
+                body, active="como-trabajamos", canonical="/como-trabajamos/")
 
 
 # ---------------------------------------------------------------- INVERSIÓN
@@ -1025,6 +1139,7 @@ def main():
         "index.html": build_home(projects),
         "404.html": build_404(),
         "servicios/index.html": build_servicios_hub(projects),
+        "como-trabajamos/index.html": build_como_trabajamos(),
         "inversion/index.html": build_inversion(),
         "por-que-ibisne/index.html": build_porque(),
         "estudio/index.html": build_estudio(),
@@ -1036,16 +1151,17 @@ def main():
         "legal/aviso-legal/index.html": build_legal("aviso-legal", "Aviso legal", AVISO_LEGAL),
         "legal/cookies/index.html": build_legal("cookies", "Política de cookies", COOKIES),
     }
-    for s in SERVICIOS:
-        pages[f"servicios/{s['slug']}/index.html"] = build_servicio(s, projects)
-        urls.append(f"/servicios/{s['slug']}/")
+    for d in DOMINIOS:
+        pages[f"servicios/{d['slug']}/index.html"] = build_dominio(d, projects)
+        urls.append(f"/servicios/{d['slug']}/")
     for p in projects:
         pages[f"portafolio/{p['slug']}/index.html"] = build_project(p, projects)
         urls.append(f"/portafolio/{p['slug']}/")
     for slug, title, cat in INSIGHTS:
         pages[f"insights/{slug}/index.html"] = build_insight(slug, title, cat)
         urls.append(f"/insights/{slug}/")
-    urls += ["/servicios/", "/inversion/", "/portafolio/", "/estudio/", "/insights/", "/contacto/", "/por-que-ibisne/",
+    urls += ["/servicios/", "/como-trabajamos/", "/inversion/", "/portafolio/", "/estudio/", "/insights/",
+             "/contacto/", "/por-que-ibisne/",
              "/legal/privacidad/", "/legal/terminos/", "/legal/aviso-legal/", "/legal/cookies/"]
 
     n = 0
@@ -1054,7 +1170,7 @@ def main():
         n += 1
     write("sitemap.xml", sitemap(sorted(set(urls))))
     print(f"  OK: {n} páginas + sitemap.xml")
-    print(f"  Servicios: {len(SERVICIOS)} · Proyectos: {len(projects)} · Insights: {len(INSIGHTS)}")
+    print(f"  Dominios: {len(DOMINIOS)} · Proyectos: {len(projects)} · Insights: {len(INSIGHTS)}")
 
 
 if __name__ == "__main__":
