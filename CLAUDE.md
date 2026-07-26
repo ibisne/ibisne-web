@@ -74,16 +74,34 @@ legal/nda-mutuo.md    ← borrador de NDA (documento de trabajo, no se publica)
 
 ## El Protocolo iBisne
 
-`/como-trabajamos/` es la pieza de conversión más importante del sitio. Existe para
-responder los dos miedos reales del fundador (que le roben la idea, que le inflen el precio
-para forzar una sociedad) con compromisos verificables, no con adjetivos.
+`/como-trabajamos/` es la pieza de conversión más importante del sitio. Cuatro fases
+(Sesión cero · Lectura · Sprint de Validación · Dos puertas) más cuatro reglas de operación.
+Existe para responder los dos miedos reales del fundador: que le roben la idea y que le
+inflen el precio para forzar una sociedad.
 
 **Sprint de Validación: $25,000 MXN**, cobrado al inicio, acreditable íntegro contra el
 desarrollo. El precio se publica a propósito: es la señal anti-inflación. Aplica solo a
 productos de software; sitios y tiendas se cotizan directo.
 
+### Dos reglas que NO se pueden romper (v22)
+
+Ambas nacieron de un error real que Eduardo corrigió. Si una sesión futura las reintroduce,
+es una regresión:
+
+1. **Nunca usar el NDA (ni contratos, firmas o abogados) como argumento de venta.** Genera
+   fricción y posiciona a iBisne como proveedor defensivo en lugar de autoridad técnica. El
+   acuerdo existe en `legal/nda-mutuo.md` pero se maneja en el **onboarding**, no en el sitio.
+2. **Nunca prometer propiedad sobre "ideas".** El art. 14 de la Ley Federal del Derecho de
+   Autor excluye expresamente "las ideas en sí mismas" de la protección. Lo protegible es el
+   activo tangible: código, software y plataforma, que es lo que sí se afirma. Usar "idea"
+   como punto de partida narrativo sí es válido (el H1 del home se queda); el error es
+   prometer **propiedad** sobre ella.
+
+La confianza se transmite por trayectoria, rigor operativo y propiedad del activo tangible.
+Ver `MESSAGING.md` para las 4 reglas publicables.
+
 ⚠️ **No prometer no competencia por vertical** hasta que Eduardo lo confirme con abogado:
-bloquearía a iBroker/iFutbol/iPool. Los 4 compromisos publicables están en `MESSAGING.md`.
+bloquearía a iBroker/iFutbol/iPool.
 
 ## Analytics
 

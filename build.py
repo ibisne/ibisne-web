@@ -364,39 +364,42 @@ DOMINIOS = [
 ]
 
 # ---------------------------------------------------------------- data: el Protocolo
-# Las cinco fases del Protocolo iBisne. Viven en /como-trabajamos/ (v21).
+# Las cuatro fases del Protocolo iBisne. Viven en /como-trabajamos/.
+# v22: se eliminó la fase "Resguardo" (era el NDA). Pedir NDA como argumento de venta
+# genera fricción y lee a proveedor defensivo; el acuerdo se maneja en el onboarding.
 PROTOCOLO = [
-    ("01", "Resguardo",
-     "Firmamos un NDA mutuo antes de la primera llamada. No es trámite, es el orden correcto: tu idea queda protegida antes de que salga de tu boca.",
-     "Sin costo · 1 día"),
-    ("02", "Sesión cero",
+    ("01", "Sesión cero",
      "Noventa minutos sobre tu negocio: mercado, números, ambición y el problema real que quieres resolver. Escuchamos como inversionistas, no como proveedores.",
      "Sin costo · 90 minutos"),
-    ("03", "Lectura",
+    ("02", "Lectura",
      "Analizamos tu proyecto como analizamos los nuestros: tesis, riesgos, unidad económica, arquitectura y alcance. Recibes el documento completo y es tuyo, contrates o no.",
      "Sin costo · 5 a 10 días"),
-    ("04", "Sprint de Validación",
-     "Construimos una versión funcional del núcleo de tu producto. No una presentación: software que se usa. El código y la propiedad intelectual quedan a tu nombre desde la primera línea.",
+    ("03", "Sprint de Validación",
+     "Construimos una versión funcional del núcleo de tu producto. No una presentación: software que se usa. El código y la plataforma quedan a tu nombre desde el primer commit.",
      "$25,000 MXN · se acredita íntegro · 2 a 4 semanas"),
-    ("05", "Dos puertas",
+    ("04", "Dos puertas",
      "Te mostramos lo construido y entregamos la cotización cerrada, con fecha y vigencia. Solo entonces, y solo si tu proyecto cumple nuestra tesis, hablamos de sociedad.",
      "Tu decisión · 1 sesión"),
 ]
 
 # (icono, título corto para el home, afirmación completa, sustento)
+# v22: el eje de confianza es técnico y ético, no contractual. Cero menciones a NDA,
+# firmas o contratos: eso genera fricción y se maneja en el onboarding, no en la venta.
+# Tampoco se promete propiedad sobre "ideas": en México no son objeto de PI (art. 14 LFDA).
+# Lo que sí es propiedad, y se dice, es el activo tangible: código y plataforma.
 COMPROMISOS = [
-    ("shield", "El NDA va primero",
-     "El NDA se firma antes de la primera llamada.",
-     "Mutuo y por escrito, con nombre y fecha de las dos partes. Hablamos después de firmar."),
-    ("cms", "La propiedad es tuya",
-     "Tu idea es tuya. El código también.",
-     "La titularidad de la propiedad intelectual y del desarrollo queda a tu nombre desde la primera línea. Conservamos únicamente nuestros frameworks y componentes previos, los que ya existían antes de conocerte."),
-    ("check", "El diagnóstico te lo quedas",
-     "El análisis es tuyo, contrates o no.",
-     "Al cerrar la fase de lectura recibes el documento completo: tesis, riesgos, arquitectura y alcance. Es tuyo, decidas lo que decidas."),
-    ("coins", "El precio se sostiene",
+    ("shield", "La discreción es estándar",
+     "Lo que nos cuentas se queda en el equipo que construye.",
+     "Accesos nominales, repositorios aislados y la información circulando solo entre quienes la necesitan para trabajar. Es la forma en que operamos desde el primer día."),
+    ("cms", "El activo es tuyo",
+     "El código y la plataforma quedan a tu nombre.",
+     "Repositorios, infraestructura y credenciales a tu nombre desde el primer commit. Conservamos únicamente los frameworks y componentes que ya existían antes de conocerte."),
+    ("check", "La lectura es tuya",
+     "El análisis se va contigo, trabajes con nosotros o no.",
+     "Al cerrar la fase de lectura recibes el documento completo: tesis, riesgos, arquitectura y alcance. Sirve igual con nosotros que con cualquier equipo técnico serio."),
+    ("coins", "El precio va primero",
      "El precio se fija antes de hablar de sociedad.",
-     "La cotización se entrega cerrada, con fecha y vigencia de 60 días. La conversación de inversión, si la hay, viene después. La misma cotización sigue en pie si prefieres contratarnos."),
+     "La cotización se entrega cerrada, con fecha y 60 días de vigencia. Si después conversamos de capital, el número ya está puesto y se sostiene."),
 ]
 
 # ---------------------------------------------------------------- data: insights
@@ -568,8 +571,8 @@ def build_home(projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Tu idea queda protegida antes de que nos la cuentes.</h2>
-  <p>NDA firmado antes de la primera llamada, propiedad intelectual a tu nombre, diagnóstico que te quedas y un precio que se fija antes de cualquier conversación de sociedad. Cinco fases, todo por escrito.</p></div>
+  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
+  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado antes de cualquier conversación de capital.</p></div>
   <div class="why-grid">{pledges}</div>
   <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
@@ -694,8 +697,8 @@ def build_dominio(d, projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Cómo empieza un proyecto.</h2>
-  <p>Con un NDA firmado antes de la primera llamada, un análisis que te quedas y un precio que se fija antes de cualquier conversación de sociedad.</p></div>
-  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cinco fases {ic('arw')}</a></div>
+  <p>Cuatro fases, un análisis que te llevas y un precio cerrado antes de cualquier conversación de capital.</p></div>
+  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cuatro fases {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -730,20 +733,20 @@ def build_como_trabajamos():
 <section class="phero"><div class="wrap">
   {crumb("Cómo trabajamos")}
   <span class="eyebrow">Protocolo iBisne</span>
-  <h1>Antes de que nos cuentes tu idea, ya está protegida.</h1>
-  <p class="lede">Cinco fases, reglas firmadas y un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
+  <h1>Convertimos visiones en activos tecnológicos.</h1>
+  <p class="lede">Cuatro fases para llevar una visión de negocio a software que opera, con un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
   <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Las cinco fases</span><h2>De la primera llamada al producto funcionando.</h2>
+  <div class="sec-h"><span class="eyebrow">Las cuatro fases</span><h2>De la primera llamada al producto funcionando.</h2>
   <p>Cada fase tiene un entregable, una duración y un costo definidos desde el inicio. Sin sorpresas a la mitad.</p></div>
   <div class="tl">{fases}</div>
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Lo que firmamos</span><h2>Los acuerdos van por escrito, no por confianza.</h2>
-  <p>Cuatro compromisos que quedan en contrato antes de que empiece el trabajo.</p></div>
+  <div class="sec-h"><span class="eyebrow">Cómo operamos</span><h2>Cuatro reglas, iguales en cada proyecto.</h2>
+  <p>Aplican desde la primera llamada y se sostienen hasta la entrega. Están publicadas para que sepas cómo trabajamos antes de trabajar con nosotros.</p></div>
   <div class="pledges">{pledges}</div>
 </div></section>
 
@@ -770,12 +773,12 @@ def build_como_trabajamos():
 
 <section class="sec"><div class="wrap"><div class="ctaband">
   <div><span class="eyebrow" style="color:var(--link)">Empezar</span>
-    <h2 style="margin-top:.8rem;">Primero el NDA. Después la idea.</h2></div>
+    <h2 style="margin-top:.8rem;">Cuéntanos el proyecto. Te decimos cómo se construye.</h2></div>
   <a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a>
 </div></div></section>
 """
     return base("Cómo trabajamos — iBisne",
-                "El Protocolo iBisne: NDA antes de la primera llamada, análisis que te quedas, Sprint de Validación con precio publicado y una cotización que se fija antes de hablar de sociedad.",
+                "El Protocolo iBisne: cuatro fases, código a tu nombre, análisis que te llevas y una cotización cerrada antes de hablar de sociedad.",
                 body, active="como-trabajamos", canonical="/como-trabajamos/")
 
 

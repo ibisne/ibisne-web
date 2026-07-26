@@ -1,5 +1,12 @@
 # BORRADOR · Acuerdo mutuo de confidencialidad (NDA)
 
+> 📌 **Documento de ONBOARDING interno. El sitio web ya no lo menciona (v22).**
+> Pedir la firma de un NDA como argumento de venta genera fricción y posiciona a iBisne
+> como proveedor defensivo en lugar de autoridad técnica, así que se eliminó de toda la
+> comunicación pública. El acuerdo sigue existiendo como práctica: se maneja al arrancar
+> con un cliente, no en el primer contacto. Ver `MESSAGING.md` § "Dos errores que NO se
+> pueden repetir".
+
 > ⚠️ **ESTE ES UN BORRADOR OPERATIVO, NO UN DOCUMENTO LEGAL VÁLIDO.**
 > Fue redactado como punto de partida para acelerar la conversación con un abogado.
 > **No lo uses con clientes sin revisión legal profesional.** Un NDA mal redactado
@@ -118,13 +125,16 @@ Firma: ______________________
 
 ## Nota sobre lo que NO incluye este borrador
 
-El sitio web publica cuatro compromisos (ver `/como-trabajamos/`). Tres de ellos son
-contractuales y viven aquí o en el contrato de servicios:
+El sitio publica cuatro **reglas de operación** (ver `/como-trabajamos/` § "Cómo operamos").
+Ninguna se enuncia como cláusula, pero todas deben poder sostenerse en la práctica:
 
-1. **NDA antes de la primera llamada** → este documento.
-2. **IP y código a nombre del cliente** → cláusula 4 (parcial) + contrato de desarrollo.
-3. **Diagnóstico incondicional** → contrato de servicios, no NDA.
-4. **Precio fijo con vigencia de 60 días** → la propia cotización.
+1. **La discreción es estándar** → este documento respalda la práctica, pero la regla se
+   cumple con controles reales: accesos nominales, repositorios aislados, need-to-know.
+2. **El activo es tuyo** (código y plataforma a nombre del cliente) → cláusula 4 (parcial)
+   + contrato de desarrollo. Es la afirmación legalmente correcta, a diferencia de prometer
+   propiedad sobre una idea, que no es objeto de PI en México.
+3. **La lectura es tuya** (análisis entregado sin condición) → contrato de servicios, no NDA.
+4. **El precio va primero** (cotización cerrada, 60 días) → la propia cotización.
 
 **No se incluyó** cláusula de no competencia por vertical, y el sitio tampoco la promete.
 Eduardo no la confirmó, y acotarla mal bloquearía el negocio propio de iBisne, que ya opera

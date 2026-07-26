@@ -31,10 +31,13 @@ Resume todo el sitio.
 > están redirigidas 301 a su dominio en `vercel.json`. No revivirlas.
 
 ## 2b. Cómo trabajamos · `/como-trabajamos` **(pieza central de conversión)**
-El **Protocolo iBisne**: 5 fases (Resguardo · Sesión cero · Lectura · Sprint de Validación · Dos puertas),
-4 compromisos firmados, ancla de precio del Sprint ($25,000 MXN acreditable) y la bifurcación
-desarrollo/sociedad. Existe para responder los dos miedos del fundador: robo de idea e inflación
-de precio. Ver `MESSAGING.md` para el detalle de los compromisos publicables.
+El **Protocolo iBisne**: 4 fases (Sesión cero · Lectura · Sprint de Validación · Dos puertas),
+4 reglas de operación ("Cómo operamos"), ancla de precio del Sprint ($25,000 MXN acreditable)
+y la bifurcación desarrollo/sociedad. Existe para responder los dos miedos del fundador: robo
+de idea e inflación de precio, **con confianza técnica y ética, nunca contractual**.
+
+> Ver `MESSAGING.md` § "Dos errores que NO se pueden repetir": ni NDA como argumento de
+> venta, ni prometer propiedad sobre ideas.
 
 ## 3. Inversión / Smart Capital · `/inversion`
 - Tesis: cuando vemos potencial, entramos con capital y co-construimos.

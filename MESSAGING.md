@@ -24,22 +24,38 @@ iBisne es una **fábrica de negocios digitales de alto impacto**: **creamos, esc
 > Regla: las webs y tiendas se nombran **dentro** de un dominio, nunca como gancho principal.
 
 ## El Protocolo iBisne (`/como-trabajamos/`)
-Cinco fases: **01 Resguardo · 02 Sesión cero · 03 Lectura · 04 Sprint de Validación · 05 Dos puertas**.
+Cuatro fases: **01 Sesión cero · 02 Lectura · 03 Sprint de Validación · 04 Dos puertas**.
 
 Existe para responder los dos miedos reales del fundador: que le roben la idea y que le
-inflen el precio para forzarlo a asociarse. Se responden con compromisos verificables, no con
-adjetivos:
-- NDA mutuo firmado **antes** de la primera llamada.
-- IP y código a nombre del cliente desde la primera línea (carve-out: frameworks previos de iBisne).
-- El diagnóstico se lo queda, contrate o no.
-- El precio se fija **antes** de hablar de sociedad, con vigencia de 60 días, y se sostiene.
+inflen el precio para forzarlo a asociarse. **El eje de confianza es técnico y ético, no
+contractual** (v22).
+
+Las 4 reglas publicadas ("Cómo operamos"):
+- **La discreción es estándar** · accesos nominales, repositorios aislados, información solo entre quienes construyen.
+- **El activo es tuyo** · código y plataforma a tu nombre desde el primer commit (carve-out: frameworks previos de iBisne).
+- **La lectura es tuya** · el análisis se va contigo, trabajes con nosotros o no.
+- **El precio va primero** · cotización cerrada con 60 días de vigencia, antes de cualquier conversación de capital.
 
 **Sprint de Validación: $25,000 MXN**, cobrado al inicio, acreditable íntegro. El precio se
 publica a propósito: es la señal anti-inflación. Aplica solo a productos de software; sitios y
 tiendas se cotizan directo.
 
+### Dos errores que NO se pueden repetir (v22)
+
+1. **Nunca usar el NDA como argumento de venta.** Exigir firmas en la portada genera
+   fricción y desconfianza, y posiciona a iBisne como proveedor defensivo en lugar de
+   autoridad técnica. Las firmas de élite no lo hacen. El acuerdo existe (ver
+   `legal/nda-mutuo.md`) pero se maneja en el **onboarding**, nunca en la comunicación pública.
+2. **Nunca prometer propiedad sobre "ideas".** En México las ideas no son objeto de
+   propiedad intelectual: el art. 14 de la Ley Federal del Derecho de Autor excluye
+   expresamente "las ideas en sí mismas". Lo protegible es el activo tangible: **código,
+   software, plataforma**. Decir "tu idea es tuya" es legalmente falso y suena amateur.
+   *Ojo:* usar la palabra "idea" como punto de partida narrativo sí es correcto (el H1 del
+   home, "Convertimos ideas en imperios digitales.", se queda). El error es prometer
+   **propiedad** sobre ella.
+
 > **No prometer** no competencia por vertical hasta que Eduardo lo confirme con su abogado
-> (bloquearía a iBroker/iFutbol/iPool). Ver `legal/nda-mutuo.md`.
+> (bloquearía a iBroker/iFutbol/iPool).
 
 ## Por qué iBisne (diferenciadores)
 - **Skin in the game** — socios operativos; nuestro retorno se alinea con el tuyo.
@@ -55,7 +71,7 @@ Editorial · sereno · seguro · humano · **premium**. Siempre **afirmativo**. 
 
 ## Léxico
 - **Usar:** negocios/productos digitales de alto impacto · escalar · de punta a punta · venture builder · co-construir · liderar su categoría · Smart Capital · dominio (no "servicio") · Protocolo · Sprint de Validación.
-- **Evitar:** "agencia" (ni para negarla) · "paquete" (ni para negarlo) · "sitios web para un rato" · "cotizador/venta" · "postúlate" · "brutal/depredador/sin piedad" · listas de 8 servicios.
+- **Evitar:** "agencia" (ni para negarla) · "paquete" (ni para negarlo) · "sitios web para un rato" · "cotizador/venta" · "postúlate" · "brutal/depredador/sin piedad" · listas de 8 servicios · **NDA, contratos, firmas y abogados como argumento de venta** · **prometer propiedad sobre ideas**.
 
 ## Tratamiento
 **Tuteo**, siempre. ("Cuéntanos tu proyecto", "tu idea es tuya"). Nunca "usted".
@@ -63,5 +79,5 @@ Editorial · sereno · seguro · humano · **premium**. Siempre **afirmativo**. 
 ## CTA
 - Botón (nav/hero): **"Hablemos"** — corto, ejecutivo, premium.
 - CTA secundario del hero: **"Cómo trabajamos"** → `/como-trabajamos/`.
-- Microcopy de cierre del Protocolo: **"Primero el NDA. Después la idea."**
+- Cierre del Protocolo: **"Cuéntanos el proyecto. Te decimos cómo se construye."**
 - Sección de contacto: **"Cuéntanos tu proyecto"** → `api/lead.js`.
