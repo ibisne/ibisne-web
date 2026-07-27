@@ -569,10 +569,16 @@ def pf_card(p, href_prefix="/portafolio/"):
 
 # ---------------------------------------------------------------- HOME
 def build_home(projects):
-    # Destacados del home, en orden exacto (5 con descanso visual + el buque insignia iBroker).
+    # v25 · el home separa por tipo de relación: arriba proyectos de cliente, abajo los
+    # de venture capital. Los slugs de abajo se excluyen de arriba por código, para que
+    # ningún proyecto pueda volver a salir dos veces si se editan estas listas.
     by = {x["slug"]: x for x in projects}
-    feat = [by[s] for s in ("ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife") if s in by]
-    cards = "".join(pf_card(p) for p in feat)
+    VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "breakit", "ifutbol")
+    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "unframe", "emergente")
+    vc_feat = [by[s] for s in VC_HOME if s in by]
+    cli_feat = [by[s] for s in CLI_HOME if s in by and s not in VC_HOME]
+    cards = "".join(pf_card(p) for p in cli_feat)
+    vc_cards = "".join(pf_card(p) for p in vc_feat)
     verbos = f"""<div class="verbos {gcls(3)}">
       <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas, apps, CRM, ERP, SaaS, IA y Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
       <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer. Performance medible y seguridad de nivel empresarial. Construimos para durar, no para salir del paso.</p></div>
@@ -584,12 +590,12 @@ def build_home(projects):
       <a href="/inversion/" class="btn btn-secondary">{ic('trend')} Smart Capital</a>
       <a href="/portafolio/" class="btn btn-secondary">{ic('blocks')} Venture Builder</a>
     </div>"""
-    ventajas = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
+    ventajas = "".join(f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
     doms = "".join(
         f'<a class="card" href="/servicios/{d["slug"]}/"><div class="ico">{ic(d["icon"])}</div>'
         f'<h3>{d["nombre"]}</h3><p>{d["lede"]}</p><span class="more">Ver el dominio {ic("arwr")}</span></a>'
         for d in DOMINIOS)
-    pledges = "".join(f'<div class="adv">{ic(i)}<h3>{corto}</h3><p>{sust}</p></div>'
+    pledges = "".join(f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{corto}</h3><p>{sust}</p></div>'
                       for i, corto, _t, sust in COMPROMISOS)
     # v23: el home no exhibe contenido de inversión (regla de negocio, ver MESSAGING.md).
     # Los artículos de esa categoría siguen publicados y visibles en /insights/.
@@ -636,9 +642,9 @@ def build_home(projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Portafolio</span><h2>Negocios que ya están en la cancha.</h2>
-  <p>Una muestra de lo que construimos y operamos. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
-  <div class="pf-grid {gcls(len(feat))}">{cards}</div>
+  <div class="sec-h"><span class="eyebrow">Clientes</span><h2>Negocios que ya están en la cancha.</h2>
+  <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
+  <div class="pf-grid {gcls(len(cli_feat))}">{cards}</div>
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
 
@@ -649,17 +655,12 @@ def build_home(projects):
   <div style="margin-top:var(--sp-6)"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
 </div></section>
 
-<section class="sec"><div class="wrap"><div class="vent">
-  <div class="head"><div><span class="eyebrow">Venture Builder</span>
-  <h2 style="margin-top:1rem;">Hemos construido imperios en su propio nicho.</h2></div>
-  <p>A través de nuestra división de Venture Builder identificamos y desarrollamos productos de alto impacto. Los diseñamos, los construimos y los operamos.</p></div>
-  <div class="vent-grid">
-    <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
-    <div class="vcard"><div class="nm">iFutbol</div><div class="ty">SaaS deportivo · Próximo a lanzar</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
-    <div class="vcard"><div class="nm">iPool</div><div class="ty">SaaS de albercas · Próximo a lanzar</div><div class="fin">{ic('arw')} Construido por iBisne</div></div>
-  </div>
-  <div style="margin-top:var(--sp-6)"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
-</div></div></section>
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Venture Capital</span><h2>Proyectos que no soltamos al entregar.</h2>
+  <p>Aquí no solo escribimos el código: seguimos dentro. Los construimos, los operamos y crecemos con ellos.</p></div>
+  <div class="pf-grid {gcls(len(vc_feat))}">{vc_cards}</div>
+  <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
+</div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
@@ -814,8 +815,8 @@ def build_como_trabajamos():
     <span class="eyebrow">La bifurcación</span>
     <h3>Dos puertas. Tú eliges.</h3>
     <div class="grid-2">
-      <div class="adv">{ic('layers')}<h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
-      <div class="adv">{ic('coins')}<h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
+      <div class="adv"><div class="ico">{ic('layers')}</div><h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
+      <div class="adv"><div class="ico">{ic('coins')}</div><h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
     </div>
     <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
     <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
@@ -839,7 +840,7 @@ def build_inversion():
             ("chart", "Márgenes", "Unidad económica sana: potencial de rentabilidad, no vanidad."),
             ("layers", "Producto", "Madurez y diferenciación. Algo que merezca escalarse."),
             ("zap", "Mentalidad", "Fundadores dispuestos a ejecutar y a jugar en grande.")]
-    cg = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in crit)
+    cg = "".join(f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in crit)
     body = f"""
 <section class="phero">{bg_for("inversion")}<div class="wrap">
   {crumb("Inversión")}

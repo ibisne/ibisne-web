@@ -409,7 +409,8 @@ section { position:relative; }
 
 /* ---- responsive ---- */
 @media (max-width:900px){
-  .grid-3,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid{ grid-template-columns:repeat(2,1fr); }
+  /* .grid-3/.verbos/.std-grid/.why-grid/.pf-grid/.ins-grid ya no van aqui:
+     sus columnas las decide .g via gcls(). Solo quedan las que no pasan por el helper. */
   .steps{ grid-template-columns:repeat(2,1fr); }
   .team-grid{ grid-template-columns:repeat(2,1fr); }
   .rrr{ grid-template-columns:1fr; }
@@ -440,7 +441,7 @@ section { position:relative; }
   .sec-h{ margin-bottom:1.4rem; }
 
   /* 1 columna, gaps compactos */
-  .grid-3,.grid-2,.verbos,.std-grid,.why-grid,.pf-grid,.ins-grid,.steps,.team-grid,.pledges{ grid-template-columns:1fr; gap:1rem; }
+  .grid-2,.steps,.team-grid,.pledges{ grid-template-columns:1fr; gap:1rem; }
   /* Protocolo: el numero de fase pasa arriba del texto para ganar ancho util. */
   .tl-item{ grid-template-columns:1fr; gap:.5rem; padding-left:1.35rem; padding-bottom:2rem; }
   .tl-item .no{ font-size:1.4rem; }
@@ -497,15 +498,20 @@ svg.ic-fill { fill:currentColor; stroke:none; }
 .g { display:grid; gap:var(--g-gap,1.25rem); grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); }
 .g-2 { --cols:2; } .g-3 { --cols:3; } .g-4 { --cols:4; }
 .g-feat-d > :first-child { grid-column:1 / -1; }        /* rellena la cola en desktop */
-.g-narrow { max-width:60rem; }                          /* 4 cards en 2x2 con medida legible */
+.g-narrow { max-width:60rem; margin-inline:auto; }      /* 4 cards en 2x2, centradas */
+/* v25 · .g controla SOLO las columnas. El gap es identidad de cada componente:
+   .std-grid dibuja divisores hairline con gap 1px + fondo --hair; si .g le mete
+   1.25rem, ese fondo se ve como bandas grises gruesas. Cada clase conserva el suyo. */
+.std-grid.g { --g-gap:1px; }
+.why-grid.g { --g-gap:1.1rem; }
 @media (max-width:900px){
   .g { --cols:2; }
-  .g-3-t { --cols:3; } .g-1-t { --cols:1; }
   .g-feat-d > :first-child { grid-column:auto; }
   .g-feat-t > :first-child { grid-column:1 / -1; }
 }
 @media (max-width:640px){
   .g { --cols:1; --g-gap:1rem; }
+  .std-grid.g { --g-gap:.7rem; }                        /* en movil son cards sueltas */
   .g-feat-d > :first-child, .g-feat-t > :first-child { grid-column:auto; }
 }
 
@@ -521,13 +527,30 @@ svg.ic-fill { fill:currentColor; stroke:none; }
 a.card:hover,a.pcard:hover,a.icard:hover,a.verbo:hover { border-color:var(--accent-line); transform:translateY(-3px); box-shadow:var(--e2); }
 div.card:hover,.adv:hover,.pledge:hover,.vcard:hover,.rrr .blk:hover { border-color:var(--accent-line); background:var(--surface-2); transform:none; }
 .adv,.pledge,.vcard,.rrr .blk { transition:border-color var(--t), background var(--t); }
+
+/* v25 · alineacion: el grid estira las cards a la altura de la fila, pero el contenido
+   quedaba pegado arriba y sobraba hueco abajo cuando los parrafos eran de distinto largo.
+   Con flex column el cuerpo empuja y el pie (more/meta) queda anclado. Patron de .icard. */
+.card,.verbo,.adv,.std-grid .it,.rrr .blk,.vcard { display:flex; flex-direction:column; }
+.card p,.verbo p,.adv p,.std-grid .it p,.rrr .blk p { flex:1 1 auto; }
+.card .more { margin-top:auto; padding-top:1.1rem; }
+.vcard .fin { margin-top:auto; padding-top:1.1rem; }
+.pledge > div:last-child { display:flex; flex-direction:column; }
+.pledge p { flex:1 1 auto; }
+
+/* v25 · iconos: .card/.verbo/.std-grid tenian caja con fondo y .adv/.pledge solo el
+   glifo suelto. Misma caja para todos, escalada al tamano de cada card. */
+.adv .ico,.pledge .ico { width:2.4rem; height:2.4rem; border-radius:.55rem; background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--ink); flex:none; }
+.adv .ico { margin-bottom:.2rem; }
 /* medida de linea al colapsar a 1 columna */
 .price-anchor .bd p,.apply .sub { max-width:60ch; }
 
 /* ---- v24 · mejoras 2026 (todas degradan solas) ---- */
 h1,h2,h3 { text-wrap:balance; }
 .lede,.sec-h p,.prose p { text-wrap:pretty; }
-.pf-item { content-visibility:auto; contain-intrinsic-size:auto 22rem; }
+/* v25: sin content-visibility en .pf-item. Combinado con el reveal por scroll y el
+   filtro JS que hace display:none daba saltos de layout al filtrar. */
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {

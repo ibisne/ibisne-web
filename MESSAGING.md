@@ -22,6 +22,23 @@ Las divisiones de inversión sobreviven en el home **solo como pills limpios sin
 `Tech Studio` → `/servicios/` · `Smart Capital` → `/inversion/` · `Venture Builder` → `/portafolio/`.
 Los links del nav y del footer también están permitidos: son navegación, no narrativa.
 
+### Matiz del alcance (v25, aclarado por Eduardo)
+Lo prohibido es el **lenguaje narrativo que el cliente entiende y que lo asusta**:
+"invertimos", "nos volvemos socios", "ponemos capital", "financiamos".
+**"Venture Capital" como etiqueta de categoría sí se puede usar**: es jerga de nicho que el
+cliente promedio no decodifica ni le da importancia. Por eso el home tiene una sección
+titulada "Venture Capital" cuyo cuerpo NO menciona dinero:
+> "Proyectos que no soltamos al entregar. Aquí no solo escribimos el código: seguimos
+> dentro. Los construimos, los operamos y crecemos con ellos."
+
+El home separa **Clientes** (proyectos de cliente) y **Venture Capital** (donde iBisne
+participa). Las listas están en `build_home()` y se excluyen entre sí por código: ningún
+proyecto puede salir en las dos secciones.
+
+⚠️ **iBroker, iPool e iFutbol NO son productos propios.** El CRM los marca como
+"Modelo de entrada: Inversión" y la tesis de iBroker menciona terceros. Llamarlos
+"Venture Builder" fue un error de v24, corregido en v25.
+
 Corolarios que ya mordieron una vez:
 - El **topbar** y el **footer** son globales y aparecen EN la home: también deben estar limpios.
 - La sección de **insights destacados del home** filtra la categoría "Inversión" y el artículo

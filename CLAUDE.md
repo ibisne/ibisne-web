@@ -97,6 +97,10 @@ Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del 
    `c` tal que `n % c == 0`; si no existe, 3 columnas con el primer item a fila completa.
    Los grids densos (ficha técnica) admiten 4 columnas; las cards con párrafo no, porque
    la medida de línea cae a ~32 caracteres: esas van 2×2 en `.g-narrow`.
+   ⚠️ **`.g` controla SOLO las columnas, nunca el `gap`.** El gap es identidad de cada
+   componente: `.std-grid` dibuja divisores hairline con `gap:1px` + fondo `--hair`, y si
+   `.g` le impone 1.25rem ese fondo se ve como bandas grises gruesas. Pasó en v24 y fue la
+   regresión más visible del sitio. Cada clase declara el suyo con `.clase.g { --g-gap }`.
 7. **Fondos de hero**: `bg_for(clave)` reparte las 5 imágenes de `assets/bg/*.webp` de
    forma estable por página. Son **oscuras**: en modo claro su opacidad baja a .14 o
    manchan el fondo. Si se agregan más, optimizar a WebP ≤200 KB (los originales de
