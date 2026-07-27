@@ -442,8 +442,11 @@ section { position:relative; }
   /* Mobile-first: mas ancho util (gutter menor) + ritmo vertical compacto */
   .wrap{ padding:0 1.15rem; }
   .sec{ padding:2.4rem 0; }
-  .hero{ padding:2.6rem 0 2rem; }
-  .phero{ min-height:16rem; padding:2.5rem 0 1.75rem; }
+  /* v28 · heroes altos con aire, pero NO a pantalla completa: a 78% asoma el borde
+     de la siguiente seccion e invita al scroll. Se usa dvh porque con vh la barra
+     de URL de Chrome/Safari cambia el viewport al hacer scroll y el hero salta. */
+  .hero,.phero{ min-height:78vh; min-height:78dvh; display:flex; align-items:center; padding:2.25rem 0; }
+  .hero .wrap,.phero .wrap{ width:100%; }
   .sec-h{ margin-bottom:1.4rem; }
 
   /* 1 columna, gaps compactos */
@@ -460,8 +463,17 @@ section { position:relative; }
   .std-grid{ background:transparent; border:0; border-radius:0; overflow:visible; gap:.7rem; }
   .std-grid .it{ border:1px solid var(--line); border-radius:var(--r-md); padding:1.1rem 1.05rem; }
   .form .two{ grid-template-columns:1fr; }
-  .hero .proof{ margin-top:2rem; gap:1.1rem 1.6rem; }
-  .hero .proof .tags{ margin-left:0; }
+
+  /* v28 · credenciales en 3 columnas. Antes era flex-wrap y cada label medía ~200px
+     por el letter-spacing, asi que solo cabia uno por fila y los tres se apilaban. */
+  .hero .proof{ display:grid; grid-template-columns:repeat(3,1fr); gap:0 .6rem;
+    margin-top:1.75rem; padding-top:1.35rem; align-items:start; }
+  .hero .proof .n{ font-size:1.45rem; line-height:1.1; }
+  .hero .proof .n small{ font-size:.58rem; letter-spacing:.06em; line-height:1.3; margin-top:.35rem; }
+  /* Los chips repiten los 3 verbos de la seccion siguiente: en movil son ruido. */
+  .hero .proof .tags{ display:none; }
+  /* Un solo "Hablemos" en pantalla: el del header es sticky y acompaña todo el scroll. */
+  .hero .cta .btn-primary{ display:none; }
   /* Footer menos vertical: marca a lo ancho + los 3 grupos de enlaces en 2 columnas. */
   .foot .cols{ grid-template-columns:1fr 1fr; gap:1.5rem 1.2rem; }
   .foot .cols>div:first-child{ grid-column:1 / -1; }
