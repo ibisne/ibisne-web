@@ -107,10 +107,29 @@ Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del 
    `Fondo/` pesan 1-3 MB cada uno).
 8. **Sin librerías de UI, sin iconos de terceros, sin emojis.** Los iconos salen del sprite
    SVG inline en `build.py` (`SPRITE`), vía `ic("nombre")`.
-9. **Al borrar páginas**: `write()` nunca elimina archivos huérfanos. Hay que `git rm -r`
+9. **Sistema móvil (v26).** El home medía 14.861px (18 pantallas) porque era un diseño de
+   escritorio colapsado a una columna. Reglas:
+   - **Colecciones visuales van en carrusel** (`.rail`): portafolios, insights y proyectos
+     relacionados. Base `scroll-snap` (soporte universal) + `::scroll-marker` tras
+     `@supports`; sin soporte queda un scroll horizontal usable. Un bloque de 6 cards pasa
+     de ~1.800px a ~260px.
+   - **Las rejillas de texto NO van en carrusel** (estándar, ventajas, compromisos):
+     esconder texto tras un gesto perjudica lectura y SEO.
+   - **El hub `/portafolio/` tampoco**: tiene filtros y debe verse completo.
+   - **Cards horizontales en móvil**: icono a la izquierda, texto a la derecha. Ahorra
+     ~55px por card.
+   - **Barra de acción inferior** (`.actionbar`): en móvil se ocultan el CTA del header y
+     el dock social, así que sin ella no había ninguna vía de contacto en todo el scroll.
+     Respeta `env(safe-area-inset-bottom)`.
+   - **Targets táctiles ≥44px** siempre (Fitts: el dedo mide ~7mm).
+   - **Al tocar el CSS, subir `?v=` en `build.py`**, o el navegador sirve el CSS viejo y
+     parece que los cambios no aplicaron.
+10. **Al borrar páginas**: `write()` nunca elimina archivos huérfanos. Hay que `git rm -r`
    las carpetas viejas **y** agregar los redirects 301 en `vercel.json` en el mismo commit.
    Nunca desplegar el borrado sin el redirect.
-10. **Imágenes**: placeholders hasta que Eduardo entregue assets reales. No generar imágenes.
+11. **Imágenes**: placeholders hasta que Eduardo entregue assets reales. No generar imágenes.
+    Los covers de insights usan a propósito los fondos genéricos de `assets/bg/`: son
+    placeholder hasta que su diseñador entregue las definitivas.
 
 ## El Protocolo iBisne
 

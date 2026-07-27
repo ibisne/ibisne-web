@@ -179,9 +179,13 @@ section { position:relative; }
 .tcard .info .mail:hover { color:var(--ink); }
 
 /* ---- page hero (interiores) ---- */
-.phero { padding:clamp(2.25rem, 1.5rem + 3.4vw, 4.25rem) 0 clamp(2rem, 1.25rem + 3vw, 3.75rem); position:relative; overflow:hidden; }
+/* v26: heroes más altos. El fondo necesita aire para leerse como descanso visual y no
+   como una franja; antes el texto empezaba casi pegado al header. */
+.phero { padding:clamp(3.25rem, 2rem + 5.4vw, 6.5rem) 0 clamp(2.5rem, 1.5rem + 3.6vw, 4.5rem);
+  position:relative; overflow:hidden; display:flex; align-items:center;
+  min-height:clamp(19rem, 14rem + 20vw, 30rem); }
 /* Capa de fondo del hero interior: imagen abstracta + velo para legibilidad. */
-.phero .bgimg { position:absolute; inset:0; z-index:0; background-position:center; background-size:cover; opacity:.38; }
+.phero .bgimg { position:absolute; inset:0; z-index:0; background-position:center; background-size:cover; opacity:.5; }
 .phero .bgimg::after { content:""; position:absolute; inset:0;
   background:linear-gradient(180deg, color-mix(in srgb,var(--bg) 42%,transparent) 0%, color-mix(in srgb,var(--bg) 78%,transparent) 62%, var(--bg) 100%); }
 /* Las imagenes son oscuras: en modo claro hay que bajarlas mucho o manchan el fondo
@@ -189,7 +193,7 @@ section { position:relative; }
 :root[data-mode="light"] .phero .bgimg { opacity:.14; }
 :root[data-mode="light"] .phero .bgimg::after {
   background:linear-gradient(180deg, color-mix(in srgb,var(--bg) 62%,transparent) 0%, color-mix(in srgb,var(--bg) 86%,transparent) 58%, var(--bg) 100%); }
-.phero .wrap { position:relative; z-index:1; }
+.phero .wrap { position:relative; z-index:1; width:100%; }   /* el .phero es flex: sin esto el wrap se encoge */
 .phero .eyebrow { color:var(--link); margin-bottom:1.2rem; }
 .phero h1 { font-size:clamp(2.2rem,5vw,3.75rem); font-weight:400; letter-spacing:-.028em; line-height:1.04; max-width:18ch; }
 .phero .lede { margin-top:1.4rem; font-size:clamp(1.02rem,1.5vw,1.2rem); color:var(--muted); max-width:42rem; line-height:1.55; }
@@ -353,16 +357,16 @@ section { position:relative; }
 .ins-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
 .icard { border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); overflow:hidden; display:flex; flex-direction:column; transition:border-color var(--t), transform var(--t); }
 .icard:hover { border-color:var(--accent-line); transform:translateY(-3px); }
-.icard .cover { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--surface-2); border-bottom:1px solid var(--hair); }
-.icard .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* v26: la portada es un fondo, no un <img>. Son placeholders con las imagenes
+   genericas hasta que lleguen las definitivas del disenador. */
+.icard .cover { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--surface-2) center/cover; border-bottom:1px solid var(--hair); }
 .icard .cover::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, color-mix(in srgb,var(--bg) 82%,transparent), transparent 58%); }
 .icard .cover span { position:absolute; left:.7rem; bottom:.65rem; z-index:2; font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); background:color-mix(in srgb,var(--bg) 52%,transparent); backdrop-filter:blur(7px); border:1px solid color-mix(in srgb,var(--ink) 15%,transparent); border-radius:var(--r-pill); padding:.28rem .6rem; }
 .icard .body { padding:1.2rem 1.25rem 1.4rem; }
 .icard .date { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); }
 .icard h3 { font-family:var(--serif); font-size:1.2rem; font-weight:500; letter-spacing:-.018em; margin-top:.6rem; line-height:1.2; }
 .icard .by { color:var(--faint); font-size:.82rem; margin-top:.7rem; }
-.ins-hero { border:1px solid var(--line); border-radius:var(--r-xl); overflow:hidden; aspect-ratio:16/9; box-shadow:var(--e3); }
-.ins-hero img { width:100%; height:100%; object-fit:cover; display:block; }
+.ins-hero { border:1px solid var(--line); border-radius:var(--r-xl); overflow:hidden; aspect-ratio:16/9; box-shadow:var(--e3); background:var(--surface-2) center/cover; }
 
 /* ---- estudio / placeholder foto ---- */
 .studio { display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4rem); align-items:center; }
@@ -430,40 +434,125 @@ section { position:relative; }
   .nav-lk{ display:none; }
   .actions .btn-primary{ display:none; }
   .actions .theme-toggle{ display:none; }
-  .hamb{ display:flex; }
+  .hamb{ display:flex; width:2.75rem; height:2.75rem; }   /* 44px: minimo tactil (Fitts) */
   .sdock{ display:none; }
 
   /* Mobile-first: mas ancho util (gutter menor) + ritmo vertical compacto */
   .wrap{ padding:0 1.15rem; }
   .sec{ padding:2.4rem 0; }
   .hero{ padding:2.6rem 0 2rem; }
-  .phero{ padding-top:1.7rem; padding-bottom:.4rem; }
+  .phero{ min-height:16rem; padding:2.5rem 0 1.75rem; }
   .sec-h{ margin-bottom:1.4rem; }
 
   /* 1 columna, gaps compactos */
   .grid-2,.steps,.team-grid,.pledges{ grid-template-columns:1fr; gap:1rem; }
   /* Protocolo: el numero de fase pasa arriba del texto para ganar ancho util. */
-  .tl-item{ grid-template-columns:1fr; gap:.5rem; padding-left:1.35rem; padding-bottom:2rem; }
+  .tl-item{ grid-template-columns:1fr; gap:.5rem; padding-left:1.35rem; padding-bottom:1.35rem; }
   .tl-item .no{ font-size:1.4rem; }
-  .pledge{ padding:1.25rem 1.15rem; gap:.9rem; }
+  .tl-item .bd p{ font-size:.92rem; line-height:1.5; }
+  .tl-item .meta{ margin-top:.65rem; }
+  .pledge{ padding:1.15rem 1.1rem; gap:.85rem; }
   /* El estándar: en desktop es rejilla con divisores (gap 1px + fondo hairline);
      en móvil ese fondo con gap grande dejaba bandas grises. Aquí cada highlight
      es una card con borde propio, sin bandas ni encimado. */
   .std-grid{ background:transparent; border:0; border-radius:0; overflow:visible; gap:.7rem; }
-  .std-grid .it{ border:1px solid var(--line); border-radius:var(--r-md); padding:1.2rem 1.15rem; }
+  .std-grid .it{ border:1px solid var(--line); border-radius:var(--r-md); padding:1.1rem 1.05rem; }
   .form .two{ grid-template-columns:1fr; }
-  .hero .cta{ margin-top:1.8rem; }
   .hero .proof{ margin-top:2rem; gap:1.1rem 1.6rem; }
   .hero .proof .tags{ margin-left:0; }
   /* Footer menos vertical: marca a lo ancho + los 3 grupos de enlaces en 2 columnas. */
   .foot .cols{ grid-template-columns:1fr 1fr; gap:1.5rem 1.2rem; }
   .foot .cols>div:first-child{ grid-column:1 / -1; }
   .foot{ padding-bottom:2rem; }
+
+  /* ========================================================
+     v26 · SISTEMA MOVIL
+     Medido antes: home 14,861px = 18.3 pantallas de scroll.
+     ======================================================== */
+
+  /* --- A · cards horizontales: icono a la izquierda, texto a la derecha.
+     Ahorra la altura del icono + su margen (~55px) en cada card. --- */
+  .card,.verbo,.adv,.std-grid .it{
+    display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto;
+    column-gap:.9rem; row-gap:.15rem; align-items:start;
+    padding:1.15rem 1.1rem;
+  }
+  .card .ico,.verbo .ico,.adv .ico,.std-grid .it .ico{
+    grid-row:1 / span 2; width:2.4rem; height:2.4rem; margin:0; font-size:1.05rem;
+  }
+  .card h3,.verbo h3,.adv h3,.std-grid .it h3{ grid-column:2; margin:0; align-self:center; }
+  .card p,.verbo p,.adv p,.std-grid .it p{ grid-column:2; margin-top:.3rem; }
+  .card .more{ grid-column:2; margin-top:.7rem; padding-top:0; }
+  /* Titulos de card mas contenidos: en movil no necesitan tamano editorial */
+  .card h3,.verbo h3{ font-size:1.15rem; }
+  .card p,.verbo p{ font-size:.9rem; line-height:1.5; }
+  .adv p,.std-grid .it p{ font-size:.86rem; line-height:1.5; }
+
+  /* --- B · tipografia: los clamp() estaban calibrados para desktop --- */
+  .hero h1{ font-size:2.15rem; max-width:none; letter-spacing:-.03em; }
+  .hero .lede{ font-size:1rem; margin-top:1.1rem; }
+  .hero .cta{ margin-top:1.5rem; }
+  .phero h1{ font-size:1.95rem; max-width:none; }
+  .phero .lede{ font-size:.98rem; margin-top:1rem; }
+  .sec-h h2{ font-size:1.5rem; }
+  .sec-h p{ font-size:.95rem; margin-top:.7rem; }
+
+  /* --- C · botones a ancho completo (targets de 48px, thumb zone) --- */
+  .cta{ gap:.6rem; width:100%; }
+  .cta > .btn{ width:100%; min-width:0; }
+  .btn,.btn-lg{ height:3rem; }
+
+  /* --- D · imagenes menos altas: consumian ~60% de la card --- */
+  .pcard .shot,.pcard .ph{ aspect-ratio:16/9; }
+  .icard .cover{ aspect-ratio:2/1; }
+  .pcard .meta{ padding:.85rem .95rem 1rem; }
+  .pcard .meta h3{ font-size:1.1rem; margin-top:.45rem; }
+  .icard .body{ padding:.9rem 1rem 1.1rem; }
+  .icard h3{ font-size:1.05rem; }
+
+  /* --- E · 2x2 donde el contenido lo permite (sin parrafo) --- */
+  .team-grid,.vent-grid{ grid-template-columns:1fr 1fr; gap:.7rem; }
+  .vcard{ padding:1.1rem 1rem; }
+  .vcard .nm{ font-size:1.15rem; }
+
+  /* --- F · segunda capa: medido que los 8 encabezados de seccion sumaban
+     1,592px y las 10 cards .adv otros 1,901px. Son los dos mayores
+     consumidores una vez que los proyectos pasaron a carrusel. --- */
+  .sec{ padding:2rem 0; }
+  .sec-h{ margin-bottom:1.1rem; }
+  .sec-h .eyebrow{ margin-bottom:.55rem; font-size:.68rem; }
+  .sec-h p{ font-size:.9rem; line-height:1.5; margin-top:.55rem; }
+  .adv{ padding:1rem 1.05rem; }
+  .adv h3{ font-size:.98rem; }
+  .adv p{ font-size:.84rem; line-height:1.45; margin-top:.25rem; }
+  .card,.verbo{ padding:1rem 1.05rem; }
+  .card p,.verbo p{ margin-top:.25rem; }
+  .card .more{ margin-top:.55rem; font-size:.8rem; }
+
+  /* El estandar son 6 features de titulo corto: caben en 2 columnas.
+     Vuelven a layout vertical porque a ~160px el icono lateral no cabe. */
+  .std-grid.g{ --cols:2; --g-gap:.55rem; }
+  .std-grid .it{ grid-template-columns:1fr; row-gap:0; padding:.9rem .85rem; }
+  .std-grid .it .ico{ grid-row:auto; width:1.9rem; height:1.9rem; font-size:.9rem; margin-bottom:.5rem; }
+  .std-grid .it h3{ grid-column:1; font-size:.88rem; line-height:1.25; }
+  .std-grid .it p{ grid-column:1; font-size:.78rem; line-height:1.4; margin-top:.25rem; }
+
+  /* Footer: los 3 grupos de enlaces en 3 columnas y menos aire. */
+  .foot{ padding:2.2rem 0 1.5rem; margin-top:2.2rem; }
+  .foot .cols{ grid-template-columns:repeat(3,1fr); gap:1.2rem .8rem; }
+  .foot .gl{ margin-bottom:.6rem; font-size:.65rem; }
+  .foot ul{ gap:.45rem; }
+  .foot ul a{ font-size:.84rem; }
+  .foot .about{ font-size:.85rem; }
+  .foot .base{ margin-top:1.5rem; padding-top:1rem; font-size:.75rem; }
 }
 
 /* ---- v5: fixes ajustes ---- */
 /* Botones en grupos .cta fuera del hero (paginas de proyecto, 404, servicios) */
 .cta { display:flex; flex-wrap:wrap; align-items:center; gap:.9rem; }
+/* v26: los botones de un mismo grupo comparten ancho mínimo para que se lean como par.
+   Antes "Hablemos" medía ~155px y "Cómo trabajamos" ~205px y al envolverse escalonaban. */
+.cta > .btn, .hero .cta > .btn { min-width:13.5rem; justify-content:center; }
 
 /* Iconos de marca rellenos (Apple/Android/Windows) */
 svg.ic-fill { fill:currentColor; stroke:none; }
@@ -498,7 +587,10 @@ svg.ic-fill { fill:currentColor; stroke:none; }
 .g { display:grid; gap:var(--g-gap,1.25rem); grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); }
 .g-2 { --cols:2; } .g-3 { --cols:3; } .g-4 { --cols:4; }
 .g-feat-d > :first-child { grid-column:1 / -1; }        /* rellena la cola en desktop */
-.g-narrow { max-width:60rem; margin-inline:auto; }      /* 4 cards en 2x2, centradas */
+/* v26: .g-narrow retirado. Angostaba y centraba el grid mientras el .sec-h iba a la
+   izquierda del wrap, y se leía como desalineado. Las 4 cards van 2x2 a ancho completo;
+   el párrafo ya tiene su propia medida con max-width:62ch. */
+.g-narrow { max-width:none; }
 /* v25 · .g controla SOLO las columnas. El gap es identidad de cada componente:
    .std-grid dibuja divisores hairline con gap 1px + fondo --hair; si .g le mete
    1.25rem, ese fondo se ve como bandas grises gruesas. Cada clase conserva el suyo. */
@@ -557,6 +649,68 @@ h1,h2,h3 { text-wrap:balance; }
     .g > *, .pf-item, .sec-h { animation:rise .6s var(--ease) both; animation-timeline:view(); animation-range:entry 6% cover 24%; }
     @keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   }
+}
+
+/* ============================================================
+   v26 · CARRUSEL (.rail) — solo movil
+   Las colecciones visuales (proyectos, insights) pasan de apilarse
+   a desplazarse en horizontal. 6 cards apiladas suman ~1,800px;
+   en carrusel ocupan ~260px.
+   Base: scroll-snap (soporte universal). Los marcadores nativos
+   ::scroll-marker (CSS Overflow L5, Chrome 135+/Safari 18.2+) van
+   tras @supports: sin ellos queda un scroll horizontal normal.
+   Regla: SOLO colecciones visuales. El texto no se esconde tras un
+   gesto, perjudica lectura y SEO.
+   ============================================================ */
+@media (max-width:640px){
+  .rail{
+    display:grid; grid-auto-flow:column; grid-auto-columns:78%;   /* 78% = peek de la siguiente */
+    gap:.75rem; overflow-x:auto; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; scroll-padding-left:1.15rem;
+    margin-inline:-1.15rem; padding:.25rem 1.15rem 1rem;          /* sangra al borde de pantalla */
+    scrollbar-width:none;
+  }
+  .rail::-webkit-scrollbar{ display:none; }
+  .rail > *{ scroll-snap-align:start; }
+  .rail.g{ grid-template-columns:none; }                          /* gana sobre la primitiva .g */
+  @media (prefers-reduced-motion: no-preference){ .rail{ scroll-behavior:smooth; } }
+
+  @supports selector(::scroll-marker){
+    .rail{ scroll-marker-group:after; }
+    .rail::scroll-marker-group{ display:flex; justify-content:center; gap:.45rem; padding-top:.9rem; }
+    .rail > *::scroll-marker{
+      content:""; width:.45rem; height:.45rem; border-radius:50%;
+      border:1px solid var(--accent-line); background:transparent;
+    }
+    .rail > *::scroll-marker:target-current{ background:var(--accent); border-color:var(--accent); }
+  }
+}
+
+/* ============================================================
+   v26 · BARRA DE ACCION INFERIOR — solo movil
+   En movil se ocultan el CTA del header y el dock social, asi que
+   durante todo el scroll no habia ninguna via de contacto.
+   Sticky en thumb zone; respeta el gesture bar de iOS/Android.
+   ============================================================ */
+.actionbar{ display:none; }
+@media (max-width:640px){
+  .actionbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:320;
+    display:flex; align-items:center; gap:.55rem;
+    padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(14px) saturate(1.3);
+    border-top:1px solid var(--line);
+  }
+  .actionbar .btn{ flex:1 1 auto; height:2.9rem; min-width:0; }
+  .actionbar .wa{
+    flex:none; width:2.9rem; height:2.9rem; border-radius:var(--r-sm);
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+    border:1px solid var(--line); color:var(--ink); background:var(--surface);
+  }
+  /* Deja aire al final para que la barra no tape el ultimo contenido */
+  body{ padding-bottom:4.6rem; }
+  .foot{ margin-bottom:0; }
 }
 
 /* ---- v24 · accesibilidad: el archivo no tenia ni una regla ---- */

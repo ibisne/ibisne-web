@@ -97,9 +97,21 @@ def gcls(n, dense=False):
 
 BGS = ["01", "02", "03", "04", "05"]
 
+def bg_url(key):
+    """Elige uno de los fondos de forma estable a partir de una clave."""
+    return f"/assets/bg/{BGS[sum(ord(c) for c in key) % len(BGS)]}.webp"
+
 def bg_for(key):
     """Fondo del hero interior, estable por pagina y alternado entre paginas."""
-    return f'<div class="bgimg" style="background-image:url(/assets/bg/{BGS[sum(ord(c) for c in key) % len(BGS)]}.webp)" aria-hidden="true"></div>'
+    return f'<div class="bgimg" style="background-image:url({bg_url(key)})" aria-hidden="true"></div>'
+
+def insight_card(slug, title, cat):
+    """Card de insight. La portada usa un fondo generico a proposito: son PLACEHOLDER
+    hasta que el disenador de Eduardo entregue las definitivas (v26)."""
+    return (f'<a class="icard" href="/insights/{slug}/">'
+            f'<div class="cover" style="background-image:url({bg_url(slug)})"><span>{cat}</span></div>'
+            f'<div class="body"><div class="date">{cat}</div><h3>{title}</h3>'
+            f'<div class="by">por el equipo iBisne</div></div></a>')
 
 # ---------------------------------------------------------------- nav / base
 NAV = [
@@ -187,6 +199,10 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
+<nav class="actionbar" aria-label="Acciones rápidas">
+  <a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a>
+  <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
+</nav>
 <div class="sdock" aria-label="Redes y contacto">
   <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
   <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
@@ -320,7 +336,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=10">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=26">
 {GTAG}
 </head>
 <body>
@@ -600,10 +616,7 @@ def build_home(projects):
     # v23: el home no exhibe contenido de inversión (regla de negocio, ver MESSAGING.md).
     # Los artículos de esa categoría siguen publicados y visibles en /insights/.
     ins_home = [x for x in INSIGHTS if x[2] != "Inversión" and x[0] != "skin-in-the-game"][:3]
-    ins = "".join(
-        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
-        f'<div class="body"><div class="date">{cat}</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
-        for s, t, cat in ins_home)
+    ins = "".join(insight_card(s, t, cat) for s, t, cat in ins_home)
     body = f"""
 <section class="hero bg"><div class="wrap">
   <h1>Convertimos visiones en activos tecnológicos.</h1>
@@ -644,7 +657,7 @@ def build_home(projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Clientes</span><h2>Negocios que ya están en la cancha.</h2>
   <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
-  <div class="pf-grid {gcls(len(cli_feat))}">{cards}</div>
+  <div class="pf-grid rail {gcls(len(cli_feat))}">{cards}</div>
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
 
@@ -658,14 +671,14 @@ def build_home(projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Venture Capital</span><h2>Proyectos que no soltamos al entregar.</h2>
   <p>Aquí no solo escribimos el código: seguimos dentro. Los construimos, los operamos y crecemos con ellos.</p></div>
-  <div class="pf-grid {gcls(len(vc_feat))}">{vc_cards}</div>
+  <div class="pf-grid rail {gcls(len(vc_feat))}">{vc_cards}</div>
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
   <p>Ideas, aprendizajes y notas de los proyectos que construimos.</p></div>
-  <div class="ins-grid {gcls(len(ins_home))}">{ins}</div>
+  <div class="ins-grid rail {gcls(len(ins_home))}">{ins}</div>
   <div style="margin-top:var(--sp-6)"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
 </div></section>
 
@@ -765,7 +778,7 @@ def build_dominio(d, projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos de este dominio.</h2></div>
-  <div class="pf-grid {gcls(len(mapped[:3]) or 3)}">{rel}</div>
+  <div class="pf-grid rail {gcls(len(mapped[:3]) or 3)}">{rel}</div>
 </div></section>
 {contacto_band()}
 """
@@ -941,10 +954,7 @@ def build_estudio():
 
 # ---------------------------------------------------------------- INSIGHTS
 def build_insights_hub():
-    cards = "".join(
-        f'<a class="icard" href="/insights/{s}/"><div class="cover"><img src="/assets/insights/{s}.jpg?2" alt="" loading="lazy"><span>{cat}</span></div>'
-        f'<div class="body"><div class="date">Perspectiva</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
-        for s, t, cat in INSIGHTS)
+    cards = "".join(insight_card(s, t, cat) for s, t, cat in INSIGHTS)
     body = f"""
 <section class="phero">{bg_for("insights")}<div class="wrap">
   {crumb("Insights")}
@@ -952,7 +962,7 @@ def build_insights_hub():
   <h1>Perspectivas desde la trinchera.</h1>
   <p class="lede">Ideas, aprendizajes y notas sobre cómo construimos, escalamos e invertimos en negocios digitales de alto impacto.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="ins-grid {gcls(len(INSIGHTS))}">{cards}</div></div></section>
+<section class="sec"><div class="wrap"><div class="ins-grid rail {gcls(len(INSIGHTS))}">{cards}</div></div></section>
 {contacto_band()}
 """
     return base("Insights — iBisne", "Perspectivas sobre construir, escalar e invertir en negocios digitales.", body, active="insights", canonical="/insights/")
@@ -968,7 +978,7 @@ def build_insight(slug, title, cat):
   <h1 style="font-size:clamp(1.9rem,4vw,3rem)">{title}</h1>
   <p class="lede">por el equipo iBisne</p>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:1rem;padding-bottom:0"><div class="wrap" style="max-width:44rem"><div class="ins-hero"><img src="/assets/insights/{slug}.jpg?2" alt="{title}"></div></div></section>
+<section class="sec" style="border-top:0;padding-top:1rem;padding-bottom:0"><div class="wrap" style="max-width:44rem"><div class="ins-hero" style="background-image:url({bg_url(slug)})" role="img" aria-label="{title}"></div></div></section>
 <section class="sec" style="border-top:0;padding-top:2rem"><div class="wrap"><div class="prose">
 {article}
 </div></div></section>
@@ -1109,7 +1119,7 @@ def build_project(p, projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
-  <div class="pf-grid {gcls(3)}">{relc}</div>
+  <div class="pf-grid rail {gcls(3)}">{relc}</div>
 </div></section>
 {contacto_band()}
 """
