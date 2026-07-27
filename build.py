@@ -558,8 +558,7 @@ def build_home(projects):
         for s, t, cat in ins_home)
     body = f"""
 <section class="hero bg"><div class="wrap">
-  <span class="eyebrow">Tech Studio · Latinoamérica</span>
-  <h1>Construimos imperios digitales.</h1>
+  <h1>Convertimos visiones en activos tecnológicos.</h1>
   <p class="lede">Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.</p>
   <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
   <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">{len(projects)}<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
@@ -629,7 +628,7 @@ def build_home(projects):
 
 {contacto_band()}
 """
-    return base("iBisne — Construimos imperios digitales",
+    return base("iBisne — Convertimos visiones en activos tecnológicos",
                 "Tech Studio y arquitectos de software. Diseñamos, desarrollamos y escalamos productos digitales de alto impacto: SaaS, CRM, ERP, apps, IA y Web3.",
                 body, active="", canonical="/")
 
@@ -743,7 +742,7 @@ def build_como_trabajamos():
 <section class="phero"><div class="wrap">
   {crumb("Cómo trabajamos")}
   <span class="eyebrow">Protocolo iBisne</span>
-  <h1>Convertimos visiones en activos tecnológicos.</h1>
+  <h1>Del primer día al producto funcionando.</h1>
   <p class="lede">Cuatro fases para llevar una visión de negocio a software que opera, con un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
   <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
 </div></section>

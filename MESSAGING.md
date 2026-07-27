@@ -32,8 +32,8 @@ Corolarios que ya mordieron una vez:
   inversión. La regla aplica a la Homepage.
 
 ## Idea central (hero)
-- Eyebrow: `TECH STUDIO · LATINOAMÉRICA`
-- H1: **Construimos imperios digitales.**
+- Eyebrow: **ninguno**. El hero arranca directo con el H1 (decisión de Eduardo, v23.1).
+- H1: **Convertimos visiones en activos tecnológicos.**
 - Sub: *Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.*
 
 ## Narrativa · los 3 verbos
