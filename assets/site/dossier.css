@@ -432,7 +432,9 @@ section { position:relative; }
   .topbar{ display:none; }
   .shead .row{ grid-template-columns:1fr auto; height:3.6rem; }
   .nav-lk{ display:none; }
-  .actions .btn-primary{ display:none; }
+  /* v27: el CTA se queda visible en el header (sticky) en lugar de una barra
+     flotante. Es la unica via de contacto durante el scroll en movil. */
+  .actions .btn-primary{ display:inline-flex; height:2.75rem; padding:0 .95rem; font-size:.85rem; }  /* 44px minimo tactil */
   .actions .theme-toggle{ display:none; }
   .hamb{ display:flex; width:2.75rem; height:2.75rem; }   /* 44px: minimo tactil (Fitts) */
   .sdock{ display:none; }
@@ -470,23 +472,28 @@ section { position:relative; }
      Medido antes: home 14,861px = 18.3 pantallas de scroll.
      ======================================================== */
 
-  /* --- A · cards horizontales: icono a la izquierda, texto a la derecha.
-     Ahorra la altura del icono + su margen (~55px) en cada card. --- */
-  .card,.verbo,.adv,.std-grid .it{
-    display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto;
-    column-gap:.9rem; row-gap:.15rem; align-items:start;
-    padding:1.15rem 1.1rem;
+  /* --- A · cards horizontales: icono a la izquierda, titulo EN LA MISMA LINEA,
+     parrafo debajo alineado con el titulo. Ahorra ~55px por card.
+     Posiciones explicitas con grid-area: sin ellas el auto-placement decide y el
+     resultado cambia segun si la card trae parrafo o pie. --- */
+  .card,.verbo,.adv{
+    display:grid; grid-template-columns:auto 1fr;
+    column-gap:.8rem; align-items:start;
+    padding:1rem 1.05rem;
   }
-  .card .ico,.verbo .ico,.adv .ico,.std-grid .it .ico{
-    grid-row:1 / span 2; width:2.4rem; height:2.4rem; margin:0; font-size:1.05rem;
+  .card .ico,.verbo .ico,.adv .ico{
+    grid-area:1 / 1; width:2.4rem; height:2.4rem; margin:0; font-size:1.05rem;
   }
-  .card h3,.verbo h3,.adv h3,.std-grid .it h3{ grid-column:2; margin:0; align-self:center; }
-  .card p,.verbo p,.adv p,.std-grid .it p{ grid-column:2; margin-top:.3rem; }
-  .card .more{ grid-column:2; margin-top:.7rem; padding-top:0; }
+  /* align-self:center aqui SI es vertical: el contenedor es grid, no flex column.
+     Alinea el titulo con el centro del icono. */
+  .card h3,.verbo h3,.adv h3{ grid-area:1 / 2; margin:0; align-self:center; }
+  .card p,.verbo p,.adv p{ grid-area:2 / 2; margin-top:.4rem; }
+  .card .more{ grid-area:3 / 2; margin-top:.6rem; padding-top:0; font-size:.8rem; }
   /* Titulos de card mas contenidos: en movil no necesitan tamano editorial */
-  .card h3,.verbo h3{ font-size:1.15rem; }
+  .card h3,.verbo h3{ font-size:1.1rem; line-height:1.25; }
   .card p,.verbo p{ font-size:.9rem; line-height:1.5; }
-  .adv p,.std-grid .it p{ font-size:.86rem; line-height:1.5; }
+  .adv h3{ font-size:.98rem; line-height:1.3; }
+  .adv p{ font-size:.86rem; line-height:1.5; }
 
   /* --- B · tipografia: los clamp() estaban calibrados para desktop --- */
   .hero h1{ font-size:2.15rem; max-width:none; letter-spacing:-.03em; }
@@ -497,10 +504,18 @@ section { position:relative; }
   .sec-h h2{ font-size:1.5rem; }
   .sec-h p{ font-size:.95rem; margin-top:.7rem; }
 
-  /* --- C · botones a ancho completo (targets de 48px, thumb zone) --- */
+  /* --- C · botones a ancho completo. Cubre TODOS los contenedores de CTA,
+     no solo .cta: antes 7 botones quedaban cortos por vivir en .pf-more,
+     .ctaband o divs con estilo inline. Los pills de .filters quedan fuera
+     a proposito: son filtros y deben verse como pastillas en fila. --- */
   .cta{ gap:.6rem; width:100%; }
-  .cta > .btn{ width:100%; min-width:0; }
+  .cta > .btn,
+  .sec-cta > .btn,
+  .pf-more > .btn,
+  .ctaband > .btn{ width:100%; min-width:0; }
   .btn,.btn-lg{ height:3rem; }
+  .ctaband{ padding:1.5rem 1.25rem; }
+  .ctaband h2{ max-width:none; }
 
   /* --- D · imagenes menos altas: consumian ~60% de la card --- */
   .pcard .shot,.pcard .ph{ aspect-ratio:16/9; }
@@ -522,20 +537,20 @@ section { position:relative; }
   .sec-h{ margin-bottom:1.1rem; }
   .sec-h .eyebrow{ margin-bottom:.55rem; font-size:.68rem; }
   .sec-h p{ font-size:.9rem; line-height:1.5; margin-top:.55rem; }
-  .adv{ padding:1rem 1.05rem; }
-  .adv h3{ font-size:.98rem; }
-  .adv p{ font-size:.84rem; line-height:1.45; margin-top:.25rem; }
-  .card,.verbo{ padding:1rem 1.05rem; }
-  .card p,.verbo p{ margin-top:.25rem; }
-  .card .more{ margin-top:.55rem; font-size:.8rem; }
+  /* (padding y tipografia de .card/.verbo/.adv ya viven en el bloque A) */
 
-  /* El estandar son 6 features de titulo corto: caben en 2 columnas.
-     Vuelven a layout vertical porque a ~160px el icono lateral no cabe. */
+  /* El estandar son 6 features de titulo corto: caben en 2 columnas y por eso
+     NO llevan el layout horizontal: a ~160px el icono lateral no cabe. */
   .std-grid.g{ --cols:2; --g-gap:.55rem; }
-  .std-grid .it{ grid-template-columns:1fr; row-gap:0; padding:.9rem .85rem; }
-  .std-grid .it .ico{ grid-row:auto; width:1.9rem; height:1.9rem; font-size:.9rem; margin-bottom:.5rem; }
-  .std-grid .it h3{ grid-column:1; font-size:.88rem; line-height:1.25; }
-  .std-grid .it p{ grid-column:1; font-size:.78rem; line-height:1.4; margin-top:.25rem; }
+  .std-grid .it{ display:block; padding:.9rem .85rem; }
+  .std-grid .it .ico{ width:1.9rem; height:1.9rem; font-size:.9rem; margin:0 0 .5rem; }
+  .std-grid .it h3{ font-size:.88rem; line-height:1.25; }
+  .std-grid .it p{ font-size:.78rem; line-height:1.4; margin-top:.25rem; }
+
+  /* La nota del estandar era flex sin envolver: el icono, el texto y el span
+     verde se comprimian en columnas y la frase quedaba ilegible. */
+  .std-note{ display:block; font-size:.85rem; line-height:1.5; }
+  .std-note .ic{ margin-right:.35rem; vertical-align:-.15em; }
 
   /* Footer: los 3 grupos de enlaces en 3 columnas y menos aire. */
   .foot{ padding:2.2rem 0 1.5rem; margin-top:2.2rem; }
@@ -550,6 +565,9 @@ section { position:relative; }
 /* ---- v5: fixes ajustes ---- */
 /* Botones en grupos .cta fuera del hero (paginas de proyecto, 404, servicios) */
 .cta { display:flex; flex-wrap:wrap; align-items:center; gap:.9rem; }
+/* v27 · pie de seccion con su CTA. Sustituye 7 <div style="margin-top:..."> inline
+   y da un gancho real para llevarlos a ancho completo en movil. */
+.sec-cta { margin-top:var(--sp-6); display:flex; flex-wrap:wrap; gap:.9rem; }
 /* v26: los botones de un mismo grupo comparten ancho mínimo para que se lean como par.
    Antes "Hablemos" medía ~155px y "Cómo trabajamos" ~205px y al envolverse escalonaban. */
 .cta > .btn, .hero .cta > .btn { min-width:13.5rem; justify-content:center; }
@@ -622,13 +640,18 @@ div.card:hover,.adv:hover,.pledge:hover,.vcard:hover,.rrr .blk:hover { border-co
 
 /* v25 · alineacion: el grid estira las cards a la altura de la fila, pero el contenido
    quedaba pegado arriba y sobraba hueco abajo cuando los parrafos eran de distinto largo.
-   Con flex column el cuerpo empuja y el pie (more/meta) queda anclado. Patron de .icard. */
-.card,.verbo,.adv,.std-grid .it,.rrr .blk,.vcard { display:flex; flex-direction:column; }
-.card p,.verbo p,.adv p,.std-grid .it p,.rrr .blk p { flex:1 1 auto; }
-.card .more { margin-top:auto; padding-top:1.1rem; }
-.vcard .fin { margin-top:auto; padding-top:1.1rem; }
-.pledge > div:last-child { display:flex; flex-direction:column; }
-.pledge p { flex:1 1 auto; }
+   Con flex column el cuerpo empuja y el pie (more/meta) queda anclado. Patron de .icard.
+   v27 · ENCERRADO EN min-width:641px A PROPOSITO. Estaba suelto y, al vivir mas abajo
+   en el archivo, pisaba el display:grid del bloque movil: las cards horizontales nunca
+   se aplicaron y align-self:center acababa centrando el titulo en horizontal. */
+@media (min-width:641px){
+  .card,.verbo,.adv,.std-grid .it,.rrr .blk,.vcard { display:flex; flex-direction:column; }
+  .card p,.verbo p,.adv p,.std-grid .it p,.rrr .blk p { flex:1 1 auto; }
+  .card .more { margin-top:auto; padding-top:1.1rem; }
+  .vcard .fin { margin-top:auto; padding-top:1.1rem; }
+  .pledge > div:last-child { display:flex; flex-direction:column; }
+  .pledge p { flex:1 1 auto; }
+}
 
 /* v25 · iconos: .card/.verbo/.std-grid tenian caja con fondo y .adv/.pledge solo el
    glifo suelto. Misma caja para todos, escalada al tamano de cada card. */
@@ -686,32 +709,9 @@ h1,h2,h3 { text-wrap:balance; }
   }
 }
 
-/* ============================================================
-   v26 · BARRA DE ACCION INFERIOR — solo movil
-   En movil se ocultan el CTA del header y el dock social, asi que
-   durante todo el scroll no habia ninguna via de contacto.
-   Sticky en thumb zone; respeta el gesture bar de iOS/Android.
-   ============================================================ */
-.actionbar{ display:none; }
-@media (max-width:640px){
-  .actionbar{
-    position:fixed; left:0; right:0; bottom:0; z-index:320;
-    display:flex; align-items:center; gap:.55rem;
-    padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));
-    background:color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter:blur(14px) saturate(1.3);
-    border-top:1px solid var(--line);
-  }
-  .actionbar .btn{ flex:1 1 auto; height:2.9rem; min-width:0; }
-  .actionbar .wa{
-    flex:none; width:2.9rem; height:2.9rem; border-radius:var(--r-sm);
-    display:flex; align-items:center; justify-content:center; font-size:1.2rem;
-    border:1px solid var(--line); color:var(--ink); background:var(--surface);
-  }
-  /* Deja aire al final para que la barra no tape el ultimo contenido */
-  body{ padding-bottom:4.6rem; }
-  .foot{ margin-bottom:0; }
-}
+/* v27 · La barra de accion inferior se retiró: a Eduardo no le gustó que
+   siguiera al scroll. La via de contacto en movil pasa al CTA del header,
+   que ya es sticky y no flota sobre el contenido (ver bloque movil). */
 
 /* ---- v24 · accesibilidad: el archivo no tenia ni una regla ---- */
 @media (prefers-reduced-motion: reduce) {

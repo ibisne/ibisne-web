@@ -199,10 +199,6 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
-<nav class="actionbar" aria-label="Acciones rápidas">
-  <a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a>
-  <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
-</nav>
 <div class="sdock" aria-label="Redes y contacto">
   <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
   <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
@@ -336,7 +332,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=26">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=27">
 {GTAG}
 </head>
 <body>
@@ -637,14 +633,14 @@ def build_home(projects):
   <div class="sec-h"><span class="eyebrow">Qué construimos</span><h2>Sistemas que operan un negocio, no piezas sueltas.</h2>
   <p>Tres dominios de ingeniería. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p></div>
   <div class="grid-3 {gcls(len(DOMINIOS))}">{doms}</div>
-  <div style="margin-top:var(--sp-6)"><a href="/servicios/" class="btn btn-secondary">Ver capacidades {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/servicios/" class="btn btn-secondary">Ver capacidades {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
   <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado desde el inicio.</p></div>
   <div class="why-grid {gcls(len(COMPROMISOS))}">{pledges}</div>
-  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec sec-alt"><div class="wrap">
@@ -665,7 +661,7 @@ def build_home(projects):
   <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre contratar un proveedor y contratar arquitectos.</h2>
   <p>No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia y criterio de negocio.</p></div>
   <div class="why-grid {gcls(len(VENTAJAS))}">{ventajas}</div>
-  <div style="margin-top:var(--sp-6)"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -679,7 +675,7 @@ def build_home(projects):
   <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
   <p>Ideas, aprendizajes y notas de los proyectos que construimos.</p></div>
   <div class="ins-grid rail {gcls(len(ins_home))}">{ins}</div>
-  <div style="margin-top:var(--sp-6)"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
 </div></section>
 
 {contacto_band()}
@@ -699,7 +695,7 @@ def build_servicios_hub(projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">{d["tag"]}</span><h2>{d["nombre"]}</h2><p>{d["lede"]}</p></div>
   <div class="std-grid {gcls(len(d["sistemas"]), dense=True)}">{sis}</div>
-  <div style="margin-top:var(--sp-6)"><a href="/servicios/{d["slug"]}/" class="btn btn-secondary">Entrar a {d["nombre"]} {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/servicios/{d["slug"]}/" class="btn btn-secondary">Entrar a {d["nombre"]} {ic('arw')}</a></div>
 </div></section>"""
     body = f"""
 <section class="phero">{bg_for("capacidades")}<div class="wrap">
@@ -763,7 +759,7 @@ def build_dominio(d, projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Cómo empieza un proyecto.</h2>
   <p>Cuatro fases, un análisis que te llevas y un precio cerrado antes de cualquier conversación de capital.</p></div>
-  <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cuatro fases {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cuatro fases {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -832,7 +828,7 @@ def build_como_trabajamos():
       <div class="adv"><div class="ico">{ic('coins')}</div><h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
     </div>
     <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
-    <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
+    <div class="sec-cta"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
   </div>
 </div></section>
 
