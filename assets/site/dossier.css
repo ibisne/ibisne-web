@@ -442,10 +442,13 @@ section { position:relative; }
   /* Mobile-first: mas ancho util (gutter menor) + ritmo vertical compacto */
   .wrap{ padding:0 1.15rem; }
   .sec{ padding:2.4rem 0; }
-  /* v28 · heroes altos con aire, pero NO a pantalla completa: a 78% asoma el borde
-     de la siguiente seccion e invita al scroll. Se usa dvh porque con vh la barra
-     de URL de Chrome/Safari cambia el viewport al hacer scroll y el hero salta. */
-  .hero,.phero{ min-height:78vh; min-height:78dvh; display:flex; align-items:center; padding:2.25rem 0; }
+  /* v29 · hero a pantalla completa. Se resta la altura del header (3.6rem) porque es
+     sticky y ocupa flujo: sin restarlo, header + hero suman mas de una pantalla y el
+     hero vuelve a cortarse, ahora por abajo. dvh y no vh porque la barra de URL de
+     Chrome/Safari cambia el viewport al hacer scroll y con vh el hero salta.
+     min-height (no height) para que crezca si el contenido no cabe, p.ej. landscape. */
+  .hero,.phero{ min-height:calc(100vh - 3.6rem); min-height:calc(100dvh - 3.6rem);
+    display:flex; align-items:center; padding:2.25rem 0; }
   .hero .wrap,.phero .wrap{ width:100%; }
   .sec-h{ margin-bottom:1.4rem; }
 
@@ -474,6 +477,20 @@ section { position:relative; }
   .hero .proof .tags{ display:none; }
   /* Un solo "Hablemos" en pantalla: el del header es sticky y acompaña todo el scroll. */
   .hero .cta .btn-primary{ display:none; }
+
+  /* v29 · las 3 divisiones pasan de botones apilados (3x48px = ~170px) a una fila
+     de mini-cards: icono arriba, texto debajo. "Venture Builder" con el icono al
+     lado necesita ~124px y solo hay ~107px por columna, por eso van en vertical.
+     Se usa .cta.hero-pills (2 clases) y no .hero-pills: `.cta{display:flex}` vive
+     fuera de este media query y ganaria por orden. Con especificidad no depende
+     de donde este escrito. Es el mismo fallo que ya costo v24 y v27. */
+  .cta.hero-pills{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+  .cta.hero-pills > .btn{
+    width:auto; min-width:0; height:auto; flex-direction:column; gap:.4rem;
+    padding:.7rem .35rem; font-size:.72rem; line-height:1.2; text-align:center;
+    white-space:normal; min-height:4.5rem; justify-content:center;
+  }
+  .cta.hero-pills > .btn .ic{ font-size:1.05rem; }
   /* Footer menos vertical: marca a lo ancho + los 3 grupos de enlaces en 2 columnas. */
   .foot .cols{ grid-template-columns:1fr 1fr; gap:1.5rem 1.2rem; }
   .foot .cols>div:first-child{ grid-column:1 / -1; }
@@ -580,6 +597,9 @@ section { position:relative; }
 /* v27 · pie de seccion con su CTA. Sustituye 7 <div style="margin-top:..."> inline
    y da un gancho real para llevarlos a ancho completo en movil. */
 .sec-cta { margin-top:var(--sp-6); display:flex; flex-wrap:wrap; gap:.9rem; }
+/* v29 · las 3 divisiones. En escritorio son pills horizontales (caben de sobra);
+   en movil pasan a mini-cards verticales, ver bloque movil. */
+.hero-pills { margin-top:var(--sp-6); }
 /* v26: los botones de un mismo grupo comparten ancho mínimo para que se lean como par.
    Antes "Hablemos" medía ~155px y "Cómo trabajamos" ~205px y al envolverse escalonaban. */
 .cta > .btn, .hero .cta > .btn { min-width:13.5rem; justify-content:center; }

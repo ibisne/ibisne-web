@@ -332,7 +332,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=28">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=29">
 {GTAG}
 </head>
 <body>
@@ -597,7 +597,7 @@ def build_home(projects):
       <div class="verbo"><div class="ico">{ic('gauge')}</div><h3>Optimizamos</h3><p>Aterrizamos ideas complejas mediante auditorías de viabilidad, diseño de flujos de usuario y creación de MVPs ágiles para mitigar riesgos antes de un lanzamiento a gran escala.</p></div>
     </div>"""
     # Divisiones: pills limpios sin explicación (regla de negocio v23, ver MESSAGING.md).
-    pills = f"""<div class="cta" style="margin-top:var(--sp-6)">
+    pills = f"""<div class="cta hero-pills">
       <a href="/servicios/" class="btn btn-secondary">{ic('cpu')} Tech Studio</a>
       <a href="/inversion/" class="btn btn-secondary">{ic('trend')} Smart Capital</a>
       <a href="/portafolio/" class="btn btn-secondary">{ic('blocks')} Venture Builder</a>
