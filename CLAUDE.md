@@ -61,7 +61,8 @@ quiere su idea). Se pierden ambos públicos.
 
 Las divisiones aparecen en el home solo como **pills sin explicación** (`Tech Studio`,
 `Smart Capital`, `Venture Builder`) y como links de nav/footer. `/inversion/`,
-`/como-trabajamos/`, `/estudio/` y `/por-que-ibisne/` sí pueden hablar de inversión.
+`/como-trabajamos/`, `/estudio/`, `/por-que-ibisne/` y `/portafolio/` sí pueden hablar
+de inversión.
 
 Ojo con los efectos colaterales: `TOPMSG` y `FOOTER` son globales y salen en la home; los
 insights destacados del home filtran la categoría "Inversión"; y "socio" en cualquier
@@ -89,12 +90,23 @@ Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del 
    los **3 dominios**.
 5. **CSS solo en `assets/site/dossier.css`**, sobre los tokens de `:root`. Cero colores
    hardcodeados. Verificar siempre el modo claro (`data-mode="light"`).
-6. **Sin librerías de UI, sin iconos de terceros, sin emojis.** Los iconos salen del sprite
+   Verificarlo **con recarga limpia**, no cambiando `data-mode` en vivo: las transiciones
+   de `border-color` devuelven valores a medio interpolar y dan lecturas falsas.
+6. **Rejillas: nunca escribir `grid-template-columns` a mano.** Usar `gcls(n, dense)`
+   (build.py), que deriva las columnas del conteo para que no queden huecos. Regla: elegir
+   `c` tal que `n % c == 0`; si no existe, 3 columnas con el primer item a fila completa.
+   Los grids densos (ficha técnica) admiten 4 columnas; las cards con párrafo no, porque
+   la medida de línea cae a ~32 caracteres: esas van 2×2 en `.g-narrow`.
+7. **Fondos de hero**: `bg_for(clave)` reparte las 5 imágenes de `assets/bg/*.webp` de
+   forma estable por página. Son **oscuras**: en modo claro su opacidad baja a .14 o
+   manchan el fondo. Si se agregan más, optimizar a WebP ≤200 KB (los originales de
+   `Fondo/` pesan 1-3 MB cada uno).
+8. **Sin librerías de UI, sin iconos de terceros, sin emojis.** Los iconos salen del sprite
    SVG inline en `build.py` (`SPRITE`), vía `ic("nombre")`.
-7. **Al borrar páginas**: `write()` nunca elimina archivos huérfanos. Hay que `git rm -r`
+9. **Al borrar páginas**: `write()` nunca elimina archivos huérfanos. Hay que `git rm -r`
    las carpetas viejas **y** agregar los redirects 301 en `vercel.json` en el mismo commit.
    Nunca desplegar el borrado sin el redirect.
-8. **Imágenes**: placeholders hasta que Eduardo entregue assets reales. No generar imágenes.
+10. **Imágenes**: placeholders hasta que Eduardo entregue assets reales. No generar imágenes.
 
 ## El Protocolo iBisne
 

@@ -62,6 +62,45 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 def ic(name):
     return f'<svg class="ic"><use href="#i-{name}"/></svg>'
 
+
+# ---------------------------------------------------------------- layout helpers (v24)
+def gcls(n, dense=False):
+    """Clases de rejilla derivadas del conteo de items, para que nunca queden huecos.
+
+    Elige c tal que n % c == 0. Si no existe, elige c tal que (n-1) % c == 0 y
+    promueve el primer item a fila completa. Los grids densos (fichas tecnicas)
+    admiten 4 columnas; las cards con parrafo no, porque la medida de linea baja
+    a ~32 caracteres: esas van 2x2 en contenedor estrecho.
+    """
+    if dense and n % 4 == 0:
+        d, feat_d = 4, False          # ficha tecnica: 4 columnas dan ~37 caracteres, legible
+    elif not dense and n == 4:
+        d, feat_d = 2, False          # card con parrafo: 4 columnas darian ~32, ilegible
+    elif n % 3 == 0:
+        d, feat_d = 3, False
+    elif (n - 1) % 3 == 0:
+        d, feat_d = 3, True           # 10, 31: el primero ocupa fila completa
+    elif n % 2 == 0:
+        d, feat_d = 2, False
+    else:
+        d, feat_d = 3, True
+    feat_t = (n % 2 == 1 and n > 2)   # tablet son 2 columnas: si sobra uno, se destaca
+    out = ["g", f"g-{d}"]
+    if feat_d:
+        out.append("g-feat-d")
+    if feat_t:
+        out.append("g-feat-t")
+    if not dense and n == 4:
+        out.append("g-narrow")        # 2x2: 56 caracteres por linea
+    return " ".join(out)
+
+
+BGS = ["01", "02", "03", "04", "05"]
+
+def bg_for(key):
+    """Fondo del hero interior, estable por pagina y alternado entre paginas."""
+    return f'<div class="bgimg" style="background-image:url(/assets/bg/{BGS[sum(ord(c) for c in key) % len(BGS)]}.webp)" aria-hidden="true"></div>'
+
 # ---------------------------------------------------------------- nav / base
 NAV = [
     ("Capacidades", "/servicios/", "servicios"),
@@ -322,7 +361,7 @@ ESTANDAR = [
 
 def estandar_grid():
     its = "".join(f'<div class="it"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in ESTANDAR)
-    return f'<div class="std-grid">{its}</div>'
+    return f'<div class="std-grid {gcls(len(ESTANDAR), dense=True)}">{its}</div>'
 
 
 # ---------------------------------------------------------------- data: dominios
@@ -519,7 +558,10 @@ def pf_card(p, href_prefix="/portafolio/"):
     elif (ASSET / f"{p['slug']}.png").exists():
         visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}" loading="lazy"></div>'
     else:
-        visual = f'<div class="ph">{p["estado"].title()}</div>'
+        # Sin captura: fondo abstracto en vez de una caja gris vacia.
+        bgn = BGS[sum(ord(c) for c in p["slug"]) % len(BGS)]
+        visual = (f'<div class="ph ph-bg" style="background-image:url(/assets/bg/{bgn}.webp)">'
+                  f'<span>{p["estado"].title()}</span></div>')
     return (f'<a class="pcard" href="{href_prefix}{p["slug"]}/">{visual}'
             f'<div class="meta"><div class="top"><span class="vert">{p.get("vertical","")}</span>'
             f'<span class="badge">{p["estado"].title()}</span></div><h3>{p["nombre"]}</h3></div></a>')
@@ -531,7 +573,7 @@ def build_home(projects):
     by = {x["slug"]: x for x in projects}
     feat = [by[s] for s in ("ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife") if s in by]
     cards = "".join(pf_card(p) for p in feat)
-    verbos = f"""<div class="verbos">
+    verbos = f"""<div class="verbos {gcls(3)}">
       <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas, apps, CRM, ERP, SaaS, IA y Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
       <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer. Performance medible y seguridad de nivel empresarial. Construimos para durar, no para salir del paso.</p></div>
       <div class="verbo"><div class="ico">{ic('gauge')}</div><h3>Optimizamos</h3><p>Aterrizamos ideas complejas mediante auditorías de viabilidad, diseño de flujos de usuario y creación de MVPs ágiles para mitigar riesgos antes de un lanzamiento a gran escala.</p></div>
@@ -572,21 +614,21 @@ def build_home(projects):
   {verbos}
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Qué construimos</span><h2>Sistemas que operan un negocio, no piezas sueltas.</h2>
   <p>Tres dominios de ingeniería. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p></div>
-  <div class="grid-3">{doms}</div>
+  <div class="grid-3 {gcls(len(DOMINIOS))}">{doms}</div>
   <div style="margin-top:var(--sp-6)"><a href="/servicios/" class="btn btn-secondary">Ver capacidades {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
   <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado desde el inicio.</p></div>
-  <div class="why-grid">{pledges}</div>
+  <div class="why-grid {gcls(len(COMPROMISOS))}">{pledges}</div>
   <div style="margin-top:var(--sp-6)"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Cada proyecto nace con lo esencial. Siempre incluido.</h2>
   <p>Lo que debería ser el estándar, lo damos por hecho. Cada plataforma llega lista para durar, escalar y competir.</p></div>
   {estandar_grid()}
@@ -596,14 +638,14 @@ def build_home(projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Portafolio</span><h2>Negocios que ya están en la cancha.</h2>
   <p>Una muestra de lo que construimos y operamos. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
-  <div class="pf-grid">{cards}</div>
+  <div class="pf-grid {gcls(len(feat))}">{cards}</div>
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre contratar un proveedor y contratar arquitectos.</h2>
   <p>No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia y criterio de negocio.</p></div>
-  <div class="why-grid">{ventajas}</div>
+  <div class="why-grid {gcls(len(VENTAJAS))}">{ventajas}</div>
   <div style="margin-top:var(--sp-6)"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
 </div></section>
 
@@ -622,7 +664,7 @@ def build_home(projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
   <p>Ideas, aprendizajes y notas de los proyectos que construimos.</p></div>
-  <div class="ins-grid">{ins}</div>
+  <div class="ins-grid {gcls(len(ins_home))}">{ins}</div>
   <div style="margin-top:var(--sp-6)"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
 </div></section>
 
@@ -642,11 +684,11 @@ def build_servicios_hub(projects):
         bloques += f"""
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">{d["tag"]}</span><h2>{d["nombre"]}</h2><p>{d["lede"]}</p></div>
-  <div class="std-grid">{sis}</div>
+  <div class="std-grid {gcls(len(d["sistemas"]), dense=True)}">{sis}</div>
   <div style="margin-top:var(--sp-6)"><a href="/servicios/{d["slug"]}/" class="btn btn-secondary">Entrar a {d["nombre"]} {ic('arw')}</a></div>
 </div></section>"""
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("capacidades")}<div class="wrap">
   {crumb("Capacidades")}
   <span class="eyebrow">Capacidades</span>
   <h1>Tres dominios de ingeniería, una sola casa.</h1>
@@ -685,7 +727,7 @@ def build_dominio(d, projects):
     else:
         visual = '<div class="ph-photo"><div class="lbl">Imagen del dominio</div><div class="sub">Próximamente.</div></div>'
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for(d["slug"])}<div class="wrap">
   {crumb(("Capacidades", "/servicios/"), d["nombre"])}
   <span class="eyebrow">{d["tag"]}</span>
   <h1>{d["nombre"]}</h1>
@@ -699,9 +741,9 @@ def build_dominio(d, projects):
   {visual}
 </div></div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Qué vive en este dominio</span><h2>Los sistemas que construimos aquí.</h2></div>
-  <div class="std-grid">{sis}</div>
+  <div class="std-grid {gcls(len(d["sistemas"]), dense=True)}">{sis}</div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -715,14 +757,14 @@ def build_dominio(d, projects):
   {estandar_grid()}
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Stack tecnológico</span><h2>Con qué lo construimos.</h2></div>
   <div class="stack">{stack}</div>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos de este dominio.</h2></div>
-  <div class="pf-grid">{rel}</div>
+  <div class="pf-grid {gcls(len(mapped[:3]) or 3)}">{rel}</div>
 </div></section>
 {contacto_band()}
 """
@@ -739,7 +781,7 @@ def build_como_trabajamos():
         f'<div class="pledge"><div class="ico">{ic(i)}</div><div><h3>{t}</h3><p>{sust}</p></div></div>'
         for i, _c, t, sust in COMPROMISOS)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("como-trabajamos")}<div class="wrap">
   {crumb("Cómo trabajamos")}
   <span class="eyebrow">Protocolo iBisne</span>
   <h1>Del primer día al producto funcionando.</h1>
@@ -750,34 +792,34 @@ def build_como_trabajamos():
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Las cuatro fases</span><h2>De la primera llamada al producto funcionando.</h2>
   <p>Cada fase tiene un entregable, una duración y un costo definidos desde el inicio. Sin sorpresas a la mitad.</p></div>
-  <div class="tl">{fases}</div>
+  <div class="fases-2col">
+    <div class="tl">{fases}</div>
+    <aside class="price-anchor compact">
+      <span class="eyebrow" style="color:var(--link)">Sprint de Validación</span>
+      <h3>$25,000 pesos por saber si vale la pena invertir dos millones.</h3>
+      <p>Construimos el núcleo funcional de tu producto. Código real, titularidad tuya y algo que puedes enseñarle a un inversionista.</p>
+      <details><summary>Cómo funciona el crédito</summary>
+        <p>Se cobra al inicio y se acredita íntegro contra el desarrollo si decides continuar. El precio es el mismo para todos y está publicado aquí, que es la mejor garantía de que no lo calculamos según lo que parezcas poder pagar.</p></details>
+      <div class="note">{ic('spark')} Aplica a productos de software. Sitios y tiendas se cotizan directo.</div>
+    </aside>
+  </div>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Cómo operamos</span><h2>Cuatro reglas, iguales en cada proyecto.</h2>
   <p>Aplican desde la primera llamada y se sostienen hasta la entrega. Están publicadas para que sepas cómo trabajamos antes de trabajar con nosotros.</p></div>
   <div class="pledges">{pledges}</div>
-</div></section>
 
-<section class="sec"><div class="wrap"><div class="price-anchor">
-  <div class="head"><span class="eyebrow" style="color:var(--link)">Sprint de Validación</span>
-    <h2>$25,000 pesos por saber si vale la pena invertir dos millones.</h2></div>
-  <div class="bd">
-    <p>El Sprint de Validación es la fase donde construimos el núcleo funcional de tu producto. Tiene precio porque tiene valor: código real, titularidad tuya y algo que puedes enseñarle a un inversionista.</p>
-    <p>Se cobra al inicio y se acredita íntegro contra el desarrollo si decides continuar. El precio es el mismo para todos y está publicado aquí, que es la mejor garantía de que no lo calculamos según lo que parezcas poder pagar.</p>
-    <div class="note">{ic('spark')} Aplica a productos de software. Sitios, tiendas y presencia digital se cotizan directo, sin sprint.</div>
+  <div class="subsplit">
+    <span class="eyebrow">La bifurcación</span>
+    <h3>Dos puertas. Tú eliges.</h3>
+    <div class="grid-2">
+      <div class="adv">{ic('layers')}<h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
+      <div class="adv">{ic('coins')}<h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
+    </div>
+    <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
+    <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
   </div>
-</div></div></section>
-
-<section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">La bifurcación</span><h2>Dos puertas. Tú eliges.</h2>
-  <p>Con el producto en la mano y el precio ya fijo, hay dos formas de seguir.</p></div>
-  <div class="grid-2">
-    <div class="adv">{ic('layers')}<h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
-    <div class="adv">{ic('coins')}<h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
-  </div>
-  <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
-  <div style="margin-top:var(--sp-6)"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="ctaband">
@@ -799,17 +841,17 @@ def build_inversion():
             ("zap", "Mentalidad", "Fundadores dispuestos a ejecutar y a jugar en grande.")]
     cg = "".join(f'<div class="adv">{ic(i)}<h3>{t}</h3><p>{d}</p></div>' for i, t, d in crit)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("inversion")}<div class="wrap">
   {crumb("Inversión")}
   <span class="eyebrow">Inversión · Smart Capital</span>
   <h1>Cuando vemos el potencial, entramos con capital.</h1>
   <p class="lede">No todo es servicio. En los proyectos con futuro claro, co-construimos y financiamos: los llevamos del concepto al lanzamiento como propios, con criterio de inversionista.</p>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Qué buscamos</span><h2>El potencial, antes que la promesa.</h2>
   <p>Elegimos con criterio. Cada proyecto en el que invertimos pasa por una lectura honesta de su realidad y su potencial.</p></div>
-  <div class="why-grid">{cg}</div>
+  <div class="why-grid {gcls(len(crit))}">{cg}</div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="vent">
@@ -833,13 +875,13 @@ def build_porque():
         f'<div class="card"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>'
         for i, t, d in VENTAJAS)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("por-que-ibisne")}<div class="wrap">
   {crumb("Por qué iBisne")}
   <span class="eyebrow">Por qué iBisne</span>
   <h1>La diferencia entre un proveedor y un socio.</h1>
   <p class="lede">No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia, criterio de negocio y responsabilidad sobre lo que construimos.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="grid-3">{adv}</div></div></section>
+<section class="sec"><div class="wrap"><div class="grid-3 {gcls(len(VENTAJAS))}">{adv}</div></div></section>
 {contacto_band()}
 """
     return base("Por qué iBisne", "Skin in the game, tecnología propia, escalabilidad por diseño y el estándar incluido.", body, active="", canonical="/por-que-ibisne/")
@@ -867,7 +909,7 @@ def build_estudio():
         f'<a class="mail" href="mailto:{e}">{e}</a></div></div>'
         for n, r, e in equipo)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("estudio")}<div class="wrap">
   {crumb("Estudio")}
   <span class="eyebrow">El estudio</span>
   <h1>Un equipo obsesionado con lo que perdura.</h1>
@@ -883,7 +925,7 @@ def build_estudio():
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">El Código iBisne</span><h2>Los principios que nos guían.</h2></div>
-  <div class="grid-3">{vg}</div>
+  <div class="grid-3 {gcls(len(valores))}">{vg}</div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -903,13 +945,13 @@ def build_insights_hub():
         f'<div class="body"><div class="date">Perspectiva</div><h3>{t}</h3><div class="by">por el equipo iBisne</div></div></a>'
         for s, t, cat in INSIGHTS)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("insights")}<div class="wrap">
   {crumb("Insights")}
   <span class="eyebrow">Insights</span>
   <h1>Perspectivas desde la trinchera.</h1>
   <p class="lede">Ideas, aprendizajes y notas sobre cómo construimos, escalamos e invertimos en negocios digitales de alto impacto.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="ins-grid">{cards}</div></div></section>
+<section class="sec"><div class="wrap"><div class="ins-grid {gcls(len(INSIGHTS))}">{cards}</div></div></section>
 {contacto_band()}
 """
     return base("Insights — iBisne", "Perspectivas sobre construir, escalar e invertir en negocios digitales.", body, active="insights", canonical="/insights/")
@@ -919,7 +961,7 @@ def build_insight(slug, title, cat):
     # Contenido real por artículo en content/insights/<slug>.html (redactado, sin placeholders).
     article = (ROOT / "content" / "insights" / f"{slug}.html").read_text(encoding="utf-8").strip()
     body = f"""
-<section class="phero"><div class="wrap" style="max-width:44rem">
+<section class="phero">{bg_for(slug)}<div class="wrap" style="max-width:44rem">
   {crumb(("Insights", "/insights/"), cat)}
   <span class="eyebrow">{cat}</span>
   <h1 style="font-size:clamp(1.9rem,4vw,3rem)">{title}</h1>
@@ -935,6 +977,27 @@ def build_insight(slug, title, cat):
 
 
 # ---------------------------------------------------------------- PORTAFOLIO
+# Modelo de entrada segun el CRM (hoja "Modelo de entrada"). Mismo patron que
+# DOMAIN_PROJECTS: vive aqui y no en cv-data.json, que es externo y alimenta el CV.
+# Del CRM solo sale el par slug -> categoria. Nunca montos, contactos ni cap table.
+MODELO_PROJECTS = {
+    "inversion": ["ibroker", "rancho-contento", "piscinamx", "geneticas", "elixier",
+                  "love-sex-and-more", "ipool", "ifutbol", "medical-mexicana", "sem",
+                  "semendomap", "dci", "thcc", "eleva", "breakit"],
+    "clientes": ["steelbeird", "neoterre", "gocer", "grupo-rmc", "sense", "vg",
+                 "farmacia-hdz", "hotel-panamera", "manufaktura", "albercas-vip",
+                 "emergente", "unframe", "batauro", "albercasopia", "digitalife", "otomi"],
+    "incubadora": [],   # categoria oficial del CRM, sin proyectos por ahora
+}
+MODELO_LABEL = {"clientes": "Clientes", "inversion": "Inversión", "incubadora": "Incubadora"}
+
+def modelo_of(slug):
+    for m, slugs in MODELO_PROJECTS.items():
+        if slug in slugs:
+            return m
+    return "clientes"
+
+
 def build_portfolio_hub(projects):
     estados = []
     for p in projects:
@@ -942,28 +1005,50 @@ def build_portfolio_hub(projects):
             estados.append(p["estado"])
     fbtns = '<button aria-pressed="true" data-f="all">Todos</button>' + "".join(
         f'<button aria-pressed="false" data-f="{e}">{e.title()}</button>' for e in estados)
+    usados = [m for m in ("clientes", "inversion", "incubadora")
+              if any(modelo_of(p["slug"]) == m for p in projects)]
+    mbtns = '<button aria-pressed="true" data-m="all">Todo el portafolio</button>' + "".join(
+        f'<button aria-pressed="false" data-m="{m}">{MODELO_LABEL[m]}</button>' for m in usados)
     cards = "".join(
-        f'<div class="pf-item" data-estado="{p["estado"]}">{pf_card(p)}</div>' for p in projects)
+        f'<div class="pf-item" data-estado="{p["estado"]}" data-modelo="{modelo_of(p["slug"])}">{pf_card(p)}</div>'
+        for p in projects)
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("portafolio")}<div class="wrap">
   {crumb("Portafolio")}
   <span class="eyebrow">Portafolio</span>
   <h1>{len(projects)} negocios digitales, en más de una docena de verticales.</h1>
-  <p class="lede">Lo que construimos, operamos e invertimos. Filtra por estado para ver lo que ya está en línea, en desarrollo o por lanzar.</p>
+  <p class="lede">Proyectos que construimos para clientes y proyectos en los que además pusimos capital. Filtra por tipo de relación o por estado.</p>
 </div></section>
 <section class="sec"><div class="wrap">
+  <div class="filters ftabs" id="pf-modelo">{mbtns}</div>
   <div class="filters" id="pf-filters">{fbtns}</div>
-  <div class="pf-grid" id="pf-grid">{cards}</div>
+  <div class="pf-count" id="pf-count" aria-live="polite"></div>
+  <div class="pf-grid {gcls(len(projects))}" id="pf-grid">{cards}</div>
+  <p class="pf-empty" id="pf-empty" hidden>No hay proyectos con esa combinación. Prueba con otro estado.</p>
 </div></section>
 {contacto_band()}
 <script>
 (function(){{
-  var btns=document.querySelectorAll('#pf-filters button'), items=document.querySelectorAll('.pf-item');
-  btns.forEach(function(b){{ b.addEventListener('click',function(){{
-    btns.forEach(function(x){{x.setAttribute('aria-pressed','false');}}); b.setAttribute('aria-pressed','true');
-    var f=b.getAttribute('data-f');
-    items.forEach(function(it){{ it.style.display=(f==='all'||it.getAttribute('data-estado')===f)?'':'none'; }});
-  }});}});
+  var mb=document.querySelectorAll('#pf-modelo button'), eb=document.querySelectorAll('#pf-filters button'),
+      items=document.querySelectorAll('.pf-item'), cnt=document.getElementById('pf-count'),
+      empty=document.getElementById('pf-empty'), m='all', e='all';
+  function apply(){{
+    var n=0;
+    items.forEach(function(it){{
+      var ok=(m==='all'||it.getAttribute('data-modelo')===m)&&(e==='all'||it.getAttribute('data-estado')===e);
+      it.style.display=ok?'':'none'; if(ok) n++;
+    }});
+    cnt.textContent=n+(n===1?' proyecto':' proyectos');
+    empty.hidden=n>0;
+  }}
+  function wire(list,attr,set){{
+    list.forEach(function(b){{ b.addEventListener('click',function(){{
+      list.forEach(function(x){{x.setAttribute('aria-pressed','false');}}); b.setAttribute('aria-pressed','true');
+      set(b.getAttribute(attr)); apply();
+    }});}});
+  }}
+  wire(mb,'data-m',function(v){{m=v;}}); wire(eb,'data-f',function(v){{e=v;}});
+  apply();
 }})();
 </script>
 """
@@ -1023,7 +1108,7 @@ def build_project(p, projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
-  <div class="pf-grid">{relc}</div>
+  <div class="pf-grid {gcls(3)}">{relc}</div>
 </div></section>
 {contacto_band()}
 """
@@ -1033,7 +1118,7 @@ def build_project(p, projects):
 # ---------------------------------------------------------------- CONTACTO
 def build_contacto():
     body = f"""
-<section class="phero"><div class="wrap">
+<section class="phero">{bg_for("contacto")}<div class="wrap">
   {crumb("Contacto")}
   <span class="eyebrow">Contacto</span>
   <h1>Cuéntanos tu proyecto.</h1>
@@ -1074,7 +1159,7 @@ fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},
 # ---------------------------------------------------------------- LEGAL
 def build_404():
     body = """
-<section class="phero"><div class="wrap" style="max-width:44rem">
+<section class="phero">{bg_for("error404")}<div class="wrap" style="max-width:44rem">
   <span class="eyebrow">Error 404</span>
   <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Esta página no existe.</h1>
   <p class="lede" style="margin-top:1.2rem">El enlace que seguiste no lleva a ningún lugar, o la página cambió de sitio. Volvamos a terreno firme.</p>
@@ -1087,7 +1172,7 @@ def build_404():
 
 def build_legal(slug, title, prose):
     body = f"""
-<section class="phero"><div class="wrap" style="max-width:44rem">
+<section class="phero">{bg_for(slug)}<div class="wrap" style="max-width:44rem">
   {crumb(("Legal", "/legal/privacidad/"), title)}
   <span class="eyebrow">Legal</span><h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">{title}</h1>
 </div></section>

@@ -101,6 +101,15 @@ Editorial · sereno · seguro · humano · **premium**. Siempre **afirmativo**. 
 ## Tratamiento
 **Tuteo**, siempre. ("Cuéntanos tu proyecto", "tu idea es tuya"). Nunca "usted".
 
+## Portafolio · grupos públicos (v24)
+El CRM clasifica por "Modelo de entrada"; en el sitio se traduce así:
+- CRM "Venta" → **Clientes** (16 proyectos). "Venta" está en la lista de Evitar, no se publica.
+- CRM "Inversión" → **Inversión** (15 proyectos, incluye iBroker, iPool, iFutbol, DCI, THCC, Eleva, BreakIt).
+- CRM "Incubadora" → **Incubadora**. Vacía por ahora: la pestaña no se imprime hasta que tenga proyectos.
+
+> Del CRM **solo** sale el par slug → categoría. Nunca montos, contactos, utilidades ni cap table.
+> El mapa vive en `MODELO_PROJECTS` (build.py), no en `cv-data.json`, que es externo.
+
 ## CTA
 - Botón (nav/hero): **"Hablemos"** — corto, ejecutivo, premium.
 - CTA secundario del hero: **"Cómo trabajamos"** → `/como-trabajamos/`.

@@ -33,3 +33,7 @@ node_modules/
 # Claude Code (local-only, no commitear)
 .claude/worktrees/
 .claude/settings.local.json
+
+# Fuentes de los fondos: PNG de 1-3 MB cada uno. Lo que se sirve son los
+# WebP optimizados en assets/bg/ (~30 KB). Ver regla 7 de CLAUDE.md.
+Fondo/

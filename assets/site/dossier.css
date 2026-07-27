@@ -15,8 +15,11 @@
   --fs-hero:clamp(2.6rem,6.4vw,5.25rem);
   --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem; --sp-5:1.5rem; --sp-6:2rem;
   --sp-7:2.5rem; --sp-8:3rem; --sp-10:4rem; --sp-12:5rem;
-  --r-sm:.5rem; --r:.75rem; --r-lg:1.125rem; --r-xl:1.625rem; --r-pill:999px;
+  --r-sm:.5rem; --r:.75rem; --r-md:.875rem; --r-lg:1.125rem; --r-xl:1.625rem; --r-pill:999px;
   --maxw:75rem; --maxw-prose:44rem; --gutter:2rem;
+  /* Sobre media oscura (hero con foto, loader): fijos en ambos modos a proposito. */
+  --scrim:#0B0D12; --on-media:#F4F5F7; --on-media-dim:#C2C6CF; --on-media-soft:#C7CBD4;
+  --on-media-line:rgba(255,255,255,.22); --on-media-ink:#191D27;
   --e1:0 1px 2px rgba(0,0,0,.5); --e2:0 6px 16px -6px rgba(0,0,0,.6);
   --e3:0 20px 44px -14px rgba(0,0,0,.7),0 4px 10px rgba(0,0,0,.5);
   --ease:cubic-bezier(.22,.68,.24,1); --t:.22s var(--ease); --t-fast:.16s var(--ease);
@@ -55,7 +58,7 @@ svg.ic { width:1em; height:1em; flex:none; stroke:currentColor; fill:none; strok
 .btn-primary { background:var(--accent); color:var(--accent-ink); box-shadow:var(--e1); }
 .btn-primary:hover { background:var(--accent-hover); transform:translateY(-1px); box-shadow:var(--e3); color:var(--accent-ink); }
 .btn-secondary { background:var(--surface); color:var(--ink); border-color:var(--line); }
-.btn-secondary:hover { border-color:var(--accent-line); color:#fff; }
+.btn-secondary:hover { border-color:var(--accent-line); color:var(--ink); }
 .btn-ghost { background:transparent; color:var(--muted); }
 .btn-ghost:hover { color:var(--ink); background:var(--surface-2); }
 .btn-lg { height:3.375rem; padding:0 1.75rem; font-size:1rem; }
@@ -106,7 +109,7 @@ body.menu-lock { overflow:hidden; }
 
 /* ---- loader cinematográfico ---- */
 /* Flash breve con el logo al centro en CADA navegacion (~0.6s + fade). */
-#loader { position:fixed; inset:0; z-index:9999; background:#0B0D12; display:flex; align-items:center; justify-content:center; transition:opacity .45s ease, visibility .45s; animation:ldout .45s cubic-bezier(.22,.68,.24,1) .6s forwards; }
+#loader { position:fixed; inset:0; z-index:9999; background:var(--scrim); display:flex; align-items:center; justify-content:center; transition:opacity .45s ease, visibility .45s; animation:ldout .45s cubic-bezier(.22,.68,.24,1) .6s forwards; }
 #loader.done { opacity:0; visibility:hidden; pointer-events:none; animation:none; }
 html.ldskip #loader { display:none !important; }        /* visita repetida: sin loader */
 html.ldhold #loader { animation:none !important; }        /* ?loader: se mantiene (debug) */
@@ -131,15 +134,16 @@ html.ldhold #loader { animation:none !important; }        /* ?loader: se mantien
 
 /* ---- sections ---- */
 section { position:relative; }
-.sec { padding:var(--sp-12) 0; border-top:1px solid var(--hair); }
-.sec:first-of-type { border-top:0; }
+.sec { padding:clamp(2.75rem, 2rem + 3.6vw, 5rem) 0; border-top:1px solid var(--hair); }
+.sec:first-of-type, .phero + .sec { border-top:0; }   /* .phero no es .sec: sin esto el 1er corte queda visible */
+.sec-alt { background:var(--surface); }               /* alterna fondo para romper secuencias iguales */
 .sec-h { max-width:52rem; margin-bottom:var(--sp-8); }
 .sec-h .eyebrow { margin-bottom:1rem; color:var(--link); }
 .sec-h h2 { font-size:clamp(1.75rem,3.6vw,2.75rem); font-weight:400; letter-spacing:-.022em; }
 .sec-h p { margin-top:1.1rem; color:var(--muted); font-size:1.0625rem; max-width:44rem; }
 
 /* ---- hero (home) ---- */
-.hero { padding:clamp(3.5rem,8vw,7rem) 0 clamp(3rem,6vw,5rem); }
+.hero { padding:clamp(3rem, 2rem + 5.2vw, 7rem) 0 clamp(2.5rem, 1.5rem + 3.4vw, 5rem); }
 .hero .eyebrow { color:var(--link); margin-bottom:1.6rem; }
 .hero h1 { font-size:var(--fs-hero); font-weight:600; letter-spacing:-.035em; line-height:1.0; max-width:16ch; }
 .hero .lede { margin-top:1.8rem; font-size:clamp(1.05rem,1.6vw,1.3rem); color:var(--muted); max-width:44rem; line-height:1.55; }
@@ -155,17 +159,17 @@ section { position:relative; }
   background:linear-gradient(90deg, rgba(11,13,18,.95) 0%, rgba(11,13,18,.8) 40%, rgba(11,13,18,.5) 100%), url('/assets/portada.jpg') center/cover no-repeat; }
 .hero.bg::after { content:""; position:absolute; inset:0; z-index:0; background:linear-gradient(0deg, rgba(11,13,18,.85) 0%, transparent 42%); }
 .hero.bg .wrap { position:relative; z-index:1; }
-.hero.bg h1 { color:#F4F5F7; }
-.hero.bg .eyebrow { color:#C7CBD4; }
-.hero.bg .lede { color:#C2C6CF; }
+.hero.bg h1 { color:var(--on-media); }
+.hero.bg .eyebrow { color:var(--on-media-soft); }
+.hero.bg .lede { color:var(--on-media-dim); }
 .hero.bg .proof { border-top-color:rgba(255,255,255,.16); }
-.hero.bg .proof .n { color:#fff; }
-.hero.bg .proof .n small { color:#9AA0AE; }
-.hero.bg .chip { border-color:rgba(255,255,255,.22); color:#C7CBD4; }
-.hero.bg .btn-primary { background:#F4F5F7; color:#191D27; }
-.hero.bg .btn-primary:hover { background:#fff; color:#191D27; }
-.hero.bg .btn-secondary { background:rgba(255,255,255,.08); color:#fff; border-color:rgba(255,255,255,.28); }
-.hero.bg .btn-secondary:hover { border-color:rgba(255,255,255,.5); color:#fff; }
+.hero.bg .proof .n { color:var(--on-media); }
+.hero.bg .proof .n small { color:var(--on-media-dim); }
+.hero.bg .chip { border-color:var(--on-media-line); color:var(--on-media-soft); }
+.hero.bg .btn-primary { background:var(--on-media); color:var(--on-media-ink); }
+.hero.bg .btn-primary:hover { background:#fff; color:var(--on-media-ink); }
+.hero.bg .btn-secondary { background:rgba(255,255,255,.08); color:var(--on-media); border-color:rgba(255,255,255,.28); }
+.hero.bg .btn-secondary:hover { border-color:rgba(255,255,255,.5); color:var(--on-media); }
 
 /* ---- foto del estudio + avatar de equipo ---- */
 .studio-photo { border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); box-shadow:var(--e2); }
@@ -175,7 +179,17 @@ section { position:relative; }
 .tcard .info .mail:hover { color:var(--ink); }
 
 /* ---- page hero (interiores) ---- */
-.phero { padding:clamp(2.5rem,6vw,5rem) 0 clamp(1.5rem,3vw,2.5rem); }
+.phero { padding:clamp(2.25rem, 1.5rem + 3.4vw, 4.25rem) 0 clamp(2rem, 1.25rem + 3vw, 3.75rem); position:relative; overflow:hidden; }
+/* Capa de fondo del hero interior: imagen abstracta + velo para legibilidad. */
+.phero .bgimg { position:absolute; inset:0; z-index:0; background-position:center; background-size:cover; opacity:.38; }
+.phero .bgimg::after { content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, color-mix(in srgb,var(--bg) 42%,transparent) 0%, color-mix(in srgb,var(--bg) 78%,transparent) 62%, var(--bg) 100%); }
+/* Las imagenes son oscuras: en modo claro hay que bajarlas mucho o manchan el fondo
+   y el titulo (casi negro) pierde contraste. */
+:root[data-mode="light"] .phero .bgimg { opacity:.14; }
+:root[data-mode="light"] .phero .bgimg::after {
+  background:linear-gradient(180deg, color-mix(in srgb,var(--bg) 62%,transparent) 0%, color-mix(in srgb,var(--bg) 86%,transparent) 58%, var(--bg) 100%); }
+.phero .wrap { position:relative; z-index:1; }
 .phero .eyebrow { color:var(--link); margin-bottom:1.2rem; }
 .phero h1 { font-size:clamp(2.2rem,5vw,3.75rem); font-weight:400; letter-spacing:-.028em; line-height:1.04; max-width:18ch; }
 .phero .lede { margin-top:1.4rem; font-size:clamp(1.02rem,1.5vw,1.2rem); color:var(--muted); max-width:42rem; line-height:1.55; }
@@ -235,6 +249,15 @@ section { position:relative; }
 .filters button { background:var(--surface); border:1px solid var(--line); color:var(--muted); font-family:var(--sans); font-size:.82rem; font-weight:600; padding:.5rem .95rem; border-radius:var(--r-pill); cursor:pointer; transition:all var(--t-fast); }
 .filters button:hover { border-color:var(--accent-line); color:var(--ink); }
 .filters button[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+/* eje primario (modelo de relacion): mas peso que los pills de estado */
+.ftabs { margin-bottom:.9rem; }
+.ftabs button { font-size:.9rem; padding:.6rem 1.15rem; border-radius:var(--r-sm); }
+.pf-count { font-size:.78rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:var(--sp-5); }
+.pf-empty { color:var(--muted); font-size:.98rem; margin-top:var(--sp-6); }
+/* placeholder con fondo para los proyectos sin captura */
+.pcard .ph.ph-bg { background-size:cover; background-position:center; position:relative; color:var(--on-media-dim); }
+.pcard .ph.ph-bg::before { content:""; position:absolute; inset:0; background:color-mix(in srgb,var(--scrim) 55%,transparent); }
+.pcard .ph.ph-bg span { position:relative; z-index:1; }
 
 /* ---- ventajas ---- */
 .why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; }
@@ -286,6 +309,24 @@ section { position:relative; }
 .price-anchor .bd p { color:var(--muted); font-size:1.0125rem; line-height:1.65; }
 .price-anchor .bd p + p { margin-top:1rem; }
 .price-anchor .note { margin-top:1.5rem; display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--faint); border-top:1px solid var(--hair); padding-top:1.1rem; }
+/* v24 · fases y precio lado a lado: quita un corte de seccion completo */
+.fases-2col { display:grid; grid-template-columns:1.35fr 1fr; gap:clamp(1.5rem,3vw,2.75rem); align-items:start; margin-top:var(--sp-6); }
+.fases-2col .tl { margin-top:0; }
+.price-anchor.compact { display:block; padding:1.75rem; position:sticky; top:5.5rem; }
+.price-anchor.compact h3 { font-family:var(--serif); font-size:clamp(1.2rem,2.1vw,1.55rem); font-weight:500; letter-spacing:-.02em; margin-top:.7rem; line-height:1.15; }
+.price-anchor.compact p { color:var(--muted); font-size:.95rem; line-height:1.6; margin-top:.8rem; }
+.price-anchor.compact details { margin-top:1rem; font-size:.9rem; }
+.price-anchor.compact summary { cursor:pointer; color:var(--link); font-weight:600; font-size:.85rem; }
+.price-anchor.compact summary:hover { color:var(--ink); }
+.price-anchor.compact details p { font-size:.88rem; color:var(--faint); }
+.price-anchor.compact .note { margin-top:1.2rem; }
+/* sub-bloque dentro de una seccion, en vez de abrir otra */
+.subsplit { margin-top:var(--sp-8); padding-top:var(--sp-7); border-top:1px solid var(--line); }
+.subsplit > h3 { font-family:var(--serif); font-size:clamp(1.4rem,2.8vw,2rem); font-weight:400; letter-spacing:-.022em; margin:.7rem 0 1.5rem; }
+@media (max-width:900px){
+  .fases-2col { grid-template-columns:1fr; }
+  .price-anchor.compact { position:static; }
+}
 
 /* ---- ficha de proyecto ---- */
 .proj-hero { aspect-ratio:16/9; border:1px solid var(--line); border-radius:var(--r-xl); overflow:hidden; background:var(--surface-2); box-shadow:var(--e3); }
@@ -297,8 +338,6 @@ section { position:relative; }
 .rrr .blk h3 { font-family:var(--serif); font-size:1.25rem; font-weight:500; margin-top:.5rem; letter-spacing:-.018em; }
 .rrr .blk p { color:var(--muted); font-size:.92rem; margin-top:.6rem; line-height:1.55; }
 .stack { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.1rem; }
-.gallery { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:var(--sp-6); }
-.gallery img { border:1px solid var(--line); border-radius:var(--r-lg); width:100%; }
 
 /* ---- prose (blog / legal) ---- */
 .prose { max-width:var(--maxw-prose); color:var(--muted); font-size:1.0625rem; line-height:1.7; }
@@ -317,7 +356,7 @@ section { position:relative; }
 .icard .cover { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--surface-2); border-bottom:1px solid var(--hair); }
 .icard .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .icard .cover::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, color-mix(in srgb,var(--bg) 82%,transparent), transparent 58%); }
-.icard .cover span { position:absolute; left:.7rem; bottom:.65rem; z-index:2; font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); background:color-mix(in srgb,var(--bg) 52%,transparent); backdrop-filter:blur(7px); border:1px solid color-mix(in srgb,#fff 15%,transparent); border-radius:var(--r-pill); padding:.28rem .6rem; }
+.icard .cover span { position:absolute; left:.7rem; bottom:.65rem; z-index:2; font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); background:color-mix(in srgb,var(--bg) 52%,transparent); backdrop-filter:blur(7px); border:1px solid color-mix(in srgb,var(--ink) 15%,transparent); border-radius:var(--r-pill); padding:.28rem .6rem; }
 .icard .body { padding:1.2rem 1.25rem 1.4rem; }
 .icard .date { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); }
 .icard h3 { font-family:var(--serif); font-size:1.2rem; font-weight:500; letter-spacing:-.018em; margin-top:.6rem; line-height:1.2; }
@@ -375,7 +414,7 @@ section { position:relative; }
   .team-grid{ grid-template-columns:repeat(2,1fr); }
   .rrr{ grid-template-columns:1fr; }
   .vent-grid{ grid-template-columns:1fr; }
-  .vent .head,.apply,.studio,.grid-2,.gallery{ grid-template-columns:1fr; }
+  .vent .head,.apply,.studio,.grid-2{ grid-template-columns:1fr; }
   .price-anchor{ grid-template-columns:1fr; }
   .foot .cols{ grid-template-columns:1fr 1fr; }
 }
@@ -446,3 +485,62 @@ svg.ic-fill { fill:currentColor; stroke:none; }
 .pwa-modal .acts { margin-top:1.5rem; display:flex; flex-wrap:wrap; gap:.7rem; }
 .pwa-modal .x { position:absolute; top:.8rem; right:.8rem; width:2rem; height:2rem; display:flex; align-items:center; justify-content:center; border:0; background:transparent; color:var(--faint); font-size:1.4rem; line-height:1; cursor:pointer; border-radius:var(--r-sm); }
 .pwa-modal .x:hover { color:var(--ink); background:var(--surface-2); }
+
+/* ============================================================
+   v24 · PRIMITIVA DE REJILLA (columnas derivadas del conteo)
+   build.py conoce len(items) y emite las clases via gcls().
+   Regla: elegir c tal que n % c == 0. Si no existe, elegir c tal
+   que (n-1) % c == 0 y promover el primer item a fila completa.
+   Va al final del archivo a proposito: gana por orden de cascada
+   sobre .grid-3 / .std-grid / .why-grid sin tener que tocarlas.
+   ============================================================ */
+.g { display:grid; gap:var(--g-gap,1.25rem); grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); }
+.g-2 { --cols:2; } .g-3 { --cols:3; } .g-4 { --cols:4; }
+.g-feat-d > :first-child { grid-column:1 / -1; }        /* rellena la cola en desktop */
+.g-narrow { max-width:60rem; }                          /* 4 cards en 2x2 con medida legible */
+@media (max-width:900px){
+  .g { --cols:2; }
+  .g-3-t { --cols:3; } .g-1-t { --cols:1; }
+  .g-feat-d > :first-child { grid-column:auto; }
+  .g-feat-t > :first-child { grid-column:1 / -1; }
+}
+@media (max-width:640px){
+  .g { --cols:1; --g-gap:1rem; }
+  .g-feat-d > :first-child, .g-feat-t > :first-child { grid-column:auto; }
+}
+
+/* ---- v24 · sistema unificado de cards ----------------------
+   Tres implementaciones hacian lo mismo (.card, .verbo, .adv/.pledge).
+   Las clases se conservan como alias: no se toca el HTML generado.
+   Regla tipografica: serif/500 = destino o narrativa (se navega).
+                      sans/700  = hecho escaneable en lista.
+   Regla de hover:    levanta solo si es enlace; los div cambian fondo.
+   Regla de radio:    --r-lg hasta 1 columna, --r-xl a ancho completo.
+   ------------------------------------------------------------ */
+.card p,.verbo p,.adv p,.pledge p,.rrr .blk p,.tl-item .bd p { max-width:62ch; text-wrap:pretty; }
+a.card:hover,a.pcard:hover,a.icard:hover,a.verbo:hover { border-color:var(--accent-line); transform:translateY(-3px); box-shadow:var(--e2); }
+div.card:hover,.adv:hover,.pledge:hover,.vcard:hover,.rrr .blk:hover { border-color:var(--accent-line); background:var(--surface-2); transform:none; }
+.adv,.pledge,.vcard,.rrr .blk { transition:border-color var(--t), background var(--t); }
+/* medida de linea al colapsar a 1 columna */
+.price-anchor .bd p,.apply .sub { max-width:60ch; }
+
+/* ---- v24 · mejoras 2026 (todas degradan solas) ---- */
+h1,h2,h3 { text-wrap:balance; }
+.lede,.sec-h p,.prose p { text-wrap:pretty; }
+.pf-item { content-visibility:auto; contain-intrinsic-size:auto 22rem; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .g > *, .pf-item, .sec-h { animation:rise .6s var(--ease) both; animation-timeline:view(); animation-range:entry 6% cover 24%; }
+    @keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  }
+}
+
+/* ---- v24 · accesibilidad: el archivo no tenia ni una regla ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *,*::before,*::after { animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  #loader { display:none !important; }
+  .g > *, .pf-item, .sec-h { opacity:1 !important; transform:none !important; }
+}
