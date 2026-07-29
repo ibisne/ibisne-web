@@ -319,6 +319,12 @@ section { position:relative; }
 .price-anchor.compact { display:block; padding:1.75rem; position:sticky; top:5.5rem; }
 .price-anchor.compact h3 { font-family:var(--serif); font-size:clamp(1.2rem,2.1vw,1.55rem); font-weight:500; letter-spacing:-.02em; margin-top:.7rem; line-height:1.15; }
 .price-anchor.compact p { color:var(--muted); font-size:.95rem; line-height:1.6; margin-top:.8rem; }
+/* v30 · lo que el cliente se lleva del Sprint. Es el contrapeso a que la titularidad
+   se transfiera al cerrar: sin esta lista, la fase se lee como demo prestada. */
+.takeaways { list-style:none; margin:1.1rem 0 0; padding:0; display:flex; flex-direction:column; gap:.55rem; }
+.takeaways li { position:relative; padding-left:1.35rem; font-size:.9rem; color:var(--muted); line-height:1.45; }
+.takeaways li::before { content:""; position:absolute; left:0; top:.55em; width:.42rem; height:.42rem;
+  border-radius:50%; background:var(--ok); }
 .price-anchor.compact details { margin-top:1rem; font-size:.9rem; }
 .price-anchor.compact summary { cursor:pointer; color:var(--link); font-weight:600; font-size:.85rem; }
 .price-anchor.compact summary:hover { color:var(--ink); }

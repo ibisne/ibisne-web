@@ -130,7 +130,7 @@ Ninguna se enuncia como cláusula, pero todas deben poder sostenerse en la prác
 
 1. **La discreción es estándar** → este documento respalda la práctica, pero la regla se
    cumple con controles reales: accesos nominales, repositorios aislados, need-to-know.
-2. **El activo es tuyo** (código y plataforma a nombre del cliente) → cláusula 4 (parcial)
+2. **El activo pasa a tu nombre** (código y plataforma al CERRAR el desarrollo, no antes) → cláusula 4 (parcial)
    + contrato de desarrollo. Es la afirmación legalmente correcta, a diferencia de prometer
    propiedad sobre una idea, que no es objeto de PI en México.
 3. **La lectura es tuya** (análisis entregado sin condición) → contrato de servicios, no NDA.

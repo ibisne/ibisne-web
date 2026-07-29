@@ -69,20 +69,20 @@ Corolarios que ya mordieron una vez:
 Cuatro fases: **01 Sesión cero · 02 Lectura · 03 Sprint de Validación · 04 Dos puertas**.
 
 Existe para responder los dos miedos reales del fundador: que le roben la idea y que le
-inflen el precio para forzarlo a asociarse. **El eje de confianza es técnico y ético, no
+inflen el precio para empujarlo a un esquema de capital. **El eje de confianza es técnico y ético, no
 contractual** (v22).
 
 Las 4 reglas publicadas ("Cómo operamos"):
 - **La discreción es estándar** · accesos nominales, repositorios aislados, información solo entre quienes construyen.
-- **El activo es tuyo** · código y plataforma a tu nombre desde el primer commit (carve-out: frameworks previos de iBisne).
+- **El activo pasa a tu nombre** · código y plataforma **al cerrar el desarrollo** (carve-out: frameworks previos de iBisne).
 - **La lectura es tuya** · el análisis se va contigo, trabajes con nosotros o no.
 - **El precio va primero** · cotización cerrada con 60 días de vigencia, antes de cualquier conversación de capital.
 
-**Sprint de Validación: $25,000 MXN**, cobrado al inicio, acreditable íntegro. El precio se
-publica a propósito: es la señal anti-inflación. Aplica solo a productos de software; sitios y
-tiendas se cotizan directo.
+**Sprint de Validación: se cotiza a la medida**, cobrado al inicio y acreditable íntegro. Un
+SaaS multi-tenant y una app no cuestan lo mismo, por eso no hay precio fijo publicado.
+Aplica solo a productos de software; sitios y tiendas se cotizan directo.
 
-### Dos errores que NO se pueden repetir (v22)
+### Cuatro errores que NO se pueden repetir
 
 1. **Nunca usar el NDA como argumento de venta.** Exigir firmas en la portada genera
    fricción y desconfianza, y posiciona a iBisne como proveedor defensivo en lugar de
@@ -95,12 +95,22 @@ tiendas se cotizan directo.
    *Ojo:* usar la palabra "idea" como punto de partida narrativo sí es correcto (el H1 del
    home, "Convertimos ideas en imperios digitales.", se queda). El error es prometer
    **propiedad** sobre ella.
+3. **Nunca decir que el código es del cliente antes del contrato** (v30). El sitio llegó a
+   publicar "a tu nombre desde el primer commit", y es **falso**: la titularidad se
+   transfiere **al cerrar el desarrollo**. Redactarlo mal se lee como demo prestada, así
+   que la regla de escritura es: **cero verbos de retención** ("conservamos", "hasta que",
+   "no se entrega"). El enunciado siempre avanza hacia el traspaso, y siempre va
+   acompañado de lo que el cliente **sí** se lleva ese día.
+4. **Nunca escribir "socio" ni "sociedad"** (v30). Asusta al cliente corporativo que solo
+   quiere desarrollo. Términos permitidos: **Smart Capital · Venture Capital · Incubadora**.
+   Aplica a **todo el sitio**, artículos incluidos. Y la propuesta de capital se presenta
+   siempre **después** del análisis, nunca como promesa de entrada.
 
 > **No prometer** no competencia por vertical hasta que Eduardo lo confirme con su abogado
 > (bloquearía a iBroker/iFutbol/iPool).
 
 ## Por qué iBisne (diferenciadores)
-- **Skin in the game** — socios operativos; nuestro retorno se alinea con el tuyo.
+- **Compromiso con el resultado** — nos medimos por lo que la plataforma logra en producción.
 - **Tecnología propia** — dueños de la infraestructura, de punta a punta.
 - **Escalabilidad por diseño** — construimos para durar y crecer.
 - **El estándar incluido** — CMS, dark/white, multi-idioma, PWA, PageSpeed, analytics: siempre.

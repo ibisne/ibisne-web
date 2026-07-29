@@ -332,7 +332,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=29">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=30">
 {GTAG}
 </head>
 <body>
@@ -426,10 +426,10 @@ PROTOCOLO = [
      "Analizamos tu proyecto como analizamos los nuestros: tesis, riesgos, unidad económica, arquitectura y alcance. Recibes el documento completo y es tuyo, contrates o no.",
      "Sin costo · 5 a 10 días"),
     ("03", "Sprint de Validación",
-     "Construimos una versión funcional del núcleo de tu producto. No una presentación: software que se usa. El código y la plataforma quedan a tu nombre desde el primer commit.",
-     "$25,000 MXN · se acredita íntegro · 2 a 4 semanas"),
+     "Construimos una versión funcional del núcleo de tu producto. No una presentación: software que se usa. Te lo mostramos en sesión, con la guía para operarlo y entenderlo por dentro. La titularidad se transfiere al cerrar el desarrollo.",
+     "Se cotiza a la medida · se acredita íntegro · 2 a 4 semanas"),
     ("04", "Dos puertas",
-     "Te mostramos lo construido y entregamos la cotización cerrada, con fecha y vigencia. Solo entonces, y solo si tu proyecto cumple nuestra tesis, hablamos de sociedad.",
+     "Te mostramos lo construido y entregamos la cotización cerrada, con fecha y vigencia. Solo entonces, y solo si el análisis lo sostiene, ponemos sobre la mesa una propuesta de Smart Capital.",
      "Tu decisión · 1 sesión"),
 ]
 
@@ -437,20 +437,22 @@ PROTOCOLO = [
 # v22: el eje de confianza es técnico y ético, no contractual. Cero menciones a NDA,
 # firmas o contratos: eso genera fricción y se maneja en el onboarding, no en la venta.
 # Tampoco se promete propiedad sobre "ideas": en México no son objeto de PI (art. 14 LFDA).
-# Lo que sí es propiedad, y se dice, es el activo tangible: código y plataforma.
+# v30: la titularidad del código NO se transfiere antes del contrato. Se dice cuándo pasa
+# (al cerrar el desarrollo), nunca con verbos de retención: el enunciado siempre avanza
+# hacia el traspaso, o se lee como demo prestada. Ver CLAUDE.md, regla de negocio #2.
 COMPROMISOS = [
     ("shield", "La discreción es estándar",
      "Lo que nos cuentas se queda en el equipo que construye.",
      "Accesos nominales, repositorios aislados y la información circulando solo entre quienes la necesitan para trabajar. Es la forma en que operamos desde el primer día."),
-    ("cms", "El activo es tuyo",
-     "El código y la plataforma quedan a tu nombre.",
-     "Repositorios, infraestructura y credenciales a tu nombre desde el primer commit. Conservamos únicamente los frameworks y componentes que ya existían antes de conocerte."),
+    ("cms", "El activo pasa a tu nombre",
+     "El código y la plataforma pasan a tu nombre al cerrar el desarrollo.",
+     "Repositorios, infraestructura y credenciales se migran a tus cuentas al arrancar el proyecto, con el inventario completo de lo que recibes. Los frameworks y componentes que ya existían antes de conocerte siguen siendo nuestros."),
     ("check", "La lectura es tuya",
      "El análisis se va contigo, trabajes con nosotros o no.",
      "Al cerrar la fase de lectura recibes el documento completo: tesis, riesgos, arquitectura y alcance. Sirve igual con nosotros que con cualquier equipo técnico serio."),
     ("coins", "El precio va primero",
-     "El precio se fija antes de hablar de sociedad.",
-     "La cotización se entrega cerrada, con fecha y 60 días de vigencia. Si después conversamos de capital, el número ya está puesto y se sostiene."),
+     "El precio se fija antes de cualquier conversación de capital.",
+     "La cotización se entrega cerrada, con fecha y 60 días de vigencia. Si después hay una conversación de capital, el número ya está puesto y se sostiene."),
 ]
 
 # ---------------------------------------------------------------- data: insights
@@ -638,7 +640,7 @@ def build_home(projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
-  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, código a tu nombre, análisis que te llevas y precio cerrado desde el inicio.</p></div>
+  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, titularidad clara, análisis que te llevas y precio cerrado desde el inicio.</p></div>
   <div class="why-grid {gcls(len(COMPROMISOS))}">{pledges}</div>
   <div class="sec-cta"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
 </div></section>
@@ -806,10 +808,15 @@ def build_como_trabajamos():
     <div class="tl">{fases}</div>
     <aside class="price-anchor compact">
       <span class="eyebrow" style="color:var(--link)">Sprint de Validación</span>
-      <h3>$25,000 pesos por saber si vale la pena invertir dos millones.</h3>
-      <p>Construimos el núcleo funcional de tu producto. Código real, titularidad tuya y algo que puedes enseñarle a un inversionista.</p>
-      <details><summary>Cómo funciona el crédito</summary>
-        <p>Se cobra al inicio y se acredita íntegro contra el desarrollo si decides continuar. El precio es el mismo para todos y está publicado aquí, que es la mejor garantía de que no lo calculamos según lo que parezcas poder pagar.</p></details>
+      <h3>Sales de la sesión con el producto funcionando enfrente.</h3>
+      <p>Construimos el núcleo de tu producto y te lo mostramos en vivo: qué hace, cómo está armado por dentro y qué falta para llevarlo a producción.</p>
+      <ul class="takeaways">
+        <li>El núcleo funcionando, demostrado en sesión</li>
+        <li>La guía para operarlo y leerlo por dentro</li>
+        <li>El análisis de la fase anterior, que ya es tuyo</li>
+      </ul>
+      <details><summary>Cómo se cotiza</summary>
+        <p>Se cotiza a la medida: un SaaS multi-tenant y una app no cuestan lo mismo. El importe se define con el alcance, se cobra al inicio y se acredita íntegro contra el desarrollo si decides continuar.</p></details>
       <div class="note">{ic('spark')} Aplica a productos de software. Sitios y tiendas se cotizan directo.</div>
     </aside>
   </div>
@@ -825,9 +832,9 @@ def build_como_trabajamos():
     <h3>Dos puertas. Tú eliges.</h3>
     <div class="grid-2">
       <div class="adv"><div class="ico">{ic('layers')}</div><h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
-      <div class="adv"><div class="ico">{ic('coins')}</div><h3>Sociedad</h3><p>En algunos casos vemos algo que preferimos financiar en lugar de facturar. Entonces ponemos capital y equipo, y compartimos el riesgo contigo.</p></div>
+      <div class="adv"><div class="ico">{ic('coins')}</div><h3>Smart Capital</h3><p>En algunos casos el análisis muestra un proyecto que preferimos financiar en lugar de facturar. Entonces entramos con capital y equipo, y el riesgo también corre por nuestra cuenta.</p></div>
     </div>
-    <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Proponemos sociedad cuando se cumplen cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una preferencia.</div>
+    <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Ponemos Smart Capital sobre la mesa solo después de analizar el proyecto, cuando el estudio muestra cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una promesa de entrada.</div>
     <div class="sec-cta"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
   </div>
 </div></section>
@@ -839,7 +846,7 @@ def build_como_trabajamos():
 </div></div></section>
 """
     return base("Cómo trabajamos — iBisne",
-                "El Protocolo iBisne: cuatro fases, código a tu nombre, análisis que te llevas y una cotización cerrada antes de hablar de sociedad.",
+                "El Protocolo iBisne: cuatro fases, análisis que te llevas, un producto funcional demostrado en sesión y una cotización cerrada antes de cualquier conversación de capital.",
                 body, active="como-trabajamos", canonical="/como-trabajamos/")
 
 
@@ -888,7 +895,7 @@ def build_porque():
 <section class="phero">{bg_for("por-que-ibisne")}<div class="wrap">
   {crumb("Por qué iBisne")}
   <span class="eyebrow">Por qué iBisne</span>
-  <h1>La diferencia entre un proveedor y un socio.</h1>
+  <h1>La diferencia entre contratar un proveedor y contratar arquitectos.</h1>
   <p class="lede">No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia, criterio de negocio y responsabilidad sobre lo que construimos.</p>
 </div></section>
 <section class="sec"><div class="wrap"><div class="grid-3 {gcls(len(VENTAJAS))}">{adv}</div></div></section>

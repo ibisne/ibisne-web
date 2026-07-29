@@ -76,6 +76,15 @@ grep -oiE "invertimos|socios|ponemos capital|financiamos|financiado|skin in the 
 
 Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del pill.
 
+**Y esta otra sobre TODO el sitio** (v30), porque "socio" y el precio viejo se filtraron
+antes hasta los artículos:
+
+```bash
+grep -rniE "socios?\b|socied|25[.,]?000|a tu nombre desde|primer commit" --include='*.html' . ; grep -rniE "socios?\b|socied" content/
+```
+
+También debe devolver cero.
+
 ## Reglas duras
 
 1. **Nunca editar los `.html` generados a mano.** Se sobreescriben en el siguiente build.
@@ -136,11 +145,25 @@ Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del 
 `/como-trabajamos/` es la pieza de conversión más importante del sitio. Cuatro fases
 (Sesión cero · Lectura · Sprint de Validación · Dos puertas) más cuatro reglas de operación.
 Existe para responder los dos miedos reales del fundador: que le roben la idea y que le
-inflen el precio para forzar una sociedad.
+inflen el precio para empujarlos a un esquema de capital.
 
-**Sprint de Validación: $25,000 MXN**, cobrado al inicio, acreditable íntegro contra el
-desarrollo. El precio se publica a propósito: es la señal anti-inflación. Aplica solo a
-productos de software; sitios y tiendas se cotizan directo.
+**Sprint de Validación: se cotiza a la medida**, cobrado al inicio y acreditable íntegro
+contra el desarrollo. No hay precio fijo publicado: un SaaS multi-tenant y una app no
+cuestan lo mismo. Aplica solo a productos de software; sitios y tiendas se cotizan directo.
+
+### Reglas de negocio de v30 (las tres son duras)
+
+1. **La titularidad del código NO se transfiere antes del contrato.** Durante el Sprint se
+   construye el núcleo, se muestra en sesión y se entrega la guía, pero el código y la
+   plataforma pasan a nombre del cliente **al cerrar el desarrollo**. El sitio llegó a
+   publicar lo contrario ("a tu nombre desde el primer commit") y era falso.
+   ⚠️ **Cero verbos de retención** al redactarlo ("conservamos", "hasta que", "no se
+   entrega"): se lee como demo prestada. El enunciado avanza hacia el traspaso y siempre
+   va junto a lo que el cliente **sí** se lleva ese día.
+2. **Prohibido "socio" y "sociedad" en todo el sitio**, artículos incluidos. Términos
+   válidos: **Smart Capital · Venture Capital · Incubadora**. La propuesta de capital se
+   presenta **después** del análisis, nunca como promesa de entrada.
+3. **Sin precio fijo del Sprint.** Se cotiza a la medida según el sistema.
 
 ### Dos reglas que NO se pueden romper (v22)
 

@@ -33,8 +33,8 @@
 
 ## 2b. Cómo trabajamos · `/como-trabajamos` **(pieza central de conversión)**
 El **Protocolo iBisne**: 4 fases (Sesión cero · Lectura · Sprint de Validación · Dos puertas),
-4 reglas de operación ("Cómo operamos"), ancla de precio del Sprint ($25,000 MXN acreditable)
-y la bifurcación desarrollo/sociedad. Existe para responder los dos miedos del fundador: robo
+4 reglas de operación ("Cómo operamos"), bloque del Sprint (se cotiza a la medida, acreditable)
+y la bifurcación desarrollo / Smart Capital. Existe para responder los dos miedos del fundador: robo
 de idea e inflación de precio, **con confianza técnica y ética, nunca contractual**.
 
 > Ver `MESSAGING.md` § "Dos errores que NO se pueden repetir": ni NDA como argumento de
