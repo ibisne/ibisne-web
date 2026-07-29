@@ -17,13 +17,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=30">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XEW1TZEMNL"></script>
+<link rel="stylesheet" href="/assets/site/dossier.css?v=31">
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XEW1TZEMNL');
+(function(){
+  var ID='G-XEW1TZEMNL';
+  window.ibLoadGA=function(){
+    if(window.__gaLoaded) return; window.__gaLoaded=true;
+    var s=document.createElement('script'); s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+ID;
+    document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];
+    window.gtag=function(){dataLayer.push(arguments);};
+    gtag('js', new Date()); gtag('config', ID);
+  };
+  try{ if(localStorage.getItem('ib_consent')==='all') window.ibLoadGA(); }catch(e){}
+})();
 </script>
 </head>
 <body>
@@ -181,8 +189,9 @@
     <div><div class="gl">Contacto</div><ul>
       <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
       <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
-      <li><a href="/legal/privacidad/">Privacidad</a></li><li><a href="/legal/terminos/">Términos</a></li>
-      <li><a href="/legal/aviso-legal/">Aviso legal</a></li><li><a href="/legal/cookies/">Cookies</a></li></ul></div>
+      <li><a href="/legal/terminos/">Términos</a></li><li><a href="/legal/privacidad/">Privacidad</a></li>
+      <li><a href="/legal/cancelacion/">Cancelación</a></li><li><a href="/legal/cookies/">Cookies</a></li>
+      <li><a href="/legal/aviso-legal/">Aviso legal</a></li></ul></div>
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
@@ -206,6 +215,32 @@
     </div>
   </div>
 </div>
+<div class="consent" id="consent" hidden>
+  <div class="consent-in">
+    <p>Usamos cookies para entender cómo se usa el sitio y mejorarlo. Al aceptar, confirmas que leíste nuestros
+      <a href="/legal/terminos/">Términos y Condiciones</a> y la
+      <a href="/legal/privacidad/">Política de privacidad</a>.
+      Detalle en <a href="/legal/cookies/">cookies</a>.</p>
+    <div class="consent-acts">
+      <button class="btn btn-primary" id="cAll">Aceptar</button>
+      <button class="btn btn-secondary" id="cMin">Solo esenciales</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var box=document.getElementById('consent'); if(!box) return;
+  var v=null; try{ v=localStorage.getItem('ib_consent'); }catch(e){}
+  if(!v) box.hidden=false;
+  function set(val){
+    try{ localStorage.setItem('ib_consent', val); }catch(e){}
+    box.hidden=true;
+    if(val==='all' && window.ibLoadGA) window.ibLoadGA();
+  }
+  document.getElementById('cAll').addEventListener('click', function(){ set('all'); });
+  document.getElementById('cMin').addEventListener('click', function(){ set('essential'); });
+})();
+</script>
 <script>
 (function(){
   var root=document.documentElement;

@@ -143,6 +143,12 @@ section { position:relative; }
 .sec-h p { margin-top:1.1rem; color:var(--muted); font-size:1.0625rem; max-width:44rem; }
 
 /* ---- hero (home) ---- */
+/* v31 · TODOS los heroes miden lo mismo en escritorio. Antes el home no tenía
+   min-height (su altura la daba el contenido, ~710px) y las páginas internas
+   tenían 480px, así que cada una medía distinto. El valor está calibrado a la
+   altura que ya tenía el home: a 1440px resuelve 44rem = 704px. */
+.hero, .phero { min-height:clamp(30rem, 26rem + 20vw, 46rem); display:flex; align-items:center; }
+.hero > .wrap, .phero > .wrap { width:100%; }
 .hero { padding:clamp(3rem, 2rem + 5.2vw, 7rem) 0 clamp(2.5rem, 1.5rem + 3.4vw, 5rem); }
 .hero .eyebrow { color:var(--link); margin-bottom:1.6rem; }
 .hero h1 { font-size:var(--fs-hero); font-weight:600; letter-spacing:-.035em; line-height:1.0; max-width:16ch; }
@@ -182,8 +188,7 @@ section { position:relative; }
 /* v26: heroes más altos. El fondo necesita aire para leerse como descanso visual y no
    como una franja; antes el texto empezaba casi pegado al header. */
 .phero { padding:clamp(3.25rem, 2rem + 5.4vw, 6.5rem) 0 clamp(2.5rem, 1.5rem + 3.6vw, 4.5rem);
-  position:relative; overflow:hidden; display:flex; align-items:center;
-  min-height:clamp(19rem, 14rem + 20vw, 30rem); }
+  position:relative; overflow:hidden; }   /* altura y centrado: regla compartida con .hero (v31) */
 /* Capa de fondo del hero interior: imagen abstracta + velo para legibilidad. */
 .phero .bgimg { position:absolute; inset:0; z-index:0; background-position:center; background-size:cover; opacity:.5; }
 .phero .bgimg::after { content:""; position:absolute; inset:0;
@@ -750,6 +755,37 @@ h1,h2,h3 { text-wrap:balance; }
 /* v27 · La barra de accion inferior se retiró: a Eduardo no le gustó que
    siguiera al scroll. La via de contacto en movil pasa al CTA del header,
    que ya es sticky y no flota sobre el contenido (ver bloque movil). */
+
+/* ============================================================
+   v31 · Banner de consentimiento
+   Dos botones: aceptar (analiticas + confirma lectura de legales)
+   o solo esenciales. Google Analytics no carga sin aceptacion.
+   ============================================================ */
+.consent { position:fixed; left:0; right:0; bottom:0; z-index:340;
+  background:color-mix(in srgb, var(--surface) 96%, transparent);
+  backdrop-filter:blur(14px) saturate(1.3); border-top:1px solid var(--line);
+  box-shadow:var(--e3); animation:consent-in .3s var(--ease) both; }
+.consent[hidden] { display:none; }
+.consent-in { max-width:var(--maxw); margin:0 auto;
+  padding:1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+  display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+.consent p { flex:1 1 22rem; margin:0; font-size:.88rem; line-height:1.55; color:var(--muted); }
+.consent p a { color:var(--link); text-decoration:underline; text-underline-offset:3px; }
+.consent p a:hover { color:var(--ink); }
+.consent-acts { display:flex; gap:.6rem; flex:none; }
+.consent-acts .btn { height:2.75rem; }          /* 44px: minimo tactil */
+@keyframes consent-in { from { transform:translateY(100%); } to { transform:none; } }
+@media (max-width:640px){
+  .consent-in { padding:.9rem 1.15rem calc(.9rem + env(safe-area-inset-bottom)); gap:.85rem; }
+  .consent p { font-size:.83rem; flex:1 1 100%; }
+  .consent-acts { width:100%; }
+  .consent-acts .btn { flex:1 1 0; min-width:0; }
+}
+@media (prefers-reduced-motion: reduce){ .consent { animation:none; } }
+
+/* nota de validacion legal al inicio de cada documento */
+.legal-nota { border:1px solid var(--line); border-radius:var(--r-md); background:var(--surface);
+  padding:.9rem 1rem; font-size:.88rem; color:var(--faint); margin-bottom:1.6rem; }
 
 /* ---- v24 · accesibilidad: el archivo no tenia ni una regla ---- */
 @media (prefers-reduced-motion: reduce) {

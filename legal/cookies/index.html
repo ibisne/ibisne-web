@@ -17,13 +17,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=30">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XEW1TZEMNL"></script>
+<link rel="stylesheet" href="/assets/site/dossier.css?v=31">
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XEW1TZEMNL');
+(function(){
+  var ID='G-XEW1TZEMNL';
+  window.ibLoadGA=function(){
+    if(window.__gaLoaded) return; window.__gaLoaded=true;
+    var s=document.createElement('script'); s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+ID;
+    document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];
+    window.gtag=function(){dataLayer.push(arguments);};
+    gtag('js', new Date()); gtag('config', ID);
+  };
+  try{ if(localStorage.getItem('ib_consent')==='all') window.ibLoadGA(); }catch(e){}
+})();
 </script>
 </head>
 <body>
@@ -117,10 +125,10 @@
   </div>
 
 <section class="phero"><div class="bgimg" style="background-image:url(/assets/bg/05.webp)" aria-hidden="true"></div><div class="wrap" style="max-width:44rem">
-  <div class="crumb"><a href="/">Inicio</a><span class="sepp">/</span><a href="/legal/privacidad/">Legal</a><span class="sepp">/</span><span>Política de cookies</span></div>
+  <div class="crumb"><a href="/">Inicio</a><span class="sepp">/</span><a href="/legal/terminos/">Legal</a><span class="sepp">/</span><span>Política de cookies</span></div>
   <span class="eyebrow">Legal</span><h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">Política de cookies</h1>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose"><p><strong>Marco general, no constituye asesoría jurídica.</strong></p>
+<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose"><p class="legal-nota"><strong>Este documento no constituye asesoría jurídica.</strong> iBisne S.A.S. de C.V. lo valida con su asesor legal. Última actualización: julio 2026.</p><p><strong>Marco general, no constituye asesoría jurídica.</strong></p>
 <h2>Qué son las cookies</h2><p>Las cookies son pequeños archivos que un sitio guarda en tu dispositivo para recordar información y mejorar la experiencia.</p>
 <h2>Cómo las usamos</h2><ul><li><strong>Esenciales:</strong> necesarias para el funcionamiento del sitio.</li><li><strong>Analíticas:</strong> nos ayudan a entender el uso del sitio de forma agregada.</li></ul>
 <h2>Tu control</h2><p>Puedes aceptar o rechazar las cookies no esenciales, y gestionarlas desde la configuración de tu navegador en cualquier momento.</p>
@@ -141,8 +149,9 @@
     <div><div class="gl">Contacto</div><ul>
       <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
       <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
-      <li><a href="/legal/privacidad/">Privacidad</a></li><li><a href="/legal/terminos/">Términos</a></li>
-      <li><a href="/legal/aviso-legal/">Aviso legal</a></li><li><a href="/legal/cookies/">Cookies</a></li></ul></div>
+      <li><a href="/legal/terminos/">Términos</a></li><li><a href="/legal/privacidad/">Privacidad</a></li>
+      <li><a href="/legal/cancelacion/">Cancelación</a></li><li><a href="/legal/cookies/">Cookies</a></li>
+      <li><a href="/legal/aviso-legal/">Aviso legal</a></li></ul></div>
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
@@ -166,6 +175,32 @@
     </div>
   </div>
 </div>
+<div class="consent" id="consent" hidden>
+  <div class="consent-in">
+    <p>Usamos cookies para entender cómo se usa el sitio y mejorarlo. Al aceptar, confirmas que leíste nuestros
+      <a href="/legal/terminos/">Términos y Condiciones</a> y la
+      <a href="/legal/privacidad/">Política de privacidad</a>.
+      Detalle en <a href="/legal/cookies/">cookies</a>.</p>
+    <div class="consent-acts">
+      <button class="btn btn-primary" id="cAll">Aceptar</button>
+      <button class="btn btn-secondary" id="cMin">Solo esenciales</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var box=document.getElementById('consent'); if(!box) return;
+  var v=null; try{ v=localStorage.getItem('ib_consent'); }catch(e){}
+  if(!v) box.hidden=false;
+  function set(val){
+    try{ localStorage.setItem('ib_consent', val); }catch(e){}
+    box.hidden=true;
+    if(val==='all' && window.ibLoadGA) window.ibLoadGA();
+  }
+  document.getElementById('cAll').addEventListener('click', function(){ set('all'); });
+  document.getElementById('cMin').addEventListener('click', function(){ set('essential'); });
+})();
+</script>
 <script>
 (function(){
   var root=document.documentElement;

@@ -95,6 +95,11 @@ Aplica solo a productos de software; sitios y tiendas se cotizan directo.
    *Ojo:* usar la palabra "idea" como punto de partida narrativo sí es correcto (el H1 del
    home, "Convertimos ideas en imperios digitales.", se queda). El error es prometer
    **propiedad** sobre ella.
+> **La titularidad depende del modelo de entrada** (v31): en modelo **Venta** todo pasa al
+> cliente al liquidar; en **Venture Capital / Incubadora** iBisne conserva total o
+> parcialmente lo que desarrolló, como inversor. El copy del Protocolo habla del primer
+> caso, que es donde desemboca la puerta de Desarrollo.
+
 3. **Nunca decir que el código es del cliente antes del contrato** (v30). El sitio llegó a
    publicar "a tu nombre desde el primer commit", y es **falso**: la titularidad se
    transfiere **al cerrar el desarrollo**. Redactarlo mal se lee como demo prestada, así

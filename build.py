@@ -194,8 +194,9 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
     <div><div class="gl">Contacto</div><ul>
       <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
       <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
-      <li><a href="/legal/privacidad/">Privacidad</a></li><li><a href="/legal/terminos/">Términos</a></li>
-      <li><a href="/legal/aviso-legal/">Aviso legal</a></li><li><a href="/legal/cookies/">Cookies</a></li></ul></div>
+      <li><a href="/legal/terminos/">Términos</a></li><li><a href="/legal/privacidad/">Privacidad</a></li>
+      <li><a href="/legal/cancelacion/">Cancelación</a></li><li><a href="/legal/cookies/">Cookies</a></li>
+      <li><a href="/legal/aviso-legal/">Aviso legal</a></li></ul></div>
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
@@ -228,12 +229,53 @@ LOADER = """<div id="loader"><canvas id="lcv"></canvas><div class="lwrap">
   <div class="qlabel">Cargando</div>
 </div></div>"""
 
-GTAG = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-XEW1TZEMNL"></script>
+# v31 · Analytics SOLO con consentimiento. Antes se cargaba en las 58 páginas sin
+# condición, lo que hacía del banner mera decoración. Ahora el script se inyecta desde
+# JS cuando ib_consent === 'all' (al aceptar, o en visitas posteriores si ya aceptó).
+GTAG = """<script>
+(function(){
+  var ID='G-XEW1TZEMNL';
+  window.ibLoadGA=function(){
+    if(window.__gaLoaded) return; window.__gaLoaded=true;
+    var s=document.createElement('script'); s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+ID;
+    document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];
+    window.gtag=function(){dataLayer.push(arguments);};
+    gtag('js', new Date()); gtag('config', ID);
+  };
+  try{ if(localStorage.getItem('ib_consent')==='all') window.ibLoadGA(); }catch(e){}
+})();
+</script>"""
+
+# Banner de consentimiento. Dos botones: aceptar todo (analíticas + confirma lectura de
+# los legales) o solo esenciales. Los propios T&C de iBisne prevén la aceptación al
+# continuar navegando, así que el aviso lo hace explícito en lugar de tácito.
+CONSENT = """<div class="consent" id="consent" hidden>
+  <div class="consent-in">
+    <p>Usamos cookies para entender cómo se usa el sitio y mejorarlo. Al aceptar, confirmas que leíste nuestros
+      <a href="/legal/terminos/">Términos y Condiciones</a> y la
+      <a href="/legal/privacidad/">Política de privacidad</a>.
+      Detalle en <a href="/legal/cookies/">cookies</a>.</p>
+    <div class="consent-acts">
+      <button class="btn btn-primary" id="cAll">Aceptar</button>
+      <button class="btn btn-secondary" id="cMin">Solo esenciales</button>
+    </div>
+  </div>
+</div>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XEW1TZEMNL');
+(function(){
+  var box=document.getElementById('consent'); if(!box) return;
+  var v=null; try{ v=localStorage.getItem('ib_consent'); }catch(e){}
+  if(!v) box.hidden=false;
+  function set(val){
+    try{ localStorage.setItem('ib_consent', val); }catch(e){}
+    box.hidden=true;
+    if(val==='all' && window.ibLoadGA) window.ibLoadGA();
+  }
+  document.getElementById('cAll').addEventListener('click', function(){ set('all'); });
+  document.getElementById('cMin').addEventListener('click', function(){ set('essential'); });
+})();
 </script>"""
 
 SCRIPTS = """<script>
@@ -332,7 +374,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=30">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=31">
 {GTAG}
 </head>
 <body>
@@ -341,6 +383,7 @@ def base(title, desc, body, active="", canonical="/"):
 {header(active)}
 {body}
 {FOOTER}
+{CONSENT}
 {SCRIPTS}
 </body>
 </html>"""
@@ -1184,13 +1227,24 @@ def build_404():
     return base("Página no encontrada — iBisne", "La página que buscas no existe.", body, active="", canonical="/404")
 
 
+def legal_body(slug):
+    """Lee el cuerpo del documento legal desde content/legal/, igual que los insights.
+    Los textos son de Eduardo (portados de sus .docx en v31) y suman ~38k caracteres:
+    como constantes de Python volverían este archivo inmanejable."""
+    p = ROOT / "content" / "legal" / f"{slug}.html"
+    return p.read_text(encoding="utf-8") if p.exists() else ""
+
+
+LEGAL_NOTA = ('<p class="legal-nota"><strong>Este documento no constituye asesoría jurídica.</strong> '
+              'iBisne S.A.S. de C.V. lo valida con su asesor legal. Última actualización: julio 2026.</p>')
+
 def build_legal(slug, title, prose):
     body = f"""
 <section class="phero">{bg_for(slug)}<div class="wrap" style="max-width:44rem">
-  {crumb(("Legal", "/legal/privacidad/"), title)}
+  {crumb(("Legal", "/legal/terminos/"), title)}
   <span class="eyebrow">Legal</span><h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">{title}</h1>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">{prose}</div></div></section>
+<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">{LEGAL_NOTA}{prose}</div></div></section>
 """
     return base(f"{title} — iBisne", title, body, active="", canonical=f"/legal/{slug}/")
 
@@ -1257,8 +1311,9 @@ def main():
         "insights/index.html": build_insights_hub(),
         "portafolio/index.html": build_portfolio_hub(projects),
         "contacto/index.html": build_contacto(),
-        "legal/privacidad/index.html": build_legal("privacidad", "Aviso de privacidad", PRIVACIDAD),
-        "legal/terminos/index.html": build_legal("terminos", "Términos y condiciones", TERMINOS),
+        "legal/privacidad/index.html": build_legal("privacidad", "Política de privacidad", legal_body("privacidad")),
+        "legal/terminos/index.html": build_legal("terminos", "Términos y condiciones", legal_body("terminos")),
+        "legal/cancelacion/index.html": build_legal("cancelacion", "Política de cancelación", legal_body("cancelacion")),
         "legal/aviso-legal/index.html": build_legal("aviso-legal", "Aviso legal", AVISO_LEGAL),
         "legal/cookies/index.html": build_legal("cookies", "Política de cookies", COOKIES),
     }
@@ -1273,7 +1328,8 @@ def main():
         urls.append(f"/insights/{slug}/")
     urls += ["/servicios/", "/como-trabajamos/", "/inversion/", "/portafolio/", "/estudio/", "/insights/",
              "/contacto/", "/por-que-ibisne/",
-             "/legal/privacidad/", "/legal/terminos/", "/legal/aviso-legal/", "/legal/cookies/"]
+             "/legal/terminos/", "/legal/privacidad/", "/legal/cancelacion/",
+             "/legal/aviso-legal/", "/legal/cookies/"]
 
     n = 0
     for path, html in pages.items():

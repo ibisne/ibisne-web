@@ -21,10 +21,11 @@ capital como socio ("Smart Capital"). Vocación operativa, no fondo VC tradicion
 npm, sin frameworks). Deploy automático en Vercel desde `main`. URL: https://www.ibisne.com
 
 ```
-build.py              ← ÚNICA fuente de verdad del sitio. 58 páginas salen de aquí.
+build.py              ← ÚNICA fuente de verdad del sitio. 59 páginas salen de aquí.
 _serve.py             ← server local: python _serve.py 8787
 assets/site/dossier.css ← ÚNICO CSS del sitio (System D · Dossier oscuro)
 content/insights/*.html ← cuerpos de artículo (fragmentos, no páginas)
+content/legal/*.html  ← textos legales de Eduardo (fragmentos)
 ../ibisne-cv/cv-data.json ← fuente de los 31 proyectos del portafolio (fuera del repo)
 MESSAGING.md          ← LEER SIEMPRE antes de tocar copy. Es la ley de tono.
 SITEMAP.md            ← estructura de páginas y su propósito
@@ -38,7 +39,7 @@ legal/nda-mutuo.md    ← borrador de NDA (documento de trabajo, no se publica)
 
 `/` · `/servicios/` (Capacidades, 3 dominios) · `/servicios/{producto,comercio,frontera}/` ·
 `/como-trabajamos/` · `/inversion/` · `/portafolio/` (+31 fichas) · `/por-que-ibisne/` ·
-`/estudio/` · `/insights/` (+10 artículos) · `/contacto/` · `/legal/{4}` · `404.html`
+`/estudio/` · `/insights/` (+10 artículos) · `/contacto/` · `/legal/{5}` · `404.html`
 
 ### Funciones clave de `build.py`
 
@@ -80,10 +81,13 @@ Debe devolver cero. `Smart Capital` solo puede aparecer una vez, como texto del 
 antes hasta los artículos:
 
 ```bash
-grep -rniE "socios?\b|socied|25[.,]?000|a tu nombre desde|primer commit" --include='*.html' . ; grep -rniE "socios?\b|socied" content/
+grep -rniE "socios?\b|socied|25[.,]?000|a tu nombre desde|primer commit" --include='*.html' . \
+  | grep -viE "sociedad mercantil|asociaci"
 ```
 
-También debe devolver cero.
+También debe devolver cero. Se excluyen **"sociedad mercantil"** y **"asociación"**: son
+términos jurídicos correctos dentro de los legales (la forma societaria de la empresa), no
+el uso comercial que la regla prohíbe. La alarma vigila el copy de venta, no el derecho.
 
 ## Reglas duras
 
@@ -165,6 +169,40 @@ cuestan lo mismo. Aplica solo a productos de software; sitios y tiendas se cotiz
    presenta **después** del análisis, nunca como promesa de entrada.
 3. **Sin precio fijo del Sprint.** Se cotiza a la medida según el sistema.
 
+### La titularidad depende del modelo de entrada (v31)
+
+Dato de negocio que no estaba escrito en ningún lado y que rige tanto el copy como los
+Términos y Condiciones:
+
+| Modelo | Qué pasa con la IP al liquidar |
+|---|---|
+| **Venta** (proyecto de cliente) | **Todo pasa al cliente**: código, plataforma y piezas. |
+| **Venture Capital / Incubadora** | **iBisne conserva total o parcialmente** los activos que desarrolló, en calidad de inversor del proyecto. |
+
+Por eso el copy del Protocolo ("el código y la plataforma pasan a tu nombre al cerrar el
+desarrollo") es correcto: quien recorre el Protocolo y elige la puerta de Desarrollo está
+en modelo Venta. Los §8 y §19 de los T&C reflejan ambos casos.
+
+### Legales (v31)
+
+Los textos son de Eduardo, portados de sus `.docx`. Viven en **`content/legal/*.html`** y
+se inyectan con `legal_body(slug)`, igual que los insights: son ~38k caracteres y como
+constantes de Python harían inmanejable `build.py`.
+
+Páginas: `terminos` · `privacidad` · `cancelacion` · `cookies` · `aviso-legal`.
+Al portarlos se actualizó el marco comercial (decían "tiendas virtuales" y "ecommerce y
+marketing digital", de una etapa anterior del negocio) y se sustituyó "socios" societario
+por "accionistas" / "aliados comerciales", para que el grep de control de v30 siga siendo
+fiable sin excepciones.
+
+### Consentimiento y Analytics (v31)
+
+**Google Analytics NO carga sin consentimiento.** `GTAG` ya no inyecta el script: define
+`window.ibLoadGA()` y solo lo ejecuta si `localStorage.ib_consent === 'all'`. El banner
+`CONSENT` ofrece "Aceptar" y "Solo esenciales". Si tocas el banner, verifica que sigue
+condicionando la carga: sin eso, el banner es decoración y las analíticas corren sin
+permiso.
+
 ### Dos reglas que NO se pueden romper (v22)
 
 Ambas nacieron de un error real que Eduardo corrigió. Si una sesión futura las reintroduce,
@@ -188,7 +226,7 @@ bloquearía a iBroker/iFutbol/iPool.
 ## Analytics
 
 Google Analytics (gtag.js, `G-XEW1TZEMNL`) se instaló el 2026-07-25 en la constante `GTAG`
-de `build.py`, inyectada por `base()` en las 58 páginas. `www.googletagmanager.com` está
+de `build.py`. **Desde v31 solo carga con consentimiento** (ver más abajo). `www.googletagmanager.com` está
 permitido en el `script-src` de la CSP de `vercel.json`. **No hay datos históricos previos
 a esa fecha**, así que las decisiones de SEO no pueden apoyarse en tráfico medido todavía.
 
