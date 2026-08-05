@@ -374,7 +374,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=31">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=32">
 {GTAG}
 </head>
 <body>
@@ -663,8 +663,7 @@ def build_home(projects):
   <h1>Convertimos visiones en activos tecnológicos.</h1>
   <p class="lede">Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.</p>
   <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
-  <div class="proof"><div class="n">+15<small>Años de experiencia</small></div><div class="n">{len(projects)}<small>Proyectos en portafolio</small></div><div class="n">12+<small>Verticales de industria</small></div>
-    <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Optimizamos</span></div></div>
+  <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Optimizamos</span></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
