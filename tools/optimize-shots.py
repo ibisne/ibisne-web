@@ -55,8 +55,17 @@ PIEZAS = [
     (r"THCC\Captura mobile\FirstMobile.jpeg",          "phone",  "thcc-m2.webp"),
 ]
 
-# THCC es uno de los 4 proyectos sin ninguna imagen: se le genera el hero de la ficha.
-HEROES = [(r"THCC\Nueva portada.jpg", "hero", "thcc.webp")]
+# Portadas de ficha (y de card en home/dominios/hub, via shot_for()).
+#
+# THCC no tenia ninguna imagen. AlbercasVIP tenia albercas-vip.png, que era una
+# captura de la pantalla "Sitio en mantenimiento": estabamos exhibiendo el letrero
+# de mantenimiento como muestra de nuestro trabajo. Se sustituye por la portada
+# real del sitio ya lanzado. El .png viejo se elimina del repo en el mismo commit,
+# porque shot_for() prueba .webp primero y el .png quedaria muerto y confundiendo.
+HEROES = [
+    (r"THCC\Nueva portada.jpg", "hero", "thcc.webp"),
+    (r"Albercasvip\Cumplimos reglas page speed.png", "hero", "albercas-vip.webp"),
+]
 
 
 def convertir(origen: Path, perfil: str, destino: Path) -> tuple[int, int, int, int]:

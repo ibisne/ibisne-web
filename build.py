@@ -183,7 +183,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   <div class="cols">
     <div>
       <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne">
-      <p class="about">Tech Studio y arquitectos de software. Diseñamos, construimos y escalamos productos digitales de alto impacto desde Zapopan, Jalisco, con mira en toda Latinoamérica.</p>
+      <p class="about">Tech Studio y arquitectos de software. Diseñamos, construimos y escalamos productos digitales de alto impacto desde Jalisco y Mérida, con mira en toda Latinoamérica.</p>
     </div>
     <div><div class="gl">Qué hacemos</div><ul>
       <li><a href="/servicios/">Capacidades</a></li><li><a href="/como-trabajamos/">Cómo trabajamos</a></li>
@@ -194,6 +194,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
     <div><div class="gl">Contacto</div><ul>
       <li><a href="mailto:proyectos@ibisne.com">proyectos@ibisne.com</a></li>
       <li><a href="/contacto/">Zapopan, Jalisco · MX</a></li>
+      <li><a href="/contacto/">Mérida, Yucatán · MX</a></li>
       <li><a href="/legal/terminos/">Términos</a></li><li><a href="/legal/privacidad/">Privacidad</a></li>
       <li><a href="/legal/cancelacion/">Cancelación</a></li><li><a href="/legal/cookies/">Cookies</a></li>
       <li><a href="/legal/aviso-legal/">Aviso legal</a></li></ul></div>
@@ -377,7 +378,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=33">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=35">
 {GTAG}
 </head>
 <body>
@@ -992,18 +993,32 @@ def build_estudio():
                ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
                ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
     vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
+    # v35 · fuente unica: las firmas de correo (../cotizaciones-ibisne/_gen-firmas.py).
+    # (iniciales, nombre, cargo, disciplina, correo). La disciplina agrupa por area
+    # para que la rejilla se lea de un vistazo; sale del cargo, no se inventa.
+    # NO se publican los WhatsApp personales que traen las firmas: el correo
+    # corporativo y el conmutador son datos de negocio, un movil personal no.
     equipo = [
-        ("Eddy", "Arquitecto de tecnologías", "eduardo@ibisne.com"),
-        ("Lizette", "Key Account Manager", "proyectos@ibisne.com"),
-        ("Axel", "QA", "qa@ibisne.com"),
-        ("Memo", "Analista financiero e inversionista", "guillemor@ibisne.com"),
-        ("Willy", "Representante de marca", "willy@ibisne.com"),
+        ("EC", "Eduardo Carriola M.", "Consultor Senior · Forward Deployed Engineer",
+         "Dirección", "eduardo@ibisne.com"),
+        ("BL", "Ing. Brissa Lizette M.", "Ing. Senior · Forward Deployed Engineer",
+         "Ingeniería", "proyectos@ibisne.com"),
+        ("AP", "Ing. Angel Peña L.", "Arquitecto de Software Fullstack",
+         "Ingeniería", "dev@ibisne.com"),
+        ("JP", "Joshua Peña", "Alto Creativo",
+         "Diseño", "creativos@ibisne.com"),
+        ("MC", "Melanie A. Camacho", "Key Account Manager",
+         "Cuentas", "kam@ibisne.com"),
+        ("DE", "Dr. David Eduardo G.", "Director Legal",
+         "Legal", "legal@ibisne.com"),
     ]
     team = "".join(
-        f'<div class="tcard"><div class="mono">{n[0]}</div>'
-        f'<div class="info"><div class="nm">{n}</div><div class="role">{r}</div>'
-        f'<a class="mail" href="mailto:{e}">{e}</a></div></div>'
-        for n, r, e in equipo)
+        f'<div class="tcard"><div class="mono">{ini}</div>'
+        f'<div class="info"><div class="disc">{disc}</div><div class="nm">{n}</div>'
+        f'<div class="role">{r}</div>'
+        f'<a class="mail" href="mailto:{e}">{e}</a>'
+        f'<a class="tel" href="tel:+523329575274">Oficina · +52 33 2957 5274</a></div></div>'
+        for ini, n, r, disc, e in equipo)
     body = f"""
 <section class="phero">{bg_for("estudio")}<div class="wrap">
   {crumb("Estudio")}
@@ -1026,8 +1041,8 @@ def build_estudio():
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Equipo</span><h2>Las personas detrás de cada proyecto.</h2>
-  <p>Un equipo pequeño y senior. Cada quien responde por su parte del resultado.</p></div>
-  <div class="team-grid">{team}</div>
+  <p>Un equipo pequeño y senior, con oficinas en Zapopan y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
+  <div class="team-grid {gcls(len(equipo))}">{team}</div>
 </div></section>
 {contacto_band()}
 """
@@ -1368,7 +1383,7 @@ def build_contacto():
   <div><span class="eyebrow">Escríbenos</span>
     <h2 style="margin-top:1rem;">Del concepto al liderazgo.</h2>
     <p class="sub">Cuéntanos qué estás construyendo, en qué vertical y qué buscas escalar. Respondemos a los proyectos que encajan con lo que hacemos.</p>
-    <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Zapopan, Jalisco · México</p>
+    <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
   </div>
   <form class="form" id="applyForm" novalidate>
     <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name"></div>
