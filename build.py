@@ -354,7 +354,10 @@ SCRIPTS = """<script>
 </script>"""
 
 
-def base(title, desc, body, active="", canonical="/"):
+def base(title, desc, body, active="", canonical="/", noindex=False):
+    # noindex="follow": la pagina sale de los buscadores pero sus enlaces internos
+    # siguen contando, para no cortarle autoridad a las paginas que si se publican.
+    robots = '\n<meta name="robots" content="noindex, follow">' if noindex else ""
     return f"""<!doctype html>
 <html lang="es" data-theme="d" data-mode="dark">
 <head>
@@ -362,7 +365,7 @@ def base(title, desc, body, active="", canonical="/"):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#12151C">
+<meta name="theme-color" content="#12151C">{robots}
 <link rel="canonical" href="https://www.ibisne.com{canonical}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/assets/pwa/icon-192.png">
@@ -374,7 +377,7 @@ def base(title, desc, body, active="", canonical="/"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=32">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=33">
 {GTAG}
 </head>
 <body>
@@ -528,6 +531,18 @@ FRONT = ["ibroker", "batauro", "otomi", "medical-mexicana", "dci", "digitalife"]
 # Se mandan al final (por indicación de Eduardo), justo antes de Hotel Panamera.
 BACK = ["vg", "farmacia-hdz", "sem"]
 
+# v33 · portafolio curado. Estos salen de TODOS los listados (home, dominios, hub) y
+# del sitemap, pero su ficha se sigue generando con <meta robots="noindex, follow">:
+# nada se borra, ningun enlace compartido se rompe y salen de Google igual.
+# Revertir un proyecto = borrar su linea de aqui y reconstruir.
+OCULTOS = ("ifutbol", "gocer", "grupo-rmc", "sense", "steelbeird", "unframe",
+           "neoterre", "breakit", "piscinamx", "elixier", "love-sex-and-more",
+           "manufaktura", "ipool", "eleva", "vg", "farmacia-hdz", "hotel-panamera")
+
+
+def visibles(projs):
+    return [p for p in projs if p.get("slug") not in OCULTOS]
+
 def order_projects(projs):
     # FRONT primero; luego descanso+link, Shopify+link, con link, arte, sin link,
     # BACK (al final) y Hotel Panamera de cierre. OJO: descanso SIN link no se prioriza.
@@ -630,8 +645,11 @@ def build_home(projects):
     # de venture capital. Los slugs de abajo se excluyen de arriba por código, para que
     # ningún proyecto pueda volver a salir dos veces si se editan estas listas.
     by = {x["slug"]: x for x in projects}
-    VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "breakit", "ifutbol")
-    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "unframe", "emergente")
+    # v33 · seis y seis para que gcls(6) de 3 columnas exactas. Al curar el portafolio
+    # salieron breakit e ifutbol de arriba y unframe de abajo; entran thcc y semendomap,
+    # y albercas-vip, que acaba de lanzar.
+    VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "thcc", "semendomap")
+    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "albercas-vip", "emergente")
     vc_feat = [by[s] for s in VC_HOME if s in by]
     cli_feat = [by[s] for s in CLI_HOME if s in by and s not in VC_HOME]
     cards = "".join(pf_card(p) for p in cli_feat)
@@ -696,7 +714,7 @@ def build_home(projects):
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Clientes</span><h2>Negocios que ya están en la cancha.</h2>
-  <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en más de una docena de verticales.</p></div>
+  <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en una docena de verticales.</p></div>
   <div class="pf-grid rail {gcls(len(cli_feat))}">{cards}</div>
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
@@ -760,10 +778,13 @@ def build_servicios_hub(projects):
                 body, active="servicios", canonical="/servicios/")
 
 
+# v33 · repoblado tras curar el portafolio. OJO: build_dominio cae a un fallback
+# silencioso (los 3 primeros del portafolio global) si un dominio se queda sin
+# proyectos mapeados, asi que cada lista debe conservar >=3 slugs visibles.
 DOMAIN_PROJECTS = {
-    "producto": ["ibroker", "ipool", "ifutbol", "gocer", "otomi", "eleva"],
-    "comercio": ["batauro", "medical-mexicana", "albercasopia", "vg", "farmacia-hdz", "hotel-panamera"],
-    "frontera": ["sem", "semendomap", "breakit", "otomi"],
+    "producto": ["ibroker", "sem", "emergente"],
+    "comercio": ["thcc", "albercas-vip", "batauro", "medical-mexicana", "albercasopia"],
+    "frontera": ["sem", "semendomap", "otomi"],
 }
 
 
@@ -1072,7 +1093,7 @@ def build_portfolio_hub(projects):
 <section class="phero">{bg_for("portafolio")}<div class="wrap">
   {crumb("Portafolio")}
   <span class="eyebrow">Portafolio</span>
-  <h1>{len(projects)} negocios digitales, en más de una docena de verticales.</h1>
+  <h1>{len(projects)} negocios digitales, en una docena de verticales.</h1>
   <p class="lede">Proyectos que construimos para clientes y proyectos en los que además pusimos capital. Filtra por tipo de relación o por estado.</p>
 </div></section>
 <section class="sec"><div class="wrap">
@@ -1111,28 +1132,167 @@ def build_portfolio_hub(projects):
     return base("Portafolio — iBisne", f"{len(projects)} negocios digitales que iBisne ha construido, operado e invertido.", body, active="portafolio", canonical="/portafolio/")
 
 
+# ---------------------------------------------------------------- casos de estudio (v33)
+# Datos de presentacion del sitio, NO del CV: por eso viven aqui (dentro del repo y
+# versionados) y no en cv-data.json, que esta fuera del repo y alimenta el curriculum.
+# Los proyectos sin entrada aqui rinden la ficha clasica, sin tocar nada.
+#
+# bloques: ("shot", archivo, pie) imagen a ancho completo
+#          ("phones", [(archivo, pie), ...]) capturas de movil, ancho contenido
+#          ("tiles",  [(archivo, pie), ...]) rejilla, columnas via gcls()
+CASO = {
+    "albercas-vip": {
+        "enfoque": "Diez colecciones RENOLIT con más de treinta y cinco acabados, cada uno con su "
+                   "garantía, convertidas en un catálogo que se recorre en minutos. Alrededor: cotizador "
+                   "con respuesta en 48 horas, instalación como app desde el propio navegador, selector "
+                   "de idioma y moneda, modo oscuro y un asistente que contesta la primera pregunta a "
+                   "cualquier hora.",
+        "notas": [
+            ("phone", "Primero el teléfono",
+             "El acabado se elige a pie de obra, con el cliente enseñando opciones en la mano. Por eso "
+             "la decisión de diseño empezó por la pantalla chica: menú de una mano, contacto por "
+             "WhatsApp a un toque y cotizador que se completa sin zoom."),
+            ("blocks", "Se instala como app",
+             "PWA instalable desde el navegador, sin pasar por App Store ni Play Store. El vendedor "
+             "abre el catálogo en obra aunque la señal esté floja, y AlbercasVIP no paga comisión de "
+             "tienda ni espera aprobación para publicar un cambio."),
+            ("layers", "Catálogo técnico navegable",
+             "ALKORPLAN 2000 y 3000, CERAMICS, TOUCH y XTREME, cada línea con sus años de garantía y "
+             "su uso recomendado. La ficha técnica dejó de ser un PDF adjunto y pasó a ser el "
+             "argumento de venta."),
+        ],
+        "bloques": [
+            ("shot", "albercas-vip-01.webp",
+             "Portada · selector de idioma y moneda, instalación como app y modo oscuro conviven en la misma barra"),
+            ("cols", [
+                ("albercas-vip-m1.webp", "Portada en móvil"),
+                ("albercas-vip-m2.webp", "Menú: WhatsApp, teléfono, idioma, moneda y tema"),
+            ]),
+            ("tiles", [
+                ("albercas-vip-a1.webp", "Alberca interior con muro de roca"),
+                ("albercas-vip-a2.webp", "Infinity en azotea, iluminación nocturna"),
+                ("albercas-vip-a3.webp", "Residencial con spa elevado y terraza"),
+            ]),
+        ],
+    },
+    "thcc": {
+        "enfoque": "Una tienda que ordena varias marcas bajo un mismo catálogo, con verificación de edad "
+                   "antes de comprar, carrito, buscador y filtros, contenido editorial y tres idiomas. "
+                   "Encima, un asistente conversacional que responde en lenguaje natural y devuelve "
+                   "tarjetas de producto comparables dentro del mismo chat.",
+        "notas": [
+            ("cart", "Varias marcas, un solo catálogo",
+             "Alienworks, GODS Beard Cult, High Tide y Medical Mexicanna comparten estructura de ficha, "
+             "taxonomía y buscador. Cada marca conserva su identidad visual sin romper la navegación "
+             "ni obligar al comprador a reaprender la tienda."),
+            ("shield", "La norma, dentro del producto",
+             "Verificación de edad antes del checkout y fichas construidas para mostrar contenido neto, "
+             "piezas y el etiquetado que la regulación mexicana exige. El cumplimiento se resolvió en la "
+             "arquitectura del catálogo, no como aviso pegado al final."),
+            ("spark", "Un asistente que sí vende",
+             "Pregúntale por el producto más caro y el más barato y responde con tarjetas comparables, "
+             "sugerencias intermedias y accesos directos a sabores y presentaciones. Convierte una duda "
+             "vaga en dos productos concretos sin salir del chat."),
+        ],
+        "bloques": [
+            ("shot", "thcc-01.webp",
+             "High Tide · bebida carbonatada de 355 ml en tres perfiles de sabor"),
+            ("cols", [
+                ("thcc-m2.webp", "Portada en móvil"),
+                ("thcc-m1.webp", "El asistente devuelve tarjetas de producto comparables"),
+            ]),
+            ("shot", "thcc-02.webp",
+             "Línea de gomitas GODS Beard Cult, fotografiada para catálogo"),
+            # Cuadradas y verticales van separadas: mezclarlas en una misma fila
+            # deja huecos bajo las de menor altura.
+            ("tiles", [
+                ("thcc-p1.webp", "Alienworks · Cherry Fuel"),
+                ("thcc-p2.webp", "GODS · Cherry Gushers"),
+            ]),
+            ("cols", [
+                ("thcc-p3.webp", "High Tide · los tres sabores"),
+                ("thcc-p4.webp", "Alienworks · la línea completa"),
+            ]),
+        ],
+    },
+}
+
+CASOS_DIR = ASSET / "casos"
+
+
+def enfoque_for(p):
+    # Sin caso propio, el bloque repite el resumen (comportamiento historico).
+    return CASO.get(p["slug"], {}).get("enfoque") or p["resumen"]
+
+
+def caso_html(p):
+    """Bloque de caso de estudio. Cadena vacia si el proyecto no tiene material."""
+    c = CASO.get(p["slug"])
+    if not c:
+        return ""
+
+    def img(archivo, pie, lazy=True):
+        # Falla ruidoso: una imagen declarada y ausente deja un hueco que nadie nota
+        # hasta que el cliente abre la ficha. Preferimos romper el build.
+        if not (CASOS_DIR / archivo).exists():
+            raise FileNotFoundError(
+                f"CASO[{p['slug']}] declara assets/portfolio/casos/{archivo} y no existe. "
+                f"Corre: python tools/optimize-shots.py")
+        lz = ' loading="lazy"' if lazy else ""
+        return (f'<img src="/assets/portfolio/casos/{archivo}" alt="{p["nombre"]} · {pie}"{lz}>'
+                f'<div class="cap">{pie}</div>')
+
+    notas = "".join(
+        f'<div class="nota"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>'
+        for i, t, d in c["notas"])
+
+    piezas = []
+    for kind, *rest in c["bloques"]:
+        if kind == "shot":
+            archivo, pie = rest
+            piezas.append(f'<figure class="case-shot">{img(archivo, pie)}</figure>')
+        elif kind == "cols":
+            items = "".join(f'<figure class="case-col">{img(a, pie)}</figure>' for a, pie in rest[0])
+            piezas.append(f'<div class="case-cols rail">{items}</div>')
+        elif kind == "tiles":
+            # dense=True: son imagenes con pie de una linea, no cards con parrafo.
+            items = "".join(f'<figure class="case-tile">{img(a, pie)}</figure>' for a, pie in rest[0])
+            piezas.append(f'<div class="case-tiles rail {gcls(len(rest[0]), dense=True)}">{items}</div>')
+
+    return f"""
+<section class="sec sec-alt"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">El caso</span><h2>Cómo se ve por dentro.</h2></div>
+  <div class="case-notes {gcls(len(c['notas']))}">{notas}</div>
+  <div class="case-media">{"".join(piezas)}</div>
+</div></section>
+"""
+
+
 def build_project(p, projects):
     tags = f'<span class="chip">{p["tipo"]}</span><span class="chip">{p.get("vertical","")}</span><span class="badge">{p["estado"].title()}</span>'
     url = p.get("url", "").strip()
     live = f'<a href="{url}" class="btn btn-secondary" target="_blank" rel="noopener">Ver en vivo {ic("arw")}</a>' if url else ""
-    img = ASSET / f"{p['slug']}.png"
     desc = p.get("descanso")
     has_desc = bool(desc) and (ASSET / f"{desc}.jpg").exists()
-    has_shot = img.exists()
+    # v33 · .webp primero para el material nuevo; los .png historicos siguen sirviendo.
+    shot_webp = (ASSET / f"{p['slug']}.webp").exists()
+    has_shot = shot_webp or (ASSET / f"{p['slug']}.png").exists()
+    shot_ext = "webp" if shot_webp else "png"
     # Lidera el descanso visual; si no hay, la captura del sitio; si no, un estado branded.
     if has_desc:
         hero = f'<div class="proj-hero"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}"></div>'
     elif has_shot:
-        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}"></div>'
+        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.{shot_ext}" alt="{p["nombre"]}"></div>'
     else:
         hero = (f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem">'
                 f'<span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span>'
                 f'<span style="font-family:var(--serif);font-size:1.5rem;color:var(--ink)">{p["estado"].title()}</span></div>')
     stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
     # Banda secundaria: la captura del sitio en vivo (cuando ya lideramos con el descanso).
+    # Se suprime si el proyecto tiene caso de estudio: ahi la imagen ya va con contexto.
     mockup = ""
-    if has_desc and has_shot:
-        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{p["slug"]}.png" '
+    if has_desc and has_shot and p["slug"] not in CASO:
+        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{p["slug"]}.{shot_ext}" '
                   f'alt="{p["nombre"]} · en vivo" loading="lazy"><div class="cap">El sitio en vivo</div></div>')
     rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
     if len(rel) < 3:
@@ -1155,20 +1315,22 @@ def build_project(p, projects):
 <section class="sec" style="border-top:0;padding-top:1rem"><div class="wrap">{hero}
   <div class="rrr">
     <div class="blk"><div class="lab">El reto</div><h3>Lo que había que lograr</h3><p>{reto_for(p)}</p></div>
-    <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h3>Nuestro enfoque</h3><p>{p["resumen"]}</p></div>
+    <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h3>Nuestro enfoque</h3><p>{enfoque_for(p)}</p></div>
     <div class="blk"><div class="lab">El resultado</div><h3>Lo que entregamos</h3><p>{resultado_for(p)}</p></div>
   </div>
   {mockup}
   <div style="margin-top:var(--sp-7)"><span class="eyebrow" style="color:var(--link)">{p.get("stack_lab","Stack tecnológico")}</span><div class="stack">{stack}</div></div>
 </div></section>
-
+{caso_html(p)}
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
   <div class="pf-grid rail {gcls(3)}">{relc}</div>
 </div></section>
 {contacto_band()}
 """
-    return base(f"{p['nombre']} — Portafolio iBisne", p["resumen"][:150], body, active="portafolio", canonical=f"/portafolio/{p['slug']}/")
+    return base(f"{p['nombre']} — Portafolio iBisne", p["resumen"][:150], body,
+                active="portafolio", canonical=f"/portafolio/{p['slug']}/",
+                noindex=p["slug"] in OCULTOS)
 
 
 # ---------------------------------------------------------------- CONTACTO
@@ -1297,7 +1459,10 @@ def sitemap(urls):
 
 
 def main():
-    projects = load_projects()
+    # v33 · dos listas. `todos` conserva los 31 para seguir generando cada ficha;
+    # `projects` es la seleccion publicada y alimenta home, dominios, hub y sitemap.
+    todos = load_projects()
+    projects = visibles(todos)
     urls = ["/"]
     pages = {
         "index.html": build_home(projects),
@@ -1319,9 +1484,12 @@ def main():
     for d in DOMINIOS:
         pages[f"servicios/{d['slug']}/index.html"] = build_dominio(d, projects)
         urls.append(f"/servicios/{d['slug']}/")
-    for p in projects:
+    for p in todos:
+        # La ficha de un oculto se regenera igual (con noindex), pero no entra al sitemap
+        # y sus "relacionados" apuntan solo a proyectos publicados.
         pages[f"portafolio/{p['slug']}/index.html"] = build_project(p, projects)
-        urls.append(f"/portafolio/{p['slug']}/")
+        if p["slug"] not in OCULTOS:
+            urls.append(f"/portafolio/{p['slug']}/")
     for slug, title, cat in INSIGHTS:
         pages[f"insights/{slug}/index.html"] = build_insight(slug, title, cat)
         urls.append(f"/insights/{slug}/")
@@ -1336,7 +1504,8 @@ def main():
         n += 1
     write("sitemap.xml", sitemap(sorted(set(urls))))
     print(f"  OK: {n} páginas + sitemap.xml")
-    print(f"  Dominios: {len(DOMINIOS)} · Proyectos: {len(projects)} · Insights: {len(INSIGHTS)}")
+    print(f"  Dominios: {len(DOMINIOS)} · Proyectos: {len(projects)} publicados "
+          f"({len(todos) - len(projects)} ocultos con noindex) · Insights: {len(INSIGHTS)}")
 
 
 if __name__ == "__main__":
