@@ -378,7 +378,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=35">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=37">
 {GTAG}
 </head>
 <body>
@@ -985,6 +985,15 @@ def build_porque():
 
 
 # ---------------------------------------------------------------- ESTUDIO
+# v37 · 4 columnas fijas en el equipo, NO gcls(). Excepcion deliberada a la regla 6 de
+# CLAUDE.md, pedida por Eduardo, con el mismo patron que PF_COLS en el hub. gcls(9)
+# daria 3 columnas (3x3 exacto); con 4 la ultima fila queda con una sola ficha y ese
+# hueco esta aceptado a proposito. Si el equipo llega a 8 o 12, cierra exacto.
+# Tablet y movil no se tocan: .g baja a 2 columnas en <=900px y .team-grid.g fija 2
+# en <=640px, que es la decision de la v35.
+TEAM_COLS = "g g-4"
+
+
 def build_estudio():
     valores = [("Ejecución sobre teoría", "Concebimos, construimos y entregamos ecosistemas completos, no reportes de esfuerzo."),
                ("Skin in the game", "Nuestro ingreso es consecuencia de la riqueza que ayudamos a generar."),
@@ -993,41 +1002,47 @@ def build_estudio():
                ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
                ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
     vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
-    # v36 · nueve personas, tres por fila: gcls(9) da 3x3 exacto.
-    # (iniciales, nombre, cargo, disciplina, sede, correo). Las filas agrupan por
-    # funcion: direccion arriba, ingenieria en medio, y abajo diseno, cuentas y legal.
-    # La sede sale del dato de Eduardo: Willy y Guillermo operan desde Merida, el
-    # resto desde Zapopan. Es lo que vuelve concreta la afirmacion de dos oficinas.
-    # NO se publican telefonos personales, solo el conmutador. Los WhatsApp que traen
-    # las firmas de correo se quedan fuera a proposito.
-    OFICINA = "+52 33 2957 5274"
+    # v37 · nueve personas en (nombre, cargo, disciplina, sede, correo).
+    #
+    # Formato de nombre: "Nombre + inicial del apellido". Uniforme y sin titulos, por
+    # indicacion de Eduardo. Eso permite derivar el monograma del propio nombre en vez
+    # de mantenerlo como campo aparte: un dato menos que puede quedar desincronizado.
+    # Los nueve monogramas resultantes son unicos (EC WV GV BL JQ AO JP MC DG).
+    #
+    # Orden pensado para la rejilla de 4 columnas (4+4+1): comercial e inversion arriba,
+    # ejecucion en medio, y Legal solo en la ultima fila por ser la funcion mas autonoma.
+    #
+    # La sede es lo que vuelve concreta la afirmacion de dos oficinas: Willy y Guillermo
+    # operan desde Merida, los otros siete desde Zapopan.
+    #
+    # Sin telefono en la ficha: el conmutador es dato de la empresa y vive en /contacto/,
+    # no repetido nueve veces. Los WhatsApp personales de las firmas nunca se publican.
     equipo = [
-        ("EC", "Eduardo Carriola M.", "Consultor Senior · Forward Deployed Engineer",
-         "Dirección", "Zapopan", "eduardo@ibisne.com"),
-        ("WV", "Willy Vergara", "Director Comercial",
+        ("Eduardo C.", "Gerente Comercial",
+         "Comercial", "Zapopan", "eduardo@ibisne.com"),
+        ("Willy V.", "Gerente Comercial",
          "Comercial", "Mérida", "willy.vergara@ibisne.com"),
-        ("GV", "Guillermo Vergara", "Director Financiero",
-         "Finanzas", "Mérida", "guillermo.vergara@ibisne.com"),
-        ("BL", "Ing. Brissa Lizette M.", "Ing. Senior · Forward Deployed Engineer",
+        ("Guillermo V.", "Gerente de Inversión",
+         "Inversión", "Mérida", "guillermo.vergara@ibisne.com"),
+        ("Brissa L.", "Ing. Senior · Forward Deployed Engineer",
          "Ingeniería", "Zapopan", "proyectos@ibisne.com"),
-        ("AP", "Ing. Angel Peña L.", "Arquitecto de Software Fullstack",
-         "Ingeniería", "Zapopan", "dev@ibisne.com"),
-        ("AX", "Ing. Axel", "QA",
+        ("Josue Q.", "Programador Senior Fullstack",
+         "Ingeniería", "Zapopan", "fullstack@ibisne.com"),
+        ("Axel O.", "QA",
          "Calidad", "Zapopan", "shopify@ibisne.com"),
-        ("JP", "Joshua Peña", "Alto Creativo",
+        ("Joshua P.", "Vibe Coding Jr.",
          "Diseño", "Zapopan", "creativos@ibisne.com"),
-        ("MC", "Melanie A. Camacho", "Key Account Manager",
+        ("Melanie C.", "Key Account Manager",
          "Cuentas", "Zapopan", "kam@ibisne.com"),
-        ("DE", "Dr. David Eduardo G.", "Director Legal",
+        ("David G.", "Director Legal",
          "Legal", "Zapopan", "legal@ibisne.com"),
     ]
     team = "".join(
-        f'<div class="tcard"><div class="mono">{ini}</div>'
+        f'<div class="tcard"><div class="mono">{"".join(w[0] for w in n.split()[:2])}</div>'
         f'<div class="info"><div class="disc">{disc} · {sede}</div><div class="nm">{n}</div>'
         f'<div class="role">{r}</div>'
-        f'<a class="mail" href="mailto:{e}">{e}</a>'
-        f'<a class="tel" href="tel:{OFICINA.replace(" ", "")}">Oficina · {OFICINA}</a></div></div>'
-        for ini, n, r, disc, sede, e in equipo)
+        f'<a class="mail" href="mailto:{e}">{e}</a></div></div>'
+        for n, r, disc, sede, e in equipo)
     body = f"""
 <section class="phero">{bg_for("estudio")}<div class="wrap">
   {crumb("Estudio")}
@@ -1051,7 +1066,7 @@ def build_estudio():
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Equipo</span><h2>Las personas detrás de cada proyecto.</h2>
   <p>Nueve personas entre las oficinas de Zapopan y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
-  <div class="team-grid {gcls(len(equipo))}">{team}</div>
+  <div class="team-grid {TEAM_COLS}">{team}</div>
 </div></section>
 {contacto_band()}
 """
