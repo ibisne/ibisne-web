@@ -622,13 +622,29 @@ def enfoque_lab(p):
 
 ASSET = ROOT / "assets" / "portfolio"
 
+
+def shot_for(slug):
+    """Ruta de la captura del proyecto, o None.
+
+    .webp primero (material nuevo, ~10x mas ligero) y .png despues, que es lo que
+    trae el material historico. Vive en un solo sitio a proposito: cuando esta
+    cascada estaba duplicada en pf_card y en build_project, se extendio solo una
+    y la card de THCC se quedo con el fondo abstracto teniendo foto real.
+    """
+    for ext in ("webp", "png"):
+        if (ASSET / f"{slug}.{ext}").exists():
+            return f"/assets/portfolio/{slug}.{ext}"
+    return None
+
+
 def pf_card(p, href_prefix="/portafolio/"):
     # Prioriza la imagen de descanso visual sobre la captura del sitio.
     desc = p.get("descanso")
+    shot = shot_for(p["slug"])
     if desc and (ASSET / f"{desc}.jpg").exists():
         visual = f'<div class="shot"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}" loading="lazy"></div>'
-    elif (ASSET / f"{p['slug']}.png").exists():
-        visual = f'<div class="shot"><img src="/assets/portfolio/{p["slug"]}.png" alt="{p["nombre"]}" loading="lazy"></div>'
+    elif shot:
+        visual = f'<div class="shot"><img src="{shot}" alt="{p["nombre"]}" loading="lazy"></div>'
     else:
         # Sin captura: fondo abstracto en vez de una caja gris vacia.
         bgn = BGS[sum(ord(c) for c in p["slug"]) % len(BGS)]
@@ -1075,6 +1091,15 @@ def modelo_of(slug):
     return "clientes"
 
 
+# v33 · 3 columnas fijas en el hub, NO gcls(). Excepcion deliberada a la regla 6 de
+# CLAUDE.md, pedida por Eduardo. Ademas gcls() nunca fue exacto aqui: este hub filtra
+# del lado del cliente, asi que el conteo visible cambia con cada tab y derivar las
+# columnas del total inicial daba una cifra que dejaba de ser cierta al primer clic.
+# Con 14 proyectos la ultima fila queda con 2 de 3; con 12, 15 o 18 cierra exacta.
+# Tablet y movil no se tocan: .g baja a 2 columnas en <=900px y a 1 en <=640px.
+PF_COLS = "g g-3"
+
+
 def build_portfolio_hub(projects):
     estados = []
     for p in projects:
@@ -1100,7 +1125,7 @@ def build_portfolio_hub(projects):
   <div class="filters ftabs" id="pf-modelo">{mbtns}</div>
   <div class="filters" id="pf-filters">{fbtns}</div>
   <div class="pf-count" id="pf-count" aria-live="polite"></div>
-  <div class="pf-grid {gcls(len(projects))}" id="pf-grid">{cards}</div>
+  <div class="pf-grid {PF_COLS}" id="pf-grid">{cards}</div>
   <p class="pf-empty" id="pf-empty" hidden>No hay proyectos con esa combinación. Prueba con otro estado.</p>
 </div></section>
 {contacto_band()}
@@ -1274,15 +1299,12 @@ def build_project(p, projects):
     live = f'<a href="{url}" class="btn btn-secondary" target="_blank" rel="noopener">Ver en vivo {ic("arw")}</a>' if url else ""
     desc = p.get("descanso")
     has_desc = bool(desc) and (ASSET / f"{desc}.jpg").exists()
-    # v33 · .webp primero para el material nuevo; los .png historicos siguen sirviendo.
-    shot_webp = (ASSET / f"{p['slug']}.webp").exists()
-    has_shot = shot_webp or (ASSET / f"{p['slug']}.png").exists()
-    shot_ext = "webp" if shot_webp else "png"
+    shot = shot_for(p["slug"])
     # Lidera el descanso visual; si no hay, la captura del sitio; si no, un estado branded.
     if has_desc:
         hero = f'<div class="proj-hero"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}"></div>'
-    elif has_shot:
-        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{p["slug"]}.{shot_ext}" alt="{p["nombre"]}"></div>'
+    elif shot:
+        hero = f'<div class="proj-hero"><img src="{shot}" alt="{p["nombre"]}"></div>'
     else:
         hero = (f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem">'
                 f'<span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span>'
@@ -1291,8 +1313,8 @@ def build_project(p, projects):
     # Banda secundaria: la captura del sitio en vivo (cuando ya lideramos con el descanso).
     # Se suprime si el proyecto tiene caso de estudio: ahi la imagen ya va con contexto.
     mockup = ""
-    if has_desc and has_shot and p["slug"] not in CASO:
-        mockup = (f'<div class="proj-mockup"><img src="/assets/portfolio/{p["slug"]}.{shot_ext}" '
+    if has_desc and shot and p["slug"] not in CASO:
+        mockup = (f'<div class="proj-mockup"><img src="{shot}" '
                   f'alt="{p["nombre"]} · en vivo" loading="lazy"><div class="cap">El sitio en vivo</div></div>')
     rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
     if len(rel) < 3:
