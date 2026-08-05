@@ -178,9 +178,10 @@ section { position:relative; }
 /* ---- foto del estudio + avatar de equipo ---- */
 .studio-photo { border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); box-shadow:var(--e2); }
 .studio-photo img { width:100%; height:100%; object-fit:cover; aspect-ratio:4/3; display:block; }
-.tcard .mono { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:var(--surface-2); border-bottom:1px solid var(--hair); font-family:var(--serif); font-size:2.4rem; font-weight:500; color:var(--accent-text); }
-.tcard .info .mail { display:block; margin-top:.35rem; font-size:.78rem; color:var(--link); word-break:break-all; }
-.tcard .info .mail:hover { color:var(--ink); }
+/* v38 · el correo se ancla al fondo de la ficha con margin-top:auto, para que las
+   nueve tarjetas alineen esa linea aunque el cargo ocupe una o dos lineas. */
+.tcard .mail { display:block; margin-top:auto; padding-top:.7rem; font-size:.78rem; color:var(--link); word-break:break-all; }
+.tcard .mail:hover { color:var(--ink); }
 
 /* ---- page hero (interiores) ---- */
 /* v26: heroes más altos. El fondo necesita aire para leerse como descanso visual y no
@@ -387,12 +388,16 @@ section { position:relative; }
    repeat(5,1fr) fijo, del equipo de cinco. */
 .team-grid { display:grid; margin-top:var(--sp-6); }
 .team-grid.g { --g-gap:1rem; }
-.tcard { border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); overflow:hidden; display:flex; flex-direction:column; }
-.tcard .ph-photo { aspect-ratio:1/1; border:0; border-bottom:1px solid var(--hair); border-radius:0; }
-.tcard .info { padding:1.1rem 1.15rem 1.25rem; display:flex; flex-direction:column; flex:1; }
-.tcard .info .disc { font-size:.66rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--link); margin-bottom:.55rem; }
-.tcard .info .nm { font-family:var(--serif); font-size:1.15rem; font-weight:500; letter-spacing:-.015em; }
-.tcard .info .role { color:var(--faint); font-size:.82rem; margin-top:.2rem; line-height:1.4; }
+/* v38 · tarjeta simple. Antes lideraba un cuadro .mono con aspect-ratio 1/1: a 4
+   columnas eso eran 272x272px de caja para mostrar dos iniciales. Se sustituye por
+   un icono de funcion del sprite, con el mismo tratamiento que .nota .ico. */
+.tcard { border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); padding:1.35rem 1.25rem 1.4rem; display:flex; flex-direction:column; transition:border-color var(--t), transform var(--t); }
+.tcard:hover { border-color:var(--accent-line); transform:translateY(-2px); }
+.tcard .ico { width:2.4rem; height:2.4rem; display:flex; align-items:center; justify-content:center;
+  border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line); color:var(--link); font-size:1.15rem; margin-bottom:1.05rem; }
+.tcard .disc { font-size:.66rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--link); margin-bottom:.5rem; }
+.tcard .nm { font-family:var(--serif); font-size:1.15rem; font-weight:500; letter-spacing:-.015em; }
+.tcard .role { color:var(--faint); font-size:.82rem; margin-top:.2rem; line-height:1.4; }
 
 /* ---- contacto ---- */
 .apply { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); padding:clamp(2.2rem,5vw,4rem); display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4rem); align-items:start; background-image:radial-gradient(90% 120% at 100% 0, var(--halo), transparent 55%); }

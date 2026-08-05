@@ -378,7 +378,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=37">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=38">
 {GTAG}
 </head>
 <body>
@@ -1002,12 +1002,14 @@ def build_estudio():
                ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
                ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
     vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
-    # v37 · nueve personas en (nombre, cargo, disciplina, sede, correo).
+    # v38 · nueve personas en (icono, nombre, cargo, disciplina, sede, correo).
     #
-    # Formato de nombre: "Nombre + inicial del apellido". Uniforme y sin titulos, por
-    # indicacion de Eduardo. Eso permite derivar el monograma del propio nombre en vez
-    # de mantenerlo como campo aparte: un dato menos que puede quedar desincronizado.
-    # Los nueve monogramas resultantes son unicos (EC WV GV BL JQ AO JP MC DG).
+    # El icono viene del sprite del sitio y apunta a la FUNCION, no a la persona: dos
+    # gerentes comerciales comparten "trend" a proposito, porque hacen lo mismo desde
+    # ciudades distintas. Sustituye al monograma cuadrado de la v37, que ocupaba una
+    # caja de 272x272 para mostrar dos letras.
+    #
+    # Formato de nombre: "Nombre + inicial del apellido", uniforme y sin titulos.
     #
     # Orden pensado para la rejilla de 4 columnas (4+4+1): comercial e inversion arriba,
     # ejecucion en medio, y Legal solo en la ultima fila por ser la funcion mas autonoma.
@@ -1018,31 +1020,31 @@ def build_estudio():
     # Sin telefono en la ficha: el conmutador es dato de la empresa y vive en /contacto/,
     # no repetido nueve veces. Los WhatsApp personales de las firmas nunca se publican.
     equipo = [
-        ("Eduardo C.", "Gerente Comercial",
+        ("trend",  "Eduardo C.", "Gerente Comercial",
          "Comercial", "Zapopan", "eduardo@ibisne.com"),
-        ("Willy V.", "Gerente Comercial",
+        ("trend",  "Willy V.", "Gerente Comercial",
          "Comercial", "Mérida", "willy.vergara@ibisne.com"),
-        ("Guillermo V.", "Gerente de Inversión",
+        ("coins",  "Guillermo V.", "Gerente de Inversión",
          "Inversión", "Mérida", "guillermo.vergara@ibisne.com"),
-        ("Brissa L.", "Ing. Senior · Forward Deployed Engineer",
+        ("cpu",    "Brissa L.", "Ing. Senior · Forward Deployed Engineer",
          "Ingeniería", "Zapopan", "proyectos@ibisne.com"),
-        ("Josue Q.", "Programador Senior Fullstack",
+        ("blocks", "Josue Q.", "Programador Senior Fullstack",
          "Ingeniería", "Zapopan", "fullstack@ibisne.com"),
-        ("Axel O.", "QA",
+        ("check",  "Axel O.", "QA",
          "Calidad", "Zapopan", "shopify@ibisne.com"),
-        ("Joshua P.", "Vibe Coding Jr.",
+        ("spark",  "Joshua P.", "Vibe Coding Jr.",
          "Diseño", "Zapopan", "creativos@ibisne.com"),
-        ("Melanie C.", "Key Account Manager",
+        ("users",  "Melanie C.", "Key Account Manager",
          "Cuentas", "Zapopan", "kam@ibisne.com"),
-        ("David G.", "Director Legal",
+        ("shield", "David G.", "Director Legal",
          "Legal", "Zapopan", "legal@ibisne.com"),
     ]
     team = "".join(
-        f'<div class="tcard"><div class="mono">{"".join(w[0] for w in n.split()[:2])}</div>'
-        f'<div class="info"><div class="disc">{disc} · {sede}</div><div class="nm">{n}</div>'
+        f'<div class="tcard"><div class="ico">{ic(i)}</div>'
+        f'<div class="disc">{disc} · {sede}</div><div class="nm">{n}</div>'
         f'<div class="role">{r}</div>'
-        f'<a class="mail" href="mailto:{e}">{e}</a></div></div>'
-        for n, r, disc, sede, e in equipo)
+        f'<a class="mail" href="mailto:{e}">{e}</a></div>'
+        for i, n, r, disc, sede, e in equipo)
     body = f"""
 <section class="phero">{bg_for("estudio")}<div class="wrap">
   {crumb("Estudio")}
