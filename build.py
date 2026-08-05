@@ -33,6 +33,7 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
 <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
 <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
 <symbol id="i-cpu" viewBox="0 0 24 24"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></symbol>
 <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
@@ -378,7 +379,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=38">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=39">
 {GTAG}
 </head>
 <body>
@@ -1021,27 +1022,33 @@ def build_estudio():
     # no repetido nueve veces. Los WhatsApp personales de las firmas nunca se publican.
     equipo = [
         ("trend",  "Eduardo C.", "Gerente Comercial",
-         "Comercial", "Zapopan", "eduardo@ibisne.com"),
+         "Comercial", "Jalisco","eduardo@ibisne.com"),
         ("trend",  "Willy V.", "Gerente Comercial",
          "Comercial", "Mérida", "willy.vergara@ibisne.com"),
         ("coins",  "Guillermo V.", "Gerente de Inversión",
          "Inversión", "Mérida", "guillermo.vergara@ibisne.com"),
         ("cpu",    "Brissa L.", "Ing. Senior · Forward Deployed Engineer",
-         "Ingeniería", "Zapopan", "proyectos@ibisne.com"),
+         "Ingeniería", "Jalisco","proyectos@ibisne.com"),
         ("blocks", "Josue Q.", "Programador Senior Fullstack",
-         "Ingeniería", "Zapopan", "fullstack@ibisne.com"),
+         "Ingeniería", "Jalisco","fullstack@ibisne.com"),
         ("check",  "Axel O.", "QA",
-         "Calidad", "Zapopan", "shopify@ibisne.com"),
+         "Calidad", "Jalisco","shopify@ibisne.com"),
         ("spark",  "Joshua P.", "Vibe Coding Jr.",
-         "Diseño", "Zapopan", "creativos@ibisne.com"),
+         "Diseño", "Jalisco","creativos@ibisne.com"),
         ("users",  "Melanie C.", "Key Account Manager",
-         "Cuentas", "Zapopan", "kam@ibisne.com"),
+         "Cuentas", "Jalisco","kam@ibisne.com"),
         ("shield", "David G.", "Director Legal",
-         "Legal", "Zapopan", "legal@ibisne.com"),
+         "Legal", "Jalisco","legal@ibisne.com"),
     ]
+    # v39 · la sede sale de la linea de disciplina y pasa a ser un pill con pin, en la
+    # misma fila que el icono. Antes decia "Ingenieria · Zapopan" y sumaba palabras a un
+    # eyebrow que ya era largo; ahora se lee de un vistazo y aprovecha el hueco que
+    # dejaba el icono a su derecha, sin sumar altura a la ficha.
     team = "".join(
-        f'<div class="tcard"><div class="ico">{ic(i)}</div>'
-        f'<div class="disc">{disc} · {sede}</div><div class="nm">{n}</div>'
+        f'<div class="tcard">'
+        f'<div class="thead"><div class="ico">{ic(i)}</div>'
+        f'<span class="sede">{ic("pin")}{sede}</span></div>'
+        f'<div class="disc">{disc}</div><div class="nm">{n}</div>'
         f'<div class="role">{r}</div>'
         f'<a class="mail" href="mailto:{e}">{e}</a></div>'
         for i, n, r, disc, sede, e in equipo)
@@ -1067,7 +1074,7 @@ def build_estudio():
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Equipo</span><h2>Las personas detrás de cada proyecto.</h2>
-  <p>Nueve personas entre las oficinas de Zapopan y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
+  <p>Nueve personas entre las oficinas de Jalisco y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
   <div class="team-grid {TEAM_COLS}">{team}</div>
 </div></section>
 {contacto_band()}
