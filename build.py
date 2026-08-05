@@ -993,32 +993,41 @@ def build_estudio():
                ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
                ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
     vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
-    # v35 · fuente unica: las firmas de correo (../cotizaciones-ibisne/_gen-firmas.py).
-    # (iniciales, nombre, cargo, disciplina, correo). La disciplina agrupa por area
-    # para que la rejilla se lea de un vistazo; sale del cargo, no se inventa.
-    # NO se publican los WhatsApp personales que traen las firmas: el correo
-    # corporativo y el conmutador son datos de negocio, un movil personal no.
+    # v36 · nueve personas, tres por fila: gcls(9) da 3x3 exacto.
+    # (iniciales, nombre, cargo, disciplina, sede, correo). Las filas agrupan por
+    # funcion: direccion arriba, ingenieria en medio, y abajo diseno, cuentas y legal.
+    # La sede sale del dato de Eduardo: Willy y Guillermo operan desde Merida, el
+    # resto desde Zapopan. Es lo que vuelve concreta la afirmacion de dos oficinas.
+    # NO se publican telefonos personales, solo el conmutador. Los WhatsApp que traen
+    # las firmas de correo se quedan fuera a proposito.
+    OFICINA = "+52 33 2957 5274"
     equipo = [
         ("EC", "Eduardo Carriola M.", "Consultor Senior · Forward Deployed Engineer",
-         "Dirección", "eduardo@ibisne.com"),
+         "Dirección", "Zapopan", "eduardo@ibisne.com"),
+        ("WV", "Willy Vergara", "Director Comercial",
+         "Comercial", "Mérida", "willy.vergara@ibisne.com"),
+        ("GV", "Guillermo Vergara", "Director Financiero",
+         "Finanzas", "Mérida", "guillermo.vergara@ibisne.com"),
         ("BL", "Ing. Brissa Lizette M.", "Ing. Senior · Forward Deployed Engineer",
-         "Ingeniería", "proyectos@ibisne.com"),
+         "Ingeniería", "Zapopan", "proyectos@ibisne.com"),
         ("AP", "Ing. Angel Peña L.", "Arquitecto de Software Fullstack",
-         "Ingeniería", "dev@ibisne.com"),
+         "Ingeniería", "Zapopan", "dev@ibisne.com"),
+        ("AX", "Ing. Axel", "QA",
+         "Calidad", "Zapopan", "shopify@ibisne.com"),
         ("JP", "Joshua Peña", "Alto Creativo",
-         "Diseño", "creativos@ibisne.com"),
+         "Diseño", "Zapopan", "creativos@ibisne.com"),
         ("MC", "Melanie A. Camacho", "Key Account Manager",
-         "Cuentas", "kam@ibisne.com"),
+         "Cuentas", "Zapopan", "kam@ibisne.com"),
         ("DE", "Dr. David Eduardo G.", "Director Legal",
-         "Legal", "legal@ibisne.com"),
+         "Legal", "Zapopan", "legal@ibisne.com"),
     ]
     team = "".join(
         f'<div class="tcard"><div class="mono">{ini}</div>'
-        f'<div class="info"><div class="disc">{disc}</div><div class="nm">{n}</div>'
+        f'<div class="info"><div class="disc">{disc} · {sede}</div><div class="nm">{n}</div>'
         f'<div class="role">{r}</div>'
         f'<a class="mail" href="mailto:{e}">{e}</a>'
-        f'<a class="tel" href="tel:+523329575274">Oficina · +52 33 2957 5274</a></div></div>'
-        for ini, n, r, disc, e in equipo)
+        f'<a class="tel" href="tel:{OFICINA.replace(" ", "")}">Oficina · {OFICINA}</a></div></div>'
+        for ini, n, r, disc, sede, e in equipo)
     body = f"""
 <section class="phero">{bg_for("estudio")}<div class="wrap">
   {crumb("Estudio")}
@@ -1041,7 +1050,7 @@ def build_estudio():
 
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Equipo</span><h2>Las personas detrás de cada proyecto.</h2>
-  <p>Un equipo pequeño y senior, con oficinas en Zapopan y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
+  <p>Nueve personas entre las oficinas de Zapopan y Mérida. Cada quien responde por su parte del resultado y contesta su propio correo.</p></div>
   <div class="team-grid {gcls(len(equipo))}">{team}</div>
 </div></section>
 {contacto_band()}
@@ -1120,8 +1129,17 @@ def build_portfolio_hub(projects):
     for p in projects:
         if p["estado"] not in estados:
             estados.append(p["estado"])
+    # v36 · con menos de 3 estados el filtro no separa nada util: al curar el
+    # portafolio quedaron "Lanzado" (13) y "Mvp" (1), y una pestaña que devuelve un
+    # solo proyecto es ruido. Se oculta solo y reaparece si vuelve a haber variedad;
+    # no se borra codigo. El JS tolera que #pf-filters no exista: querySelectorAll
+    # devuelve lista vacia, wire() no hace nada y el estado se queda en "all".
+    filtro_estado = len(estados) >= 3
     fbtns = '<button aria-pressed="true" data-f="all">Todos</button>' + "".join(
         f'<button aria-pressed="false" data-f="{e}">{e.title()}</button>' for e in estados)
+    fbar = f'<div class="filters" id="pf-filters">{fbtns}</div>' if filtro_estado else ""
+    lede_filtro = ("Filtra por tipo de relación o por estado." if filtro_estado
+                   else "Filtra por tipo de relación.")
     usados = [m for m in ("clientes", "inversion", "incubadora")
               if any(modelo_of(p["slug"]) == m for p in projects)]
     mbtns = '<button aria-pressed="true" data-m="all">Todo el portafolio</button>' + "".join(
@@ -1134,14 +1152,14 @@ def build_portfolio_hub(projects):
   {crumb("Portafolio")}
   <span class="eyebrow">Portafolio</span>
   <h1>{len(projects)} negocios digitales, en una docena de verticales.</h1>
-  <p class="lede">Proyectos que construimos para clientes y proyectos en los que además pusimos capital. Filtra por tipo de relación o por estado.</p>
+  <p class="lede">Proyectos que construimos para clientes y proyectos en los que además pusimos capital. {lede_filtro}</p>
 </div></section>
 <section class="sec"><div class="wrap">
   <div class="filters ftabs" id="pf-modelo">{mbtns}</div>
-  <div class="filters" id="pf-filters">{fbtns}</div>
+  {fbar}
   <div class="pf-count" id="pf-count" aria-live="polite"></div>
   <div class="pf-grid {PF_COLS}" id="pf-grid">{cards}</div>
-  <p class="pf-empty" id="pf-empty" hidden>No hay proyectos con esa combinación. Prueba con otro estado.</p>
+  <p class="pf-empty" id="pf-empty" hidden>No hay proyectos con esa combinación. Prueba con otra.</p>
 </div></section>
 {contacto_band()}
 <script>
