@@ -877,17 +877,65 @@ body:has(.quiz) .foot, body:has(.quiz) .sdock { display:none !important; }
    en movil la topbar no existe y el header baja a 3.6rem (ver bloque 640px). */
 .quiz { min-height:calc(100vh - 6.85rem); min-height:calc(100dvh - 6.85rem);
   display:flex; flex-direction:column; justify-content:center;
-  padding:1.6rem 0 2rem; }
+  padding:1.6rem 0 1.4rem; }
+/* Con el form dentro, flex:1 lo hace ocupar todo: el justify-content de arriba
+   solo aplica a la pantalla de bienvenida. */
 /* El banner de cookies es fixed y no reserva espacio: mientras este visible
    se le abre hueco al quiz para que no tape los botones. */
 body.has-consent .quiz { padding-bottom:13rem; }
 
-/* ---- barra de progreso ---- */
-.qbar { display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem; }
-.qbar .track { flex:1; height:3px; background:var(--line-2); border-radius:var(--r-pill); overflow:hidden; }
-.qbar .fill { height:100%; background:var(--accent); border-radius:var(--r-pill); transition:width var(--t); }
-.qbar .num { font-size:.7rem; font-weight:700; color:var(--faint); letter-spacing:.14em;
-  text-transform:uppercase; white-space:nowrap; }
+/* ---- estructura anclada: el stepper y los botones no se mueven nunca ----
+   Antes .quiz centraba TODO el bloque, asi que cada paso de distinta altura
+   recolocaba stepper y botones: eso se percibia como salto. Ahora el form
+   ocupa el alto completo y solo respira la zona central. */
+/* La cadena flex tiene que llegar hasta el form: .quiz > .wrap > form. Sin
+   esto el flex:1 del form no aplica y el bloque se recentra en cada paso. */
+.quiz > .wrap { flex:1; display:flex; flex-direction:column; min-height:0; }
+.quiz > .wrap > .qwel { margin-top:auto; margin-bottom:auto; }
+#briefForm { display:flex; flex-direction:column; flex:1; min-height:0; }
+.qbody { flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0; }
+.qnav { margin-top:auto; }
+
+/* ---- stepper de iconos con estados ---- */
+.qsteps { position:relative; display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:.55rem; }
+.qsteps::before { content:""; position:absolute; left:1.15rem; right:1.15rem; top:50%;
+  height:1px; background:var(--line-2); }
+.qs { position:relative; z-index:1; width:2.3rem; height:2.3rem; flex:none; padding:0;
+  display:flex; align-items:center; justify-content:center; border-radius:50%;
+  border:1.5px solid var(--line-2); background:var(--bg); cursor:default;
+  transition:border-color var(--t-fast), background var(--t-fast), color var(--t-fast); }
+.qs .ic { width:1rem; height:1rem; color:var(--faint); transition:color var(--t-fast); }
+
+/* Pendiente: aun no llega ahi. Es el estado por defecto de arriba. */
+
+/* Visitado pero sin responder: paso de largo y lo dejo vacio. */
+.qs.is-empty { border-color:var(--line); border-style:dashed; }
+.qs.is-empty .ic { color:var(--muted); }
+
+/* Completado: dejo respuesta. */
+.qs.is-done { border-color:var(--ok); background:color-mix(in srgb, var(--ok) 14%, transparent); }
+.qs.is-done .ic { color:var(--ok); }
+
+/* Donde estoy parado. */
+.qs.is-now { border-color:var(--accent); border-width:2px; background:var(--surface-2);
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
+.qs.is-now .ic { color:var(--ink); }
+
+/* Con error: solo el paso 1 cuando falta contacto valido. */
+.qs.is-error { border-color:var(--error); background:color-mix(in srgb, var(--error) 12%, transparent); }
+.qs.is-error .ic { color:var(--error); }
+
+/* Navegable hacia atras; los pasos aun no alcanzados quedan inertes. */
+.qs.can-go { cursor:pointer; }
+.qs.can-go:hover { border-color:var(--accent-line); }
+.qs:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+
+.qsnum { font-size:.68rem; font-weight:700; color:var(--faint); letter-spacing:.14em;
+  text-transform:uppercase; text-align:center; margin-bottom:1.3rem; }
+
+/* ---- campos condicionales (progressive disclosure) ---- */
+.cond[hidden] { display:none !important; }
 
 /* ---- tarjeta horizontal: contexto a la izquierda, campos a la derecha ---- */
 .qcard { display:grid; grid-template-columns:14rem 1fr; gap:2.75rem; align-items:start; }
@@ -1007,7 +1055,9 @@ label.opt span { line-height:1.25; }
 }
 @media (max-width:640px) {
   .quiz { min-height:calc(100dvh - 3.7rem); padding:1.1rem 0 1.4rem; }
-  .qbar { margin-bottom:1.1rem; }
+  .qs { width:2.1rem; height:2.1rem; }
+  .qs .ic { width:.92rem; height:.92rem; }
+  .qsnum { margin-bottom:1rem; font-size:.64rem; }
   .fgrid { grid-template-columns:1fr; gap:.75rem; }
   .opts.two-up { grid-template-columns:1fr 1fr; }
   .qside h3 { font-size:1.2rem; }
@@ -1031,7 +1081,7 @@ label.opt span { line-height:1.25; }
 /* ---- impresion: solo el resumen ---- */
 @media print {
   #loader, .shead, .foot, .sdock, .consent, .crumb,
-  .qbar, .qnav, .done .acts, .warnbox { display:none !important; }
+  .qsteps, .qsnum, .qnav, .done .acts, .warnbox { display:none !important; }
   html, body { background:#fff !important; }
   .quiz { min-height:0; padding:0; }
   .prt { display:block !important; }

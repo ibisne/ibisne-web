@@ -379,7 +379,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=41">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=42">
 {GTAG}
 </head>
 <body>
@@ -1456,8 +1456,8 @@ fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},
 
 # ---------------------------------------------------------------- BRIEF /empecemos/
 # Quiz de reactivacion para clientes con MVP y cotizacion ya entregados.
-# Pantalla de bienvenida + 6 pasos + cierre. No usa .phero a proposito: esa
-# clase se fuerza a 100dvh en movil y empujaba el formulario bajo el pliegue.
+# Bienvenida + 6 pasos + cierre. No usa .phero a proposito: esa clase se fuerza
+# a 100dvh en movil y empujaba el formulario bajo el pliegue.
 PROMO_FECHA = "31 de agosto de 2026"
 
 # Los 6 incluidos sin costo de las cotizaciones. Todos los iconos ya existen
@@ -1471,8 +1471,17 @@ INCLUIDOS = [
     ("cms", "CMS autoadministrable"),
 ]
 
-# El JS va como constante aparte (string normal, no f-string) para no tener que
-# doblar cada llave. Se inyecta con {EMPECEMOS_JS} en el body.
+# Icono y rotulo de cada paso en el stepper.
+PASOS = [
+    ("users", "Contacto"),
+    ("monitor", "Sitio web"),
+    ("ig", "Presencia"),
+    ("zap", "Tiempos"),
+    ("coins", "Inversión"),
+    ("check", "Revisar"),
+]
+
+# El JS va como constante aparte (string normal, no f-string) para no doblar llaves.
 EMPECEMOS_JS = r"""
 <script>
 (function(){
@@ -1480,29 +1489,37 @@ EMPECEMOS_JS = r"""
   if (!form) return;
   var wel = document.getElementById('qwelcome');
   var pasos = [].slice.call(form.querySelectorAll('.qstep'));
-  var fill = document.getElementById('qbFill');
+  var chips = [].slice.call(document.querySelectorAll('.qs'));
   var num = document.getElementById('qbNum');
   var btnPrev = document.getElementById('btnPrev');
   var btnNext = document.getElementById('btnNext');
   var btnSend = document.getElementById('btnSend');
   var msg = document.getElementById('qMsg');
   var i = 0;
+  var visto = [true, false, false, false, false, false];   // por donde ya paso
+  var errorEn1 = false;
 
   var ETIQUETAS = {
     nombre:'Nombre', empresa:'Proyecto o negocio', email:'Correo', telefono:'Teléfono',
-    dominio:'Dominio', correos_corp:'Correos corporativos', redes:'Redes sociales',
-    google_ficha:'Ficha en Google', fecha_lanzamiento:'Lanzamiento tentativo',
-    urgencia:'Urgencia', inversion:'Inversión estimada'
+    tiene_sitio:'¿Tiene sitio?', dominio:'Dominio', correos_corp:'Correos corporativos',
+    en_redes:'¿En redes?', redes:'Redes sociales', google_ficha:'Ficha en Google',
+    urgencia:'Urgencia', fecha_lanzamiento:'Lanzamiento tentativo', inversion:'Inversión estimada'
   };
+  // Que campos "cuentan" para dar por respondido cada paso.
+  var CAMPOS_PASO = [
+    ['nombre','empresa','email','telefono'],
+    ['tiene_sitio','dominio','correos_corp'],
+    ['en_redes','redes','google_ficha'],
+    ['urgencia','fecha_lanzamiento'],
+    ['inversion'],
+    []
+  ];
 
-  // El banner de cookies es fixed y no reserva espacio: si esta visible, se le
-  // abre hueco al quiz para que no tape los botones.
   function ajustarConsent(){
     var c = document.getElementById('consent');
     document.body.classList.toggle('has-consent', !!(c && !c.hidden));
   }
-  ajustarConsent();
-  setTimeout(ajustarConsent, 400);
+  ajustarConsent(); setTimeout(ajustarConsent, 400);
   document.addEventListener('click', function(e){
     if (e.target && (e.target.id === 'cAll' || e.target.id === 'cMin')) setTimeout(ajustarConsent, 60);
   });
@@ -1513,7 +1530,7 @@ EMPECEMOS_JS = r"""
       var el = form.querySelector('[name="' + k + '"]');
       if (el && el.value.trim()) d[k] = el.value.trim();
     });
-    ['correos_corp','google_ficha','urgencia','inversion'].forEach(function(k){
+    ['tiene_sitio','correos_corp','en_redes','google_ficha','urgencia','inversion'].forEach(function(k){
       var el = form.querySelector('[name="' + k + '"]:checked');
       if (el) d[k] = el.value;
     });
@@ -1523,23 +1540,43 @@ EMPECEMOS_JS = r"""
   }
 
   function aviso(txt, malo){ msg.textContent = txt || ''; msg.style.color = malo ? 'var(--error)' : 'var(--muted)'; }
-
   function foco(sel){ var el = form.querySelector(sel); if (el) try { el.focus({preventScroll:true}); } catch(e){} }
 
-  // Telefono mexicano: 10 digitos reales. Rechaza el numero fantasma.
+  // Telefono mexicano: 10 digitos reales.
   function telValido(v){
     var d = (v || '').replace(/\D/g, '');
-    if (d.length === 12 && d.indexOf('52') === 0) d = d.slice(2);   // +52 al frente
+    if (d.length === 12 && d.indexOf('52') === 0) d = d.slice(2);
     if (d.length === 11 && d.indexOf('1') === 0) d = d.slice(1);
     if (d.length !== 10) return false;
-    if (/^(\d)\1{9}$/.test(d)) return false;                        // 0000000000
+    if (/^(\d)\1{9}$/.test(d)) return false;
     return true;
   }
   function mailValido(v){ return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v || ''); }
 
+  function respondido(n){
+    var d = datos();
+    return CAMPOS_PASO[n].some(function(k){ return !!d[k]; });
+  }
+
+  // Cinco estados: pendiente (sin clase), visitado-vacio, completado, actual y error.
+  function pintarChips(){
+    chips.forEach(function(ch, n){
+      ch.className = 'qs';
+      if (n === 0 && errorEn1) ch.classList.add('is-error');
+      else if (respondido(n)) ch.classList.add('is-done');
+      else if (visto[n] && n !== i) ch.classList.add('is-empty');
+      if (n === i) ch.classList.add('is-now');
+      var alcanzable = visto[n];
+      ch.classList.toggle('can-go', alcanzable && n !== i);
+      ch.setAttribute('aria-current', n === i ? 'step' : 'false');
+      if (!alcanzable) ch.setAttribute('aria-disabled', 'true');
+      else ch.removeAttribute('aria-disabled');
+    });
+  }
+
   function pintar(){
     pasos.forEach(function(p, n){ p.hidden = (n !== i); });
-    fill.style.width = ((i + 1) / pasos.length * 100) + '%';
+    visto[i] = true;
     num.textContent = 'Paso ' + (i + 1) + ' de ' + pasos.length;
     btnPrev.hidden = (i === 0);
     var ultimo = (i === pasos.length - 1);
@@ -1547,16 +1584,20 @@ EMPECEMOS_JS = r"""
     btnSend.hidden = !ultimo;
     aviso('');
     if (ultimo) resumir();
+    pintarChips();
   }
 
-  // Solo el paso 1 bloquea: es el dato que de verdad se necesita.
   function valido(){
     if (i !== 0) return true;
     var d = datos();
-    if (!d.nombre) { aviso('Dinos cómo te llamas.', 1); foco('[name="nombre"]'); return false; }
-    if (!d.empresa) { aviso('Falta el nombre del proyecto o negocio.', 1); foco('[name="empresa"]'); return false; }
-    if (!mailValido(d.email)) { aviso('Escribe un correo válido.', 1); foco('[name="email"]'); return false; }
-    if (!telValido(d.telefono)) { aviso('El teléfono debe llevar 10 dígitos.', 1); foco('[name="telefono"]'); return false; }
+    var falla = null;
+    if (!d.nombre) falla = ['Dinos cómo te llamas.', '[name="nombre"]'];
+    else if (!d.empresa) falla = ['Falta el nombre del proyecto o negocio.', '[name="empresa"]'];
+    else if (!mailValido(d.email)) falla = ['Escribe un correo válido.', '[name="email"]'];
+    else if (!telValido(d.telefono)) falla = ['El teléfono debe llevar 10 dígitos.', '[name="telefono"]'];
+    errorEn1 = !!falla;
+    pintarChips();
+    if (falla) { aviso(falla[0], 1); foco(falla[1]); return false; }
     return true;
   }
 
@@ -1575,17 +1616,53 @@ EMPECEMOS_JS = r"""
     document.getElementById('sumBox').innerHTML = filas;
   }
 
+  // ---- Progressive disclosure: solo se muestra lo que aplica ----
+  function condicionales(){
+    var d = datos();
+    // Dominio: el label cambia segun tenga sitio o no.
+    var wrapDom = document.getElementById('condDominio');
+    var lbDom = document.getElementById('lbDominio');
+    var inDom = document.getElementById('dominio');
+    if (d.tiene_sitio) {
+      wrapDom.hidden = false;
+      if (d.tiene_sitio === 'Sí') {
+        lbDom.textContent = '¿Cuál es tu dominio?';
+        inDom.placeholder = 'tudominio.com';
+      } else {
+        lbDom.textContent = '¿Qué dominio te gustaría tener?';
+        inDom.placeholder = 'elquequieras.com · si aún no lo decides, déjalo vacío';
+      }
+    } else { wrapDom.hidden = true; }
+
+    // Redes: las casillas solo salen si dijo que si.
+    document.getElementById('condRedes').hidden = (d.en_redes !== 'Sí');
+
+    // Fecha: no se le pide a quien sigue pensandolo.
+    var pideFecha = d.urgencia && d.urgencia !== 'Lo sigo pensando';
+    document.getElementById('condFecha').hidden = !pideFecha;
+  }
+  form.addEventListener('change', function(){ condicionales(); pintarChips(); });
+  form.addEventListener('input', function(){ pintarChips(); });
+
+  // ---- navegacion ----
   document.getElementById('btnStart').addEventListener('click', function(){
-    wel.hidden = true; form.hidden = false; pintar();
+    wel.hidden = true; form.hidden = false; condicionales(); pintar();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   btnNext.addEventListener('click', function(){ if (valido() && i < pasos.length - 1) { i++; pintar(); } });
   btnPrev.addEventListener('click', function(){ if (i > 0) { i--; pintar(); } });
+  chips.forEach(function(ch, n){
+    ch.addEventListener('click', function(){
+      if (!visto[n] || n === i) return;              // solo hacia pasos ya vistos
+      if (n > 0 && !valido()) return;                // sin contacto valido no se avanza
+      i = n; pintar();
+    });
+  });
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var d = datos();
-    if (d.website) return;                       // honeypot
+    if (d.website) return;                            // honeypot
     if (!document.getElementById('acepto').checked) {
       aviso('Marca la casilla de privacidad para continuar.', 1); return;
     }
@@ -1636,20 +1713,21 @@ EMPECEMOS_JS = r"""
 
 
 def _wins():
-    """Los 6 incluidos sin costo, con su icono del sprite."""
     return "\n        ".join(
         f'<div class="win">{ic(icono)}<span>{texto}</span></div>' for icono, texto in INCLUIDOS
     )
 
 
-def _qside(n, icono, titulo, sub):
-    """Columna izquierda de cada paso: numeral, icono y contexto."""
-    return f"""<div class="qside">
-          <div class="qnum">Paso {n}</div>
-          <div class="qic">{ic(icono)}</div>
-          <h3>{titulo}</h3>
-          <p>{sub}</p>
-        </div>"""
+def _stepper():
+    return "\n      ".join(
+        f'<button type="button" class="qs" data-n="{n}" title="{rotulo}" aria-label="{rotulo}">{ic(icono)}</button>'
+        for n, (icono, rotulo) in enumerate(PASOS)
+    )
+
+
+def _qside(titulo, sub):
+    """Columna de contexto. Sin numeral ni icono: ambos viven en el stepper."""
+    return f'<div class="qside"><h3>{titulo}</h3><p>{sub}</p></div>'
 
 
 def build_empecemos():
@@ -1679,122 +1757,142 @@ def build_empecemos():
   <!-- ══════ QUIZ ══════ -->
   <form class="form" id="briefForm" novalidate hidden>
 
-    <div class="qbar">
-      <span class="num" id="qbNum">Paso 1 de 6</span>
-      <span class="track"><span class="fill" id="qbFill" style="width:16.6%"></span></span>
+    <div class="qsteps" id="qSteps">
+      {_stepper()}
     </div>
+    <div class="qsnum" id="qbNum">Paso 1 de 6</div>
 
-    <!-- 1 · CONTACTO -->
-    <div class="qstep">
-      <div class="qcard">
-        {_qside(1, 'users', '¿Con quién hablamos?', 'Con esto te damos seguimiento y te mandamos los avances.')}
-        <div class="qmain">
-          <div class="fgrid">
-            <div class="fgroup"><label for="nombre">Nombre</label>
-              <input class="input" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre"></div>
-            <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
-              <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
-          </div>
-          <div class="fgrid" style="margin-top:.9rem">
-            <div class="fgroup"><label for="email">Correo</label>
-              <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com"></div>
-            <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
-              <input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="17" placeholder="33 1234 5678"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="qbody">
 
-    <!-- 2 · DOMINIO Y CORREOS -->
-    <div class="qstep" hidden>
-      <div class="qcard">
-        {_qside(2, 'monitor', 'Tu dominio', 'Dónde va a vivir el proyecto cuando salga a producción.')}
-        <div class="qmain">
-          <div class="fgroup"><label for="dominio">¿Ya tienes dominio?</label>
-            <input class="input" id="dominio" name="dominio" inputmode="url" placeholder="tudominio.com · déjalo vacío si aún no"></div>
-          <div class="fgroup"><span class="lb">¿Necesitas correos corporativos?</span>
-            <div class="opts">
-              <label class="opt"><input type="radio" name="correos_corp" value="Sí, los necesito"><span>Sí, los necesito</span></label>
-              <label class="opt"><input type="radio" name="correos_corp" value="Ya tengo"><span>Ya tengo</span></label>
-              <label class="opt"><input type="radio" name="correos_corp" value="No estoy seguro"><span>No estoy seguro</span></label>
+      <!-- 1 · CONTACTO -->
+      <div class="qstep">
+        <div class="qcard">
+          {_qside('¿Con quién hablamos?', 'Con esto te damos seguimiento y te mandamos los avances.')}
+          <div class="qmain">
+            <div class="fgrid">
+              <div class="fgroup"><label for="nombre">Nombre</label>
+                <input class="input" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre"></div>
+              <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
+                <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
+            </div>
+            <div class="fgrid" style="margin-top:.9rem">
+              <div class="fgroup"><label for="email">Correo</label>
+                <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com"></div>
+              <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
+                <input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="17" placeholder="33 1234 5678"></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 3 · PRESENCIA -->
-    <div class="qstep" hidden>
-      <div class="qcard">
-        {_qside(3, 'ig', 'Dónde te encuentran', 'Para conectar el sitio con lo que ya tienes andando.')}
-        <div class="qmain">
-          <div class="fgroup"><span class="lb">¿En qué redes está tu negocio?</span>
-            <div class="opts two-up">
-              <label class="opt"><input type="checkbox" name="redes" value="Instagram"><span>Instagram</span></label>
-              <label class="opt"><input type="checkbox" name="redes" value="Facebook"><span>Facebook</span></label>
-              <label class="opt"><input type="checkbox" name="redes" value="TikTok"><span>TikTok</span></label>
-              <label class="opt"><input type="checkbox" name="redes" value="LinkedIn"><span>LinkedIn</span></label>
+      <!-- 2 · SITIO WEB -->
+      <div class="qstep" hidden>
+        <div class="qcard">
+          {_qside('Tu sitio web', 'Dónde va a vivir el proyecto cuando salga a producción.')}
+          <div class="qmain">
+            <div class="fgroup"><span class="lb">¿Ya tienes sitio web?</span>
+              <div class="opts two-up">
+                <label class="opt"><input type="radio" name="tiene_sitio" value="Sí"><span>Sí, ya tengo</span></label>
+                <label class="opt"><input type="radio" name="tiene_sitio" value="No"><span>Todavía no</span></label>
+              </div>
             </div>
-          </div>
-          <div class="fgroup"><span class="lb">¿Apareces en Google con tu ficha de negocio?</span>
-            <div class="opts">
-              <label class="opt"><input type="radio" name="google_ficha" value="Sí, ya aparezco"><span>Sí, ya aparezco</span></label>
-              <label class="opt"><input type="radio" name="google_ficha" value="No"><span>No</span></label>
-              <label class="opt"><input type="radio" name="google_ficha" value="No estoy seguro"><span>No estoy seguro</span></label>
+            <div class="fgroup cond" id="condDominio" hidden>
+              <label for="dominio" id="lbDominio">¿Cuál es tu dominio?</label>
+              <input class="input" id="dominio" name="dominio" inputmode="url" placeholder="tudominio.com">
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4 · TIEMPOS -->
-    <div class="qstep" hidden>
-      <div class="qcard">
-        {_qside(4, 'zap', 'Tus tiempos', 'Con esto organizamos el arranque y reservamos el equipo.')}
-        <div class="qmain">
-          <div class="fgroup"><label for="fecha_lanzamiento">¿Para cuándo te gustaría lanzar?</label>
-            <input class="input" id="fecha_lanzamiento" name="fecha_lanzamiento" type="date"></div>
-          <div class="fgroup"><span class="lb">¿Qué tan urgente es?</span>
-            <div class="opts">
-              <label class="opt"><input type="radio" name="urgencia" value="Urgente, ya quiero arrancar"><span>Urgente, ya quiero arrancar</span></label>
-              <label class="opt"><input type="radio" name="urgencia" value="Me puedo esperar"><span>Me puedo esperar</span></label>
-              <label class="opt"><input type="radio" name="urgencia" value="Lo sigo pensando"><span>Lo sigo pensando</span></label>
+            <div class="fgroup"><span class="lb">¿Necesitas correos corporativos?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="correos_corp" value="Sí, los necesito"><span>Sí, los necesito</span></label>
+                <label class="opt"><input type="radio" name="correos_corp" value="Ya tengo"><span>Ya tengo</span></label>
+                <label class="opt"><input type="radio" name="correos_corp" value="No estoy seguro"><span>No estoy seguro</span></label>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 5 · INVERSION -->
-    <div class="qstep" hidden>
-      <div class="qcard">
-        {_qside(5, 'coins', 'Tu inversión', 'Nos ayuda a proponerte el alcance que sí te cuadra.')}
-        <div class="qmain">
-          <div class="fgroup"><span class="lb">¿Qué inversión tienes contemplada?</span>
-            <div class="opts">
-              <label class="opt"><input type="radio" name="inversion" value="Hasta $15,000"><span>Hasta $15,000</span></label>
-              <label class="opt"><input type="radio" name="inversion" value="$15,000 a $35,000"><span>$15,000 a $35,000</span></label>
-              <label class="opt"><input type="radio" name="inversion" value="$35,000 a $75,000"><span>$35,000 a $75,000</span></label>
-              <label class="opt"><input type="radio" name="inversion" value="Más de $75,000"><span>Más de $75,000</span></label>
-              <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
+      <!-- 3 · PRESENCIA -->
+      <div class="qstep" hidden>
+        <div class="qcard">
+          {_qside('Dónde te encuentran', 'Para conectar el sitio con lo que ya tienes andando.')}
+          <div class="qmain">
+            <div class="fgroup"><span class="lb">¿Tu negocio está en redes sociales?</span>
+              <div class="opts two-up">
+                <label class="opt"><input type="radio" name="en_redes" value="Sí"><span>Sí</span></label>
+                <label class="opt"><input type="radio" name="en_redes" value="Todavía no"><span>Todavía no</span></label>
+              </div>
+            </div>
+            <div class="fgroup cond" id="condRedes" hidden><span class="lb">¿En cuáles?</span>
+              <div class="opts two-up">
+                <label class="opt"><input type="checkbox" name="redes" value="Instagram"><span>Instagram</span></label>
+                <label class="opt"><input type="checkbox" name="redes" value="Facebook"><span>Facebook</span></label>
+                <label class="opt"><input type="checkbox" name="redes" value="TikTok"><span>TikTok</span></label>
+                <label class="opt"><input type="checkbox" name="redes" value="LinkedIn"><span>LinkedIn</span></label>
+              </div>
+            </div>
+            <div class="fgroup"><span class="lb">¿Apareces en Google con tu ficha de negocio?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="google_ficha" value="Sí, ya aparezco"><span>Sí, ya aparezco</span></label>
+                <label class="opt"><input type="radio" name="google_ficha" value="No"><span>No</span></label>
+                <label class="opt"><input type="radio" name="google_ficha" value="No estoy seguro"><span>No estoy seguro</span></label>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 6 · RESUMEN -->
-    <div class="qstep" hidden>
-      <div class="qcard">
-        {_qside(6, 'check', 'Revisa y envía', 'Esto es lo que nos llega. Puedes volver atrás a corregir.')}
-        <div class="qmain">
-          <div class="summary" id="sumBox"></div>
-          <div class="consent-field">
-            <input type="checkbox" id="acepto">
-            <label for="acepto">Autorizo a iBisne a usar estos datos para dar seguimiento a mi proyecto, conforme al <a href="/legal/privacidad/">Aviso de privacidad</a>.</label>
+      <!-- 4 · TIEMPOS -->
+      <div class="qstep" hidden>
+        <div class="qcard">
+          {_qside('Tus tiempos', 'Con esto organizamos el arranque y reservamos el equipo.')}
+          <div class="qmain">
+            <div class="fgroup"><span class="lb">¿Qué tan urgente es?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="urgencia" value="Urgente, ya quiero arrancar"><span>Urgente, ya quiero arrancar</span></label>
+                <label class="opt"><input type="radio" name="urgencia" value="Me puedo esperar"><span>Me puedo esperar</span></label>
+                <label class="opt"><input type="radio" name="urgencia" value="Lo sigo pensando"><span>Lo sigo pensando</span></label>
+              </div>
+            </div>
+            <div class="fgroup cond" id="condFecha" hidden>
+              <label for="fecha_lanzamiento">¿Para cuándo te gustaría lanzar?</label>
+              <input class="input" id="fecha_lanzamiento" name="fecha_lanzamiento" type="date">
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- 5 · INVERSION -->
+      <div class="qstep" hidden>
+        <div class="qcard">
+          {_qside('Tu inversión', 'Nos ayuda a proponerte el alcance que sí te cuadra.')}
+          <div class="qmain">
+            <div class="fgroup"><span class="lb">¿Qué inversión tienes contemplada?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="inversion" value="Hasta $15,000"><span>Hasta $15,000</span></label>
+                <label class="opt"><input type="radio" name="inversion" value="$15,000 a $35,000"><span>$15,000 a $35,000</span></label>
+                <label class="opt"><input type="radio" name="inversion" value="$35,000 a $75,000"><span>$35,000 a $75,000</span></label>
+                <label class="opt"><input type="radio" name="inversion" value="Más de $75,000"><span>Más de $75,000</span></label>
+                <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 · RESUMEN -->
+      <div class="qstep" hidden>
+        <div class="qcard">
+          {_qside('Revisa y envía', 'Esto es lo que nos llega. Puedes volver atrás a corregir.')}
+          <div class="qmain">
+            <div class="summary" id="sumBox"></div>
+            <div class="consent-field">
+              <input type="checkbox" id="acepto">
+              <label for="acepto">Autorizo a iBisne a usar estos datos para dar seguimiento a mi proyecto, conforme al <a href="/legal/privacidad/">Aviso de privacidad</a>.</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
