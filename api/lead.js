@@ -1,5 +1,6 @@
 // § 00.LEAD — Vercel serverless function
-// Recibe leads del quiz · valida payload · reenvía a Slack + email (Resend)
+// Recibe leads de /contacto/ y del brief /empecemos/ · valida payload
+// reenvía a Slack + email (Resend)
 // Env vars requeridas (configurar en Vercel):
 //   - SLACK_WEBHOOK_URL  (opcional · si no existe, se omite el reenvío a Slack)
 //   - RESEND_API_KEY     (opcional · si no existe, se omite el email)
@@ -56,6 +57,16 @@ module.exports = async function handler(req, res) {
     selecciones: clean(payload.selecciones, 2000),
     mensaje: clean(payload.mensaje, 2000),
     locale: clean(payload.locale, 10),
+    // Brief de aterrizaje (/empecemos/). Sin estas claves el endpoint las
+    // descartaria en silencio: solo se reenvia lo que esta en esta lista.
+    origen: clean(payload.origen, 60),
+    dominio: clean(payload.dominio, 200),
+    redes: clean(payload.redes, 300),
+    google_ficha: clean(payload.google_ficha, 40),
+    correos_corp: clean(payload.correos_corp, 40),
+    fecha_lanzamiento: clean(payload.fecha_lanzamiento, 40),
+    urgencia: clean(payload.urgencia, 60),
+    inversion: clean(payload.inversion, 60),
     ua: clean(req.headers['user-agent'], 300),
     ts: new Date().toISOString(),
   };
@@ -81,7 +92,7 @@ module.exports = async function handler(req, res) {
         blocks: [
           {
             type: 'header',
-            text: { type: 'plain_text', text: 'Nuevo lead — iBisne quiz' }
+            text: { type: 'plain_text', text: 'Nuevo lead — iBisne' }
           },
           {
             type: 'section',
@@ -89,11 +100,15 @@ module.exports = async function handler(req, res) {
               { type: 'mrkdwn', text: '*Nombre:* ' + (lead.nombre || '—') },
               { type: 'mrkdwn', text: '*Email:* ' + (lead.email || '—') },
               { type: 'mrkdwn', text: '*Teléfono:* ' + (lead.telefono || '—') },
-              { type: 'mrkdwn', text: '*Empresa:* ' + (lead.empresa || '—') },
-              { type: 'mrkdwn', text: '*Vertical:* ' + (lead.vertical || '—') },
-              { type: 'mrkdwn', text: '*Subtipo:* ' + (lead.subtipo || '—') },
-              { type: 'mrkdwn', text: '*Total:* ' + (lead.total || '—') + ' ' + (lead.currency || lead.moneda || '') },
-              { type: 'mrkdwn', text: '*Locale:* ' + (lead.locale || '—') }
+              { type: 'mrkdwn', text: '*Empresa / proyecto:* ' + (lead.empresa || '—') },
+              { type: 'mrkdwn', text: '*Origen:* ' + (lead.origen || lead.vertical || '—') },
+              { type: 'mrkdwn', text: '*Urgencia:* ' + (lead.urgencia || '—') },
+              { type: 'mrkdwn', text: '*Inversión:* ' + (lead.inversion || '—') },
+              { type: 'mrkdwn', text: '*Lanzamiento:* ' + (lead.fecha_lanzamiento || '—') },
+              { type: 'mrkdwn', text: '*Dominio:* ' + (lead.dominio || '—') },
+              { type: 'mrkdwn', text: '*Redes:* ' + (lead.redes || '—') },
+              { type: 'mrkdwn', text: '*Ficha Google:* ' + (lead.google_ficha || '—') },
+              { type: 'mrkdwn', text: '*Correos corp.:* ' + (lead.correos_corp || '—') }
             ]
           },
           {
@@ -123,22 +138,38 @@ module.exports = async function handler(req, res) {
   // ─── Resend (email transactional) ───
   if (resendKey) {
     try {
+      // Fila de tabla: se omite sola cuando el campo viene vacio, para que el
+      // correo del brief no llegue lleno de guiones de campos que no aplican.
+      const fila = (etiqueta, valor) =>
+        valor ? '<tr><td style="border-bottom:1px solid #eee;"><b>' + etiqueta +
+                '</b></td><td style="border-bottom:1px solid #eee;">' + valor + '</td></tr>' : '';
+
       const html = [
-        '<h2 style="font-family:sans-serif;margin:0 0 12px 0;">Nuevo lead — iBisne quiz</h2>',
+        '<h2 style="font-family:sans-serif;margin:0 0 4px 0;">Nuevo lead — iBisne</h2>',
+        '<p style="font-family:sans-serif;color:#666;margin:0 0 16px 0;font-size:14px;">Origen: ' +
+          (lead.origen || lead.vertical || 'sitio web') + ' · ' + lead.ts + '</p>',
         '<table cellpadding="6" cellspacing="0" style="font-family:sans-serif;border-collapse:collapse;">',
-        '<tr><td><b>Nombre</b></td><td>' + (lead.nombre || '—') + '</td></tr>',
-        '<tr><td><b>Email</b></td><td>' + (lead.email || '—') + '</td></tr>',
-        '<tr><td><b>Teléfono</b></td><td>' + (lead.telefono || '—') + '</td></tr>',
-        '<tr><td><b>Empresa</b></td><td>' + (lead.empresa || '—') + '</td></tr>',
-        '<tr><td><b>Vertical</b></td><td>' + (lead.vertical || '—') + '</td></tr>',
-        '<tr><td><b>Subtipo</b></td><td>' + (lead.subtipo || '—') + '</td></tr>',
-        '<tr><td><b>Total</b></td><td>' + (lead.total || '—') + ' ' + (lead.currency || lead.moneda || '') + '</td></tr>',
-        '<tr><td><b>Locale</b></td><td>' + (lead.locale || '—') + '</td></tr>',
-        '<tr><td><b>UA</b></td><td>' + (lead.ua || '—') + '</td></tr>',
-        '</table>',
-        '<h3 style="font-family:sans-serif;margin-top:18px;">Selecciones</h3>',
-        '<pre style="font-family:monospace;background:#f4f4f4;padding:12px;border-radius:6px;white-space:pre-wrap;">' + (lead.selecciones || '—') + '</pre>'
+        fila('Nombre', lead.nombre),
+        fila('Email', lead.email),
+        fila('Teléfono', lead.telefono),
+        fila('Empresa / proyecto', lead.empresa),
+        fila('Dominio', lead.dominio),
+        fila('Redes sociales', lead.redes),
+        fila('Ficha en Google', lead.google_ficha),
+        fila('Correos corporativos', lead.correos_corp),
+        fila('Fecha de lanzamiento', lead.fecha_lanzamiento),
+        fila('Urgencia', lead.urgencia),
+        fila('Expectativa de inversión', lead.inversion),
+        fila('Vertical', lead.vertical),
+        fila('Subtipo', lead.subtipo),
+        fila('Total', lead.total ? lead.total + ' ' + (lead.currency || lead.moneda || '') : null),
+        fila('UA', lead.ua),
+        '</table>'
       ];
+      if (lead.selecciones) {
+        html.push('<h3 style="font-family:sans-serif;margin-top:18px;">Selecciones</h3>');
+        html.push('<pre style="font-family:monospace;background:#f4f4f4;padding:12px;border-radius:6px;white-space:pre-wrap;">' + lead.selecciones + '</pre>');
+      }
       if (lead.mensaje) {
         html.push('<h3 style="font-family:sans-serif;margin-top:18px;">Mensaje</h3>');
         html.push('<p style="font-family:sans-serif;">' + lead.mensaje + '</p>');
@@ -150,10 +181,11 @@ module.exports = async function handler(req, res) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'iBisne quiz <noreply@ibisne.com>',
+          from: 'iBisne <noreply@ibisne.com>',
           to: [notifyEmail],
           reply_to: lead.email || undefined,
-          subject: 'Nuevo lead · ' + (lead.nombre || lead.email || lead.telefono),
+          subject: 'Nuevo lead · ' + (lead.nombre || lead.email || lead.telefono) +
+                   (lead.urgencia ? ' · ' + lead.urgencia : ''),
           html: html.join('')
         })
       });

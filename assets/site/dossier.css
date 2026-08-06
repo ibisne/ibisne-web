@@ -857,3 +857,186 @@ h1,h2,h3 { text-wrap:balance; }
   #loader { display:none !important; }
   .g > *, .pf-item, .sec-h { opacity:1 !important; transform:none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   v41 · QUIZ /empecemos/ — brief de reactivacion
+   Pantalla completa sin scroll: esta pagina NO usa .phero, porque la regla
+   movil de la linea 475 lo fuerza a 100dvh y empujaba el formulario entero
+   bajo el pliegue. Aqui el contenedor .quiz ocupa el viewport util.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root { --error:#E5766B; }
+:root[data-mode="light"] { --error:#C2453A; }
+
+/* ---- contenedor a viewport ----
+   Esta pagina es tipo aplicacion: el footer del sitio (582px) se oculta para
+   que el quiz sea literalmente una sola pantalla, sin scroll. Los enlaces
+   legales siguen accesibles desde la casilla de consentimiento del paso 6. */
+body:has(.quiz) .foot, body:has(.quiz) .sdock { display:none !important; }
+/* Chrome a descontar: en desktop topbar (2.5rem) + header (4.2rem) + hairlines;
+   en movil la topbar no existe y el header baja a 3.6rem (ver bloque 640px). */
+.quiz { min-height:calc(100vh - 6.85rem); min-height:calc(100dvh - 6.85rem);
+  display:flex; flex-direction:column; justify-content:center;
+  padding:1.6rem 0 2rem; }
+/* El banner de cookies es fixed y no reserva espacio: mientras este visible
+   se le abre hueco al quiz para que no tape los botones. */
+body.has-consent .quiz { padding-bottom:13rem; }
+
+/* ---- barra de progreso ---- */
+.qbar { display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem; }
+.qbar .track { flex:1; height:3px; background:var(--line-2); border-radius:var(--r-pill); overflow:hidden; }
+.qbar .fill { height:100%; background:var(--accent); border-radius:var(--r-pill); transition:width var(--t); }
+.qbar .num { font-size:.7rem; font-weight:700; color:var(--faint); letter-spacing:.14em;
+  text-transform:uppercase; white-space:nowrap; }
+
+/* ---- tarjeta horizontal: contexto a la izquierda, campos a la derecha ---- */
+.qcard { display:grid; grid-template-columns:14rem 1fr; gap:2.75rem; align-items:start; }
+.qside .qnum { font-size:.7rem; font-weight:700; letter-spacing:.2em; color:var(--faint);
+  text-transform:uppercase; margin-bottom:.9rem; }
+.qside .qic { width:2.6rem; height:2.6rem; border-radius:var(--r-sm); background:var(--surface-2);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  margin-bottom:1rem; }
+.qside .qic .ic { width:1.3rem; height:1.3rem; color:var(--ink); }
+.qside h3 { font-size:1.4rem; font-weight:500; letter-spacing:-.025em; line-height:1.15;
+  margin-bottom:.5rem; }
+.qside p { font-size:.87rem; color:var(--muted); line-height:1.5; }
+.qmain > .fgroup:first-child { margin-top:0; }
+
+/* ---- campos ---- */
+.fgroup { margin-bottom:1.15rem; }
+.fgroup > label, .fgroup > .lb { display:block; font-size:.76rem; font-weight:600;
+  color:var(--muted); margin-bottom:.5rem; letter-spacing:.02em; }
+.fgrid { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+.fgrid .fgroup { margin-bottom:0; }
+
+/* ---- opciones ----
+   .form label (0,1,1) le ganaba a .opt (0,1,0) e imponia display:block, con lo
+   que el control y su texto se maquetaban como texto suelto. Por eso label.opt. */
+.opts { display:grid; gap:.45rem; }
+.opts.two-up { grid-template-columns:1fr 1fr; }
+label.opt, .form label.opt {
+  display:flex; align-items:center; gap:.65rem; cursor:pointer; margin-bottom:0;
+  min-height:2.85rem; padding:.6rem .85rem; border:1px solid var(--line);
+  border-radius:var(--r-sm); background:var(--bg); font-size:.88rem; font-weight:400;
+  color:var(--ink); letter-spacing:0; text-transform:none;
+  transition:border-color var(--t-fast), background var(--t-fast); }
+label.opt:hover { border-color:var(--accent-line); }
+label.opt input { appearance:none; -webkit-appearance:none; margin:0; flex:none;
+  width:1.05rem; height:1.05rem; border:1.5px solid var(--line); background:transparent;
+  cursor:pointer; transition:border-color var(--t-fast), background var(--t-fast); }
+label.opt input[type="radio"] { border-radius:50%; }
+label.opt input[type="checkbox"] { border-radius:.25rem; }
+label.opt input:checked { border-color:var(--accent); background:var(--accent);
+  box-shadow:inset 0 0 0 3px var(--bg); }
+label.opt input[type="checkbox"]:checked { box-shadow:inset 0 0 0 2px var(--bg); }
+label.opt input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+label.opt:has(input:checked) { border-color:var(--accent); background:var(--surface-2); }
+label.opt span { line-height:1.25; }
+
+/* ---- bienvenida ---- */
+.qwel { text-align:center; max-width:46rem; margin:0 auto; }
+.qwel .eyebrow { display:block; margin-bottom:1rem; }
+.qwel h1 { font-size:clamp(1.65rem,3.4vw,2.5rem); font-weight:400; letter-spacing:-.03em;
+  line-height:1.12; margin-bottom:.9rem; }
+.qwel .lede { font-size:1rem; color:var(--muted); line-height:1.55; max-width:36rem;
+  margin:0 auto 1.7rem; }
+.wins { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin:0 0 1.5rem; }
+.win { display:flex; align-items:center; gap:.6rem; padding:.7rem .8rem; text-align:left;
+  border:1px solid var(--line); border-radius:var(--r-sm); background:var(--surface); }
+.win .ic { width:1.05rem; height:1.05rem; flex:none; color:var(--ink); }
+.win span { font-size:.78rem; font-weight:600; color:var(--ink); line-height:1.2; }
+.qwel .gift { font-size:.82rem; color:var(--faint); margin-bottom:1.5rem; }
+
+/* ---- gancho del 5% ---- */
+.promo { display:flex; align-items:center; gap:1rem; padding:1rem 1.3rem; margin-bottom:1.6rem;
+  border:1px solid var(--accent-line); border-radius:var(--r-md); background:var(--surface-2);
+  text-align:left; }
+.promo .pct { font-size:2rem; font-weight:700; color:var(--ink); letter-spacing:-.04em;
+  line-height:1; flex:none; }
+.promo .ptxt { font-size:.85rem; color:var(--muted); line-height:1.45; }
+.promo .ptxt b { color:var(--ink); font-weight:600; }
+
+/* ---- consentimiento ---- */
+.consent-field { display:flex; align-items:flex-start; gap:.7rem; margin:.4rem 0 0;
+  padding:.85rem; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); }
+.consent-field input { appearance:none; -webkit-appearance:none; margin:.15rem 0 0; flex:none;
+  width:1.05rem; height:1.05rem; border:1.5px solid var(--line); border-radius:.25rem;
+  background:transparent; cursor:pointer; }
+.consent-field input:checked { border-color:var(--accent); background:var(--accent);
+  box-shadow:inset 0 0 0 2px var(--bg); }
+.consent-field input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.consent-field label { font-size:.8rem; color:var(--muted); line-height:1.45; cursor:pointer;
+  margin:0; font-weight:400; letter-spacing:0; text-transform:none; }
+.consent-field a { color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
+
+/* ---- navegacion ---- */
+.qnav { display:flex; gap:.7rem; margin-top:1.5rem; align-items:center; }
+.qnav .btn { justify-content:center; }
+.qnav .grow { flex:1; }
+.qmsg { font-size:.78rem; margin-top:.7rem; min-height:1.1rem; color:var(--muted); }
+
+/* ---- resumen ---- */
+.summary { border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; }
+.summary .row { display:grid; grid-template-columns:10rem 1fr; gap:.8rem; padding:.5rem .9rem;
+  font-size:.84rem; border-bottom:1px solid var(--line-2); }
+.summary .row:last-child { border-bottom:0; }
+.summary .row .k { color:var(--faint); font-size:.75rem; font-weight:600; }
+.summary .row .v { color:var(--ink); word-break:break-word; }
+
+/* ---- pantalla final ---- */
+.done { text-align:center; max-width:38rem; margin:0 auto; }
+.done .mark { width:3rem; height:3rem; margin:0 auto 1.1rem; border-radius:50%;
+  background:var(--accent); color:var(--accent-ink); display:flex; align-items:center;
+  justify-content:center; }
+.done .mark .ic { width:1.4rem; height:1.4rem; }
+.done h3 { font-size:1.5rem; font-weight:500; letter-spacing:-.025em; margin-bottom:.6rem; }
+.done p { color:var(--muted); font-size:.94rem; line-height:1.6; }
+.done .acts { display:flex; gap:.7rem; justify-content:center; margin-top:1.6rem; flex-wrap:wrap; }
+.warnbox { border:1px solid var(--error); border-radius:var(--r-sm); background:var(--surface);
+  padding:1rem 1.15rem; margin-top:1.3rem; text-align:left; }
+.warnbox p { font-size:.85rem; color:var(--ink); margin:0 0 .8rem; }
+
+/* ---- ocultado: .btn declara display:inline-flex y gana a [hidden] ---- */
+.qstep[hidden], #briefForm[hidden], #briefDone[hidden], .warnbox[hidden],
+.qnav .btn[hidden], #qwelcome[hidden] { display:none !important; }
+
+/* ---- movil: todo debe caber en una pantalla ---- */
+@media (max-width:900px) {
+  .qcard { grid-template-columns:1fr; gap:1.1rem; }
+  .qside .qic { margin-bottom:.7rem; }
+}
+@media (max-width:640px) {
+  .quiz { min-height:calc(100dvh - 3.7rem); padding:1.1rem 0 1.4rem; }
+  .qbar { margin-bottom:1.1rem; }
+  .fgrid { grid-template-columns:1fr; gap:.75rem; }
+  .opts.two-up { grid-template-columns:1fr 1fr; }
+  .qside h3 { font-size:1.2rem; }
+  .qside p { font-size:.82rem; }
+  .qside .qic { width:2.2rem; height:2.2rem; margin-bottom:.6rem; }
+  .fgroup { margin-bottom:.85rem; }
+  label.opt, .form label.opt { min-height:2.75rem; padding:.5rem .75rem; font-size:.84rem; }
+  .opts { gap:.4rem; }
+  .wins { grid-template-columns:1fr 1fr; gap:.45rem; }
+  .win { padding:.55rem .6rem; }
+  .win span { font-size:.72rem; }
+  .qwel .lede { font-size:.92rem; margin-bottom:1.2rem; }
+  .promo { padding:.85rem 1rem; gap:.8rem; margin-bottom:1.2rem; }
+  .promo .pct { font-size:1.7rem; }
+  .promo .ptxt { font-size:.79rem; }
+  .summary .row { grid-template-columns:1fr; gap:.1rem; padding:.45rem .8rem; }
+  .qnav { margin-top:1.1rem; }
+  .qnav .btn { height:2.9rem; }
+}
+
+/* ---- impresion: solo el resumen ---- */
+@media print {
+  #loader, .shead, .foot, .sdock, .consent, .crumb,
+  .qbar, .qnav, .done .acts, .warnbox { display:none !important; }
+  html, body { background:#fff !important; }
+  .quiz { min-height:0; padding:0; }
+  .prt { display:block !important; }
+  .summary { border-color:#ddd; page-break-inside:avoid; }
+  .summary .row { border-color:#eee; }
+  a[href]::after { content:""; }
+}
+.prt { display:none; }

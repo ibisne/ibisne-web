@@ -379,7 +379,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=39">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=41">
 {GTAG}
 </head>
 <body>
@@ -1426,6 +1426,7 @@ def build_contacto():
     <h2 style="margin-top:1rem;">Del concepto al liderazgo.</h2>
     <p class="sub">Cuéntanos qué estás construyendo, en qué vertical y qué buscas escalar. Respondemos a los proyectos que encajan con lo que hacemos.</p>
     <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
+    <a class="btn btn-secondary" href="/empecemos/" style="margin-top:1.6rem">Me interesa, quiero empezar {ic('arw')}</a>
   </div>
   <form class="form" id="applyForm" novalidate>
     <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name"></div>
@@ -1451,6 +1452,390 @@ fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},
 </script>
 """
     return base("Contacto — iBisne", "Cuéntanos tu proyecto. Del concepto al liderazgo de su categoría.", body, active="", canonical="/contacto/")
+
+
+# ---------------------------------------------------------------- BRIEF /empecemos/
+# Quiz de reactivacion para clientes con MVP y cotizacion ya entregados.
+# Pantalla de bienvenida + 6 pasos + cierre. No usa .phero a proposito: esa
+# clase se fuerza a 100dvh en movil y empujaba el formulario bajo el pliegue.
+PROMO_FECHA = "31 de agosto de 2026"
+
+# Los 6 incluidos sin costo de las cotizaciones. Todos los iconos ya existen
+# en el SPRITE del sitio: no hace falta agregar ninguno.
+INCLUIDOS = [
+    ("lang", "Idioma ES / EN"),
+    ("phone", "PWA instalable"),
+    ("contrast", "Dark / White"),
+    ("gauge", "PageSpeed, las 4 métricas"),
+    ("chart", "Alta en Google Analytics"),
+    ("cms", "CMS autoadministrable"),
+]
+
+# El JS va como constante aparte (string normal, no f-string) para no tener que
+# doblar cada llave. Se inyecta con {EMPECEMOS_JS} en el body.
+EMPECEMOS_JS = r"""
+<script>
+(function(){
+  var form = document.getElementById('briefForm');
+  if (!form) return;
+  var wel = document.getElementById('qwelcome');
+  var pasos = [].slice.call(form.querySelectorAll('.qstep'));
+  var fill = document.getElementById('qbFill');
+  var num = document.getElementById('qbNum');
+  var btnPrev = document.getElementById('btnPrev');
+  var btnNext = document.getElementById('btnNext');
+  var btnSend = document.getElementById('btnSend');
+  var msg = document.getElementById('qMsg');
+  var i = 0;
+
+  var ETIQUETAS = {
+    nombre:'Nombre', empresa:'Proyecto o negocio', email:'Correo', telefono:'Teléfono',
+    dominio:'Dominio', correos_corp:'Correos corporativos', redes:'Redes sociales',
+    google_ficha:'Ficha en Google', fecha_lanzamiento:'Lanzamiento tentativo',
+    urgencia:'Urgencia', inversion:'Inversión estimada'
+  };
+
+  // El banner de cookies es fixed y no reserva espacio: si esta visible, se le
+  // abre hueco al quiz para que no tape los botones.
+  function ajustarConsent(){
+    var c = document.getElementById('consent');
+    document.body.classList.toggle('has-consent', !!(c && !c.hidden));
+  }
+  ajustarConsent();
+  setTimeout(ajustarConsent, 400);
+  document.addEventListener('click', function(e){
+    if (e.target && (e.target.id === 'cAll' || e.target.id === 'cMin')) setTimeout(ajustarConsent, 60);
+  });
+
+  function datos(){
+    var d = {};
+    ['nombre','empresa','email','telefono','dominio','fecha_lanzamiento','website'].forEach(function(k){
+      var el = form.querySelector('[name="' + k + '"]');
+      if (el && el.value.trim()) d[k] = el.value.trim();
+    });
+    ['correos_corp','google_ficha','urgencia','inversion'].forEach(function(k){
+      var el = form.querySelector('[name="' + k + '"]:checked');
+      if (el) d[k] = el.value;
+    });
+    var r = [].slice.call(form.querySelectorAll('[name="redes"]:checked')).map(function(el){ return el.value; });
+    if (r.length) d.redes = r.join(', ');
+    return d;
+  }
+
+  function aviso(txt, malo){ msg.textContent = txt || ''; msg.style.color = malo ? 'var(--error)' : 'var(--muted)'; }
+
+  function foco(sel){ var el = form.querySelector(sel); if (el) try { el.focus({preventScroll:true}); } catch(e){} }
+
+  // Telefono mexicano: 10 digitos reales. Rechaza el numero fantasma.
+  function telValido(v){
+    var d = (v || '').replace(/\D/g, '');
+    if (d.length === 12 && d.indexOf('52') === 0) d = d.slice(2);   // +52 al frente
+    if (d.length === 11 && d.indexOf('1') === 0) d = d.slice(1);
+    if (d.length !== 10) return false;
+    if (/^(\d)\1{9}$/.test(d)) return false;                        // 0000000000
+    return true;
+  }
+  function mailValido(v){ return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v || ''); }
+
+  function pintar(){
+    pasos.forEach(function(p, n){ p.hidden = (n !== i); });
+    fill.style.width = ((i + 1) / pasos.length * 100) + '%';
+    num.textContent = 'Paso ' + (i + 1) + ' de ' + pasos.length;
+    btnPrev.hidden = (i === 0);
+    var ultimo = (i === pasos.length - 1);
+    btnNext.hidden = ultimo;
+    btnSend.hidden = !ultimo;
+    aviso('');
+    if (ultimo) resumir();
+  }
+
+  // Solo el paso 1 bloquea: es el dato que de verdad se necesita.
+  function valido(){
+    if (i !== 0) return true;
+    var d = datos();
+    if (!d.nombre) { aviso('Dinos cómo te llamas.', 1); foco('[name="nombre"]'); return false; }
+    if (!d.empresa) { aviso('Falta el nombre del proyecto o negocio.', 1); foco('[name="empresa"]'); return false; }
+    if (!mailValido(d.email)) { aviso('Escribe un correo válido.', 1); foco('[name="email"]'); return false; }
+    if (!telValido(d.telefono)) { aviso('El teléfono debe llevar 10 dígitos.', 1); foco('[name="telefono"]'); return false; }
+    return true;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+    });
+  }
+
+  function resumir(){
+    var d = datos(), filas = '';
+    Object.keys(ETIQUETAS).forEach(function(k){
+      if (d[k]) filas += '<div class="row"><span class="k">' + ETIQUETAS[k] +
+                         '</span><span class="v">' + esc(d[k]) + '</span></div>';
+    });
+    document.getElementById('sumBox').innerHTML = filas;
+  }
+
+  document.getElementById('btnStart').addEventListener('click', function(){
+    wel.hidden = true; form.hidden = false; pintar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  btnNext.addEventListener('click', function(){ if (valido() && i < pasos.length - 1) { i++; pintar(); } });
+  btnPrev.addEventListener('click', function(){ if (i > 0) { i--; pintar(); } });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var d = datos();
+    if (d.website) return;                       // honeypot
+    if (!document.getElementById('acepto').checked) {
+      aviso('Marca la casilla de privacidad para continuar.', 1); return;
+    }
+    btnSend.disabled = true;
+    aviso('Enviando…');
+    var payload = Object.assign({}, d, { origen: 'empecemos', vertical: 'reactivacion', locale: 'es-MX' });
+    delete payload.website;
+
+    fetch('/api/lead', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      var httpOk = r.ok;
+      return r.json().catch(function(){ return {}; }).then(function(j){ return { httpOk: httpOk, body: j }; });
+    })
+    // Solo se declara exito con ok:true explicito. Un 404, un 500 o una respuesta
+    // que no sea JSON dejan body={} y se colarian como envio correcto.
+    .then(function(res){
+      var enviado = res.httpOk && res.body && res.body.ok === true && res.body.noop !== true;
+      listo(payload, !enviado);
+    })
+    .catch(function(){ listo(payload, true); });
+  });
+
+  function listo(payload, degradado){
+    document.getElementById('sumPrint').innerHTML = document.getElementById('sumBox').innerHTML;
+    form.hidden = true;
+    document.getElementById('briefDone').hidden = false;
+    if (degradado) {
+      var lineas = [];
+      Object.keys(ETIQUETAS).forEach(function(k){
+        if (payload[k]) lineas.push(ETIQUETAS[k] + ': ' + payload[k]);
+      });
+      var href = 'mailto:proyectos@ibisne.com'
+        + '?subject=' + encodeURIComponent('Brief de proyecto · ' + (payload.nombre || ''))
+        + '&body=' + encodeURIComponent(lineas.join('\n'));
+      document.getElementById('mailFallback').setAttribute('href', href);
+      document.getElementById('avisoEnvio').hidden = false;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('btnPdf').addEventListener('click', function(){ window.print(); });
+})();
+</script>
+"""
+
+
+def _wins():
+    """Los 6 incluidos sin costo, con su icono del sprite."""
+    return "\n        ".join(
+        f'<div class="win">{ic(icono)}<span>{texto}</span></div>' for icono, texto in INCLUIDOS
+    )
+
+
+def _qside(n, icono, titulo, sub):
+    """Columna izquierda de cada paso: numeral, icono y contexto."""
+    return f"""<div class="qside">
+          <div class="qnum">Paso {n}</div>
+          <div class="qic">{ic(icono)}</div>
+          <h3>{titulo}</h3>
+          <p>{sub}</p>
+        </div>"""
+
+
+def build_empecemos():
+    body = f"""
+<section class="quiz"><div class="wrap" style="max-width:58rem">
+
+  <!-- ══════ BIENVENIDA ══════ -->
+  <div class="qwel" id="qwelcome">
+    <span class="eyebrow">Para ti, que ya viste tu MVP</span>
+    <h1>Llevemos tu MVP a su versión final.</h1>
+    <p class="lede">Tu proyecto nos causó tal impresión que con gusto construimos tu MVP. Esperamos que te haya gustado lo suficiente como para terminar lo que empezamos.</p>
+
+    <p class="gift">Si cierras antes del <b>{PROMO_FECHA}</b>, estas seis cosas van incluidas sin costo:</p>
+    <div class="wins">
+        {_wins()}
+    </div>
+
+    <div class="promo">
+      <span class="pct">5%</span>
+      <span class="ptxt">Y sumamos un <b>5% extra de descuento</b> sobre la última cotización que preparamos para ti. Se aplica encima de las condiciones que ya tienes.</span>
+    </div>
+
+    <p class="lede" style="margin-bottom:1.4rem">Llena este formato y lancemos juntos. Toma menos de dos minutos.</p>
+    <button type="button" class="btn btn-primary btn-lg" id="btnStart">Empecemos {ic('arw')}</button>
+  </div>
+
+  <!-- ══════ QUIZ ══════ -->
+  <form class="form" id="briefForm" novalidate hidden>
+
+    <div class="qbar">
+      <span class="num" id="qbNum">Paso 1 de 6</span>
+      <span class="track"><span class="fill" id="qbFill" style="width:16.6%"></span></span>
+    </div>
+
+    <!-- 1 · CONTACTO -->
+    <div class="qstep">
+      <div class="qcard">
+        {_qside(1, 'users', '¿Con quién hablamos?', 'Con esto te damos seguimiento y te mandamos los avances.')}
+        <div class="qmain">
+          <div class="fgrid">
+            <div class="fgroup"><label for="nombre">Nombre</label>
+              <input class="input" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre"></div>
+            <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
+              <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
+          </div>
+          <div class="fgrid" style="margin-top:.9rem">
+            <div class="fgroup"><label for="email">Correo</label>
+              <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com"></div>
+            <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
+              <input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="17" placeholder="33 1234 5678"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 · DOMINIO Y CORREOS -->
+    <div class="qstep" hidden>
+      <div class="qcard">
+        {_qside(2, 'monitor', 'Tu dominio', 'Dónde va a vivir el proyecto cuando salga a producción.')}
+        <div class="qmain">
+          <div class="fgroup"><label for="dominio">¿Ya tienes dominio?</label>
+            <input class="input" id="dominio" name="dominio" inputmode="url" placeholder="tudominio.com · déjalo vacío si aún no"></div>
+          <div class="fgroup"><span class="lb">¿Necesitas correos corporativos?</span>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="correos_corp" value="Sí, los necesito"><span>Sí, los necesito</span></label>
+              <label class="opt"><input type="radio" name="correos_corp" value="Ya tengo"><span>Ya tengo</span></label>
+              <label class="opt"><input type="radio" name="correos_corp" value="No estoy seguro"><span>No estoy seguro</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · PRESENCIA -->
+    <div class="qstep" hidden>
+      <div class="qcard">
+        {_qside(3, 'ig', 'Dónde te encuentran', 'Para conectar el sitio con lo que ya tienes andando.')}
+        <div class="qmain">
+          <div class="fgroup"><span class="lb">¿En qué redes está tu negocio?</span>
+            <div class="opts two-up">
+              <label class="opt"><input type="checkbox" name="redes" value="Instagram"><span>Instagram</span></label>
+              <label class="opt"><input type="checkbox" name="redes" value="Facebook"><span>Facebook</span></label>
+              <label class="opt"><input type="checkbox" name="redes" value="TikTok"><span>TikTok</span></label>
+              <label class="opt"><input type="checkbox" name="redes" value="LinkedIn"><span>LinkedIn</span></label>
+            </div>
+          </div>
+          <div class="fgroup"><span class="lb">¿Apareces en Google con tu ficha de negocio?</span>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="google_ficha" value="Sí, ya aparezco"><span>Sí, ya aparezco</span></label>
+              <label class="opt"><input type="radio" name="google_ficha" value="No"><span>No</span></label>
+              <label class="opt"><input type="radio" name="google_ficha" value="No estoy seguro"><span>No estoy seguro</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 · TIEMPOS -->
+    <div class="qstep" hidden>
+      <div class="qcard">
+        {_qside(4, 'zap', 'Tus tiempos', 'Con esto organizamos el arranque y reservamos el equipo.')}
+        <div class="qmain">
+          <div class="fgroup"><label for="fecha_lanzamiento">¿Para cuándo te gustaría lanzar?</label>
+            <input class="input" id="fecha_lanzamiento" name="fecha_lanzamiento" type="date"></div>
+          <div class="fgroup"><span class="lb">¿Qué tan urgente es?</span>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="urgencia" value="Urgente, ya quiero arrancar"><span>Urgente, ya quiero arrancar</span></label>
+              <label class="opt"><input type="radio" name="urgencia" value="Me puedo esperar"><span>Me puedo esperar</span></label>
+              <label class="opt"><input type="radio" name="urgencia" value="Lo sigo pensando"><span>Lo sigo pensando</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 · INVERSION -->
+    <div class="qstep" hidden>
+      <div class="qcard">
+        {_qside(5, 'coins', 'Tu inversión', 'Nos ayuda a proponerte el alcance que sí te cuadra.')}
+        <div class="qmain">
+          <div class="fgroup"><span class="lb">¿Qué inversión tienes contemplada?</span>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="inversion" value="Hasta $15,000"><span>Hasta $15,000</span></label>
+              <label class="opt"><input type="radio" name="inversion" value="$15,000 a $35,000"><span>$15,000 a $35,000</span></label>
+              <label class="opt"><input type="radio" name="inversion" value="$35,000 a $75,000"><span>$35,000 a $75,000</span></label>
+              <label class="opt"><input type="radio" name="inversion" value="Más de $75,000"><span>Más de $75,000</span></label>
+              <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 · RESUMEN -->
+    <div class="qstep" hidden>
+      <div class="qcard">
+        {_qside(6, 'check', 'Revisa y envía', 'Esto es lo que nos llega. Puedes volver atrás a corregir.')}
+        <div class="qmain">
+          <div class="summary" id="sumBox"></div>
+          <div class="consent-field">
+            <input type="checkbox" id="acepto">
+            <label for="acepto">Autorizo a iBisne a usar estos datos para dar seguimiento a mi proyecto, conforme al <a href="/legal/privacidad/">Aviso de privacidad</a>.</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+    <div class="qnav">
+      <button type="button" class="btn btn-secondary" id="btnPrev" hidden>Atrás</button>
+      <button type="button" class="btn btn-primary grow" id="btnNext">Continuar {ic('arw')}</button>
+      <button type="submit" class="btn btn-primary grow" id="btnSend" hidden>Enviar {ic('arw')}</button>
+    </div>
+    <div class="qmsg" id="qMsg"></div>
+  </form>
+
+  <!-- ══════ CIERRE ══════ -->
+  <div class="done" id="briefDone" hidden>
+    <div class="mark">{ic('check')}</div>
+    <h3>Listo, ya lo tenemos.</h3>
+    <p>Gracias por tomarte el tiempo. Revisamos tu información y te contactamos para afinar los detalles y cerrar el arranque.</p>
+    <p style="margin-top:.9rem"><b style="color:var(--ink)">Tu 5% extra sigue en pie</b> si cierras antes del {PROMO_FECHA}.</p>
+
+    <div class="acts">
+      <button type="button" class="btn btn-secondary" id="btnPdf">Descargar mi resumen en PDF</button>
+      <a class="btn btn-ghost" href="{HOME}">Volver al inicio</a>
+    </div>
+
+    <div class="warnbox" id="avisoEnvio" hidden>
+      <p><b>Un detalle:</b> no pudimos confirmar la entrega automática de tus datos. Para que nada se pierda, mándanoslos con un clic: ya van escritos en el correo.</p>
+      <a class="btn btn-primary" id="mailFallback" href="mailto:proyectos@ibisne.com">Enviar por correo</a>
+    </div>
+
+    <div class="prt" style="margin-top:2rem;text-align:left">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:.5rem">iBisne · Brief de proyecto</div>
+      <div class="summary" id="sumPrint"></div>
+      <div style="font-size:.75rem;color:#888;margin-top:1rem">proyectos@ibisne.com · ibisne.com · 5% extra vigente hasta el {PROMO_FECHA}</div>
+    </div>
+  </div>
+
+</div></section>
+{EMPECEMOS_JS}
+"""
+    return base("Empecemos — iBisne", "Llevemos tu MVP a su versión final.",
+                body, active="", canonical="/empecemos/", noindex=True)
 
 
 # ---------------------------------------------------------------- LEGAL
@@ -1554,6 +1939,7 @@ def main():
         "insights/index.html": build_insights_hub(),
         "portafolio/index.html": build_portfolio_hub(projects),
         "contacto/index.html": build_contacto(),
+        "empecemos/index.html": build_empecemos(),
         "legal/privacidad/index.html": build_legal("privacidad", "Política de privacidad", legal_body("privacidad")),
         "legal/terminos/index.html": build_legal("terminos", "Términos y condiciones", legal_body("terminos")),
         "legal/cancelacion/index.html": build_legal("cancelacion", "Política de cancelación", legal_body("cancelacion")),
