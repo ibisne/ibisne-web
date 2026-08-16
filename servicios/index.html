@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=42">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=43">
 <script>
 (function(){
   var ID='G-XEW1TZEMNL';
@@ -235,8 +235,12 @@
   document.querySelectorAll('.theme-toggle').forEach(function(b){ b.addEventListener('click',function(){ setMode(root.getAttribute('data-mode')==='dark'?'light':'dark'); }); });
   setMode(root.getAttribute('data-mode')||'dark');
   // ---- Idioma (ES/EN, ambos grupos) ----
-  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
-    if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
+  // Si la pagina trae diccionario propio marca data-i18n-ready en <html> y manda ella:
+  // sin esta guarda, el aviso de "proximamente" saldria encima de una pagina ya traducida.
+  if(!root.hasAttribute('data-i18n-ready')){
+    document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
+      if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
+  }
   // ---- Menu movil: overlay unico con todas las acciones ----
   var mm=document.getElementById('mobnav'), hb=document.getElementById('hambBtn'), mx=document.getElementById('mmenuClose');
   function openMenu(){ if(!mm)return; mm.classList.add('open'); mm.setAttribute('aria-hidden','false'); if(hb)hb.setAttribute('aria-expanded','true'); document.body.classList.add('menu-lock'); }

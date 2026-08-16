@@ -67,6 +67,11 @@ module.exports = async function handler(req, res) {
     fecha_lanzamiento: clean(payload.fecha_lanzamiento, 40),
     urgencia: clean(payload.urgencia, 60),
     inversion: clean(payload.inversion, 60),
+    // Promo de landing pages (/promos/landing-pages/). Sin estas tres claves el
+    // lead llegaria sin saber que nivel eligio ni como pensaba pagarlo.
+    plan: clean(payload.plan, 60),
+    modalidad: clean(payload.modalidad, 80),
+    metodo_pago: clean(payload.metodo_pago, 40),
     ua: clean(req.headers['user-agent'], 300),
     ts: new Date().toISOString(),
   };
@@ -102,6 +107,8 @@ module.exports = async function handler(req, res) {
               { type: 'mrkdwn', text: '*Teléfono:* ' + (lead.telefono || '—') },
               { type: 'mrkdwn', text: '*Empresa / proyecto:* ' + (lead.empresa || '—') },
               { type: 'mrkdwn', text: '*Origen:* ' + (lead.origen || lead.vertical || '—') },
+              { type: 'mrkdwn', text: '*Nivel:* ' + (lead.subtipo || lead.plan || '—') },
+              { type: 'mrkdwn', text: '*Forma de pago:* ' + (lead.modalidad || '—') },
               { type: 'mrkdwn', text: '*Urgencia:* ' + (lead.urgencia || '—') },
               { type: 'mrkdwn', text: '*Inversión:* ' + (lead.inversion || '—') },
               { type: 'mrkdwn', text: '*Lanzamiento:* ' + (lead.fecha_lanzamiento || '—') },
@@ -161,7 +168,9 @@ module.exports = async function handler(req, res) {
         fila('Urgencia', lead.urgencia),
         fila('Expectativa de inversión', lead.inversion),
         fila('Vertical', lead.vertical),
-        fila('Subtipo', lead.subtipo),
+        fila('Nivel', lead.subtipo || lead.plan),
+        fila('Forma de pago', lead.modalidad),
+        fila('Método elegido', lead.metodo_pago),
         fila('Total', lead.total ? lead.total + ' ' + (lead.currency || lead.moneda || '') : null),
         fila('UA', lead.ua),
         '</table>'

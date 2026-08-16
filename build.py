@@ -290,8 +290,12 @@ SCRIPTS = """<script>
   document.querySelectorAll('.theme-toggle').forEach(function(b){ b.addEventListener('click',function(){ setMode(root.getAttribute('data-mode')==='dark'?'light':'dark'); }); });
   setMode(root.getAttribute('data-mode')||'dark');
   // ---- Idioma (ES/EN, ambos grupos) ----
-  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
-    if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
+  // Si la pagina trae diccionario propio marca data-i18n-ready en <html> y manda ella:
+  // sin esta guarda, el aviso de "proximamente" saldria encima de una pagina ya traducida.
+  if(!root.hasAttribute('data-i18n-ready')){
+    document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
+      if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
+  }
   // ---- Menu movil: overlay unico con todas las acciones ----
   var mm=document.getElementById('mobnav'), hb=document.getElementById('hambBtn'), mx=document.getElementById('mmenuClose');
   function openMenu(){ if(!mm)return; mm.classList.add('open'); mm.setAttribute('aria-hidden','false'); if(hb)hb.setAttribute('aria-expanded','true'); document.body.classList.add('menu-lock'); }
@@ -379,7 +383,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=42">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=43">
 {GTAG}
 </head>
 <body>
@@ -1936,6 +1940,770 @@ def build_empecemos():
                 body, active="", canonical="/empecemos/", noindex=True)
 
 
+# ================================================================================
+# PROMO · LANDING PAGES  ·  /promos/landing-pages/
+# ================================================================================
+# Pieza de venta en frio: se manda por link a un prospecto, no se navega desde el
+# sitio. Por eso sale con noindex, NO entra al sitemap y NO se agrega al NAV.
+# Publicar "5.000 MXN" abierto al buscador contradice el posicionamiento de tech
+# studio que sostienen /inversion/ y /portafolio/. El link si se puede compartir.
+#
+# No choca con la regla "sin precio fijo" del CLAUDE.md: esa aplica al Sprint de
+# Validacion de producto. El propio documento dice que sitios y tiendas se cotizan
+# directo, y una landing page es exactamente eso.
+#
+# ⚠️ PENDIENTE DE EDUARDO · pegar los links de cobro en PAGOS y los datos en SPEI.
+#    Mientras esten vacios NO se dibuja el boton: el CTA cae al formulario de
+#    reserva. Nunca se manda a nadie a un checkout roto.
+
+PROMO_VENCE = "31 de agosto de 2026"
+PROMO_VENCE_ISO = "2026-08-31T23:59:59-06:00"
+WA_NUM = "523329575274"
+
+# Links de cobro hospedados. Cero captura de tarjeta en el sitio: sin alcance PCI
+# y sin tocar la CSP (son <a href>, no formularios ni scripts de terceros).
+PAGOS = {
+    "lanzamiento": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
+    "captacion": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
+    "cinetica": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
+}
+
+# Transferencia SPEI. Sin link: son datos bancarios. Si CLABE viene vacia, el
+# bloque entero no se dibuja.
+SPEI = {"banco": "", "beneficiario": "", "clabe": "", "concepto": "Landing iBisne"}
+
+METODOS = [
+    ("mercadopago", "Mercado Pago", "cart"),
+    ("paypal", "PayPal", "coins"),
+    ("stripe", "Stripe", "blocks"),
+]
+
+PLAZOS = [3, 6, 12]          # meses sin intereses ofrecidos
+PLAZO_DEF = 12               # el que sale preseleccionado: la mensualidad mas baja
+DESC_CONTADO = 0.10          # 10% por pago en una sola exhibicion
+
+PLANES = [
+    {
+        "slug": "lanzamiento", "precio": 5000, "dias": 5, "destacado": False,
+        "nombre": ("Lanzamiento", "Launch"),
+        "tag": ("Landing simple", "Simple landing"),
+        "para": ("Para validar una oferta rápido y tener presencia seria esta semana.",
+                 "To validate an offer fast and look serious this week."),
+        "hereda": None,
+        "incluye": [
+            ("Diseño a medida, hero más cuatro bloques", "Custom design, hero plus four blocks"),
+            ("Diseñada en móvil primero, de arriba a abajo", "Designed mobile first, top to bottom"),
+            ("Modo claro y modo oscuro", "Light and dark mode"),
+            ("Formulario de contacto directo a tu correo", "Contact form straight to your inbox"),
+            ("Botón de WhatsApp con mensaje ya escrito", "WhatsApp button with the message pre written"),
+            ("Tu dominio conectado y certificado SSL", "Your domain connected, SSL certificate"),
+            ("Carga optimizada, Core Web Vitals en verde", "Optimized load, Core Web Vitals in green"),
+            ("Entrega en 5 días hábiles", "Delivered in 5 business days"),
+        ],
+    },
+    {
+        "slug": "captacion", "precio": 10000, "dias": 10, "destacado": True,
+        "nombre": ("Captación", "Capture"),
+        "tag": ("Landing robusta para leads", "Lead driven landing"),
+        "para": ("Para que la página trabaje: cada visita entra a tu pipeline con nombre y teléfono.",
+                 "So the page works: every visit enters your pipeline with a name and a phone."),
+        "hereda": ("Todo lo de Lanzamiento, más:", "Everything in Launch, plus:"),
+        "incluye": [
+            ("Estructura de conversión completa, de ocho a diez bloques", "Full conversion structure, eight to ten blocks"),
+            ("Los leads llegan a tu correo y a Slack al instante", "Leads reach your inbox and Slack instantly"),
+            ("Formulario por pasos, con validación", "Step by step form, with validation"),
+            ("Prueba social: testimonios y casos reales", "Social proof: testimonials and real cases"),
+            ("Bloque de preguntas que resuelve objeciones", "FAQ block that answers objections"),
+            ("Google Analytics 4 con eventos de conversión", "Google Analytics 4 with conversion events"),
+            ("Pixel de Meta y etiqueta de Google Ads", "Meta pixel and Google Ads tag"),
+            ("SEO técnico y tarjetas para redes", "Technical SEO and social cards"),
+            ("Bilingüe, español e inglés", "Bilingual, Spanish and English"),
+            ("Entrega en 10 días hábiles", "Delivered in 10 business days"),
+        ],
+    },
+    {
+        "slug": "cinetica", "precio": 15000, "dias": 15, "destacado": False,
+        "nombre": ("Cinética", "Kinetic"),
+        "tag": ("Landing animada de punta a punta", "Fully animated landing"),
+        "para": ("Para cuando la página tiene que dejar huella al primer scroll. Esta que estás leyendo es de este nivel.",
+                 "For when the page has to land on the first scroll. The one you are reading is this tier."),
+        "hereda": ("Todo lo de Captación, más:", "Everything in Capture, plus:"),
+        "incluye": [
+            ("Animación ligada al scroll en cada sección", "Scroll linked animation in every section"),
+            ("Transiciones de vista entre estados", "View transitions between states"),
+            ("Micro interacciones en todo lo accionable", "Micro interactions on everything clickable"),
+            ("Movimiento nativo del navegador, cero librerías, cero peso extra", "Native browser motion, zero libraries, zero extra weight"),
+            ("Instalable como app, con su icono en el teléfono", "Installable as an app, with its icon on the phone"),
+            ("Accesibilidad AA y respeto a reducir movimiento", "AA accessibility, honors reduced motion"),
+            ("Sesión de estrategia de mensaje, 60 minutos", "Message strategy session, 60 minutes"),
+            ("Dos rondas de ajuste después de entregar", "Two rounds of adjustments after delivery"),
+            ("Entrega en 15 días hábiles", "Delivered in 15 business days"),
+        ],
+    },
+]
+
+PROMO_FAQ = [
+    (("¿Y si el diseño no me convence?", "What if I do not like the design?"),
+     ("Antes de la mitad del plazo ves el primer avance visual. Si la dirección no es la que buscabas, se ajusta sin costo y seguimos.",
+      "You see the first visual draft before the halfway mark. If the direction is off, we adjust at no cost and keep going.")),
+    (("¿El dominio y el hosting entran?", "Are domain and hosting included?"),
+     ("Conectamos el dominio que ya tengas y el primer año de hospedaje va incluido. Si aún no tienes dominio, lo conseguimos al costo.",
+      "We connect the domain you already own and the first year of hosting is included. No domain yet, we get it at cost.")),
+    (("¿Puedo pagar a meses?", "Can I pay monthly?"),
+     ("Sí. Meses sin intereses a 3, 6 o 12 con tarjetas Visa y Mastercard participantes. Pagando en una sola exhibición son 10% menos.",
+      "Yes. Interest free at 3, 6 or 12 months with participating Visa and Mastercard. Paying in full is 10% less.")),
+    (("¿Cuándo empiezan?", "When do you start?"),
+     ("El mismo día que confirmamos el pago. El plazo de entrega corre en días hábiles desde ahí.",
+      "The same day payment clears. The delivery window runs in business days from there.")),
+    (("¿La página queda a mi nombre?", "Do I own the page?"),
+     ("Sí. Al liquidar, el código y la plataforma quedan a tu nombre, con todos los accesos en tus manos.",
+      "Yes. On final payment, the code and the platform go under your name, with every access in your hands.")),
+    (("¿Qué necesitan de mí?", "What do you need from me?"),
+     ("Tu logo y una idea de lo que quieres decir. Si no tienes textos, los escribimos nosotros.",
+      "Your logo and an idea of what you want to say. No copy yet, we write it.")),
+    (("¿Emiten factura?", "Do you invoice?"),
+     ("Sí, factura fiscal con IVA desglosado. Los precios de esta página no lo incluyen.",
+      "Yes, tax invoice with VAT itemized. The prices on this page do not include it.")),
+]
+
+PROMO_PASOS = [
+    (("Eliges nivel", "Pick a tier"), ("Aquí mismo, en dos taps.", "Right here, in two taps."), "cart"),
+    (("Confirmas pago", "Confirm payment"), ("Tarjeta, PayPal o transferencia SPEI.", "Card, PayPal or SPEI transfer."), "coins"),
+    (("Nos das el material", "Send the material"), ("Logo, textos y ejemplos. Diez minutos.", "Logo, copy and examples. Ten minutes."), "cms"),
+    (("Sale en línea", "It goes live"), ("Con tu dominio, midiendo desde el día uno.", "On your domain, measuring from day one."), "zap"),
+]
+
+# Textos sueltos de la pagina. Clave -> (es, en). El HTML sale en espanol y lleva
+# data-i18n; el diccionario ingles viaja como JSON y el toggle intercambia.
+PT = {
+    "kicker":   ("Promoción vigente", "Live offer"),
+    "h1":       ("Landing pages que cobran lo que valen.",
+                 "Landing pages that earn their price."),
+    "lede":     ("Tres niveles, precio cerrado y fecha de entrega por escrito. Diseñadas para móvil primero, instalables como app y listas en español e inglés.",
+                 "Three tiers, closed price and a delivery date in writing. Mobile first, installable as an app, ready in Spanish and English."),
+    "cta1":     ("Ver precios", "See pricing"),
+    "cta2":     ("Hablar por WhatsApp", "Chat on WhatsApp"),
+    "vence":    ("Estos precios se sostienen hasta el", "These prices hold until"),
+    "t1":       ("31 proyectos entregados", "31 projects delivered"),
+    "t2":       ("Zapopan y Mérida", "Zapopan and Mérida"),
+    "t3":       ("Entrega desde 5 días", "Delivery from 5 days"),
+    "pr_eye":   ("Precios", "Pricing"),
+    "pr_h2":    ("Elige cómo quieres pagar y qué tan lejos quieres llegar.",
+                 "Choose how you pay and how far you want to go."),
+    "pr_p":     ("El precio no cambia después. Lo que ves es lo que se factura.",
+                 "The price does not move later. What you see is what gets invoiced."),
+    "sw_lab":   ("Forma de pago", "Payment method"),
+    "sw_one":   ("Una sola exhibición", "Single payment"),
+    "sw_msi":   ("Meses sin intereses", "Interest free months"),
+    # Version en minuscula: se concatena despues del numero de meses ("12 meses sin
+    # intereses"). Con la clave de arriba salia una mayuscula a media frase.
+    "msi_low":  ("meses sin intereses", "months interest free"),
+    "titulo":   ("Landing pages desde $5,000 MXN, iBisne",
+                 "Landing pages from $5,000 MXN, iBisne"),
+    "sw_save":  ("ahorras 10%", "save 10%"),
+    "plazo":    ("Plazo", "Term"),
+    "cards":    ("Visa y Mastercard participantes", "Participating Visa and Mastercard"),
+    "reco":     ("El que más se contrata", "Most chosen"),
+    "antes":    ("antes", "before"),
+    "pay_now":  ("Pagar ahora", "Pay now"),
+    "reserve":  ("Apartar mi lugar", "Reserve my slot"),
+    "ask":      ("Preguntar antes", "Ask first"),
+    "pay_h":    ("Cómo quieres pagarlo", "How you want to pay it"),
+    "spei_h":   ("Transferencia SPEI", "SPEI transfer"),
+    "spei_c":   ("Copiar CLABE", "Copy CLABE"),
+    "spei_ok":  ("Copiada", "Copied"),
+    "demo_eye": ("Nivel Cinética", "Kinetic tier"),
+    "demo_h2":  ("Esto no se explica. Se ve.", "This is not explained. It is seen."),
+    "demo_p":   ("Cada bloque de esta página reacciona a tu scroll, sin una sola librería de animación cargada. Peso extra: cero kilobytes.",
+                 "Every block on this page reacts to your scroll, without a single animation library loaded. Extra weight: zero kilobytes."),
+    "demo_1":   ("Entra con el scroll", "Enters on scroll"),
+    "demo_2":   ("Responde al dedo", "Responds to touch"),
+    "demo_3":   ("Se apaga si molesta", "Backs off if unwanted"),
+    "demo_n":   ("Si tu sistema pide menos movimiento, la página lo obedece sin perder nada de información.",
+                 "If your system asks for less motion, the page obeys without losing any information."),
+    "pf_eye":   ("Trabajo entregado", "Delivered work"),
+    "pf_h2":    ("No es la primera vez que hacemos esto.", "This is not our first one."),
+    "pf_p":     ("Una muestra del portafolio. Cada ficha abre el caso completo.",
+                 "A sample of the portfolio. Each card opens the full case."),
+    "pf_all":   ("Ver el portafolio completo", "See the full portfolio"),
+    "ps_eye":   ("Cómo corre", "How it runs"),
+    "ps_h2":    ("Cuatro pasos y estás en línea.", "Four steps and you are live."),
+    "faq_eye":  ("Antes de que preguntes", "Before you ask"),
+    "faq_h2":   ("Las siete dudas de siempre.", "The usual seven questions."),
+    "fm_eye":   ("Arranquemos", "Let us start"),
+    "fm_h2":    ("Dime cuál quieres y lo dejamos amarrado.", "Tell me which one and we lock it in."),
+    "fm_p":     ("Un minuto de tu tiempo. Te contesto el mismo día.",
+                 "One minute of your time. Same day reply."),
+    "f_name":   ("Tu nombre", "Your name"),
+    "f_wa":     ("WhatsApp, 10 dígitos", "WhatsApp, 10 digits"),
+    "f_mail":   ("Correo", "Email"),
+    "f_biz":    ("Tu negocio o proyecto", "Your business or project"),
+    "f_plan":   ("Nivel que te interesa", "Tier you want"),
+    "f_msg":    ("Qué quieres lograr, en una línea", "What you want to achieve, in one line"),
+    "f_send":   ("Enviar y apartar", "Send and reserve"),
+    "f_ok_h":   ("Listo, ya lo tenemos.", "Got it."),
+    "f_ok_p":   ("Te contactamos hoy mismo para amarrar el arranque. Si tienes prisa, escríbenos por WhatsApp y vamos directo.",
+                 "We contact you today to lock the start. In a hurry, message us on WhatsApp and we go straight there."),
+    "f_err":    ("No pudimos enviarlo. Escríbenos por WhatsApp y lo resolvemos en un minuto.",
+                 "We could not send it. Message us on WhatsApp and we solve it in a minute."),
+    "f_priv":   ("Autorizo a iBisne a contactarme sobre este proyecto, conforme al",
+                 "I authorize iBisne to contact me about this project, under the"),
+    "f_privl":  ("aviso de privacidad", "privacy notice"),
+    "guar_h":   ("Lo que sostiene el precio", "What holds the price up"),
+    "g1":       ("Precio cerrado, sin sorpresas al final", "Closed price, no surprises at the end"),
+    "g2":       ("Fecha de entrega por escrito", "Delivery date in writing"),
+    "g3":       ("Al liquidar, el código queda a tu nombre", "On final payment, the code is yours"),
+    "g4":       ("Factura fiscal con IVA desglosado", "Tax invoice with VAT itemized"),
+    "fine":     ("Precios en pesos mexicanos, más IVA. Los meses sin intereses aplican con tarjetas de crédito participantes de Visa y Mastercard, sujeto a la aprobación de tu banco. El descuento de 10% aplica únicamente al pago en una sola exhibición.",
+                 "Prices in Mexican pesos, plus VAT. Interest free months apply with participating Visa and Mastercard credit cards, subject to your bank's approval. The 10% discount applies only to the single payment option."),
+    "ab_cta":   ("Quiero la mía", "I want mine"),
+    "wa_msg":   ("Hola, vi la promoción de landing pages y me interesa el nivel",
+                 "Hi, I saw the landing page offer and I am interested in the tier"),
+}
+
+
+def pt(k, lang=0):
+    return PT[k][lang]
+
+
+def money(n):
+    return f"{n:,.0f}"
+
+
+def money2(n):
+    return f"{n:,.2f}"
+
+
+def wa_link(plan_nombre):
+    msg = f"{pt('wa_msg')} {plan_nombre}."
+    return f"https://wa.me/{WA_NUM}?text=" + msg.replace(" ", "%20").replace(",", "%2C")
+
+
+def promo_pay_links(slug):
+    """Botones de cobro que SI existen. Sin links configurados devuelve cadena vacia
+    y la card cae al CTA de reserva: nunca se manda a nadie a un checkout roto."""
+    out = []
+    for modo in ("contado", "msi"):
+        for key, label, icon in METODOS:
+            url = PAGOS.get(slug, {}).get(modo, {}).get(key, "")
+            if not url:
+                continue
+            out.append(
+                f'<a class="lp-pay" href="{url}" target="_blank" rel="noopener nofollow" '
+                f'data-modo="{modo}" data-metodo="{key}" data-plan="{slug}">'
+                f'{ic(icon)}<span>{label}</span></a>')
+    return "".join(out)
+
+
+def promo_spei():
+    if not SPEI.get("clabe"):
+        return ""
+    return f"""<div class="lp-spei">
+      <div class="lp-spei-h">{ic('db')}<span data-i18n="spei_h">{pt('spei_h')}</span></div>
+      <dl>
+        <div><dt>Banco</dt><dd>{SPEI['banco']}</dd></div>
+        <div><dt>Beneficiario</dt><dd>{SPEI['beneficiario']}</dd></div>
+        <div><dt>CLABE</dt><dd><code id="lpClabe">{SPEI['clabe']}</code></dd></div>
+        <div><dt>Concepto</dt><dd>{SPEI['concepto']}</dd></div>
+      </dl>
+      <button type="button" class="btn btn-secondary" id="lpCopy" data-i18n="spei_c">{pt('spei_c')}</button>
+    </div>"""
+
+
+def promo_card(p):
+    base_price = p["precio"]
+    contado = round(base_price * (1 - DESC_CONTADO))
+    lista = "".join(
+        f'<li>{ic("check")}<span data-i18n="inc_{p["slug"]}_{i}">{es}</span></li>'
+        for i, (es, en) in enumerate(p["incluye"]))
+    hereda = ""
+    if p["hereda"]:
+        hereda = f'<p class="lp-her" data-i18n="her_{p["slug"]}">{p["hereda"][0]}</p>'
+    pays = promo_pay_links(p["slug"])
+    if pays:
+        cta = (f'<button type="button" class="btn btn-primary btn-lg grow lp-open" '
+               f'data-plan="{p["slug"]}" data-i18n="pay_now">{pt("pay_now")}</button>')
+    else:
+        cta = (f'<a class="btn btn-primary btn-lg grow lp-pick" href="#reservar" '
+               f'data-plan="{p["slug"]}" data-i18n="reserve">{pt("reserve")}</a>')
+    return f"""<article class="lp-card{' is-reco' if p['destacado'] else ''}" data-plan="{p['slug']}" data-base="{base_price}">
+      {'<span class="lp-reco" data-i18n="reco">' + pt('reco') + '</span>' if p['destacado'] else ''}
+      <div class="lp-card-h">
+        <span class="lp-tag" data-i18n="tag_{p['slug']}">{p['tag'][0]}</span>
+        <h3 data-i18n="nom_{p['slug']}">{p['nombre'][0]}</h3>
+        <p class="lp-para" data-i18n="para_{p['slug']}">{p['para'][0]}</p>
+      </div>
+      <div class="lp-price">
+        <span class="lp-was"><s>${money(base_price)}</s></span>
+        <span class="lp-now">${money(contado)}</span>
+        <span class="lp-per">MXN</span>
+      </div>
+      <p class="lp-sub">{pt('sw_one')}</p>
+      {cta}
+      <a class="lp-alt" href="{wa_link(p['nombre'][0])}" target="_blank" rel="noopener" data-i18n="ask">{pt('ask')}</a>
+      {hereda}
+      <ul class="lp-inc">{lista}</ul>
+    </article>"""
+
+
+def build_promos(projects):
+    planes = "".join(promo_card(p) for p in PLANES)
+    plazos = "".join(
+        f'<option value="{m}"{" selected" if m == PLAZO_DEF else ""}>{m}</option>'
+        for m in PLAZOS)
+    pasos = "".join(
+        f'<div class="lp-step"><span class="n">{i + 1}</span><div class="ico">{ic(icon)}</div>'
+        f'<h4 data-i18n="paso_{i}">{tt[0]}</h4><p data-i18n="pasod_{i}">{dd[0]}</p></div>'
+        for i, ((tt), (dd), icon) in enumerate(PROMO_PASOS))
+    faq = "".join(
+        f'<details name="lpfaq" class="lp-faq">'
+        f'<summary><span data-i18n="faq_q{i}">{q[0]}</span>{ic("down")}</summary>'
+        f'<p data-i18n="faq_a{i}">{a[0]}</p></details>'
+        for i, (q, a) in enumerate(PROMO_FAQ))
+    proof = "".join(pf_card(p) for p in projects[:6])
+    opciones = "".join(
+        f'<option value="{p["slug"]}">{p["nombre"][0]} · ${money(p["precio"])}</option>'
+        for p in PLANES)
+    metodos_all = "".join(promo_pay_links(p["slug"]) for p in PLANES)
+    pay_sheet = ""
+    if metodos_all or SPEI.get("clabe"):
+        pay_sheet = f"""<div class="lp-sheet" id="lpSheet" aria-hidden="true">
+      <div class="lp-sheet-in" role="dialog" aria-modal="true" aria-labelledby="lpSheetH">
+        <button type="button" class="lp-sheet-x" id="lpSheetX" aria-label="Cerrar">{ic('x')}</button>
+        <h3 id="lpSheetH" data-i18n="pay_h">{pt('pay_h')}</h3>
+        <div class="lp-sheet-sum" id="lpSheetSum"></div>
+        <div class="lp-pays" id="lpPays">{metodos_all}</div>
+        {promo_spei()}
+      </div>
+    </div>"""
+
+    body = f"""
+<div class="lp">
+
+  <!-- ══════ HERO ══════ -->
+  <section class="lp-hero">
+    <div class="bgimg" style="background-image:url({bg_url('promos')})" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="lp-kick"><span class="dot"></span><span data-i18n="kicker">{pt('kicker')}</span></span>
+      <h1 data-i18n="h1">{pt('h1')}</h1>
+      <p class="lede" data-i18n="lede">{pt('lede')}</p>
+      <div class="lp-acts">
+        <a class="btn btn-primary btn-lg" href="#precios" data-i18n="cta1">{pt('cta1')}</a>
+        <a class="btn btn-secondary btn-lg" href="{wa_link('')}" target="_blank" rel="noopener" data-i18n="cta2">{pt('cta2')}</a>
+      </div>
+      <div class="lp-count" id="lpCount" data-until="{PROMO_VENCE_ISO}">
+        <span data-i18n="vence">{pt('vence')}</span> <b>{PROMO_VENCE}</b><span class="lp-clock" id="lpClock"></span>
+      </div>
+      <ul class="lp-trust">
+        <li>{ic('layers')}<span data-i18n="t1">{pt('t1')}</span></li>
+        <li>{ic('pin')}<span data-i18n="t2">{pt('t2')}</span></li>
+        <li>{ic('zap')}<span data-i18n="t3">{pt('t3')}</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════ PRECIOS ══════ -->
+  <section class="sec" id="precios">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="pr_eye">{pt('pr_eye')}</span>
+        <h2 data-i18n="pr_h2">{pt('pr_h2')}</h2>
+        <p data-i18n="pr_p">{pt('pr_p')}</p>
+      </div>
+
+      <div class="lp-switch" role="radiogroup" aria-label="{pt('sw_lab')}">
+        <label class="lp-sw">
+          <input type="radio" name="lpmodo" value="contado" checked>
+          <span><b data-i18n="sw_one">{pt('sw_one')}</b><em data-i18n="sw_save">{pt('sw_save')}</em></span>
+        </label>
+        <label class="lp-sw">
+          <input type="radio" name="lpmodo" value="msi">
+          <span><b data-i18n="sw_msi">{pt('sw_msi')}</b><em data-i18n="cards">{pt('cards')}</em></span>
+        </label>
+      </div>
+
+      <div class="lp-plazo" id="lpPlazoBox" hidden>
+        <label for="lpPlazo" data-i18n="plazo">{pt('plazo')}</label>
+        <select id="lpPlazo" class="input">{plazos}</select>
+        <span data-i18n="cards">{pt('cards')}</span>
+      </div>
+
+      <div class="lp-plans {gcls(3)}">{planes}</div>
+
+      <p class="lp-fine" data-i18n="fine">{pt('fine')}</p>
+    </div>
+  </section>
+
+  <!-- ══════ DEMO DE MOVIMIENTO ══════ -->
+  <section class="sec sec-alt lp-demo">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="demo_eye">{pt('demo_eye')}</span>
+        <h2 data-i18n="demo_h2">{pt('demo_h2')}</h2>
+        <p data-i18n="demo_p">{pt('demo_p')}</p>
+      </div>
+      <div class="lp-motion">
+        <div class="lp-mtile"><span class="lp-mnum" data-count="60">0</span><b data-i18n="demo_1">{pt('demo_1')}</b></div>
+        <div class="lp-mtile"><span class="lp-mnum" data-count="100">0</span><b data-i18n="demo_2">{pt('demo_2')}</b></div>
+        <div class="lp-mtile"><span class="lp-mnum" data-count="0">0</span><b data-i18n="demo_3">{pt('demo_3')}</b></div>
+      </div>
+      <p class="lp-note">{ic('shield')}<span data-i18n="demo_n">{pt('demo_n')}</span></p>
+    </div>
+  </section>
+
+  <!-- ══════ PRUEBA ══════ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="pf_eye">{pt('pf_eye')}</span>
+        <h2 data-i18n="pf_h2">{pt('pf_h2')}</h2>
+        <p data-i18n="pf_p">{pt('pf_p')}</p>
+      </div>
+      <div class="pf-grid rail {gcls(6)}">{proof}</div>
+      <div class="sec-cta"><a class="btn btn-secondary" href="/portafolio/" data-i18n="pf_all">{pt('pf_all')}</a></div>
+    </div>
+  </section>
+
+  <!-- ══════ PROCESO ══════ -->
+  <section class="sec sec-alt">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="ps_eye">{pt('ps_eye')}</span>
+        <h2 data-i18n="ps_h2">{pt('ps_h2')}</h2>
+      </div>
+      <div class="lp-steps">{pasos}</div>
+    </div>
+  </section>
+
+  <!-- ══════ FAQ ══════ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="faq_eye">{pt('faq_eye')}</span>
+        <h2 data-i18n="faq_h2">{pt('faq_h2')}</h2>
+      </div>
+      <div class="lp-faqs">{faq}</div>
+    </div>
+  </section>
+
+  <!-- ══════ RESERVA ══════ -->
+  <section class="sec sec-alt" id="reservar">
+    <div class="wrap">
+      <div class="lp-form-grid">
+        <div class="sec-h" style="margin-bottom:0">
+          <span class="eyebrow" data-i18n="fm_eye">{pt('fm_eye')}</span>
+          <h2 data-i18n="fm_h2">{pt('fm_h2')}</h2>
+          <p data-i18n="fm_p">{pt('fm_p')}</p>
+          <ul class="lp-guar">
+            <li>{ic('check')}<span data-i18n="g1">{pt('g1')}</span></li>
+            <li>{ic('check')}<span data-i18n="g2">{pt('g2')}</span></li>
+            <li>{ic('check')}<span data-i18n="g3">{pt('g3')}</span></li>
+            <li>{ic('check')}<span data-i18n="g4">{pt('g4')}</span></li>
+          </ul>
+        </div>
+
+        <form class="lp-form" id="lpForm" novalidate data-wa="{wa_link('')}">
+          <div class="fgroup"><label for="lpNombre" data-i18n="f_name">{pt('f_name')}</label>
+            <input class="input" id="lpNombre" name="nombre" autocomplete="name" required></div>
+          <div class="fgroup"><label for="lpTel" data-i18n="f_wa">{pt('f_wa')}</label>
+            <input class="input" id="lpTel" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="17" required></div>
+          <div class="fgroup"><label for="lpMail" data-i18n="f_mail">{pt('f_mail')}</label>
+            <input class="input" id="lpMail" name="email" type="email" inputmode="email" autocomplete="email"></div>
+          <div class="fgroup"><label for="lpEmp" data-i18n="f_biz">{pt('f_biz')}</label>
+            <input class="input" id="lpEmp" name="empresa" autocomplete="organization"></div>
+          <div class="fgroup"><label for="lpPlan" data-i18n="f_plan">{pt('f_plan')}</label>
+            <select class="input" id="lpPlan" name="plan">{opciones}</select></div>
+          <div class="fgroup"><label for="lpMsg" data-i18n="f_msg">{pt('f_msg')}</label>
+            <input class="input" id="lpMsg" name="mensaje"></div>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+          <label class="lp-priv"><input type="checkbox" id="lpOk" required>
+            <span><span data-i18n="f_priv">{pt('f_priv')}</span> <a href="/legal/privacidad/" data-i18n="f_privl">{pt('f_privl')}</a>.</span></label>
+          <button type="submit" class="btn btn-primary btn-lg" id="lpSend" data-i18n="f_send">{pt('f_send')}</button>
+          <p class="lp-msg" id="lpMsgBox" role="status"></p>
+        </form>
+
+        <div class="lp-done" id="lpDone" hidden>
+          <div class="mark">{ic('check')}</div>
+          <h3 data-i18n="f_ok_h">{pt('f_ok_h')}</h3>
+          <p data-i18n="f_ok_p">{pt('f_ok_p')}</p>
+          <a class="btn btn-primary" href="{wa_link('')}" target="_blank" rel="noopener" data-i18n="cta2">{pt('cta2')}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {pay_sheet}
+
+  <div class="lp-abar" aria-label="Acciones">
+    <a class="lp-abar-wa" href="{wa_link('')}" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
+    <a class="btn btn-primary grow" href="#precios" data-i18n="ab_cta">{pt('ab_cta')}</a>
+  </div>
+
+</div>
+{promo_js()}
+"""
+    return base("Landing pages desde $5,000 MXN — iBisne",
+                "Tres niveles de landing page con precio cerrado, entrega por escrito y pago a meses sin intereses. Diseño first mobile, bilingüe e instalable como app.",
+                body, active="", canonical="/promos/landing-pages/", noindex=True)
+
+
+# JS de la promo. Va como constante plana (no f-string) para no tener que duplicar
+# cada llave del codigo. Los tres marcadores __ES__ / __EN__ / __DESC__ los sustituye
+# promo_js() con los diccionarios y el descuento reales.
+PROMO_JS = """
+(function(){
+  var root=document.documentElement;
+  var DICT={es:__ES__, en:__EN__};
+  var D=__DESC__;
+  var lang='es';
+
+  // La pagina se declara autosuficiente en idioma: sin esto, el listener global de
+  // SCRIPTS dispararia el aviso de "version en ingles proximamente" encima de una
+  // pagina que si esta traducida.
+  root.setAttribute('data-i18n-ready','');
+
+  function T(k){ return (DICT[lang] && DICT[lang][k]) || (DICT.es[k] || ''); }
+  function fmt(n,d){ return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+  function ev(name,params){ try{ if(window.gtag) window.gtag('event',name,params||{}); }catch(e){} }
+
+  // ---------- idioma ----------
+  function setLang(L){
+    lang = (L==='en') ? 'en' : 'es';
+    root.setAttribute('lang', lang==='en' ? 'en' : 'es');
+    document.title=DICT[lang].titulo||document.title;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var v=DICT[lang][el.getAttribute('data-i18n')];
+      if(typeof v==='string') el.innerHTML=v;
+    });
+    document.querySelectorAll('.lang button').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-lang')===lang));
+    });
+    try{ localStorage.setItem('ib_lang', lang); }catch(e){}
+    price();
+    clock();
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopImmediatePropagation();
+      setLang(b.getAttribute('data-lang'));
+      ev('lang_switch',{lang:b.getAttribute('data-lang')});
+    });
+  });
+
+  // ---------- precios ----------
+  var modoIn=document.querySelectorAll('input[name=lpmodo]');
+  var plazoBox=document.getElementById('lpPlazoBox');
+  var plazoSel=document.getElementById('lpPlazo');
+  function modo(){ var c=document.querySelector('input[name=lpmodo]:checked'); return c?c.value:'contado'; }
+  function price(){
+    var m=modo(), pl=plazoSel?parseInt(plazoSel.value,10):12;
+    if(plazoBox) plazoBox.hidden=(m!=='msi');
+    document.querySelectorAll('.lp-card').forEach(function(c){
+      var base=parseInt(c.getAttribute('data-base'),10);
+      var was=c.querySelector('.lp-was'), now=c.querySelector('.lp-now');
+      var per=c.querySelector('.lp-per'), sub=c.querySelector('.lp-sub');
+      if(m==='contado'){
+        was.hidden=false; was.innerHTML='<s>$'+fmt(base,0)+'</s>';
+        now.textContent='$'+fmt(Math.round(base*(1-D)),0);
+        per.textContent='MXN';
+        sub.textContent=T('sw_one');
+      } else {
+        was.hidden=true;
+        now.textContent='$'+fmt(base/pl,2);
+        per.textContent='MXN /'+(lang==='en'?'mo':'mes');
+        sub.textContent=pl+' '+T('msi_low')+' · total $'+fmt(base,0);
+      }
+    });
+    document.querySelectorAll('.lp-pay').forEach(function(a){
+      a.hidden=(a.getAttribute('data-modo')!==m);
+    });
+  }
+  modoIn.forEach(function(r){ r.addEventListener('change',function(){ price(); ev('select_payment_mode',{mode:modo()}); }); });
+  if(plazoSel) plazoSel.addEventListener('change',function(){ price(); ev('select_term',{months:plazoSel.value}); });
+  price();
+
+  // ---------- cuenta regresiva ----------
+  var cbox=document.getElementById('lpCount'), clockEl=document.getElementById('lpClock');
+  function clock(){
+    if(!cbox||!clockEl) return;
+    var end=new Date(cbox.getAttribute('data-until')).getTime();
+    var left=end-Date.now();
+    if(isNaN(end)||left<=0){ clockEl.textContent=''; return; }
+    var d=Math.floor(left/86400000), h=Math.floor(left/3600000)%24;
+    clockEl.textContent=' · '+d+(lang==='en'?'d ':'d ')+h+'h';
+  }
+  clock(); setInterval(clock,60000);
+
+  // ---------- eleccion de nivel ----------
+  var planSel=document.getElementById('lpPlan');
+  document.querySelectorAll('.lp-pick').forEach(function(a){
+    a.addEventListener('click',function(){
+      var p=a.getAttribute('data-plan');
+      if(planSel) planSel.value=p;
+      ev('select_plan',{plan:p, mode:modo()});
+    });
+  });
+
+  // ---------- hoja de pago ----------
+  var sheet=document.getElementById('lpSheet');
+  var sheetSum=document.getElementById('lpSheetSum');
+  function openSheet(planSlug){
+    if(!sheet) return;
+    document.querySelectorAll('.lp-pay').forEach(function(a){
+      a.hidden=!(a.getAttribute('data-plan')===planSlug && a.getAttribute('data-modo')===modo());
+    });
+    var card=document.querySelector('.lp-card[data-plan="'+planSlug+'"]');
+    if(card && sheetSum){
+      sheetSum.innerHTML='<b>'+card.querySelector('h3').textContent+'</b><span>'+
+        card.querySelector('.lp-now').textContent+' '+card.querySelector('.lp-per').textContent+'</span>';
+    }
+    sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false');
+    document.body.classList.add('menu-lock');
+    ev('begin_checkout',{plan:planSlug, mode:modo()});
+  }
+  function closeSheet(){
+    if(!sheet) return;
+    sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true');
+    document.body.classList.remove('menu-lock');
+    price();
+  }
+  document.querySelectorAll('.lp-open').forEach(function(b){
+    b.addEventListener('click',function(){ openSheet(b.getAttribute('data-plan')); });
+  });
+  var sx=document.getElementById('lpSheetX'); if(sx) sx.addEventListener('click',closeSheet);
+  if(sheet) sheet.addEventListener('click',function(e){ if(e.target===sheet) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheet(); });
+  document.querySelectorAll('.lp-pay').forEach(function(a){
+    a.addEventListener('click',function(){
+      ev('add_payment_info',{plan:a.getAttribute('data-plan'), method:a.getAttribute('data-metodo'), mode:a.getAttribute('data-modo')});
+    });
+  });
+
+  // ---------- SPEI ----------
+  var cp=document.getElementById('lpCopy'), cl=document.getElementById('lpClabe');
+  if(cp&&cl) cp.addEventListener('click',function(){
+    var txt=cl.textContent.replace(/\\s/g,'');
+    var done=function(){ cp.textContent=T('spei_ok'); setTimeout(function(){ cp.textContent=T('spei_c'); },2000); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,function(){}); }
+    else { var t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select();
+           try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(t); }
+    ev('copy_clabe',{});
+  });
+
+  // ---------- movimiento ----------
+  var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SD=window.CSS&&CSS.supports&&CSS.supports('(animation-timeline: view()) and (animation-range: entry)');
+  // Sin scroll driven animations (Firefox) el efecto se recrea con IntersectionObserver.
+  // Con soporte nativo NO se toca nada: el CSS es mas fluido que cualquier JS.
+  if(!SD && !RM && 'IntersectionObserver' in window){
+    var rv=document.querySelectorAll('.lp .sec-h, .lp-card, .lp-step, .lp-faq, .lp-mtile, .lp .pcard, .lp-form, .lp-guar');
+    rv.forEach(function(el){ el.classList.add('rv'); });
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{rootMargin:'0px 0px -8% 0px', threshold:.08});
+    rv.forEach(function(el){ io.observe(el); });
+  }
+  // Contadores del bloque de demostracion
+  if(!RM && 'IntersectionObserver' in window){
+    var nio=new IntersectionObserver(function(en){
+      en.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var el=e.target, to=parseInt(el.getAttribute('data-count'),10)||0, t0=null;
+        function step(ts){ if(!t0) t0=ts; var k=Math.min((ts-t0)/900,1);
+          el.textContent=Math.round(to*(1-Math.pow(1-k,3)));
+          if(k<1) requestAnimationFrame(step); }
+        requestAnimationFrame(step); nio.unobserve(el);
+      });
+    },{threshold:.5});
+    document.querySelectorAll('.lp-mnum').forEach(function(el){ nio.observe(el); });
+  }
+
+  // ---------- formulario ----------
+  var form=document.getElementById('lpForm'), done=document.getElementById('lpDone');
+  var box=document.getElementById('lpMsgBox'), send=document.getElementById('lpSend');
+  if(form) form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var d={}; new FormData(form).forEach(function(v,k){ d[k]=v; });
+    if(d.website) return;
+    if(!d.nombre || !(d.telefono||d.email)){ box.textContent=lang==='en'?'Name and a way to reach you, please.':'Falta tu nombre y un medio de contacto.'; return; }
+    if(!document.getElementById('lpOk').checked){ box.textContent=lang==='en'?'Please accept the privacy notice.':'Falta autorizar el aviso de privacidad.'; return; }
+    var slug=d.plan||'';
+    var card=document.querySelector('.lp-card[data-plan="'+slug+'"]');
+    var basep=card?parseInt(card.getAttribute('data-base'),10):0;
+    var m=modo(), pl=plazoSel?plazoSel.value:'';
+    d.origen='promo-landing-pages';
+    d.vertical='landing page';
+    d.subtipo=card?card.querySelector('h3').textContent:slug;
+    d.modalidad = (m==='contado')
+      ? (lang==='en'?'Single payment, 10% off':'Una exhibición, 10% de descuento')
+      : (pl+(lang==='en'?' months interest free':' meses sin intereses'));
+    d.total = m==='contado' ? String(Math.round(basep*(1-D))) : String(basep);
+    d.currency='MXN';
+    d.locale = lang==='en' ? 'en-US' : 'es-MX';
+    send.disabled=true; box.textContent='';
+    ev('generate_lead',{plan:slug, mode:m, value:parseInt(d.total,10)||0, currency:'MXN'});
+    fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+      .then(function(r){ if(!r.ok) throw new Error('bad'); return r.json(); })
+      .then(function(){ form.hidden=true; if(done) done.hidden=false; })
+      .catch(function(){
+        // El lead no se pierde por un fallo de red: el aviso trae el enlace ya
+        // escrito, no solo la instruccion de escribir.
+        send.disabled=false;
+        box.innerHTML=T('f_err')+' <a href="'+form.getAttribute('data-wa')+
+          '" target="_blank" rel="noopener">WhatsApp</a>';
+      });
+  });
+
+  // ---------- arranque ----------
+  // Prioridad: ?lang= gana sobre lo guardado. Es una pagina que se manda por link:
+  // si compartes la version en ingles, tiene que abrir en ingles aunque el visitante
+  // haya elegido espanol en otra visita.
+  var saved=null; try{ saved=localStorage.getItem('ib_lang'); }catch(e){}
+  var url=new URLSearchParams(location.search).get('lang');
+  var nav=(navigator.language||'').toLowerCase().indexOf('es')===0 ? 'es' : 'en';
+  setLang(url || saved || nav);
+})();
+"""
+
+
+def promo_dict(i):
+    """Diccionario completo de un idioma (0 es, 1 en): textos sueltos + los que
+    viven dentro de PLANES, PROMO_FAQ y PROMO_PASOS. El JS necesita AMBOS: el
+    precio y el plazo se reescriben en vivo y tienen que poder volver a espanol."""
+    d = {k: v[i] for k, v in PT.items()}
+    for p in PLANES:
+        d[f"nom_{p['slug']}"] = p["nombre"][i]
+        d[f"tag_{p['slug']}"] = p["tag"][i]
+        d[f"para_{p['slug']}"] = p["para"][i]
+        if p["hereda"]:
+            d[f"her_{p['slug']}"] = p["hereda"][i]
+        for j, par in enumerate(p["incluye"]):
+            d[f"inc_{p['slug']}_{j}"] = par[i]
+    for j, (q, a) in enumerate(PROMO_FAQ):
+        d[f"faq_q{j}"] = q[i]
+        d[f"faq_a{j}"] = a[i]
+    for j, (tt, dd, _icon) in enumerate(PROMO_PASOS):
+        d[f"paso_{j}"] = tt[i]
+        d[f"pasod_{j}"] = dd[i]
+    return d
+
+
+def promo_js():
+    return ("<script>\n" + PROMO_JS
+            .replace("__ES__", json.dumps(promo_dict(0), ensure_ascii=False))
+            .replace("__EN__", json.dumps(promo_dict(1), ensure_ascii=False))
+            .replace("__DESC__", str(DESC_CONTADO)) + "\n</script>")
+
+
 # ---------------------------------------------------------------- LEGAL
 def build_404():
     body = """
@@ -2038,6 +2806,9 @@ def main():
         "portafolio/index.html": build_portfolio_hub(projects),
         "contacto/index.html": build_contacto(),
         "empecemos/index.html": build_empecemos(),
+        # Pieza de venta en frio. A proposito fuera de `urls`: no entra al sitemap
+        # y sale con noindex. Se comparte por link, no se encuentra buscando.
+        "promos/landing-pages/index.html": build_promos(projects),
         "legal/privacidad/index.html": build_legal("privacidad", "Política de privacidad", legal_body("privacidad")),
         "legal/terminos/index.html": build_legal("terminos", "Términos y condiciones", legal_body("terminos")),
         "legal/cancelacion/index.html": build_legal("cancelacion", "Política de cancelación", legal_body("cancelacion")),

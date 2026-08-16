@@ -41,6 +41,30 @@ legal/nda-mutuo.md    ← borrador de NDA (documento de trabajo, no se publica)
 `/como-trabajamos/` · `/inversion/` · `/portafolio/` (+31 fichas) · `/por-que-ibisne/` ·
 `/estudio/` · `/insights/` (+10 artículos) · `/contacto/` · `/legal/{5}` · `404.html`
 
+**Páginas que se mandan por link, no se navegan** (`noindex`, fuera del `sitemap.xml`,
+fuera del `NAV`): `/empecemos/` (brief de reactivación) y `/promos/landing-pages/`
+(promoción de landing pages, v43). Si alguna sesión futura las agrega al nav o al
+sitemap, es una regresión: publicar "$5,000 MXN" abierto al buscador contradice el
+posicionamiento que sostienen `/inversion/` y `/portafolio/`.
+
+### /promos/landing-pages/ (v43)
+
+Tres niveles (Lanzamiento 5k · Captación 10k · Cinética 15k, en `PLANES`), selector de
+pago contado con 10% de descuento contra meses sin intereses (`PLAZOS`, `DESC_CONTADO`),
+y ES/EN real con diccionario propio. Cuatro cosas que hay que saber antes de tocarla:
+
+1. **Los links de cobro viven en `PAGOS` y los datos bancarios en `SPEI`.** Si están
+   vacíos, el botón de pago no se dibuja y el CTA cae al formulario de reserva. Nunca
+   se manda a nadie a un checkout roto: no metas links de relleno.
+2. **Cero captura de tarjeta en el sitio.** Solo links hospedados (Mercado Pago, PayPal,
+   Stripe). Sin alcance PCI y sin tocar la CSP de `vercel.json`.
+3. **El i18n de esta página manda sobre el global.** Marca `data-i18n-ready` en `<html>`
+   y `SCRIPTS` respeta esa bandera; sin ella saldría el aviso de "versión en inglés
+   próximamente" encima de una página ya traducida. `?lang=es|en` gana sobre lo guardado.
+4. **El movimiento va en dos carriles**: scroll driven animations nativas bajo `@supports`
+   y, donde no hay soporte (Firefox), `.rv`/`.in` por IntersectionObserver. Ninguno corre
+   bajo `prefers-reduced-motion`. Sin librerías, en cumplimiento de la regla dura #8.
+
 ### Funciones clave de `build.py`
 
 - `base(title, desc, body, active, canonical)` — shell HTML de **todas** las páginas. Aquí
