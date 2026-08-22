@@ -43,27 +43,54 @@ legal/nda-mutuo.md    ← borrador de NDA (documento de trabajo, no se publica)
 
 **Páginas que se mandan por link, no se navegan** (`noindex`, fuera del `sitemap.xml`,
 fuera del `NAV`): `/empecemos/` (brief de reactivación) y `/promos/landing-pages/`
-(promoción de landing pages, v43). Si alguna sesión futura las agrega al nav o al
+(promoción de landing pages, v44). Si alguna sesión futura las agrega al nav o al
 sitemap, es una regresión: publicar "$5,000 MXN" abierto al buscador contradice el
 posicionamiento que sostienen `/inversion/` y `/portafolio/`.
 
-### /promos/landing-pages/ (v43)
+### /promos/landing-pages/ (v44)
 
-Tres niveles (Lanzamiento 5k · Captación 10k · Cinética 15k, en `PLANES`), selector de
-pago contado con 10% de descuento contra meses sin intereses (`PLAZOS`, `DESC_CONTADO`),
-y ES/EN real con diccionario propio. Cuatro cosas que hay que saber antes de tocarla:
+Pieza de venta en frio con identidad visual propia. Storytelling en 10 bloques:
+hero, **el agente** (demo viva), **el filtro** (demo interactiva), lo hacemos todo,
+el estandar, trabajos, precios, como corre, dudas y reserva. El precio va en la
+posicion 7, despues de construir deseo, con tres atajos permanentes a `#precios`
+para el impaciente. Ocho cosas que hay que saber antes de tocarla:
 
-1. **Los links de cobro viven en `PAGOS` y los datos bancarios en `SPEI`.** Si están
-   vacíos, el botón de pago no se dibuja y el CTA cae al formulario de reserva. Nunca
+1. **Los links de cobro viven en `PAGOS` y los datos bancarios en `SPEI`.** Si estan
+   vacios, el boton de pago no se dibuja y el CTA cae al formulario de reserva. Nunca
    se manda a nadie a un checkout roto: no metas links de relleno.
 2. **Cero captura de tarjeta en el sitio.** Solo links hospedados (Mercado Pago, PayPal,
    Stripe). Sin alcance PCI y sin tocar la CSP de `vercel.json`.
-3. **El i18n de esta página manda sobre el global.** Marca `data-i18n-ready` en `<html>`
-   y `SCRIPTS` respeta esa bandera; sin ella saldría el aviso de "versión en inglés
-   próximamente" encima de una página ya traducida. `?lang=es|en` gana sobre lo guardado.
-4. **El movimiento va en dos carriles**: scroll driven animations nativas bajo `@supports`
+3. **Sistema de color propio, scoped a `.lp`.** Tres familias con significado:
+   gradiente aguamarina→azul (`--ia-1/--ia-2`) es **la maquina**; ambar (`--ia-win`)
+   es **el resultado del cliente** y aparece en exactamente dos lugares (la tarjeta
+   de lead capturado y el veredicto calificado); el gris del sistema es **la marca**,
+   y por eso **todos los botones siguen en `--accent`**. Si el acento se derrama a los
+   CTA, la pagina se lee a plantilla. `--accent` global NO se toca nunca: lo usa
+   `.btn-primary` en las 61 paginas.
+4. **En modo claro el texto de acento solo puede usar `--ia-2`** (5.7:1). `--ia-1` da
+   3.3:1 sobre blanco: ahi va como relleno o texto grande, jamas como parrafo.
+5. **El i18n de esta pagina manda sobre el global.** Marca `data-i18n-ready` en `<html>`
+   y `SCRIPTS` respeta esa bandera. `?lang=es|en` gana sobre lo guardado. ⚠️ El hilo
+   del agente y el veredicto del filtro los pinta el JS y **no llevan `data-i18n`**:
+   `setLang()` tiene que llamar a `chatRepaint()` y `score()` o se quedan en espanol.
+6. **El hilo del chat va etiquetado como Demostracion.** Es un guion. Presentarlo como
+   conversacion en vivo seria enganoso.
+7. **Prueba social curada en `PROMO_PROOF`, nunca `projects[:N]`.** El corte generico
+   metia `ibroker` (es un CRM) y `digitalife` (fue solo diseno UX/UI, sin desarrollo).
+   Una guarda rompe el build si un slug desaparece o entra a `OCULTOS`, y otra si los
+   diccionarios ES y EN dejan de tener las mismas claves.
+8. **El movimiento va en dos carriles**: scroll driven animations nativas bajo `@supports`
    y, donde no hay soporte (Firefox), `.rv`/`.in` por IntersectionObserver. Ninguno corre
-   bajo `prefers-reduced-motion`. Sin librerías, en cumplimiento de la regla dura #8.
+   bajo `prefers-reduced-motion`. Ambos carriles tienen un **piso duro por temporizador**:
+   si el observer no entrega (pestana oculta, sin composicion de cuadros), el hilo del
+   agente se pinta completo a los 10s y las entradas se revelan a los 4s. Sin ese piso,
+   la tarjeta que vende se queda vacia y la pagina invisible. Sin librerias (regla #8).
+
+**Decisiones comerciales de v44** (confirmadas por Eduardo, viven en el copy):
+cambios de **contenido** ilimitados sin costo el primer ano (rediseños se cotizan) ·
+el agente de ventas entra **solo en Captacion y Cinetica**, con el primer ano de
+operacion incluido y cuota mensual a partir del segundo · precios sin cambio en
+5.000 / 10.000 / 15.000 MXN.
 
 ### Funciones clave de `build.py`
 

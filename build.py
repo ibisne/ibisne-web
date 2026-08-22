@@ -57,6 +57,8 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 <symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
 <symbol id="i-apple" viewBox="0 0 24 24"><path d="M17.05 12.04c-.03-2.6 2.12-3.84 2.22-3.9-1.21-1.78-3.1-2.02-3.77-2.05-1.6-.16-3.13.94-3.94.94-.82 0-1.72-.92-2.84-.9-1.46.02-2.81.85-3.56 2.16-1.52 2.63-.39 6.53 1.09 8.67.72 1.05 1.58 2.22 2.71 2.18 1.09-.04 1.5-.7 2.82-.7 1.31 0 1.68.7 2.83.68 1.17-.02 1.91-1.06 2.62-2.11.83-1.21 1.17-2.38 1.19-2.44-.03-.01-2.28-.87-2.3-3.46zM14.9 4.6c.6-.73 1.01-1.75.9-2.76-.87.03-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.22z"/></symbol>
 <symbol id="i-android" viewBox="0 0 24 24"><path d="M6 8.5v7.2a1 1 0 0 0 1 1h.9v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h3.6v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h.9a1 1 0 0 0 1-1V8.5H6zM3.6 8.5a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 3.6 8.5zm16.8 0a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 20.4 8.5zM15.5 3.4l1.1-1.1a.35.35 0 0 0-.5-.5l-1.24 1.25A5.6 5.6 0 0 0 12 2.4c-.86 0-1.68.2-2.4.55L8.36 1.7a.35.35 0 1 0-.5.5l1.1 1.1A4.7 4.7 0 0 0 6.3 7.5h11.4a4.7 4.7 0 0 0-2.2-4.1zM9.6 5.8a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44zm4.8 0a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44z"/></symbol>
+<symbol id="i-sparks" viewBox="0 0 24 24"><path d="M10 2.5c.6 4 1.5 4.9 5.5 5.5-4 .6-4.9 1.5-5.5 5.5-.6-4-1.5-4.9-5.5-5.5 4-.6 4.9-1.5 5.5-5.5Z"/><path d="M17.5 14c.3 2.3.9 2.9 3.2 3.2-2.3.3-2.9.9-3.2 3.2-.3-2.3-.9-2.9-3.2-3.2 2.3-.3 2.9-.9 3.2-3.2Z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></symbol>
 <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.75 10.4 4.6v6.9H3zM11.35 4.45 21 3v8.5h-9.65zM3 12.5h7.4v6.9L3 18.25zM11.35 12.5H21V21l-9.65-1.45z"/></symbol>
 </svg>"""
 
@@ -383,7 +385,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=43">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=44">
 {GTAG}
 </head>
 <body>
@@ -1995,32 +1997,37 @@ PLANES = [
     {
         "slug": "lanzamiento", "precio": 5000, "dias": 5, "destacado": False,
         "nombre": ("Lanzamiento", "Launch"),
-        "tag": ("Landing simple", "Simple landing"),
-        "para": ("Para validar una oferta rápido y tener presencia seria esta semana.",
-                 "To validate an offer fast and look serious this week."),
+        "tag": ("Tu presencia, bien hecha", "Your presence, done right"),
+        "para": ("Para validar una oferta rápido y verte serio esta misma semana.",
+                 "To validate an offer fast and look serious this same week."),
         "hereda": None,
         "incluye": [
             ("Diseño a medida, hero más cuatro bloques", "Custom design, hero plus four blocks"),
             ("Diseñada en móvil primero, de arriba a abajo", "Designed mobile first, top to bottom"),
             ("Modo claro y modo oscuro", "Light and dark mode"),
             ("Formulario de contacto directo a tu correo", "Contact form straight to your inbox"),
-            ("Botón de WhatsApp con mensaje ya escrito", "WhatsApp button with the message pre written"),
+            ("Botón de WhatsApp con el mensaje ya escrito", "WhatsApp button with the message pre written"),
             ("Tu dominio conectado y certificado SSL", "Your domain connected, SSL certificate"),
+            ("Hospedaje incluido el primer año", "Hosting included the first year"),
             ("Carga optimizada, Core Web Vitals en verde", "Optimized load, Core Web Vitals in green"),
+            ("Cambios de contenido sin costo el primer año", "Content changes at no cost the first year"),
             ("Entrega en 5 días hábiles", "Delivered in 5 business days"),
         ],
     },
     {
         "slug": "captacion", "precio": 10000, "dias": 10, "destacado": True,
         "nombre": ("Captación", "Capture"),
-        "tag": ("Landing robusta para leads", "Lead driven landing"),
-        "para": ("Para que la página trabaje: cada visita entra a tu pipeline con nombre y teléfono.",
-                 "So the page works: every visit enters your pipeline with a name and a phone."),
+        "tag": ("Con tu agente de ventas", "With your sales agent"),
+        "para": ("Para que la página trabaje sola: atiende, califica y te pasa al que va en serio.",
+                 "So the page works on its own: it answers, qualifies and hands you the serious one."),
         "hereda": ("Todo lo de Lanzamiento, más:", "Everything in Launch, plus:"),
         "incluye": [
+            ("Tu agente de ventas, entrenado con tu catálogo y tu forma de hablar",
+             "Your sales agent, trained on your catalog and your way of speaking"),
+            ("Primer año de operación del agente incluido", "First year of agent operation included"),
+            ("Filtro de leads: pasa el que va en serio", "Lead filter: the serious one gets through"),
             ("Estructura de conversión completa, de ocho a diez bloques", "Full conversion structure, eight to ten blocks"),
             ("Los leads llegan a tu correo y a Slack al instante", "Leads reach your inbox and Slack instantly"),
-            ("Formulario por pasos, con validación", "Step by step form, with validation"),
             ("Prueba social: testimonios y casos reales", "Social proof: testimonials and real cases"),
             ("Bloque de preguntas que resuelve objeciones", "FAQ block that answers objections"),
             ("Google Analytics 4 con eventos de conversión", "Google Analytics 4 with conversion events"),
@@ -2033,15 +2040,17 @@ PLANES = [
     {
         "slug": "cinetica", "precio": 15000, "dias": 15, "destacado": False,
         "nombre": ("Cinética", "Kinetic"),
-        "tag": ("Landing animada de punta a punta", "Fully animated landing"),
-        "para": ("Para cuando la página tiene que dejar huella al primer scroll. Esta que estás leyendo es de este nivel.",
+        "tag": ("Animada de punta a punta", "Animated end to end"),
+        "para": ("Para cuando la página tiene que dejar huella al primer scroll. Esta que lees es de este nivel.",
                  "For when the page has to land on the first scroll. The one you are reading is this tier."),
         "hereda": ("Todo lo de Captación, más:", "Everything in Capture, plus:"),
         "incluye": [
             ("Animación ligada al scroll en cada sección", "Scroll linked animation in every section"),
             ("Transiciones de vista entre estados", "View transitions between states"),
             ("Micro interacciones en todo lo accionable", "Micro interactions on everything clickable"),
-            ("Movimiento nativo del navegador, cero librerías, cero peso extra", "Native browser motion, zero libraries, zero extra weight"),
+            ("Movimiento nativo del navegador, cero librerías, cero peso extra",
+             "Native browser motion, zero libraries, zero extra weight"),
+            ("Tu agente también atiende por WhatsApp", "Your agent also answers on WhatsApp"),
             ("Instalable como app, con su icono en el teléfono", "Installable as an app, with its icon on the phone"),
             ("Accesibilidad AA y respeto a reducir movimiento", "AA accessibility, honors reduced motion"),
             ("Sesión de estrategia de mensaje, 60 minutos", "Message strategy session, 60 minutes"),
@@ -2051,11 +2060,140 @@ PLANES = [
     },
 ]
 
+# ---- Guion del agente. (rol, es, en) · rol: "me" (el cliente) | "bot" (el agente).
+# El hilo es de albercas A PROPOSITO: abajo se muestran albercas-vip y albercasopia
+# como trabajo real, y la coherencia entre la demo y la prueba social suma.
+# ⚠️ El hilo va etiquetado como DEMOSTRACION en la interfaz. Es un guion, y presentarlo
+#    como conversacion en vivo seria enganoso.
+PROMO_CHAT = [
+    ("me", "Hola, ¿hacen albercas con calentador?",
+           "Hi, do you build pools with a heater?"),
+    ("bot", "Hola. Sí, es de lo que más nos piden. ¿La alberca ya existe o la vas a construir?",
+            "Hi. Yes, it is one of our most requested. Does the pool already exist or are you building it?"),
+    ("me", "Ya existe, mide 8 por 4.",
+           "It already exists, 8 by 4 meters."),
+    ("bot", "Perfecto. Para ese tamaño va bomba de calor de 90,000 BTU: sube unos 8 grados y aguanta todo el año. ¿Te paso la cotización por WhatsApp o prefieres una llamada?",
+            "Got it. For that size a 90,000 BTU heat pump fits: it raises about 8 degrees and holds all year. Should I send the quote on WhatsApp, or would you rather a call?"),
+    ("me", "WhatsApp está bien.",
+           "WhatsApp works."),
+    ("bot", "Listo, te la mando hoy. ¿A qué número la envío?",
+            "Done, I send it today. Which number should I use?"),
+]
+PROMO_CHAT_LEAD = (
+    ("Lead capturado y enviado", "Lead captured and sent"),
+    ("Nombre, WhatsApp, qué necesita y cuándo lo quiere. Ya está en tu bandeja.",
+     "Name, WhatsApp, what they need and when they want it. Already in your inbox."),
+)
+
+# ---- Filtro de leads. (pregunta(es,en), [(es, en, puntos)]) · 3 preguntas x 3 opciones.
+# La opcion preseleccionada es la primera de cada grupo, elegida para que el veredicto
+# de entrada sea "calificado": jugar con el filtro es opcional, verlo bien no.
+PROMO_FILTRO = [
+    (("¿Qué necesitas?", "What do you need?"), [
+        ("Cotizar un proyecto", "Quote a project", 34),
+        ("Entender precios", "Understand pricing", 18),
+        ("Estoy viendo opciones", "Just browsing", 6),
+    ]),
+    (("¿Para cuándo?", "By when?"), [
+        ("Este mes", "This month", 33),
+        ("En dos o tres meses", "In two or three months", 16),
+        ("Todavía no sé", "Not sure yet", 5),
+    ]),
+    (("¿Presupuesto?", "Budget?"), [
+        ("Ya está aprobado", "Already approved", 33),
+        ("Lo estoy armando", "Putting it together", 17),
+        ("Quiero una referencia", "Looking for a ballpark", 6),
+    ]),
+]
+# (estado, umbral, titulo(es,en), texto(es,en)) · Ningun veredicto habla mal del
+# prospecto: el que no califica igual queda atendido, solo que sin interrumpirte.
+PROMO_VEREDICTOS = [
+    ("ok", 70,
+     ("Lead calificado", "Qualified lead"),
+     ("Entra directo a tu WhatsApp y a tu correo, con el resumen ya escrito.",
+      "Goes straight to your WhatsApp and your inbox, with the summary already written.")),
+    ("warn", 40,
+     ("Para dar seguimiento", "Worth following up"),
+     ("Se guarda en tu lista y el agente le da seguimiento por su cuenta.",
+      "It lands on your list and the agent follows up on its own.")),
+    ("low", 0,
+     ("Atendido en automático", "Handled automatically"),
+     ("Recibe respuesta al instante con la información que pidió. A ti no te interrumpe.",
+      "Gets an instant reply with the information requested. It never interrupts you.")),
+]
+
+# ---- El estandar incluido. (icono, titulo(es,en), desc(es,en)) · 8 items.
+# Los 6 primeros son los de INCLUIDOS/ESTANDAR del sitio; los 2 ultimos son nuevos.
+# Descripciones de <=45 caracteres: a 4 columnas la medida de linea es corta.
+PROMO_ESTANDAR = [
+    ("cms", ("CMS autoadministrable", "Self managed CMS"),
+            ("Edita textos e imágenes sin depender de nadie.", "Edit copy and images without depending on anyone.")),
+    ("contrast", ("Dark y White", "Dark and White"),
+            ("Modo claro y oscuro, cuidados los dos.", "Light and dark mode, both cared for.")),
+    ("lang", ("Español e inglés", "Spanish and English"),
+            ("Los dos idiomas desde el día uno.", "Both languages from day one.")),
+    ("phone", ("PWA instalable", "Installable PWA"),
+            ("Se instala como app en iOS y Android.", "Installs as an app on iOS and Android.")),
+    ("gauge", ("PageSpeed optimizado", "PageSpeed optimized"),
+            ("Las cuatro métricas de Google, en verde.", "Google's four metrics, in green.")),
+    ("chart", ("Analytics y SEO", "Analytics and SEO"),
+            ("Alta en analítica y metadatos completos.", "Analytics set up, full metadata.")),
+    ("shield", ("Dominio y SSL", "Domain and SSL"),
+            ("Tu dominio conectado y con certificado.", "Your domain connected and certified.")),
+    ("cloud", ("Hospedaje un año", "Hosting for a year"),
+            ("El primer año de hospedaje va incluido.", "The first year of hosting is included.")),
+]
+
+# ---- Lo hacemos todo por ti. Lista asimetrica a proposito: 3 contra 8.
+PROMO_TU = [
+    ("Tu logo", "Your logo"),
+    ("Una idea de lo que quieres decir", "An idea of what you want to say"),
+    ("Diez minutos para revisar", "Ten minutes to review"),
+]
+PROMO_NOS = [
+    ("cms", "Escribimos los textos de venta", "We write the sales copy"),
+    ("layers", "Diseñamos cada sección", "We design every section"),
+    ("cpu", "Programamos y probamos", "We build it and test it"),
+    ("spark", "Entrenamos a tu agente", "We train your agent"),
+    ("filter", "Configuramos el filtro de leads", "We set up the lead filter"),
+    ("shield", "Conectamos dominio y certificado", "We connect domain and certificate"),
+    ("chart", "Dejamos la medición corriendo", "We leave measurement running"),
+    ("zap", "Lo publicamos y lo mantenemos", "We publish it and keep it running"),
+]
+PROMO_PLEDGE = (
+    ("Quieres un cambio, lo pides.", "Want a change, just ask."),
+    ("Durante el primer año, los cambios de textos, imágenes y bloques van sin costo. Los pides y se hacen.",
+     "For the first year, changes to copy, images and blocks come at no cost. You ask, we do them."),
+)
+
+# ---- Prueba social CURADA. Orden explicito.
+# NUNCA projects[:N] sobre el orden general: eso metia ibroker (es un CRM, no una
+# landing) y digitalife (fue solo diseno UX/UI, sin desarrollo), y dejaba fuera
+# albercas-vip y thcc, los unicos con set completo de capturas de caso.
+PROMO_PROOF = ("albercas-vip", "thcc", "otomi", "medical-mexicana", "dci",
+               "batauro", "albercasopia", "rancho-contento", "geneticas")
+# Capturas reales de caso. Solo las de 1600x900: las de movil son 575x1100 y
+# reventarian el aspect-ratio de la tira.
+PROMO_SHOTS = [
+    ("albercas-vip-01", ("AlbercasVIP · portada", "AlbercasVIP · cover")),
+    ("thcc-01", ("THCC · tienda", "THCC · store")),
+    ("albercas-vip-a1", ("AlbercasVIP · catálogo", "AlbercasVIP · catalog")),
+    ("thcc-02", ("THCC · categorías", "THCC · categories")),
+    ("albercas-vip-a2", ("AlbercasVIP · ficha", "AlbercasVIP · product")),
+    ("albercas-vip-a3", ("AlbercasVIP · contacto", "AlbercasVIP · contact")),
+]
+
 PROMO_FAQ = [
+    (("¿El agente suena a robot?", "Does the agent sound robotic?"),
+     ("No. Lo entrenamos con tu catálogo, tus precios y tu forma de hablar, y lo afinamos con conversaciones reales antes de soltarlo. Contesta en tres segundos, a las once de la noche y en domingo.",
+      "No. We train it on your catalog, your prices and your way of speaking, and tune it with real conversations before it goes live. It answers in three seconds, at eleven at night and on Sundays.")),
+    (("¿Los cambios sin costo tienen letra chica?", "Any fine print on the free changes?"),
+     ("Una sola: durante el primer año cubrimos cambios de contenido, textos, imágenes, precios y bloques que ya existen, sin límite de veces. Un rediseño completo o secciones nuevas se cotizan aparte.",
+      "Just one: for the first year we cover content changes, copy, images, prices and existing blocks, with no cap on how many. A full redesign or brand new sections are quoted separately.")),
     (("¿Y si el diseño no me convence?", "What if I do not like the design?"),
      ("Antes de la mitad del plazo ves el primer avance visual. Si la dirección no es la que buscabas, se ajusta sin costo y seguimos.",
       "You see the first visual draft before the halfway mark. If the direction is off, we adjust at no cost and keep going.")),
-    (("¿El dominio y el hosting entran?", "Are domain and hosting included?"),
+    (("¿El dominio y el hospedaje entran?", "Are domain and hosting included?"),
      ("Conectamos el dominio que ya tengas y el primer año de hospedaje va incluido. Si aún no tienes dominio, lo conseguimos al costo.",
       "We connect the domain you already own and the first year of hosting is included. No domain yet, we get it at cost.")),
     (("¿Puedo pagar a meses?", "Can I pay monthly?"),
@@ -2067,9 +2205,9 @@ PROMO_FAQ = [
     (("¿La página queda a mi nombre?", "Do I own the page?"),
      ("Sí. Al liquidar, el código y la plataforma quedan a tu nombre, con todos los accesos en tus manos.",
       "Yes. On final payment, the code and the platform go under your name, with every access in your hands.")),
-    (("¿Qué necesitan de mí?", "What do you need from me?"),
-     ("Tu logo y una idea de lo que quieres decir. Si no tienes textos, los escribimos nosotros.",
-      "Your logo and an idea of what you want to say. No copy yet, we write it.")),
+    (("¿Qué pasa con el agente al año?", "What happens with the agent after a year?"),
+     ("El primer año de operación va incluido en Captación y Cinética. A partir del segundo se cotiza una cuota mensual según el volumen de conversaciones que esté atendiendo.",
+      "The first year of operation is included in Capture and Kinetic. From the second year we quote a monthly fee based on the volume of conversations it handles.")),
     (("¿Emiten factura?", "Do you invoice?"),
      ("Sí, factura fiscal con IVA desglosado. Los precios de esta página no lo incluyen.",
       "Yes, tax invoice with VAT itemized. The prices on this page do not include it.")),
@@ -2078,67 +2216,102 @@ PROMO_FAQ = [
 PROMO_PASOS = [
     (("Eliges nivel", "Pick a tier"), ("Aquí mismo, en dos taps.", "Right here, in two taps."), "cart"),
     (("Confirmas pago", "Confirm payment"), ("Tarjeta, PayPal o transferencia SPEI.", "Card, PayPal or SPEI transfer."), "coins"),
-    (("Nos das el material", "Send the material"), ("Logo, textos y ejemplos. Diez minutos.", "Logo, copy and examples. Ten minutes."), "cms"),
-    (("Sale en línea", "It goes live"), ("Con tu dominio, midiendo desde el día uno.", "On your domain, measuring from day one."), "zap"),
+    (("Nos das el material", "Send the material"), ("Logo y una idea. Diez minutos.", "Logo and an idea. Ten minutes."), "cms"),
+    (("Sale en línea", "It goes live"), ("Con tu dominio y tu agente atendiendo.", "On your domain, with your agent answering."), "zap"),
 ]
 
 # Textos sueltos de la pagina. Clave -> (es, en). El HTML sale en espanol y lleva
-# data-i18n; el diccionario ingles viaja como JSON y el toggle intercambia.
+# data-i18n; los dos diccionarios viajan como JSON y el toggle intercambia.
+# ⚠️ Ningun texto traducible lleva cifras dentro: los numeros se componen aparte
+#    desde PLANES, para que cambiar un precio no deje una traduccion mintiendo.
 PT = {
+    "titulo":   ("Landing pages con agente de ventas, iBisne",
+                 "Landing pages with a sales agent, iBisne"),
     "kicker":   ("Promoción vigente", "Live offer"),
-    "h1":       ("Landing pages que cobran lo que valen.",
-                 "Landing pages that earn their price."),
-    "lede":     ("Tres niveles, precio cerrado y fecha de entrega por escrito. Diseñadas para móvil primero, instalables como app y listas en español e inglés.",
-                 "Three tiers, closed price and a delivery date in writing. Mobile first, installable as an app, ready in Spanish and English."),
-    "cta1":     ("Ver precios", "See pricing"),
+    "h1a":      ("Tu mejor vendedor", "Your best salesperson"),
+    "h1b":      ("no duerme.", "never sleeps."),
+    "lede":     ("Construimos tu landing page al máximo nivel y le integramos tu propio agente de ventas: conversa con tus clientes, resuelve dudas y te entrega solo a los que van en serio. Tú no mueves un dedo.",
+                 "We build your landing page at the highest level and integrate your own sales agent: it talks to your customers, answers questions and hands you only the serious ones. You do not lift a finger."),
+    "cta1":     ("Ver cómo trabaja", "See it work"),
     "cta2":     ("Hablar por WhatsApp", "Chat on WhatsApp"),
+    "anch_a":   ("Desde", "From"),
+    "anch_b":   ("IVA aparte", "VAT extra"),
+    "anch_c":   ("días para entregar", "days to deliver"),
     "vence":    ("Estos precios se sostienen hasta el", "These prices hold until"),
     "t1":       ("31 proyectos entregados", "31 projects delivered"),
     "t2":       ("Zapopan y Mérida", "Zapopan and Mérida"),
     "t3":       ("Entrega desde 5 días", "Delivery from 5 days"),
+
+    # -- el agente
+    "ag_eye":   ("El agente", "The agent"),
+    "ag_h2":    ("Míralo trabajando. Ahora mismo.", "Watch it work. Right now."),
+    "ag_p":     ("Lo entrenamos con tu catálogo, tus precios y tu forma de hablar. Corre sobre modelos de lenguaje, lo afinamos nosotros, y contesta en tres segundos a las once de la noche y en domingo.",
+                 "We train it on your catalog, your prices and your way of speaking. It runs on language models, we tune it ourselves, and it answers in three seconds at eleven at night and on Sundays."),
+    "ag_demo":  ("Demostración", "Demo"),
+    "ag_name":  ("Sofía · asistente de Albercas del Valle", "Sofía · assistant at Albercas del Valle"),
+    "ag_live":  ("En línea, contesta en 3 segundos", "Online, answers in 3 seconds"),
+    "ag_ph":    ("Escribe tu pregunta", "Type your question"),
+    "ag_replay": ("Repetir", "Replay"),
+    "ag_cta":   ("Quiero uno así", "I want one like this"),
+
+    # -- el filtro
+    "fl_eye":   ("El filtro", "The filter"),
+    "fl_h2":    ("Solo llega quien va en serio.", "Only the serious ones reach you."),
+    "fl_p":     ("El agente califica cada conversación mientras ocurre. Muévele a las respuestas y mira cómo cambia el veredicto.",
+                 "The agent scores every conversation as it happens. Change the answers and watch the verdict move."),
+    "fl_note":  ("Al que no califica igual lo atiende, con la información que pidió. Simplemente no te interrumpe.",
+                 "Whoever does not qualify still gets served, with the information they asked for. It just never interrupts you."),
+
+    # -- lo hacemos todo
+    "td_eye":   ("Cero fricción", "Zero friction"),
+    "td_h2":    ("Tú das el logo. Nosotros hacemos el resto.",
+                 "You bring the logo. We do the rest."),
+    "td_tu":    ("Lo que pones tú", "What you bring"),
+    "td_nos":   ("Lo que ponemos nosotros", "What we bring"),
+
+    # -- el estandar
+    "st_eye":   ("El estándar", "The standard"),
+    "st_h2":    ("Todo esto entra sin que lo pidas.", "All of this comes in without asking."),
+    "st_p":     ("No son extras que se cotizan aparte. Es el piso mínimo de cualquier cosa que sale de aquí.",
+                 "These are not add ons quoted separately. It is the floor for anything that leaves this studio."),
+
+    # -- trabajos
+    "pf_eye":   ("Trabajo entregado", "Delivered work"),
+    "pf_h2":    ("Esto es lo último que entregamos.", "This is the latest we shipped."),
+    "pf_p":     ("Capturas reales de proyectos en línea. Cada ficha abre el caso completo.",
+                 "Real screenshots of live projects. Each card opens the full case."),
+    "pf_all":   ("Ver el portafolio completo", "See the full portfolio"),
+
+    # -- precios
     "pr_eye":   ("Precios", "Pricing"),
-    "pr_h2":    ("Elige cómo quieres pagar y qué tan lejos quieres llegar.",
-                 "Choose how you pay and how far you want to go."),
+    "pr_h2":    ("Elige hasta dónde quieres llegar.", "Choose how far you want to go."),
     "pr_p":     ("El precio no cambia después. Lo que ves es lo que se factura.",
                  "The price does not move later. What you see is what gets invoiced."),
     "sw_lab":   ("Forma de pago", "Payment method"),
     "sw_one":   ("Una sola exhibición", "Single payment"),
     "sw_msi":   ("Meses sin intereses", "Interest free months"),
-    # Version en minuscula: se concatena despues del numero de meses ("12 meses sin
-    # intereses"). Con la clave de arriba salia una mayuscula a media frase.
     "msi_low":  ("meses sin intereses", "months interest free"),
-    "titulo":   ("Landing pages desde $5,000 MXN, iBisne",
-                 "Landing pages from $5,000 MXN, iBisne"),
     "sw_save":  ("ahorras 10%", "save 10%"),
     "plazo":    ("Plazo", "Term"),
     "cards":    ("Visa y Mastercard participantes", "Participating Visa and Mastercard"),
     "reco":     ("El que más se contrata", "Most chosen"),
-    "antes":    ("antes", "before"),
     "pay_now":  ("Pagar ahora", "Pay now"),
     "reserve":  ("Apartar mi lugar", "Reserve my slot"),
     "ask":      ("Preguntar antes", "Ask first"),
+    "more":     ("Ver todo lo que incluye", "See everything included"),
+    "less":     ("Ver menos", "Show less"),
     "pay_h":    ("Cómo quieres pagarlo", "How you want to pay it"),
     "spei_h":   ("Transferencia SPEI", "SPEI transfer"),
     "spei_c":   ("Copiar CLABE", "Copy CLABE"),
     "spei_ok":  ("Copiada", "Copied"),
-    "demo_eye": ("Nivel Cinética", "Kinetic tier"),
-    "demo_h2":  ("Esto no se explica. Se ve.", "This is not explained. It is seen."),
-    "demo_p":   ("Cada bloque de esta página reacciona a tu scroll, sin una sola librería de animación cargada. Peso extra: cero kilobytes.",
-                 "Every block on this page reacts to your scroll, without a single animation library loaded. Extra weight: zero kilobytes."),
-    "demo_1":   ("Entra con el scroll", "Enters on scroll"),
-    "demo_2":   ("Responde al dedo", "Responds to touch"),
-    "demo_3":   ("Se apaga si molesta", "Backs off if unwanted"),
-    "demo_n":   ("Si tu sistema pide menos movimiento, la página lo obedece sin perder nada de información.",
-                 "If your system asks for less motion, the page obeys without losing any information."),
-    "pf_eye":   ("Trabajo entregado", "Delivered work"),
-    "pf_h2":    ("No es la primera vez que hacemos esto.", "This is not our first one."),
-    "pf_p":     ("Una muestra del portafolio. Cada ficha abre el caso completo.",
-                 "A sample of the portfolio. Each card opens the full case."),
-    "pf_all":   ("Ver el portafolio completo", "See the full portfolio"),
+    "fine":     ("Precios en pesos mexicanos, más IVA. Los meses sin intereses aplican con tarjetas de crédito participantes de Visa y Mastercard, sujeto a la aprobación de tu banco. El descuento de 10% aplica únicamente al pago en una sola exhibición. El agente de ventas se incluye en Captación y Cinética, con el primer año de operación cubierto.",
+                 "Prices in Mexican pesos, plus VAT. Interest free months apply with participating Visa and Mastercard credit cards, subject to your bank's approval. The 10% discount applies only to the single payment option. The sales agent is included in Capture and Kinetic, with the first year of operation covered."),
+
+    # -- proceso · faq · cierre
     "ps_eye":   ("Cómo corre", "How it runs"),
     "ps_h2":    ("Cuatro pasos y estás en línea.", "Four steps and you are live."),
     "faq_eye":  ("Antes de que preguntes", "Before you ask"),
-    "faq_h2":   ("Las siete dudas de siempre.", "The usual seven questions."),
+    "faq_h2":   ("Las dudas de siempre.", "The usual questions."),
     "fm_eye":   ("Arranquemos", "Let us start"),
     "fm_h2":    ("Dime cuál quieres y lo dejamos amarrado.", "Tell me which one and we lock it in."),
     "fm_p":     ("Un minuto de tu tiempo. Te contesto el mismo día.",
@@ -2158,13 +2331,10 @@ PT = {
     "f_priv":   ("Autorizo a iBisne a contactarme sobre este proyecto, conforme al",
                  "I authorize iBisne to contact me about this project, under the"),
     "f_privl":  ("aviso de privacidad", "privacy notice"),
-    "guar_h":   ("Lo que sostiene el precio", "What holds the price up"),
     "g1":       ("Precio cerrado, sin sorpresas al final", "Closed price, no surprises at the end"),
     "g2":       ("Fecha de entrega por escrito", "Delivery date in writing"),
     "g3":       ("Al liquidar, el código queda a tu nombre", "On final payment, the code is yours"),
     "g4":       ("Factura fiscal con IVA desglosado", "Tax invoice with VAT itemized"),
-    "fine":     ("Precios en pesos mexicanos, más IVA. Los meses sin intereses aplican con tarjetas de crédito participantes de Visa y Mastercard, sujeto a la aprobación de tu banco. El descuento de 10% aplica únicamente al pago en una sola exhibición.",
-                 "Prices in Mexican pesos, plus VAT. Interest free months apply with participating Visa and Mastercard credit cards, subject to your bank's approval. The 10% discount applies only to the single payment option."),
     "ab_cta":   ("Quiero la mía", "I want mine"),
     "wa_msg":   ("Hola, vi la promoción de landing pages y me interesa el nivel",
                  "Hi, I saw the landing page offer and I am interested in the tier"),
@@ -2177,10 +2347,6 @@ def pt(k, lang=0):
 
 def money(n):
     return f"{n:,.0f}"
-
-
-def money2(n):
-    return f"{n:,.2f}"
 
 
 def wa_link(plan_nombre):
@@ -2219,24 +2385,125 @@ def promo_spei():
     </div>"""
 
 
+# ---------------------------------------------------------------- bloques de la promo
+def promo_agent():
+    """Demostracion del agente. El hilo lo pinta el JS desde PROMO_CHAT: el HTML sale
+    con el <ol> vacio a proposito, con min-height en CSS para no provocar CLS."""
+    return f"""<div class="lp-agent lp-edge">
+      <div class="lp-agent-top">
+        <span class="lp-avatar">{ic('sparks')}</span>
+        <div class="lp-agent-id">
+          <b data-i18n="ag_name">{pt('ag_name')}</b>
+          <em class="lp-agent-live"><i></i><span data-i18n="ag_live">{pt('ag_live')}</span></em>
+        </div>
+        <span class="lp-demo" data-i18n="ag_demo">{pt('ag_demo')}</span>
+      </div>
+      <ol class="lp-chat" id="lpChat" aria-live="polite"></ol>
+      <div class="lp-chat-foot">
+        <span data-i18n="ag_ph">{pt('ag_ph')}</span>{ic('send')}
+      </div>
+      <button type="button" class="lp-replay" id="lpReplay">{ic('arwr')}<span data-i18n="ag_replay">{pt('ag_replay')}</span></button>
+    </div>"""
+
+
+def promo_filter():
+    """Filtro de leads. Pills segmentadas, no <select>: en movil un select cuesta dos
+    taps y se lee a formulario; la pill responde al primer tap y se lee a producto.
+    La primera opcion de cada grupo viene marcada para que el veredicto de entrada
+    sea 'calificado'. Jugar con el filtro es opcional; verlo bien, no."""
+    grupos = []
+    for i, (preg, opts) in enumerate(PROMO_FILTRO):
+        pills = "".join(
+            f'<label class="lp-pill"><input type="radio" name="lpf{i}" value="{j}" '
+            f'data-p="{pts}"{" checked" if j == 0 else ""}>'
+            f'<span data-i18n="fqo_{i}_{j}">{es}</span></label>'
+            for j, (es, _en, pts) in enumerate(opts))
+        grupos.append(
+            f'<div class="lp-fgroup" role="radiogroup" aria-label="{preg[0]}">'
+            f'<span class="lp-flab" data-i18n="fq_{i}">{preg[0]}</span>'
+            f'<div class="lp-pills">{pills}</div></div>')
+    v0 = PROMO_VEREDICTOS[0]
+    return f"""<div class="lp-filter">
+      <div class="lp-fq">{''.join(grupos)}</div>
+      <aside class="lp-verdict" id="lpVerdict" data-state="{v0[0]}" aria-live="polite">
+        <div class="lp-meter"><i style="--p:100%"></i></div>
+        <b id="lpVerH">{v0[2][0]}</b>
+        <p id="lpVerP">{v0[3][0]}</p>
+        <div class="lp-vroute">{ic('wa')}<span data-i18n="fl_note">{pt('fl_note')}</span></div>
+      </aside>
+    </div>"""
+
+
+def promo_std():
+    its = "".join(
+        f'<div class="it"><div class="ico">{ic(icono)}</div>'
+        f'<h3 data-i18n="std_{i}_t">{t[0]}</h3><p data-i18n="std_{i}_d">{d[0]}</p></div>'
+        for i, (icono, t, d) in enumerate(PROMO_ESTANDAR))
+    return f'<div class="lp-std {gcls(len(PROMO_ESTANDAR), dense=True)}">{its}</div>'
+
+
+def promo_todo():
+    tu = "".join(f'<li data-i18n="tu_{i}">{es}</li>' for i, (es, _en) in enumerate(PROMO_TU))
+    nos = "".join(f'<li>{ic(icono)}<span data-i18n="nos_{i}">{es}</span></li>'
+                  for i, (icono, es, _en) in enumerate(PROMO_NOS))
+    return f"""<div class="lp-todo">
+      <div class="lp-tcol lp-tcol-you">
+        <span class="lp-tlab" data-i18n="td_tu">{pt('td_tu')}</span>
+        <ul class="lp-tlist">{tu}</ul>
+      </div>
+      <div class="lp-tcol">
+        <span class="lp-tlab" data-i18n="td_nos">{pt('td_nos')}</span>
+        <ul class="lp-tlist lp-tlist-us">{nos}</ul>
+      </div>
+      <div class="lp-pledge lp-edge">
+        <span class="lp-pico">{ic('spark')}</span>
+        <div>
+          <b data-i18n="pledge_h">{PROMO_PLEDGE[0][0]}</b>
+          <p data-i18n="pledge_p">{PROMO_PLEDGE[1][0]}</p>
+        </div>
+      </div>
+    </div>"""
+
+
+def promo_shots():
+    figs = "".join(
+        f'<figure><img src="/assets/portfolio/casos/{arch}.webp" alt="{pie[0]}" '
+        f'loading="lazy" width="1600" height="900">'
+        f'<figcaption data-i18n="shot_{i}">{pie[0]}</figcaption></figure>'
+        for i, (arch, pie) in enumerate(PROMO_SHOTS))
+    return f'<div class="lp-shots rail">{figs}</div>'
+
+
+def promo_proof(projects):
+    """Prueba social curada. Rompe el build si un slug desaparece o entra a OCULTOS,
+    en vez de imprimir en silencio una rejilla con huecos."""
+    by = {p["slug"]: p for p in projects}
+    faltan = [s for s in PROMO_PROOF if s not in by]
+    if faltan:
+        raise KeyError(f"PROMO_PROOF declara slugs inexistentes u ocultos: {faltan}")
+    cards = "".join(pf_card(by[s]) for s in PROMO_PROOF)
+    return f'<div class="pf-grid rail {gcls(len(PROMO_PROOF))}">{cards}</div>'
+
+
 def promo_card(p):
     base_price = p["precio"]
     contado = round(base_price * (1 - DESC_CONTADO))
     lista = "".join(
         f'<li>{ic("check")}<span data-i18n="inc_{p["slug"]}_{i}">{es}</span></li>'
-        for i, (es, en) in enumerate(p["incluye"]))
+        for i, (es, _en) in enumerate(p["incluye"]))
     hereda = ""
     if p["hereda"]:
         hereda = f'<p class="lp-her" data-i18n="her_{p["slug"]}">{p["hereda"][0]}</p>'
-    pays = promo_pay_links(p["slug"])
-    if pays:
-        cta = (f'<button type="button" class="btn btn-primary btn-lg grow lp-open" '
+    if promo_pay_links(p["slug"]):
+        cta = (f'<button type="button" class="btn btn-primary btn-lg lp-open" '
                f'data-plan="{p["slug"]}" data-i18n="pay_now">{pt("pay_now")}</button>')
     else:
-        cta = (f'<a class="btn btn-primary btn-lg grow lp-pick" href="#reservar" '
+        cta = (f'<a class="btn btn-primary btn-lg lp-pick" href="#reservar" '
                f'data-plan="{p["slug"]}" data-i18n="reserve">{pt("reserve")}</a>')
-    return f"""<article class="lp-card{' is-reco' if p['destacado'] else ''}" data-plan="{p['slug']}" data-base="{base_price}">
-      {'<span class="lp-reco" data-i18n="reco">' + pt('reco') + '</span>' if p['destacado'] else ''}
+    reco = (f'<span class="lp-reco" data-i18n="reco">{pt("reco")}</span>'
+            if p["destacado"] else "")
+    return f"""<article class="lp-card{' is-reco lp-edge' if p['destacado'] else ''}" data-plan="{p['slug']}" data-base="{base_price}">
+      {reco}
       <div class="lp-card-h">
         <span class="lp-tag" data-i18n="tag_{p['slug']}">{p['tag'][0]}</span>
         <h3 data-i18n="nom_{p['slug']}">{p['nombre'][0]}</h3>
@@ -2256,20 +2523,20 @@ def promo_card(p):
 
 
 def build_promos(projects):
-    planes = "".join(promo_card(p) for p in PLANES)
+    p0 = PLANES[0]
     plazos = "".join(
         f'<option value="{m}"{" selected" if m == PLAZO_DEF else ""}>{m}</option>'
         for m in PLAZOS)
+    planes = "".join(promo_card(p) for p in PLANES)
     pasos = "".join(
-        f'<div class="lp-step"><span class="n">{i + 1}</span><div class="ico">{ic(icon)}</div>'
+        f'<div class="lp-step"><span class="n">{i + 1}</span><div class="ico">{ic(icono)}</div>'
         f'<h4 data-i18n="paso_{i}">{tt[0]}</h4><p data-i18n="pasod_{i}">{dd[0]}</p></div>'
-        for i, ((tt), (dd), icon) in enumerate(PROMO_PASOS))
+        for i, (tt, dd, icono) in enumerate(PROMO_PASOS))
     faq = "".join(
         f'<details name="lpfaq" class="lp-faq">'
         f'<summary><span data-i18n="faq_q{i}">{q[0]}</span>{ic("down")}</summary>'
         f'<p data-i18n="faq_a{i}">{a[0]}</p></details>'
         for i, (q, a) in enumerate(PROMO_FAQ))
-    proof = "".join(pf_card(p) for p in projects[:6])
     opciones = "".join(
         f'<option value="{p["slug"]}">{p["nombre"][0]} · ${money(p["precio"])}</option>'
         for p in PLANES)
@@ -2289,17 +2556,22 @@ def build_promos(projects):
     body = f"""
 <div class="lp">
 
-  <!-- ══════ HERO ══════ -->
+  <!-- ══════ 0 · HERO ══════ -->
   <section class="lp-hero">
-    <div class="bgimg" style="background-image:url({bg_url('promos')})" aria-hidden="true"></div>
     <div class="wrap">
       <span class="lp-kick"><span class="dot"></span><span data-i18n="kicker">{pt('kicker')}</span></span>
-      <h1 data-i18n="h1">{pt('h1')}</h1>
+      <h1><span data-i18n="h1a">{pt('h1a')}</span> <span class="ia" data-i18n="h1b">{pt('h1b')}</span></h1>
       <p class="lede" data-i18n="lede">{pt('lede')}</p>
       <div class="lp-acts">
-        <a class="btn btn-primary btn-lg" href="#precios" data-i18n="cta1">{pt('cta1')}</a>
+        <a class="btn btn-primary btn-lg" href="#agente" data-i18n="cta1">{pt('cta1')}</a>
         <a class="btn btn-secondary btn-lg" href="{wa_link('')}" target="_blank" rel="noopener" data-i18n="cta2">{pt('cta2')}</a>
       </div>
+      <a class="lp-anchor" href="#precios">
+        <span data-i18n="anch_a">{pt('anch_a')}</span> <b>${money(p0['precio'])} MXN</b>
+        <span class="sep">·</span> <span data-i18n="anch_b">{pt('anch_b')}</span>
+        <span class="sep">·</span> <b>{p0['dias']}</b> <span data-i18n="anch_c">{pt('anch_c')}</span>
+        {ic('arwr')}
+      </a>
       <div class="lp-count" id="lpCount" data-until="{PROMO_VENCE_ISO}">
         <span data-i18n="vence">{pt('vence')}</span> <b>{PROMO_VENCE}</b><span class="lp-clock" id="lpClock"></span>
       </div>
@@ -2311,8 +2583,74 @@ def build_promos(projects):
     </div>
   </section>
 
-  <!-- ══════ PRECIOS ══════ -->
-  <section class="sec" id="precios">
+  <!-- ══════ 1 · EL AGENTE ══════ -->
+  <section class="sec lp-sec-agent" id="agente">
+    <div class="wrap">
+      <div class="lp-split">
+        <div class="sec-h">
+          <span class="eyebrow" data-i18n="ag_eye">{pt('ag_eye')}</span>
+          <h2 data-i18n="ag_h2">{pt('ag_h2')}</h2>
+          <p data-i18n="ag_p">{pt('ag_p')}</p>
+          <div class="sec-cta">
+            <a class="btn btn-primary" href="#precios" data-i18n="ag_cta">{pt('ag_cta')}</a>
+          </div>
+        </div>
+        {promo_agent()}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ 2 · EL FILTRO ══════ -->
+  <section class="sec sec-alt">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="fl_eye">{pt('fl_eye')}</span>
+        <h2 data-i18n="fl_h2">{pt('fl_h2')}</h2>
+        <p data-i18n="fl_p">{pt('fl_p')}</p>
+      </div>
+      {promo_filter()}
+    </div>
+  </section>
+
+  <!-- ══════ 3 · LO HACEMOS TODO ══════ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="td_eye">{pt('td_eye')}</span>
+        <h2 data-i18n="td_h2">{pt('td_h2')}</h2>
+      </div>
+      {promo_todo()}
+    </div>
+  </section>
+
+  <!-- ══════ 4 · EL ESTÁNDAR ══════ -->
+  <section class="sec sec-alt">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="st_eye">{pt('st_eye')}</span>
+        <h2 data-i18n="st_h2">{pt('st_h2')}</h2>
+        <p data-i18n="st_p">{pt('st_p')}</p>
+      </div>
+      {promo_std()}
+    </div>
+  </section>
+
+  <!-- ══════ 5 · TRABAJOS ══════ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow" data-i18n="pf_eye">{pt('pf_eye')}</span>
+        <h2 data-i18n="pf_h2">{pt('pf_h2')}</h2>
+        <p data-i18n="pf_p">{pt('pf_p')}</p>
+      </div>
+      {promo_shots()}
+      {promo_proof(projects)}
+      <div class="sec-cta"><a class="btn btn-secondary" href="/portafolio/" data-i18n="pf_all">{pt('pf_all')}</a></div>
+    </div>
+  </section>
+
+  <!-- ══════ 6 · PRECIOS ══════ -->
+  <section class="sec sec-alt" id="precios">
     <div class="wrap">
       <div class="sec-h">
         <span class="eyebrow" data-i18n="pr_eye">{pt('pr_eye')}</span>
@@ -2337,44 +2675,14 @@ def build_promos(projects):
         <span data-i18n="cards">{pt('cards')}</span>
       </div>
 
-      <div class="lp-plans {gcls(3)}">{planes}</div>
+      <div class="lp-plans {gcls(len(PLANES))}">{planes}</div>
 
       <p class="lp-fine" data-i18n="fine">{pt('fine')}</p>
     </div>
   </section>
 
-  <!-- ══════ DEMO DE MOVIMIENTO ══════ -->
-  <section class="sec sec-alt lp-demo">
-    <div class="wrap">
-      <div class="sec-h">
-        <span class="eyebrow" data-i18n="demo_eye">{pt('demo_eye')}</span>
-        <h2 data-i18n="demo_h2">{pt('demo_h2')}</h2>
-        <p data-i18n="demo_p">{pt('demo_p')}</p>
-      </div>
-      <div class="lp-motion">
-        <div class="lp-mtile"><span class="lp-mnum" data-count="60">0</span><b data-i18n="demo_1">{pt('demo_1')}</b></div>
-        <div class="lp-mtile"><span class="lp-mnum" data-count="100">0</span><b data-i18n="demo_2">{pt('demo_2')}</b></div>
-        <div class="lp-mtile"><span class="lp-mnum" data-count="0">0</span><b data-i18n="demo_3">{pt('demo_3')}</b></div>
-      </div>
-      <p class="lp-note">{ic('shield')}<span data-i18n="demo_n">{pt('demo_n')}</span></p>
-    </div>
-  </section>
-
-  <!-- ══════ PRUEBA ══════ -->
+  <!-- ══════ 7 · CÓMO CORRE ══════ -->
   <section class="sec">
-    <div class="wrap">
-      <div class="sec-h">
-        <span class="eyebrow" data-i18n="pf_eye">{pt('pf_eye')}</span>
-        <h2 data-i18n="pf_h2">{pt('pf_h2')}</h2>
-        <p data-i18n="pf_p">{pt('pf_p')}</p>
-      </div>
-      <div class="pf-grid rail {gcls(6)}">{proof}</div>
-      <div class="sec-cta"><a class="btn btn-secondary" href="/portafolio/" data-i18n="pf_all">{pt('pf_all')}</a></div>
-    </div>
-  </section>
-
-  <!-- ══════ PROCESO ══════ -->
-  <section class="sec sec-alt">
     <div class="wrap">
       <div class="sec-h">
         <span class="eyebrow" data-i18n="ps_eye">{pt('ps_eye')}</span>
@@ -2384,8 +2692,8 @@ def build_promos(projects):
     </div>
   </section>
 
-  <!-- ══════ FAQ ══════ -->
-  <section class="sec">
+  <!-- ══════ 8 · DUDAS ══════ -->
+  <section class="sec sec-alt">
     <div class="wrap">
       <div class="sec-h">
         <span class="eyebrow" data-i18n="faq_eye">{pt('faq_eye')}</span>
@@ -2395,8 +2703,8 @@ def build_promos(projects):
     </div>
   </section>
 
-  <!-- ══════ RESERVA ══════ -->
-  <section class="sec sec-alt" id="reservar">
+  <!-- ══════ 9 · RESERVA ══════ -->
+  <section class="sec" id="reservar">
     <div class="wrap">
       <div class="lp-form-grid">
         <div class="sec-h" style="margin-bottom:0">
@@ -2451,18 +2759,19 @@ def build_promos(projects):
 </div>
 {promo_js()}
 """
-    return base("Landing pages desde $5,000 MXN — iBisne",
-                "Tres niveles de landing page con precio cerrado, entrega por escrito y pago a meses sin intereses. Diseño first mobile, bilingüe e instalable como app.",
+    return base(pt('titulo'),
+                "Landing pages con tu propio agente de ventas: atiende, califica y te entrega solo a los que van en serio. Precio cerrado, entrega por escrito y pago a meses sin intereses.",
                 body, active="", canonical="/promos/landing-pages/", noindex=True)
 
 
-# JS de la promo. Va como constante plana (no f-string) para no tener que duplicar
-# cada llave del codigo. Los tres marcadores __ES__ / __EN__ / __DESC__ los sustituye
-# promo_js() con los diccionarios y el descuento reales.
+# JS de la promo. Va como constante plana (no f-string) para no duplicar cada llave.
+# Los marcadores __ES__ / __EN__ / __DESC__ / __CHAT__ / __VER__ los sustituye promo_js().
 PROMO_JS = """
 (function(){
   var root=document.documentElement;
   var DICT={es:__ES__, en:__EN__};
+  var CHAT=__CHAT__;        // [[rol, claveES], ...] el texto sale del diccionario
+  var VER=__VER__;          // [[estado, umbral], ...] ordenado de mayor a menor
   var D=__DESC__;
   var lang='es';
 
@@ -2471,6 +2780,7 @@ PROMO_JS = """
   // pagina que si esta traducida.
   root.setAttribute('data-i18n-ready','');
 
+  var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function T(k){ return (DICT[lang] && DICT[lang][k]) || (DICT.es[k] || ''); }
   function fmt(n,d){ return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
   function ev(name,params){ try{ if(window.gtag) window.gtag('event',name,params||{}); }catch(e){} }
@@ -2478,7 +2788,7 @@ PROMO_JS = """
   // ---------- idioma ----------
   function setLang(L){
     lang = (L==='en') ? 'en' : 'es';
-    root.setAttribute('lang', lang==='en' ? 'en' : 'es');
+    root.setAttribute('lang', lang);
     document.title=DICT[lang].titulo||document.title;
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var v=DICT[lang][el.getAttribute('data-i18n')];
@@ -2488,8 +2798,9 @@ PROMO_JS = """
       b.setAttribute('aria-pressed', String(b.getAttribute('data-lang')===lang));
     });
     try{ localStorage.setItem('ib_lang', lang); }catch(e){}
-    price();
-    clock();
+    // Lo que pinta el JS no lleva data-i18n: hay que repintarlo a mano o se queda
+    // a medias en espanol. Es el bug mas facil de introducir en esta pagina.
+    price(); clock(); score(); chatRepaint();
   }
   document.querySelectorAll('.lang button').forEach(function(b){
     b.addEventListener('click', function(e){
@@ -2500,7 +2811,6 @@ PROMO_JS = """
   });
 
   // ---------- precios ----------
-  var modoIn=document.querySelectorAll('input[name=lpmodo]');
   var plazoBox=document.getElementById('lpPlazoBox');
   var plazoSel=document.getElementById('lpPlazo');
   function modo(){ var c=document.querySelector('input[name=lpmodo]:checked'); return c?c.value:'contado'; }
@@ -2526,10 +2836,37 @@ PROMO_JS = """
     document.querySelectorAll('.lp-pay').forEach(function(a){
       a.hidden=(a.getAttribute('data-modo')!==m);
     });
+    incLabels();
   }
-  modoIn.forEach(function(r){ r.addEventListener('change',function(){ price(); ev('select_payment_mode',{mode:modo()}); }); });
+  document.querySelectorAll('input[name=lpmodo]').forEach(function(r){
+    r.addEventListener('change',function(){ price(); ev('select_payment_mode',{mode:modo()}); }); });
   if(plazoSel) plazoSel.addEventListener('change',function(){ price(); ev('select_term',{months:plazoSel.value}); });
-  price();
+
+  // ---------- recorte de la lista de incluidos en movil ----------
+  // Tres listas completas apiladas miden ~2.100px a 375px. Se recortan a 4 y se
+  // abren con un boton. En escritorio la lista sale entera y esto no corre.
+  var CUT=3;
+  function incSetup(){
+    if(!window.matchMedia||!window.matchMedia('(max-width:640px)').matches) return;
+    document.querySelectorAll('.lp-card .lp-inc').forEach(function(ul){
+      if(ul.children.length<=CUT+1 || ul.dataset.cut) return;
+      ul.dataset.cut='1';
+      var b=document.createElement('button');
+      b.type='button'; b.className='lp-inc-more'; b.textContent=T('more');
+      b.addEventListener('click',function(){
+        var open=ul.classList.toggle('is-open');
+        b.textContent=open?T('less'):T('more');
+      });
+      ul.parentNode.insertBefore(b, ul.nextSibling);
+    });
+  }
+  function incLabels(){
+    document.querySelectorAll('.lp-inc-more').forEach(function(b){
+      var ul=b.previousElementSibling;
+      b.textContent=(ul&&ul.classList.contains('is-open'))?T('less'):T('more');
+    });
+  }
+  incSetup();
 
   // ---------- cuenta regresiva ----------
   var cbox=document.getElementById('lpCount'), clockEl=document.getElementById('lpClock');
@@ -2539,9 +2876,88 @@ PROMO_JS = """
     var left=end-Date.now();
     if(isNaN(end)||left<=0){ clockEl.textContent=''; return; }
     var d=Math.floor(left/86400000), h=Math.floor(left/3600000)%24;
-    clockEl.textContent=' · '+d+(lang==='en'?'d ':'d ')+h+'h';
+    clockEl.textContent=' · '+d+'d '+h+'h';
   }
-  clock(); setInterval(clock,60000);
+  setInterval(clock,60000);
+
+  // ---------- el agente ----------
+  var chatEl=document.getElementById('lpChat'), timers=[], played=false;
+  function bubble(rol, html, cls){
+    var li=document.createElement('li');
+    li.className=rol+(cls?' '+cls:''); li.innerHTML=html;
+    chatEl.appendChild(li); chatEl.scrollTop=chatEl.scrollHeight;
+    return li;
+  }
+  function leadCard(){
+    var li=document.createElement('li');
+    li.className='lp-chat-lead';
+    li.innerHTML='<b>'+T('chatlead_h')+'</b><span>'+T('chatlead_p')+'</span>';
+    chatEl.appendChild(li); chatEl.scrollTop=chatEl.scrollHeight;
+  }
+  function chatClear(){ timers.forEach(clearTimeout); timers=[]; if(chatEl) chatEl.innerHTML=''; }
+  function chatAll(){ chatClear();
+    CHAT.forEach(function(t){ bubble(t[0], T(t[1])); }); leadCard(); }
+  function chatPlay(){
+    if(!chatEl) return;
+    chatClear();
+    // Sin movimiento el hilo se pinta entero de golpe: nunca vacio.
+    if(RM){ chatAll(); return; }
+    var t=280;
+    CHAT.forEach(function(turno){
+      var rol=turno[0], key=turno[1];
+      if(rol==='bot'){
+        timers.push(setTimeout(function(){
+          var b=bubble('bot','<span class="lp-typing"><i></i><i></i><i></i></span>','is-typing');
+          var wait=Math.min(1400, 620+T(key).length*7);
+          timers.push(setTimeout(function(){ b.classList.remove('is-typing'); b.innerHTML=T(key);
+            chatEl.scrollTop=chatEl.scrollHeight; }, wait));
+        }, t));
+        t += 340 + Math.min(1400, 620+T(key).length*7);
+      } else {
+        timers.push(setTimeout(function(){ bubble('me', T(key)); }, t));
+        t += 820;
+      }
+    });
+    timers.push(setTimeout(leadCard, t+240));
+  }
+  function chatRepaint(){
+    if(!chatEl || !played) return;
+    // Si ya termino de reproducirse, se repinta entero en el idioma nuevo.
+    if(timers.length===0){ chatAll(); } else { chatPlay(); }
+  }
+  if(chatEl && 'IntersectionObserver' in window){
+    var cio=new IntersectionObserver(function(en){
+      en.forEach(function(e){ if(e.isIntersecting){ played=true; chatPlay(); cio.disconnect();
+        ev('agent_demo_view',{}); } });
+    },{threshold:.35});
+    cio.observe(chatEl);
+    // Respaldo. IntersectionObserver no entrega si la pestana esta oculta o no
+    // compone cuadros, y entonces la tarjeta del agente se queda VACIA: es lo peor
+    // que puede pasar en esta seccion, porque es la que vende. A los 10 segundos
+    // se pinta el hilo completo pase lo que pase.
+    setTimeout(function(){ if(!played){ played=true; chatAll(); } }, 10000);
+  } else if(chatEl){ played=true; chatAll(); }
+  var rp=document.getElementById('lpReplay');
+  if(rp) rp.addEventListener('click',function(){ played=true; chatPlay(); ev('agent_demo_replay',{}); });
+
+  // ---------- el filtro ----------
+  var verd=document.getElementById('lpVerdict');
+  var verH=document.getElementById('lpVerH'), verP=document.getElementById('lpVerP');
+  function score(){
+    if(!verd) return;
+    var total=0;
+    document.querySelectorAll('.lp-fq input:checked').forEach(function(r){
+      total += parseInt(r.getAttribute('data-p'),10)||0; });
+    var est=VER[VER.length-1][0];
+    for(var i=0;i<VER.length;i++){ if(total>=VER[i][1]){ est=VER[i][0]; break; } }
+    verd.setAttribute('data-state', est);
+    var bar=verd.querySelector('.lp-meter i');
+    if(bar) bar.style.setProperty('--p', Math.max(8, total)+'%');
+    if(verH) verH.textContent=T('ver_'+est+'_h');
+    if(verP) verP.textContent=T('ver_'+est+'_p');
+  }
+  document.querySelectorAll('.lp-fq input').forEach(function(r){
+    r.addEventListener('change',function(){ score(); ev('lead_filter_play',{}); }); });
 
   // ---------- eleccion de nivel ----------
   var planSel=document.getElementById('lpPlan');
@@ -2577,8 +2993,7 @@ PROMO_JS = """
     price();
   }
   document.querySelectorAll('.lp-open').forEach(function(b){
-    b.addEventListener('click',function(){ openSheet(b.getAttribute('data-plan')); });
-  });
+    b.addEventListener('click',function(){ openSheet(b.getAttribute('data-plan')); }); });
   var sx=document.getElementById('lpSheetX'); if(sx) sx.addEventListener('click',closeSheet);
   if(sheet) sheet.addEventListener('click',function(e){ if(e.target===sheet) closeSheet(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheet(); });
@@ -2592,39 +3007,26 @@ PROMO_JS = """
   var cp=document.getElementById('lpCopy'), cl=document.getElementById('lpClabe');
   if(cp&&cl) cp.addEventListener('click',function(){
     var txt=cl.textContent.replace(/\\s/g,'');
-    var done=function(){ cp.textContent=T('spei_ok'); setTimeout(function(){ cp.textContent=T('spei_c'); },2000); };
-    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,function(){}); }
+    var ok=function(){ cp.textContent=T('spei_ok'); setTimeout(function(){ cp.textContent=T('spei_c'); },2000); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok,function(){}); }
     else { var t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select();
-           try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(t); }
+           try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(t); }
     ev('copy_clabe',{});
   });
 
-  // ---------- movimiento ----------
-  var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var SD=window.CSS&&CSS.supports&&CSS.supports('(animation-timeline: view()) and (animation-range: entry)');
-  // Sin scroll driven animations (Firefox) el efecto se recrea con IntersectionObserver.
+  // ---------- entradas por scroll ----------
   // Con soporte nativo NO se toca nada: el CSS es mas fluido que cualquier JS.
+  var SD=window.CSS&&CSS.supports&&CSS.supports('(animation-timeline: view()) and (animation-range: entry)');
   if(!SD && !RM && 'IntersectionObserver' in window){
-    var rv=document.querySelectorAll('.lp .sec-h, .lp-card, .lp-step, .lp-faq, .lp-mtile, .lp .pcard, .lp-form, .lp-guar');
+    var rv=document.querySelectorAll('.lp .sec-h, .lp-card, .lp-step, .lp-faq, .lp-agent, .lp-filter, .lp-std .it, .lp-tcol, .lp-pledge, .lp-shots figure, .lp .pcard, .lp-form');
     rv.forEach(function(el){ el.classList.add('rv'); });
     var io=new IntersectionObserver(function(en){
       en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
     },{rootMargin:'0px 0px -8% 0px', threshold:.08});
     rv.forEach(function(el){ io.observe(el); });
-  }
-  // Contadores del bloque de demostracion
-  if(!RM && 'IntersectionObserver' in window){
-    var nio=new IntersectionObserver(function(en){
-      en.forEach(function(e){
-        if(!e.isIntersecting) return;
-        var el=e.target, to=parseInt(el.getAttribute('data-count'),10)||0, t0=null;
-        function step(ts){ if(!t0) t0=ts; var k=Math.min((ts-t0)/900,1);
-          el.textContent=Math.round(to*(1-Math.pow(1-k,3)));
-          if(k<1) requestAnimationFrame(step); }
-        requestAnimationFrame(step); nio.unobserve(el);
-      });
-    },{threshold:.5});
-    document.querySelectorAll('.lp-mnum').forEach(function(el){ nio.observe(el); });
+    // Piso duro: .rv arranca en opacity 0. Si el observer no entrega, la pagina
+    // entera se queda invisible. A los 4 segundos se revela todo, sin excepcion.
+    setTimeout(function(){ rv.forEach(function(el){ el.classList.add('in'); }); }, 4000);
   }
 
   // ---------- formulario ----------
@@ -2655,8 +3057,7 @@ PROMO_JS = """
       .then(function(r){ if(!r.ok) throw new Error('bad'); return r.json(); })
       .then(function(){ form.hidden=true; if(done) done.hidden=false; })
       .catch(function(){
-        // El lead no se pierde por un fallo de red: el aviso trae el enlace ya
-        // escrito, no solo la instruccion de escribir.
+        // El lead no se pierde por un fallo de red: el aviso trae el enlace escrito.
         send.disabled=false;
         box.innerHTML=T('f_err')+' <a href="'+form.getAttribute('data-wa')+
           '" target="_blank" rel="noopener">WhatsApp</a>';
@@ -2665,8 +3066,7 @@ PROMO_JS = """
 
   // ---------- arranque ----------
   // Prioridad: ?lang= gana sobre lo guardado. Es una pagina que se manda por link:
-  // si compartes la version en ingles, tiene que abrir en ingles aunque el visitante
-  // haya elegido espanol en otra visita.
+  // si compartes la version en ingles, tiene que abrir en ingles.
   var saved=null; try{ saved=localStorage.getItem('ib_lang'); }catch(e){}
   var url=new URLSearchParams(location.search).get('lang');
   var nav=(navigator.language||'').toLowerCase().indexOf('es')===0 ? 'es' : 'en';
@@ -2676,9 +3076,9 @@ PROMO_JS = """
 
 
 def promo_dict(i):
-    """Diccionario completo de un idioma (0 es, 1 en): textos sueltos + los que
-    viven dentro de PLANES, PROMO_FAQ y PROMO_PASOS. El JS necesita AMBOS: el
-    precio y el plazo se reescriben en vivo y tienen que poder volver a espanol."""
+    """Diccionario completo de un idioma (0 es, 1 en): textos sueltos + los que viven
+    dentro de las estructuras. El JS necesita AMBOS, porque el precio, el hilo del
+    agente y el veredicto del filtro se reescriben en vivo y tienen que poder volver."""
     d = {k: v[i] for k, v in PT.items()}
     for p in PLANES:
         d[f"nom_{p['slug']}"] = p["nombre"][i]
@@ -2694,14 +3094,46 @@ def promo_dict(i):
     for j, (tt, dd, _icon) in enumerate(PROMO_PASOS):
         d[f"paso_{j}"] = tt[i]
         d[f"pasod_{j}"] = dd[i]
+    for j, turno in enumerate(PROMO_CHAT):
+        d[f"chat_{j}"] = turno[1 + i]
+    d["chatlead_h"] = PROMO_CHAT_LEAD[0][i]
+    d["chatlead_p"] = PROMO_CHAT_LEAD[1][i]
+    for j, (preg, opts) in enumerate(PROMO_FILTRO):
+        d[f"fq_{j}"] = preg[i]
+        for k, op in enumerate(opts):
+            d[f"fqo_{j}_{k}"] = op[i]
+    for est, _um, tit, txt in PROMO_VEREDICTOS:
+        d[f"ver_{est}_h"] = tit[i]
+        d[f"ver_{est}_p"] = txt[i]
+    for j, (_icono, t, ds) in enumerate(PROMO_ESTANDAR):
+        d[f"std_{j}_t"] = t[i]
+        d[f"std_{j}_d"] = ds[i]
+    for j, par in enumerate(PROMO_TU):
+        d[f"tu_{j}"] = par[i]
+    for j, (_icono, es, en) in enumerate(PROMO_NOS):
+        d[f"nos_{j}"] = (es, en)[i]
+    d["pledge_h"] = PROMO_PLEDGE[0][i]
+    d["pledge_p"] = PROMO_PLEDGE[1][i]
+    for j, (_arch, pie) in enumerate(PROMO_SHOTS):
+        d[f"shot_{j}"] = pie[i]
     return d
 
 
 def promo_js():
+    es, en = promo_dict(0), promo_dict(1)
+    if set(es) != set(en):
+        raise AssertionError(
+            "El diccionario ES y el EN no tienen las mismas claves: "
+            f"{set(es) ^ set(en)}")
+    chat = [[rol, f"chat_{j}"] for j, (rol, _e, _n) in enumerate(PROMO_CHAT)]
+    ver = [[est, um] for est, um, _t, _x in PROMO_VEREDICTOS]
     return ("<script>\n" + PROMO_JS
-            .replace("__ES__", json.dumps(promo_dict(0), ensure_ascii=False))
-            .replace("__EN__", json.dumps(promo_dict(1), ensure_ascii=False))
+            .replace("__ES__", json.dumps(es, ensure_ascii=False))
+            .replace("__EN__", json.dumps(en, ensure_ascii=False))
+            .replace("__CHAT__", json.dumps(chat))
+            .replace("__VER__", json.dumps(ver))
             .replace("__DESC__", str(DESC_CONTADO)) + "\n</script>")
+
 
 
 # ---------------------------------------------------------------- LEGAL
