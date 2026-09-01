@@ -215,7 +215,9 @@ section { position:relative; }
 .crumb { display:flex; gap:.5rem; align-items:center; font-size:.8rem; color:var(--faint); margin-bottom:1.4rem; }
 .crumb a { color:var(--faint); }
 .crumb a:hover { color:var(--ink); }
-.crumb .sepp { opacity:.5; }
+/* .5 dejaba el separador en 2:1 en los dos modos. Es decorativo y WCAG no lo
+   exige, pero a .78 se ve y no compite con las migas. */
+.crumb .sepp { opacity:.78; }
 
 .chip { display:inline-flex; align-items:center; padding:.4rem .8rem; border:1px solid var(--line); border-radius:var(--r-pill); font-size:.72rem; font-weight:600; color:var(--muted); letter-spacing:.02em; text-transform:uppercase; }
 .badge { display:inline-flex; align-items:center; font-size:.64rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent); padding:.2rem .55rem; border-radius:var(--r-pill); }
@@ -1389,7 +1391,6 @@ label.opt span { line-height:1.25; }
 }
 
 .lp-plazo { display:flex; align-items:center; flex-wrap:wrap; gap:.6rem; margin-bottom:1.4rem; }
-.lp-plazo label { font-size:.82rem; font-weight:600; color:var(--muted); }
 .lp-plazo > span { font-size:.76rem; color:var(--faint); }
 
 /* ── v46 · los tres controles, un solo componente ──────────────────
@@ -1431,14 +1432,14 @@ label.opt span { line-height:1.25; }
 
 .lp-cplazo .lp-plazo { margin:0; display:flex; align-items:center; gap:.6rem; }
 .lp-cplazo select.input { width:auto; min-width:5.5rem; }
-.lp-cplazo .lp-plazo > span { font-size:.72rem; color:var(--muted); max-width:11ch; line-height:1.2; }
+.lp-cplazo .lp-plazo > span { font-size:.72rem; color:var(--muted); line-height:1.2; }
 /* El plazo solo aplica a meses sin intereses: se atenua en lugar de esconderse,
    porque desaparecer mueve toda la fila y el ojo pierde el sitio. */
 .lp-cplazo { transition:opacity var(--t); }
 .lp-cplazo.is-off { opacity:.32; }
 .lp-cplazo.is-off select { cursor:not-allowed; }
 
-@media (max-width:980px){
+@media (max-width:900px){
   .lp-cgroup { flex:1 1 100%; }
   .lp-cplazo { flex:1 1 100%; }
 }
@@ -1448,7 +1449,7 @@ label.opt span { line-height:1.25; }
    y gana por especificidad: se mostraban los seis paquetes a la vez. */
 .lp-plans[hidden] { display:none; }
 
-@media (max-width:860px){
+@media (max-width:900px){
   .lp-ctrl { gap:.9rem; }
   .lp-cgroup { width:100%; }
   .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr 1fr; }
@@ -1489,7 +1490,6 @@ label.opt span { line-height:1.25; }
    7 · PROCESO
    ============================================================ */
 /* El stepper vive completo en el bloque v51 del final del archivo. */
-.lp-step p { margin-top:.35rem; font-size:.85rem; color:var(--muted); line-height:1.45; }
 
 /* ============================================================
    8 · DUDAS
@@ -1530,7 +1530,6 @@ label.opt span { line-height:1.25; }
   font-size:1.02rem; font-weight:600; color:var(--ink); transition:color var(--t-fast); }
 .lp-faq summary::-webkit-details-marker { display:none; }
 .lp-faq summary:hover { color:var(--link); }
-.lp-faq summary svg.ic { color:var(--faint); flex:none; transition:transform var(--t); }
 .lp-faq[open] summary svg.ic { transform:rotate(180deg); color:var(--ia-2); }
 .lp-faq p { padding:0 0 1.1rem; color:var(--muted); font-size:.94rem; line-height:1.6; max-width:64ch; }
 
@@ -1539,7 +1538,7 @@ label.opt span { line-height:1.25; }
    ============================================================ */
 .lp-form-grid { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr); gap:clamp(1.5rem,4vw,3.5rem); align-items:start; }
 .lp-guar { list-style:none; margin:1.6rem 0 0; padding:0; display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr)); gap:.7rem 1.2rem; }
+  grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem 1.2rem; }
 .lp-guar li { display:flex; gap:.55rem; font-size:.9rem; color:var(--muted); }
 .lp-guar svg.ic { color:var(--ok); margin-top:.25em; flex:none; }
 .lp-form { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); padding:1.6rem; }
@@ -1612,7 +1611,7 @@ label.opt span { line-height:1.25; }
     .lp .sec-h, .lp-step, .lp-faq, .lp-form, .lp-guar, .lp-tcol, .lp-vroute {
       animation:lp-rise auto linear backwards;
       animation-timeline:view(); animation-range:entry 0% entry 62%; }
-    .lp-card, .lp-agent, .lp-filter, .lp-pledge, .lp-std .it, .lp-shots figure, .lp .pcard {
+    .lp-card, .lp-agent, .lp-filter, .lp-pledge, .lp-std .it, .lp-shots figure {
       animation:lp-pop auto linear backwards;
       animation-timeline:view(); animation-range:entry 0% entry 58%; }
   }
@@ -1626,9 +1625,8 @@ label.opt span { line-height:1.25; }
    FIRST MOBILE · el escritorio de arriba se reordena, no se encoge
    ============================================================ */
 @media (max-width:900px) {
-  .lp-split, .lp-filter, .lp-todo, .lp-form-grid { grid-template-columns:1fr; }
+  .lp-split, .lp-filter, .lp-form-grid { grid-template-columns:1fr; }
   .lp-verdict { position:static; }
-  .lp-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .lp-shots { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media (max-width:640px) {
@@ -1652,14 +1650,7 @@ label.opt span { line-height:1.25; }
   .lp-agent-id b { font-size:.82rem; }
 
   .lp-pills { gap:.4rem; }
-  .lp-pill > span { min-height:2.9rem; font-size:.82rem; padding:0 .85rem; }
   .lp-verdict { padding:1.2rem 1.1rem; }
-
-  /* Cards horizontales: icono a la izquierda, texto a la derecha (regla v26). */
-  .lp-std h3, .lp-std p { grid-column:2; }
-  .lp-std p { margin-top:0; }
-  .lp-std h3 { font-size:.94rem; }
-  .lp-std p { font-size:.8rem; }
 
   .lp-pledge { flex-direction:row; padding:1.1rem 1rem; gap:.85rem; }
   .lp-pico { width:2.2rem; height:2.2rem; font-size:1rem; }
@@ -1678,7 +1669,7 @@ label.opt span { line-height:1.25; }
   .lp-card .btn { height:3.1rem; }
 
   .lp-faq summary { font-size:.95rem; min-height:3.3rem; }
-  .lp-form { padding:1.2rem; border-radius:var(--r-lg); }
+  .lp-form { border-radius:var(--r-lg); }
   .lp-sheet { padding:0; align-items:flex-end; }
   .lp-sheet-in { max-width:none; border-radius:var(--r-xl) var(--r-xl) 0 0; border-bottom:0; max-height:92vh; }
 
@@ -1746,13 +1737,13 @@ label.opt span { line-height:1.25; }
   gap:.9rem 1.1rem; align-content:start; }
 .lp-form .fgroup { min-width:0; }
 /* El consentimiento, el envio y el aviso cruzan entero: son la decision, no un
-   dato mas. El ultimo campo tambien, para que la rejilla no deje un hueco. */
+   dato mas. El sexto campo NO: sacarlo a fila completa dejaba cinco en dos
+   columnas, que es impar, y creaba justo el hueco que decia evitar. */
 .lp-form .lp-priv,
 .lp-form button[type="submit"],
-.lp-form .lp-msg,
-/* v51 · el sexto campo iba a fila completa "para que la rejilla no dejara
-   hueco" y era justo lo que lo creaba: cinco en dos columnas es impar. */
-.lp-form textarea.input { min-height:5.5rem; }
+.lp-form .lp-msg { grid-column:1 / -1; }
+/* La casilla mide 16.8px: el objetivo tactil util es la etiqueta entera. */
+.lp-form .lp-priv { min-height:2.75rem; }
 
 @media (max-width:720px){
   .lp-form { grid-template-columns:1fr; }
@@ -1773,9 +1764,9 @@ label.opt span { line-height:1.25; }
   border-left:2px solid var(--ia-2); }
 .lp-tlist-us li { font-size:.95rem; }
 .lp-tlab { color:var(--muted); }
-/* La media query original queda antes que estas reglas, asi que hay que repetir
-   el colapso aqui o a 375px quedan dos columnas de 143px. */
-@media (max-width:760px){
+/* Va aqui, despues de la declaracion de .lp-todo: puesto antes, la redeclaracion
+   sin media query de arriba lo anula por orden. Mismo ancho que sus hermanas. */
+@media (max-width:900px){
   .lp-todo { grid-template-columns:1fr; }
   .lp-todo .lp-tlist { justify-content:flex-start; }
   .lp-tcol-you .lp-tlist li { font-size:1.05rem; }
@@ -1797,16 +1788,6 @@ label.opt span { line-height:1.25; }
 .lp-fold .lp-inc { margin-top:.2rem; }
 .lp-fold .lp-her { margin-top:0; }
 
-/* En escritorio la lista se ve entera: el plegado existe para ahorrar scroll en
-   el telefono, y ahi sobra ancho. El <summary> desaparece y el contenido se
-   muestra siempre, sin depender del atributo open. */
-@media (min-width:641px){
-  /* En escritorio ninguna lista se pliega: el <details> se emite cerrado para
-     que el telefono arranque compacto, y aqui se abre entero por CSS. */
-  .lp-fold > summary { display:none; }
-  .lp-fold > *:not(summary) { display:revert; }
-  .lp-fold:not([open]) > *:not(summary) { display:revert; }
-}
 
 
 /* ── v50 · el estado activo tiene que verse ────────────────────────
@@ -1921,7 +1902,7 @@ label.opt span { line-height:1.25; }
   .lp-flab { font-size:.8rem; }
   .lp-fq { gap:.8rem; }
   .lp-pills { gap:.35rem; }
-  .lp-pill > span { padding:.5rem .8rem; font-size:.82rem; min-height:2.5rem; }
+  .lp-pill > span { padding:.5rem .8rem; font-size:.82rem; min-height:2.75rem; }
   .lp-verdict { padding:1rem; }
   .lp-score b { font-size:2.2rem; }
   .lp-verdict b { font-size:1.15rem; }
@@ -1929,9 +1910,7 @@ label.opt span { line-height:1.25; }
   .lp-vroute { font-size:.78rem; }
 
   /* ── el formulario ── */
-  .lp-form { padding:1.1rem 1rem; gap:.7rem .8rem; }
   .lp-form .fgroup label { font-size:.76rem; margin-bottom:.2rem; }
-  .lp .input { height:2.75rem; font-size:.9rem; }
   .lp-guar { margin-top:1rem; gap:.5rem .8rem; }
   .lp-guar li { font-size:.82rem; }
   .lp-priv { font-size:.78rem; line-height:1.4; }
@@ -1977,13 +1956,9 @@ label.opt span { line-height:1.25; }
 
   /* ── listas y cuerpos ── */
   .lp-tlist { gap:.45rem; }
-  .lp-std .it { padding:1rem .9rem; }
-  .lp-std h3 { font-size:.95rem; }
-  .lp-std p { font-size:.8rem; line-height:1.4; }
   .lp-pledge { padding:1.1rem 1rem; gap:.8rem; }
   .lp-pledge b { font-size:1.15rem; }
   .lp-pledge p { font-size:.88rem; }
-  .lp-pico { width:2.2rem; height:2.2rem; }
 
   /* ── las rejillas de texto a dos columnas ──
      El estandar (8 items) y los pasos (6) caian en una sola columna: 586px y
@@ -1991,10 +1966,6 @@ label.opt span { line-height:1.25; }
      proyecto reserva el rail para colecciones visuales, porque esconder texto
      tras un gesto perjudica lectura y SEO. */
   .lp-std.g { --cols:2; }
-  .lp-std .it { padding:.85rem .75rem; }
-  .lp-std .ico { width:1.9rem; height:1.9rem; margin-bottom:.55rem; font-size:.9rem; }
-  .lp-std h3 { font-size:.86rem; line-height:1.2; }
-  .lp-std p { font-size:.75rem; line-height:1.35; margin-top:.25rem; }
 
 
   /* ── el acordeon de dudas ── */
@@ -2078,7 +2049,7 @@ label.opt span { line-height:1.25; }
   .lp-cplazo select.input { min-height:2.75rem; height:2.75rem; }
   .lp-ctrl .lp-seg b,
   .lp-ctrl .lp-sw b { font-size:.8rem; }
-  .lp-cplazo .lp-plazo > span { font-size:.68rem; max-width:none; }
+  .lp-cplazo .lp-plazo > span { font-size:.68rem; }
 }
 
 /* ── 4 · el badge de la recomendada ya no se monta en la tarjeta de arriba ──
@@ -2171,16 +2142,22 @@ body.has-consent .lp-abar { display:none; }
 /* ── objetivos tactiles que el propio proyecto fija en 44px ── */
 .lp-alt { display:flex; align-items:center; justify-content:center; min-height:2.75rem;
   margin-top:.25rem; }
-@media (max-width:640px){
-  .lp-pill > span { min-height:2.75rem; }
-}
 
 /* ── la tabla de precios no promociona la tarjeta mas barata ──
    gcls(3) añade g-feat-t, cuya regla de ≤900px sube el primer item a fila
    completa para rellenar la cola de una rejilla impar. En una lista ordenada
    por precio eso agranda Lanzamiento por encima de la recomendada. */
+/* NO pasar .lp-std a una columna bajo 480. Una auditoria lo pidio por medida de
+   linea (23 caracteres a 375px, por debajo del piso de 30) y es cierto, pero
+   Eduardo aprobo estas tarjetas en dos columnas de forma explicita: lo unico que
+   pidio cambiar fue el icono, de la izquierda a arriba. A una columna la seccion
+   pasa de 779px a 1.120px, justo el scroll del que se quejo. */
+
 @media (max-width:900px){
   .lp-plans.g-feat-t > :first-child { grid-column:auto; }
+  /* Y una sola columna: con .g en 2 y tres tarjetas, 3 % 2 deja una celda
+     entera vacia justo en el bloque que vende. */
+  .lp-plans.g { --cols:1; }
 }
 
 /* ── el numero del veredicto ── */
@@ -2196,5 +2173,5 @@ body.has-consent .lp-abar { display:none; }
 @media (max-width:640px){
   /* Abandonaba el token --fs-hero por un 2.35rem fijo y el H1 saltaba 4px al
      cruzar el breakpoint. */
-  .lp-hero h1 { font-size:clamp(2.1rem, 8.8vw, 2.75rem); }
+  .lp-hero h1 { font-size:clamp(2.1rem, 8.8vw, 2.6rem); }
 }
