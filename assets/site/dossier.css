@@ -1372,6 +1372,43 @@ label.opt span { line-height:1.25; }
 .lp-plazo select.input { width:auto; min-width:6.5rem; height:2.6rem; }
 .lp-plazo > span { font-size:.76rem; color:var(--faint); }
 
+/* ── v46 · los tres controles en una sola fila ─────────────────────
+   Segmento, forma de pago y plazo son opciones del mismo producto, no tres
+   decisiones sucesivas. Apiladas median 260px de alto antes del primer precio. */
+.lp-ctrl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:.9rem 1.1rem;
+  margin-bottom:1.6rem; }
+/* Los dos grupos de opciones reparten el ancho; el plazo solo pide lo suyo. */
+.lp-cgroup { display:flex; flex-direction:column; gap:.45rem; min-width:0; flex:1 1 16rem; }
+.lp-cplazo { flex:0 1 auto; }
+.lp-clab { font-size:.66rem; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); }
+.lp-ctrl .lp-segs,
+.lp-ctrl .lp-switch { margin:0; max-width:none; }
+.lp-ctrl .lp-segs,
+.lp-ctrl .lp-switch { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.lp-ctrl .lp-seg > span { padding:.6rem .85rem; }
+.lp-ctrl .lp-sw > span { min-height:2.9rem; }
+.lp-cplazo .lp-plazo { margin:0; }
+/* El plazo solo aplica a meses sin intereses. Se atenua en lugar de esconderse:
+   desaparecer mueve toda la fila y el ojo pierde el sitio. */
+.lp-cplazo { transition:opacity var(--t); }
+.lp-cplazo.is-off { opacity:.32; }
+.lp-cplazo.is-off select { cursor:not-allowed; }
+
+/* ── el toggle tiene que ocultar de verdad ─────────────────────────
+   [hidden] aplica display:none, pero la rejilla trae display:grid desde gcls()
+   y gana por especificidad: se mostraban los seis paquetes a la vez. */
+.lp-plans[hidden] { display:none; }
+
+@media (max-width:860px){
+  .lp-ctrl { gap:.9rem; }
+  .lp-cgroup { width:100%; }
+  .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:480px){
+  .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr; }
+}
+
 .lp-plans { align-items:stretch; margin-top:1.2rem; }
 .lp-card { position:relative; display:flex; flex-direction:column; background:var(--surface);
   border:1px solid var(--line); border-radius:var(--r-xl); padding:1.6rem 1.4rem;
@@ -1420,7 +1457,37 @@ label.opt span { line-height:1.25; }
 /* ============================================================
    8 · DUDAS
    ============================================================ */
-.lp-faqs { border-top:1px solid var(--hair); max-width:52rem; }
+/* ── v46 · dudas en dos columnas ───────────────────────────────────
+   Con max-width:52rem las nueve preguntas caian en una tira angosta y a 1440px
+   sobraba la mitad de la pantalla. En dos columnas el bloque mide la mitad de
+   alto. El acordeon sigue siendo exclusivo (name="lpfaq"), asi que al abrir una
+   solo crece SU fila: las demas no se mueven. */
+.lp-faqs { border-top:1px solid var(--hair); max-width:none;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(1.5rem,4vw,3.5rem); align-items:start; }
+/* Nueve es impar: la ultima ocupa la fila entera en vez de dejar un hueco. */
+.lp-faqs > .lp-faq:last-child:nth-child(odd) { grid-column:1 / -1; }
+
+/* El signo + que se vuelve − al abrir. Dos barras, sin icono del sprite: el
+   simbolo tiene que SER un mas y un menos, no un icono que se le parezca. */
+.lp-pm { position:relative; flex:none; width:1.1rem; height:1.1rem; }
+.lp-pm::before, .lp-pm::after { content:""; position:absolute; inset:50% 0 auto 0;
+  height:1.6px; background:var(--muted); border-radius:1px; translate:0 -50%;
+  transition:opacity var(--t), background var(--t); }
+.lp-pm::after { rotate:90deg; }
+.lp-faq[open] .lp-pm::after { opacity:0; }
+.lp-faq[open] .lp-pm::before { background:var(--ia-2); }
+.lp-faq summary:hover .lp-pm::before,
+.lp-faq summary:hover .lp-pm::after { background:var(--ink); }
+
+@media (max-width:820px){
+  .lp-faqs { grid-template-columns:1fr; }
+  .lp-faqs > .lp-faq:last-child:nth-child(odd) { grid-column:auto; }
+}
+@media (prefers-reduced-motion:reduce){
+  .lp-pm::before, .lp-pm::after { transition:none; }
+}
+
 .lp-faq { border-bottom:1px solid var(--hair); }
 .lp-faq summary { display:flex; align-items:center; justify-content:space-between; gap:1rem;
   min-height:3.5rem; padding:1rem 0; cursor:pointer; list-style:none;
@@ -1434,12 +1501,12 @@ label.opt span { line-height:1.25; }
 /* ============================================================
    9 · RESERVA
    ============================================================ */
-.lp-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,3.5rem); align-items:start; }
-.lp-guar { list-style:none; margin:1.6rem 0 0; padding:0; display:flex; flex-direction:column; gap:.6rem; }
+.lp-form-grid { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr); gap:clamp(1.5rem,4vw,3.5rem); align-items:start; }
+.lp-guar { list-style:none; margin:1.6rem 0 0; padding:0; display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr)); gap:.7rem 1.2rem; }
 .lp-guar li { display:flex; gap:.55rem; font-size:.9rem; color:var(--muted); }
 .lp-guar svg.ic { color:var(--ok); margin-top:.25em; flex:none; }
-.lp-form { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); padding:1.6rem;
-  display:flex; flex-direction:column; gap:.85rem; }
+.lp-form { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); padding:1.6rem; }
 .lp-form .fgroup { display:flex; flex-direction:column; gap:.35rem; }
 .lp-form label { font-size:.8rem; font-weight:600; color:var(--muted); }
 .lp-form .btn { width:100%; justify-content:center; margin-top:.3rem; }
@@ -1608,4 +1675,89 @@ label.opt span { line-height:1.25; }
     display:flex; align-items:center; justify-content:center; font-size:1.2rem;
     background:var(--surface-2); border:1px solid var(--line); color:var(--ink); }
   body:has(.lp-abar) .foot { padding-bottom:4.6rem; }
+}
+
+/* ── v46 · hero en dos columnas ────────────────────────────────────
+   Siete bloques apilados median casi una pantalla y media. El mensaje y sus
+   botones se quedan a la izquierda; el precio, el reloj y la prueba se agrupan
+   a la derecha, que es donde el ojo los busca despues de leer el titular. */
+.lp-hero .bgimg { position:absolute; inset:0; z-index:-2; background-size:cover;
+  background-position:center; opacity:.20; pointer-events:none; }
+:root[data-mode="light"] .lp-hero .bgimg { opacity:.10; }
+.lp-hero .wrap { position:relative; }
+.lp-hgrid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(1.6rem,4vw,3.5rem); align-items:end; }
+.lp-hmain { min-width:0; }
+.lp-haside { display:flex; flex-direction:column; align-items:flex-start; gap:.9rem;
+  min-width:0; padding-bottom:.4rem; }
+.lp-haside .lp-anchor,
+.lp-haside .lp-count { margin:0; }
+.lp-haside .lp-trust { margin:0; }
+
+@media (max-width:900px){
+  .lp-hgrid { grid-template-columns:1fr; gap:1.5rem; align-items:start; }
+  .lp-haside { padding-bottom:0; }
+}
+
+/* ── v46 · el filtro: preguntas en fila, veredicto en banda ────────
+   El instrumento se llevaba 1fr sin llenarlo y la pieza que vende vivia
+   comprimida en 21rem. Ahora las tres preguntas reparten el ancho y el
+   veredicto cruza entero debajo, que es donde cae la mirada al terminar. */
+.lp-filter { display:block; }
+.lp-fq { display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(1rem,2.5vw,2rem); margin-bottom:1.6rem; }
+.lp-fgroup { min-width:0; }
+.lp-verdict { position:static; display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,auto); gap:1rem 1.8rem;
+  align-items:center; padding:1.3rem 1.5rem; }
+.lp-verdict .lp-meter { grid-column:1 / -1; }
+.lp-vbody { display:contents; }
+.lp-vmain { min-width:0; }
+.lp-verdict .lp-vroute { margin:0; max-width:32ch; }
+
+@media (max-width:900px){
+  .lp-fq { grid-template-columns:1fr; gap:1.1rem; }
+  .lp-verdict { grid-template-columns:1fr; }
+}
+
+/* ── v46 · el formulario en dos columnas ───────────────────────────
+   Ocho controles a ancho completo eran una tira vertical con la mitad derecha
+   vacia. Los campos cortos van pareados; el consentimiento y el envio se
+   quedan a fila entera porque son la decision, no un dato mas. */
+.lp-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.9rem 1.1rem; align-content:start; }
+.lp-form .fgroup { min-width:0; }
+/* El consentimiento, el envio y el aviso cruzan entero: son la decision, no un
+   dato mas. El ultimo campo tambien, para que la rejilla no deje un hueco. */
+.lp-form .lp-priv,
+.lp-form button[type="submit"],
+.lp-form .lp-msg,
+.lp-form .fgroup:nth-of-type(6) { grid-column:1 / -1; }
+.lp-form textarea.input { min-height:5.5rem; }
+
+@media (max-width:720px){
+  .lp-form { grid-template-columns:1fr; }
+}
+
+/* ── v46 · cero friccion: la asimetria 3-contra-8 ES el argumento ──
+   Tres items contra ocho en columnas de .85fr/1.15fr dejaban un hueco vertical
+   enorme a la izquierda. No se rellena: se invierte el peso tipografico. Lo que
+   pones tu son tres lineas grandes; lo que ponemos nosotros, ocho renglones de
+   lista. La desproporcion se lee de un vistazo, que es lo que vende. */
+.lp-todo { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); align-items:stretch; }
+.lp-tcol { display:flex; flex-direction:column; min-width:0; }
+/* Ambas listas estiran y reparten SU holgura entre sus propias filas: da igual
+   cual crezca manana, el hueco no puede reaparecer. */
+.lp-todo .lp-tlist { flex:1; justify-content:space-evenly; }
+.lp-tcol-you .lp-tlist li { font-size:clamp(1.05rem,.9rem + .6vw,1.35rem);
+  color:var(--ink); font-weight:500; line-height:1.35; padding-left:1.1rem;
+  border-left:2px solid var(--ia-2); }
+.lp-tlist-us li { font-size:.95rem; }
+.lp-tlab { color:var(--muted); }
+/* La media query original queda antes que estas reglas, asi que hay que repetir
+   el colapso aqui o a 375px quedan dos columnas de 143px. */
+@media (max-width:760px){
+  .lp-todo { grid-template-columns:1fr; }
+  .lp-todo .lp-tlist { justify-content:flex-start; }
+  .lp-tcol-you .lp-tlist li { font-size:1.05rem; }
 }

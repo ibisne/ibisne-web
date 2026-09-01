@@ -54,6 +54,7 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 <symbol id="i-ig" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
 <symbol id="i-apple" viewBox="0 0 24 24"><path d="M17.05 12.04c-.03-2.6 2.12-3.84 2.22-3.9-1.21-1.78-3.1-2.02-3.77-2.05-1.6-.16-3.13.94-3.94.94-.82 0-1.72-.92-2.84-.9-1.46.02-2.81.85-3.56 2.16-1.52 2.63-.39 6.53 1.09 8.67.72 1.05 1.58 2.22 2.71 2.18 1.09-.04 1.5-.7 2.82-.7 1.31 0 1.68.7 2.83.68 1.17-.02 1.91-1.06 2.62-2.11.83-1.21 1.17-2.38 1.19-2.44-.03-.01-2.28-.87-2.3-3.46zM14.9 4.6c.6-.73 1.01-1.75.9-2.76-.87.03-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.22z"/></symbol>
 <symbol id="i-android" viewBox="0 0 24 24"><path d="M6 8.5v7.2a1 1 0 0 0 1 1h.9v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h3.6v2.6a1.15 1.15 0 0 0 2.3 0v-2.6h.9a1 1 0 0 0 1-1V8.5H6zM3.6 8.5a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 3.6 8.5zm16.8 0a1.15 1.15 0 0 0-1.15 1.15v4.6a1.15 1.15 0 0 0 2.3 0v-4.6A1.15 1.15 0 0 0 20.4 8.5zM15.5 3.4l1.1-1.1a.35.35 0 0 0-.5-.5l-1.24 1.25A5.6 5.6 0 0 0 12 2.4c-.86 0-1.68.2-2.4.55L8.36 1.7a.35.35 0 1 0-.5.5l1.1 1.1A4.7 4.7 0 0 0 6.3 7.5h11.4a4.7 4.7 0 0 0-2.2-4.1zM9.6 5.8a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44zm4.8 0a.72.72 0 1 1 0-1.44.72.72 0 0 1 0 1.44z"/></symbol>
@@ -385,7 +386,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=45">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=47">
 {GTAG}
 </head>
 <body>
@@ -2003,9 +2004,9 @@ METODOS = [
 
 PLAZOS = [3, 6, 12]          # meses sin intereses ofrecidos
 PLAZO_DEF = 12               # el que sale preseleccionado: la mensualidad mas baja
-DESC_CONTADO = 0.05          # 5% por pago en una sola exhibicion.
-                             # Bajo a proposito: el empuje comercial esta en
-                             # los meses sin intereses, no en el contado.
+DESC_CONTADO = 0.0           # Sin descuento por contado. El precio publicado es
+                             # el precio: mismo numero se pague de una o a meses.
+                             # El switch elige la forma de pago, no cambia el total.
 
 PLANES = [
     {
@@ -2052,7 +2053,7 @@ PLANES = [
         ],
     },
     {
-        "slug": "cinetica", "precio": 30000, "dias": 15, "destacado": False, "seg": "landing",
+        "slug": "cinetica", "precio": 28500, "dias": 15, "destacado": False, "seg": "landing",
         "nombre": ("Cinética", "Kinetic"),
         "tag": ("Animada de punta a punta", "Animated end to end"),
         "para": ("Para cuando la página tiene que dejar huella al primer scroll. Esta que lees es de este nivel.",
@@ -2129,7 +2130,7 @@ PLANES_SITIO = [
         ],
     },
     {
-        "slug": "sitio-cinetica", "precio": 50000, "dias": 30, "destacado": False,
+        "slug": "sitio-cinetica", "precio": 47500, "dias": 30, "destacado": False,
         "seg": "sitio",
         "nombre": ("Cinética", "Kinetic"),
         "tag": ("Animado de punta a punta", "Animated end to end"),
@@ -2396,7 +2397,7 @@ PT = {
     "sw_one":   ("Una sola exhibición", "Single payment"),
     "sw_msi":   ("Meses sin intereses", "Interest free months"),
     "msi_low":  ("meses sin intereses", "months interest free"),
-    "sw_save":  ("ahorras 10%", "save 10%"),
+    "sw_save":  ("El total, de una sola vez", "The full amount, in one go"),
     "plazo":    ("Plazo", "Term"),
     "cards":    ("Visa y Mastercard participantes", "Participating Visa and Mastercard"),
     "reco":     ("El que más se contrata", "Most chosen"),
@@ -2532,9 +2533,13 @@ def promo_filter():
       <div class="lp-fq">{''.join(grupos)}</div>
       <aside class="lp-verdict" id="lpVerdict" data-state="{v0[0]}" aria-live="polite">
         <div class="lp-meter"><i style="--p:100%"></i></div>
-        <b id="lpVerH">{v0[2][0]}</b>
-        <p id="lpVerP">{v0[3][0]}</p>
-        <div class="lp-vroute">{ic('wa')}<span data-i18n="fl_note">{pt('fl_note')}</span></div>
+        <div class="lp-vbody">
+          <div class="lp-vmain">
+            <b id="lpVerH">{v0[2][0]}</b>
+            <p id="lpVerP">{v0[3][0]}</p>
+          </div>
+          <div class="lp-vroute">{ic('wa')}<span data-i18n="fl_note">{pt('fl_note')}</span></div>
+        </div>
       </aside>
     </div>"""
 
@@ -2645,13 +2650,16 @@ def build_promos(projects):
         for i, (tt, dd, icono) in enumerate(PROMO_PASOS))
     faq = "".join(
         f'<details name="lpfaq" class="lp-faq">'
-        f'<summary><span data-i18n="faq_q{i}">{q[0]}</span>{ic("down")}</summary>'
+        f'<summary><span data-i18n="faq_q{i}">{q[0]}</span>'
+        f'<span class="lp-pm" aria-hidden="true"></span></summary>'
         f'<p data-i18n="faq_a{i}">{a[0]}</p></details>'
         for i, (q, a) in enumerate(PROMO_FAQ))
     opciones = "".join(
-        f'<option value="{p["slug"]}">{p["nombre"][0]} · ${money(p["precio"])}</option>'
-        for p in PLANES)
-    metodos_all = "".join(promo_pay_links(p["slug"]) for p in PLANES)
+        f'<optgroup label="{SEG_NOMBRE[clave][0]}">' + "".join(
+            f'<option value="{p["slug"]}">{p["nombre"][0]} · ${money(p["precio"])}</option>'
+            for p in grupo) + '</optgroup>'
+        for clave, grupo in (('landing', PLANES), ('sitio', PLANES_SITIO)))
+    metodos_all = "".join(promo_pay_links(p["slug"]) for p in TODOS_LOS_PLANES)
     pay_sheet = ""
     if metodos_all or SPEI.get("clabe"):
         pay_sheet = f"""<div class="lp-sheet" id="lpSheet" aria-hidden="true">
@@ -2669,28 +2677,35 @@ def build_promos(projects):
 
   <!-- ══════ 0 · HERO ══════ -->
   <section class="lp-hero">
+    {bg_for('promos')}
     <div class="wrap">
-      <span class="lp-kick"><span class="dot"></span><span data-i18n="kicker">{pt('kicker')}</span></span>
-      <h1><span data-i18n="h1a">{pt('h1a')}</span> <span class="ia" data-i18n="h1b">{pt('h1b')}</span></h1>
-      <p class="lede" data-i18n="lede">{pt('lede')}</p>
-      <div class="lp-acts">
-        <a class="btn btn-primary btn-lg" href="#agente" data-i18n="cta1">{pt('cta1')}</a>
-        <a class="btn btn-secondary btn-lg" href="{wa_link('')}" target="_blank" rel="noopener" data-i18n="cta2">{pt('cta2')}</a>
+      <div class="lp-hgrid">
+        <div class="lp-hmain">
+          <span class="lp-kick"><span class="dot"></span><span data-i18n="kicker">{pt('kicker')}</span></span>
+          <h1><span data-i18n="h1a">{pt('h1a')}</span> <span class="ia" data-i18n="h1b">{pt('h1b')}</span></h1>
+          <p class="lede" data-i18n="lede">{pt('lede')}</p>
+          <div class="lp-acts">
+            <a class="btn btn-primary btn-lg" href="#agente" data-i18n="cta1">{pt('cta1')}</a>
+            <a class="btn btn-secondary btn-lg" href="{wa_link('')}" target="_blank" rel="noopener" data-i18n="cta2">{pt('cta2')}</a>
+          </div>
+        </div>
+        <aside class="lp-haside">
+          <a class="lp-anchor" href="#precios">
+            <span data-i18n="anch_a">{pt('anch_a')}</span> <b>${money(p0['precio'])} MXN</b>
+            <span class="sep">·</span> <span data-i18n="anch_b">{pt('anch_b')}</span>
+            <span class="sep">·</span> <b>{p0['dias']}</b> <span data-i18n="anch_c">{pt('anch_c')}</span>
+            {ic('arwr')}
+          </a>
+          <div class="lp-count" id="lpCount" data-until="{PROMO_VENCE_ISO}">
+            <span data-i18n="vence">{pt('vence')}</span> <b>{PROMO_VENCE}</b><span class="lp-clock" id="lpClock"></span>
+          </div>
+          <ul class="lp-trust">
+            <li>{ic('layers')}<span data-i18n="t1">{pt('t1')}</span></li>
+            <li>{ic('pin')}<span data-i18n="t2">{pt('t2')}</span></li>
+            <li>{ic('zap')}<span data-i18n="t3">{pt('t3')}</span></li>
+          </ul>
+        </aside>
       </div>
-      <a class="lp-anchor" href="#precios">
-        <span data-i18n="anch_a">{pt('anch_a')}</span> <b>${money(p0['precio'])} MXN</b>
-        <span class="sep">·</span> <span data-i18n="anch_b">{pt('anch_b')}</span>
-        <span class="sep">·</span> <b>{p0['dias']}</b> <span data-i18n="anch_c">{pt('anch_c')}</span>
-        {ic('arwr')}
-      </a>
-      <div class="lp-count" id="lpCount" data-until="{PROMO_VENCE_ISO}">
-        <span data-i18n="vence">{pt('vence')}</span> <b>{PROMO_VENCE}</b><span class="lp-clock" id="lpClock"></span>
-      </div>
-      <ul class="lp-trust">
-        <li>{ic('layers')}<span data-i18n="t1">{pt('t1')}</span></li>
-        <li>{ic('pin')}<span data-i18n="t2">{pt('t2')}</span></li>
-        <li>{ic('zap')}<span data-i18n="t3">{pt('t3')}</span></li>
-      </ul>
     </div>
   </section>
 
@@ -2768,23 +2783,31 @@ def build_promos(projects):
         <p data-i18n="pr_p">{pt('pr_p')}</p>
       </div>
 
-      <div class="lp-segs" role="radiogroup" aria-label="{pt('seg_lab')}">{segpills}</div>
-
-      <div class="lp-switch" role="radiogroup" aria-label="{pt('sw_lab')}">
-        <label class="lp-sw is-hero">
-          <input type="radio" name="lpmodo" value="msi" checked>
-          <span><b data-i18n="sw_msi">{pt('sw_msi')}</b><em data-i18n="sw_msi_d">{pt('sw_msi_d')}</em></span>
-        </label>
-        <label class="lp-sw">
-          <input type="radio" name="lpmodo" value="contado">
-          <span><b data-i18n="sw_one">{pt('sw_one')}</b><em data-i18n="sw_save">{pt('sw_save')}</em></span>
-        </label>
-      </div>
-
-      <div class="lp-plazo" id="lpPlazoBox">
-        <label for="lpPlazo" data-i18n="plazo">{pt('plazo')}</label>
-        <select id="lpPlazo" class="input">{plazos}</select>
-        <span data-i18n="cards">{pt('cards')}</span>
+      <div class="lp-ctrl">
+        <div class="lp-cgroup">
+          <span class="lp-clab" data-i18n="seg_lab">{pt('seg_lab')}</span>
+          <div class="lp-segs" role="radiogroup" aria-label="{pt('seg_lab')}">{segpills}</div>
+        </div>
+        <div class="lp-cgroup">
+          <span class="lp-clab" data-i18n="sw_lab">{pt('sw_lab')}</span>
+          <div class="lp-switch" role="radiogroup" aria-label="{pt('sw_lab')}">
+            <label class="lp-sw is-hero">
+              <input type="radio" name="lpmodo" value="msi" checked>
+              <span><b data-i18n="sw_msi">{pt('sw_msi')}</b><em data-i18n="sw_msi_d">{pt('sw_msi_d')}</em></span>
+            </label>
+            <label class="lp-sw">
+              <input type="radio" name="lpmodo" value="contado">
+              <span><b data-i18n="sw_one">{pt('sw_one')}</b><em data-i18n="sw_save">{pt('sw_save')}</em></span>
+            </label>
+          </div>
+        </div>
+        <div class="lp-cgroup lp-cplazo" id="lpPlazoBox">
+          <span class="lp-clab" data-i18n="plazo">{pt('plazo')}</span>
+          <div class="lp-plazo">
+            <select id="lpPlazo" class="input">{plazos}</select>
+            <span data-i18n="cards">{pt('cards')}</span>
+          </div>
+        </div>
       </div>
 
       {planes}
@@ -2943,16 +2966,19 @@ PROMO_JS = """
     r.addEventListener('change',function(){ segApply(); ev('select_segment',{segment:seg()}); }); });
   function price(){
     var m=modo(), pl=plazoSel?parseInt(plazoSel.value,10):12;
-    if(plazoBox) plazoBox.hidden=(m!=='msi');
+    if(plazoBox){ plazoBox.classList.toggle('is-off', m!=='msi');
+      var ps=plazoBox.querySelector('select'); if(ps) ps.disabled=(m!=='msi'); }
     document.querySelectorAll('.lp-card').forEach(function(c){
       var base=parseInt(c.getAttribute('data-base'),10);
       var was=c.querySelector('.lp-was'), now=c.querySelector('.lp-now');
       var per=c.querySelector('.lp-per'), sub=c.querySelector('.lp-sub');
       if(m==='contado'){
-        was.hidden=false; was.innerHTML='<s>$'+fmt(base,0)+'</s>';
+        // Sin descuento por contado: no hay precio anterior que tachar. Ensenar
+        // un tachado con el mismo numero seria simular una rebaja que no existe.
+        was.hidden=true;
         now.textContent='$'+fmt(Math.round(base*(1-D)),0);
         per.textContent='MXN';
-        sub.textContent=T('sw_one');
+        sub.textContent=T('sw_save');
       } else {
         // El empuje comercial esta aqui: la mensualidad manda y el total pasa a la
         // linea de abajo. Sin el tachado, que solo aplica al descuento de contado.
