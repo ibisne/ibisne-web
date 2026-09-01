@@ -47,7 +47,7 @@ fuera del `NAV`): `/empecemos/` (brief de reactivación) y `/promos/landing-page
 sitemap, es una regresión: publicar "$5,000 MXN" abierto al buscador contradice el
 posicionamiento que sostienen `/inversion/` y `/portafolio/`.
 
-### /promos/landing-pages/ (v49)
+### /promos/landing-pages/ (v51)
 
 Pieza de venta en frio con identidad visual propia. Storytelling en 10 bloques:
 hero, **el agente** (demo viva), **el filtro** (demo interactiva), lo hacemos todo,
@@ -93,6 +93,29 @@ para el impaciente. Ocho cosas que hay que saber antes de tocarla:
    si el observer no entrega (pestana oculta, sin composicion de cuadros), el hilo del
    agente se pinta completo a los 10s y las entradas se revelan a los 4s. Sin ese piso,
    la tarjeta que vende se queda vacia y la pagina invisible. Sin librerias (regla #8).
+9. **El pliegue de "que incluye" se emite SIEMPRE cerrado** (`<details class="lp-fold">`,
+   sin `open`) y lo abre el CSS en escritorio, dentro de `@media (min-width:641px)`:
+   `.lp-fold::details-content { content-visibility:visible }` mas `display:revert` como
+   respaldo para motores viejos, y `.lp-fold > .lp-inc { display:flex }` porque `revert`
+   devuelve el `display:block` del UA y se lleva el `gap` por delante. Si alguien borra ese
+   bloque, en escritorio desaparecen **20 de las 32 lineas de valor** de la seccion de
+   precios y no queda ningun control para abrirlas: el `<summary>` va `display:none` ahi.
+   Es la regresion mas cara que ha tenido la pagina y no se ve sin medir.
+10. **La barra de accion cede ante el banner de cookies.** `.lp-abar` (z-index 500) y
+   `.consent` (340) son los dos `fixed` abajo: la barra tapaba "Aceptar" y "Solo
+   esenciales", asi que en telefono nadie podia consentir y, como `GTAG` solo carga con
+   `ib_consent === 'all'`, Analytics no arrancaba nunca. El JS del banner publica
+   `body.has-consent` y el CSS hace `body.has-consent .lp-abar { display:none }`.
+11. **El proceso es un stepper, no una rejilla de tarjetas.** `<ol class="lp-steps">` con
+   `<li class="lp-step">`: numero en circulo, rail que une los circulos (`::before`, que
+   se apaga con `content:none` al final de cada fila) y texto debajo. **Sin icono**: con
+   seis pasos numerados no aporta y roba el ancho del texto. El titulo es `h3` (era `h4`
+   bajo un `h2`, un salto de nivel). El H2 dice **"Seis fases"**, no cuatro.
+12. **Los tres controles de precio son un control segmentado**, un carril con las dos
+   opciones dentro, no cuatro cajas con borde propio. En movil se ocultan los rotulos de
+   grupo (`.lp-clab`) **salvo el del plazo**: un `<select>` que solo dice "12" no se
+   entiende solo. El badge `.lp-reco` pasa a `position:static` con `align-self:flex-start`
+   bajo 900px, o se monta sobre la tarjeta de arriba.
 
 **Decisiones comerciales vigentes** (confirmadas por Eduardo, viven en el copy):
 cambios de **contenido** ilimitados sin costo el primer ano (rediseños se cotizan) ·
@@ -188,7 +211,11 @@ También debe devolver cero. Tres exclusiones, cada una con su motivo:
    Web3) como lista. Eso reconstruye el catálogo de agencia que se mató en v21. Hablar de
    los **3 dominios**.
 5. **CSS solo en `assets/site/dossier.css`**, sobre los tokens de `:root`. Cero colores
-   hardcodeados. Verificar siempre el modo claro (`data-mode="light"`).
+   hardcodeados. Tokens que v51 corrigio por contraste y no hay que revertir: en claro
+   `--ok:#1E7A4C` (el `#5CBE88` daba 2.29:1 sobre blanco en TODO el sitio), `--muted`
+   y `--faint` un punto mas oscuros; en oscuro `--faint:#8A91A0`. Y `--ia-grad-text`,
+   que existe **solo** para superficies con texto encima: el `--ia-grad` normal arranca
+   en `--ia-1`, que en claro da 3.36:1 contra blanco. Verificar siempre el modo claro (`data-mode="light"`).
    Verificarlo **con recarga limpia**, no cambiando `data-mode` en vivo: las transiciones
    de `border-color` devuelven valores a medio interpolar y dan lecturas falsas.
 6. **Rejillas: nunca escribir `grid-template-columns` a mano.** Usar `gcls(n, dense)`

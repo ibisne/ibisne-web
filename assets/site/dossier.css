@@ -5,7 +5,7 @@
    ============================================================ */
 :root {
   --bg:#12151C; --surface:#1B1F29; --surface-2:#232834; --raise:#232834;
-  --ink:#F4F5F7; --muted:#9AA0AE; --faint:#767D8C;
+  --ink:#F4F5F7; --muted:#9AA0AE; --faint:#8A91A0;
   --line:#2C3340; --line-2:#242A36; --hair:#1E222C;
   --accent:#EAEBEF; --accent-hover:#FFFFFF; --accent-text:#DDDFE4;
   --link:#C7CBD4; --accent-soft:#232834; --accent-line:#3A4150; --accent-ink:#191D27;
@@ -27,7 +27,9 @@
 /* ---- modo claro (System D light) ---- */
 :root[data-mode="light"] {
   --bg:#F2F3F6; --surface:#FFFFFF; --surface-2:#F7F8FA; --raise:#FFFFFF;
-  --ink:#191D27; --muted:#5C6373; --faint:#6C7280;
+  /* v51 · --muted daba 4.48:1 dentro del hero (la foto de fondo oscurece --bg)
+     y --faint 4.34:1 sobre --bg. Los dos por debajo del minimo AA. */
+  --ink:#191D27; --muted:#565D6C; --faint:#5F6572;
   --line:#DDDFE4; --line-2:#EAEBEF; --hair:#EFF0F3;
   --accent:#191D27; --accent-hover:#2A3040; --accent-text:#191D27;
   --link:#2A3040; --accent-soft:#EAEBEF; --accent-line:#C2C6CF; --accent-ink:#FFFFFF;
@@ -35,9 +37,18 @@
   --e1:0 1px 2px rgba(20,22,24,.05),0 1px 1px rgba(20,22,24,.04);
   --e2:0 4px 12px -4px rgba(20,22,24,.10),0 2px 4px rgba(20,22,24,.05);
   --e3:0 14px 34px -10px rgba(20,22,24,.16),0 4px 10px rgba(20,22,24,.06);
+  /* --error si tenia contraparte clara; --ok no, y daba 2.29:1 sobre blanco en
+     todo el sitio: los checks de las listas, el punto de "promocion vigente" y
+     el titular "Lead calificado", que es justo el estado que vende. */
+  --ok:#1E7A4C;
 }
 :root[data-mode="light"] .shead .logo,
 :root[data-mode="light"] .foot .logo { filter:invert(1) brightness(.82); }
+
+/* Sin esto, en oscuro el desplegable nativo, la casilla y la barra de scroll
+   salen con el chrome claro del sistema. */
+:root { color-scheme:dark; }
+:root[data-mode="light"] { color-scheme:light; }
 
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
@@ -1118,8 +1129,11 @@ label.opt span { line-height:1.25; }
   --ia-glow:rgba(91,157,255,.28);
   --ia-grad:linear-gradient(100deg, var(--ia-1) 0%, var(--ia-2) 100%);
   --ia-win:#FFC46B;  --ia-win-soft:rgba(255,196,107,.12);
+  /* El gradiente con texto blanco encima arranca en --ia-1. En oscuro da 11.9:1
+     y no hay problema; en claro hay que separarlos, asi que existe este segundo
+     token: relleno decorativo por un lado, superficie con texto por el otro. */
+  --ia-grad-text:var(--ia-grad);
   --edge-fill:var(--surface);
-  --g-gap:1.1rem;
 }
 :root[data-mode="light"] .lp {
   /* En claro, el texto de acento SOLO puede usar --ia-2 (5.7:1 sobre blanco).
@@ -1129,6 +1143,9 @@ label.opt span { line-height:1.25; }
   --ia-line:rgba(44,99,216,.28);
   --ia-glow:rgba(44,99,216,.16);
   --ia-win:#8A5A0C;  --ia-win-soft:rgba(138,90,12,.08);
+  /* Blanco sobre #0E9E86 da 3.36:1 y el CTA, el badge y la pill activa exigen
+     4.5:1. El extremo verde se oscurece SOLO donde hay texto encima. */
+  --ia-grad-text:linear-gradient(100deg,#0A7A68 0%, var(--ia-2) 100%);
 }
 
 /* Escala tipografica propia: sube respecto del resto del sitio para que lea
@@ -1139,7 +1156,10 @@ label.opt span { line-height:1.25; }
 .lp .input { width:100%; height:2.9rem; padding:0 .85rem; background:var(--surface-2); color:var(--ink);
   border:1px solid var(--line); border-radius:var(--r-sm); font-family:var(--sans); font-size:.95rem;
   transition:border-color var(--t-fast), background var(--t-fast); }
-.lp .input:focus-visible { outline:none; border-color:var(--ia-line); background:var(--surface); }
+/* v51 · outline:none dejaba el foco en un tinte de borde de 1.5:1: en los siete
+   campos no se sabia donde estabas. Mismo patron que .lp-pill y .lp-seg. */
+.lp .input:focus-visible { outline:2px solid var(--ia-2); outline-offset:2px;
+  border-color:var(--ia-2); background:var(--surface); }
 .lp select.input { appearance:none; cursor:pointer;
   background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
   background-position:calc(100% - 1.1rem) 1.25rem, calc(100% - .75rem) 1.25rem;
@@ -1169,7 +1189,7 @@ label.opt span { line-height:1.25; }
 .lp-hero h1 { font-size:var(--fs-hero); margin:1.1rem 0 0; max-width:15ch; text-wrap:balance; }
 /* El color plano va ANTES del background a proposito: si el clip no aplica
    (Safari viejo), degrada a azul legible en vez de a texto invisible. */
-.lp-hero h1 .ia { color:var(--ia-2); background:var(--ia-grad);
+.lp-hero h1 .ia { color:var(--ia-2); background:var(--ia-grad-text);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 .lp-hero .lede { margin-top:1.2rem; color:var(--muted); font-size:1.0625rem; max-width:52ch; text-wrap:pretty; }
 .lp-acts { display:flex; flex-wrap:wrap; gap:.8rem; margin-top:1.8rem; }
@@ -1256,17 +1276,13 @@ label.opt span { line-height:1.25; }
 .lp-pill > span:hover { border-color:var(--ia-line); color:var(--ink); }
 .lp-pill input:checked + span { border-color:transparent; color:var(--ia-ink); background:var(--ia-grad); }
 .lp-pill input:focus-visible + span { outline:2px solid var(--ia-2); outline-offset:2px; }
-.lp-verdict { position:sticky; top:6rem; padding:1.4rem 1.3rem; border-radius:var(--r-xl);
+.lp-verdict { position:sticky; padding:1.4rem 1.3rem; border-radius:var(--r-xl);
   background:var(--surface); border:1px solid var(--line); transition:border-color var(--t); }
 .lp-verdict[data-state="ok"] { border-color:transparent; box-shadow:0 20px 60px -30px var(--ia-glow);
   background:linear-gradient(var(--edge-fill),var(--edge-fill)) padding-box, var(--ia-grad) border-box; }
 .lp-meter { height:.4rem; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden; margin-bottom:1.1rem; }
 .lp-meter i { display:block; height:100%; width:var(--p,0%); border-radius:var(--r-pill); background:var(--ia-grad); }
-.lp-verdict[data-state="ok"] .lp-meter i { background:var(--ia-win); }
-.lp-verdict[data-state="warn"] .lp-meter i { background:var(--muted); }
-.lp-verdict[data-state="low"] .lp-meter i { background:var(--faint); }
 .lp-verdict b { display:block; font-family:var(--serif); font-size:1.35rem; font-weight:500; letter-spacing:-.02em; }
-.lp-verdict[data-state="ok"] b { color:var(--ia-win); }
 .lp-verdict p { margin-top:.5rem; color:var(--muted); font-size:.9rem; line-height:1.55; }
 .lp-vroute { display:flex; gap:.55rem; align-items:flex-start; margin-top:1.1rem; padding-top:1rem;
   border-top:1px solid var(--hair); font-size:.8rem; color:var(--faint); line-height:1.5; }
@@ -1374,7 +1390,6 @@ label.opt span { line-height:1.25; }
 
 .lp-plazo { display:flex; align-items:center; flex-wrap:wrap; gap:.6rem; margin-bottom:1.4rem; }
 .lp-plazo label { font-size:.82rem; font-weight:600; color:var(--muted); }
-.lp-plazo select.input { width:auto; min-width:6.5rem; height:2.6rem; }
 .lp-plazo > span { font-size:.76rem; color:var(--faint); }
 
 /* ── v46 · los tres controles, un solo componente ──────────────────
@@ -1427,9 +1442,6 @@ label.opt span { line-height:1.25; }
   .lp-cgroup { flex:1 1 100%; }
   .lp-cplazo { flex:1 1 100%; }
 }
-@media (max-width:480px){
-  .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr; }
-}
 
 /* ── el toggle tiene que ocultar de verdad ─────────────────────────
    [hidden] aplica display:none, pero la rejilla trae display:grid desde gcls()
@@ -1441,11 +1453,9 @@ label.opt span { line-height:1.25; }
   .lp-cgroup { width:100%; }
   .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr 1fr; }
 }
-@media (max-width:480px){
-  .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr; }
-}
 
 .lp-plans { align-items:stretch; margin-top:1.2rem; }
+.lp-plans.g { --g-gap:1.1rem; }
 .lp-card { position:relative; display:flex; flex-direction:column; background:var(--surface);
   border:1px solid var(--line); border-radius:var(--r-xl); padding:1.6rem 1.4rem;
   transition:border-color var(--t), box-shadow var(--t); }
@@ -1473,21 +1483,12 @@ label.opt span { line-height:1.25; }
 .lp-inc { list-style:none; margin:.8rem 0 0; padding:0; display:flex; flex-direction:column; gap:.55rem; }
 .lp-inc li { display:flex; gap:.55rem; font-size:.875rem; color:var(--muted); line-height:1.45; }
 .lp-inc svg.ic { color:var(--ok); margin-top:.28em; flex:none; }
-.lp-inc-more { display:none; }
 .lp-fine { margin-top:1.6rem; font-size:.74rem; line-height:1.6; color:var(--faint); max-width:74ch; }
 
 /* ============================================================
    7 · PROCESO
    ============================================================ */
-.lp-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--hair);
-  border:1px solid var(--hair); border-radius:var(--r-lg); overflow:hidden; }
-.lp-step { position:relative; background:var(--surface); padding:1.5rem 1.2rem; transition:background var(--t); }
-.lp-step:hover { background:var(--raise); }
-.lp-step .n { position:absolute; top:1rem; right:1.1rem; font-size:.72rem; font-weight:700; color:var(--faint); }
-.lp-step .ico { width:2.4rem; height:2.4rem; border-radius:.65rem; background:var(--surface-2);
-  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
-  color:var(--ink); margin-bottom:.9rem; }
-.lp-step h4 { font-size:1.05rem; font-weight:500; }
+/* El stepper vive completo en el bloque v51 del final del archivo. */
 .lp-step p { margin-top:.35rem; font-size:.85rem; color:var(--muted); line-height:1.45; }
 
 /* ============================================================
@@ -1655,8 +1656,6 @@ label.opt span { line-height:1.25; }
   .lp-verdict { padding:1.2rem 1.1rem; }
 
   /* Cards horizontales: icono a la izquierda, texto a la derecha (regla v26). */
-  .lp-std .it { display:grid; grid-template-columns:2.1rem 1fr; gap:.25rem .85rem; align-items:start; padding:1rem 1.1rem; }
-  .lp-std .ico { width:2.1rem; height:2.1rem; margin-bottom:0; font-size:.95rem; grid-row:1 / span 2; }
   .lp-std h3, .lp-std p { grid-column:2; }
   .lp-std p { margin-top:0; }
   .lp-std h3 { font-size:.94rem; }
@@ -1677,22 +1676,6 @@ label.opt span { line-height:1.25; }
   .lp-card h3 { font-size:1.55rem; }
   .lp-now { font-size:2.2rem; }
   .lp-card .btn { height:3.1rem; }
-  /* Tres listas completas apiladas miden ~2.100px. Se recortan a 4 y se abren
-     con un boton: las cards NO van en rail porque hay que compararlas. */
-  .lp-inc li:nth-child(n+4) { display:none; }
-  .lp-inc.is-open li:nth-child(n+4) { display:flex; }
-  .lp-inc-more { display:inline-flex; align-items:center; min-height:2.75rem; margin-top:.4rem;
-    padding:0; border:0; background:transparent; cursor:pointer; font-family:var(--sans);
-    font-size:.82rem; font-weight:600; color:var(--ia-2); }
-
-  .lp-steps { grid-template-columns:1fr; }
-  .lp-step { display:grid; grid-template-columns:2.4rem 1fr; gap:.25rem .9rem; align-items:start; padding:1rem 1.1rem; }
-  .lp-step .ico { margin-bottom:0; grid-row:1 / span 2; }
-  .lp-step h4, .lp-step p { grid-column:2; }
-  .lp-step p { margin-top:0; }
-  .lp-step h4 { font-size:.98rem; }
-  .lp-step p { font-size:.82rem; }
-  .lp-step .n { top:.85rem; right:.9rem; }
 
   .lp-faq summary { font-size:.95rem; min-height:3.3rem; }
   .lp-form { padding:1.2rem; border-radius:var(--r-lg); }
@@ -1767,7 +1750,8 @@ label.opt span { line-height:1.25; }
 .lp-form .lp-priv,
 .lp-form button[type="submit"],
 .lp-form .lp-msg,
-.lp-form .fgroup:nth-of-type(6) { grid-column:1 / -1; }
+/* v51 · el sexto campo iba a fila completa "para que la rejilla no dejara
+   hueco" y era justo lo que lo creaba: cinco en dos columnas es impar. */
 .lp-form textarea.input { min-height:5.5rem; }
 
 @media (max-width:720px){
@@ -1817,6 +1801,8 @@ label.opt span { line-height:1.25; }
    el telefono, y ahi sobra ancho. El <summary> desaparece y el contenido se
    muestra siempre, sin depender del atributo open. */
 @media (min-width:641px){
+  /* En escritorio ninguna lista se pliega: el <details> se emite cerrado para
+     que el telefono arranque compacto, y aqui se abre entero por CSS. */
   .lp-fold > summary { display:none; }
   .lp-fold > *:not(summary) { display:revert; }
   .lp-fold:not([open]) > *:not(summary) { display:revert; }
@@ -1912,21 +1898,23 @@ label.opt span { line-height:1.25; }
 /* ── v50 · el carrusel dice que se desliza ─────────────────────────
    No estaban encimadas: es un rail de 1.700px dentro de 375px. Lo que
    faltaba era la señal. */
-.lp-shots { position:relative; }
 .lp-shotswrap { position:relative; }
-.lp-shotswrap::after { content:""; position:absolute; top:0; right:0; bottom:.6rem;
-  width:3rem; pointer-events:none;
-  background:linear-gradient(90deg, transparent, var(--bg)); }
-.lp .sec-alt .lp-shotswrap::after { background:linear-gradient(90deg, transparent, var(--surface)); }
+/* Solo bajo 640: por encima .lp-shots es una rejilla estatica y el degradado
+   tapaba el borde de la ultima columna sin nada que desplazar. */
+@media (max-width:640px){
+  .lp-shotswrap::after { content:""; position:absolute; top:0; right:0; bottom:1.25rem;
+    width:2.5rem; pointer-events:none;
+    background:linear-gradient(90deg, transparent, var(--bg)); }
+}
 
 @media (max-width:640px){
   /* ── el agente ── */
   .lp-agent { padding:.9rem; }
   #lpChat { gap:.5rem; }
-  #lpChat > div { font-size:.86rem; line-height:1.4; padding:.6rem .75rem; max-width:88%; }
+  #lpChat > li { font-size:.86rem; line-height:1.4; padding:.6rem .75rem; max-width:88%; }
   .lp-chat-lead { padding:.75rem .8rem; }
   .lp-chat-lead b { font-size:.95rem; }
-  .lp-chat-lead p { font-size:.82rem; }
+  .lp-chat-lead span { font-size:.82rem; }
 
   /* ── el filtro ── */
   .lp-fgroup { gap:.4rem; }
@@ -1992,9 +1980,6 @@ label.opt span { line-height:1.25; }
   .lp-std .it { padding:1rem .9rem; }
   .lp-std h3 { font-size:.95rem; }
   .lp-std p { font-size:.8rem; line-height:1.4; }
-  .lp-step { padding:1.1rem 1rem; }
-  .lp-step h4 { font-size:.98rem; }
-  .lp-step p { font-size:.82rem; line-height:1.4; }
   .lp-pledge { padding:1.1rem 1rem; gap:.8rem; }
   .lp-pledge b { font-size:1.15rem; }
   .lp-pledge p { font-size:.88rem; }
@@ -2005,20 +1990,211 @@ label.opt span { line-height:1.25; }
      561px. En dos columnas son la mitad. NO van en carrusel: la regla 9 del
      proyecto reserva el rail para colecciones visuales, porque esconder texto
      tras un gesto perjudica lectura y SEO. */
-  .lp-std { grid-template-columns:1fr 1fr; }
+  .lp-std.g { --cols:2; }
   .lp-std .it { padding:.85rem .75rem; }
   .lp-std .ico { width:1.9rem; height:1.9rem; margin-bottom:.55rem; font-size:.9rem; }
   .lp-std h3 { font-size:.86rem; line-height:1.2; }
   .lp-std p { font-size:.75rem; line-height:1.35; margin-top:.25rem; }
 
-  .lp-steps { grid-template-columns:1fr 1fr; }
-  .lp-step { padding:.9rem .75rem; }
-  .lp-step .ico { width:1.9rem; height:1.9rem; margin-bottom:.55rem; }
-  .lp-step .n { top:.6rem; right:.7rem; font-size:.66rem; }
-  .lp-step h4 { font-size:.88rem; line-height:1.2; }
-  .lp-step p { font-size:.76rem; line-height:1.35; }
 
   /* ── el acordeon de dudas ── */
   .lp-faq summary { min-height:2.9rem; padding:.75rem 0; font-size:.94rem; }
   .lp-faq p { font-size:.88rem; line-height:1.5; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   v51 · LO QUE EDUARDO SENALO EN SUS CINCO CAPTURAS
+   ══════════════════════════════════════════════════════════════════
+   Va al final del archivo a proposito: estas reglas corrigen a las de v44-v50
+   y con la misma especificidad solo gana la ultima. Moverlo hacia arriba las
+   desactiva en silencio. */
+
+/* ── 1 · el ancla del hero deja de ser un boton partido ─────────────
+   "Desde $5,000 MXN · IVA aparte · 5 dias para entregar →" nunca cupo en una
+   linea a 375px, y una pildora que parte en dos se lee como un boton roto.
+   Deja de ser pildora: es un bloque de dato con tres niveles de jerarquia y
+   una sola caja, que es lo que de verdad hace. */
+.lp-anchor { display:grid; grid-template-columns:1fr auto; align-items:center;
+  gap:.05rem 1rem; flex-wrap:nowrap; margin-top:1.2rem; padding:.85rem 1rem;
+  border:1px solid var(--line); border-radius:var(--r); background:var(--surface);
+  color:var(--muted); transition:border-color var(--t), background var(--t); }
+.lp-anchor:hover { border-color:var(--ia-line); background:var(--raise); color:var(--muted); }
+.lp-anchor-k { grid-column:1; font-size:.66rem; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); }
+.lp-anchor-n { grid-column:1; font-family:var(--serif); font-size:1.5rem; font-weight:500;
+  letter-spacing:-.02em; line-height:1.1; color:var(--ink); font-variant-numeric:tabular-nums; }
+.lp-anchor-m { grid-column:1; font-size:.76rem; line-height:1.35; color:var(--muted); }
+.lp-anchor-m .sep { color:var(--faint); }
+.lp-anchor-go { grid-column:2; grid-row:1 / span 3; display:flex; align-items:center;
+  justify-content:center; width:2.2rem; height:2.2rem; border-radius:50%;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--ia-2);
+  transition:background var(--t), border-color var(--t); }
+.lp-anchor:hover .lp-anchor-go { background:var(--ia-soft); border-color:var(--ia-line); }
+
+/* ── 2 · el estandar: icono arriba y todo cargado a la izquierda ────
+   v44 puso el icono a la izquierda y el texto a la derecha para ahorrar alto.
+   Con la rejilla a dos columnas de v50 la columna de texto cayo a 110px: diez
+   caracteres por linea. Vuelve a apilarse, que es como se lee. */
+@media (max-width:640px){
+  .lp-std .it { display:block; padding:.95rem .85rem; }
+  .lp-std .it .ico { grid-row:auto; width:1.9rem; height:1.9rem; margin:0 0 .6rem; }
+  .lp-std h3, .lp-std p { grid-column:auto; }
+  .lp-std h3 { font-size:.92rem; line-height:1.25; }
+  .lp-std p { margin-top:.3rem; font-size:.79rem; line-height:1.4; }
+}
+
+/* ── 3 · los toggles de precio, mucho mas chicos ────────────────────
+   Eran cuatro cajas de 3.5rem con borde propio y una etiqueta encima de cada
+   grupo: 200px solo para elegir dos cosas. Ahora es un control segmentado —
+   un solo carril con las dos opciones dentro— de 2.75rem, el minimo tactil.
+   El grupo pierde su rotulo en movil: "Landing pages / Sitios web" y "Meses
+   sin intereses / Una sola exhibicion" ya dicen que son. */
+.lp-ctrl .lp-segs,
+.lp-ctrl .lp-switch { padding:.25rem; gap:.25rem; border:1px solid var(--line);
+  border-radius:var(--r-pill); background:var(--surface-2); }
+.lp-ctrl .lp-seg > span,
+.lp-ctrl .lp-sw > span { min-height:3rem; height:3rem; border:0; border-radius:var(--r-pill);
+  background:transparent; padding:.3rem .9rem; align-items:center; text-align:center;
+  justify-content:center; }
+.lp-ctrl .lp-seg > span { align-items:flex-start; text-align:left; }
+.lp-ctrl .lp-seg:hover > span,
+.lp-ctrl .lp-sw:hover > span { background:var(--raise); }
+.lp-ctrl .lp-seg input:checked + span,
+.lp-ctrl .lp-sw input:checked + span { background:var(--accent); border-color:transparent; box-shadow:none; }
+.lp-ctrl .lp-sw.is-hero input:checked + span { background:var(--ia-grad-text); }
+.lp-cplazo select.input { min-height:3rem; height:3rem; border-radius:var(--r-pill); }
+
+@media (max-width:640px){
+  /* Sin rotulos de grupo: 66px recuperados y el control se lee mas ligero. */
+  .lp-ctrl { gap:.55rem; margin-bottom:.9rem; }
+  .lp-ctrl .lp-clab { display:none; }
+  /* El plazo si conserva rotulo: un select que solo dice "12" no se entiende
+     solo. Va inline a la izquierda para no gastar una fila entera. */
+  .lp-cplazo { flex-direction:row; align-items:center; gap:.65rem; flex-wrap:wrap; }
+  .lp-cplazo .lp-clab { display:block; flex:none; }
+  .lp-cgroup { gap:0; }
+  .lp-ctrl .lp-seg > span,
+  .lp-ctrl .lp-sw > span,
+  .lp-cplazo select.input { min-height:2.75rem; height:2.75rem; }
+  .lp-ctrl .lp-seg b,
+  .lp-ctrl .lp-sw b { font-size:.8rem; }
+  .lp-cplazo .lp-plazo > span { font-size:.68rem; max-width:none; }
+}
+
+/* ── 4 · el badge de la recomendada ya no se monta en la tarjeta de arriba ──
+   top:-.7rem contra un gap de .8rem: en movil el badge invadia el borde
+   inferior de la tarjeta anterior. Apilado, el badge entra en el flujo. */
+@media (max-width:900px){
+  /* align-self porque .lp-card es flex column: sin el, "inline-block" se estira
+     a todo el ancho y el badge se lee como una barra, no como una etiqueta. */
+  .lp-reco { position:static; align-self:flex-start; margin-bottom:.7rem; }
+}
+
+/* ── 5 · el proceso son pasos, no tarjetas ─────────────────────────
+   Seis cajas con icono y un numero suelto arriba a la derecha se leian como
+   una rejilla de features, y el numero se montaba sobre el titulo. Ahora es un
+   stepper: circulo numerado, rail que une los circulos, texto debajo. */
+.lp-steps { list-style:none; margin:0; padding:0; display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr)); gap:2.1rem 1.8rem;
+  background:none; border:0; border-radius:0; overflow:visible; }
+.lp-step { position:relative; background:none; padding:0; transition:none; }
+.lp-step:hover { background:none; }
+.lp-step .n { position:relative; z-index:1; display:flex; align-items:center; justify-content:center;
+  width:2.4rem; height:2.4rem; border-radius:50%; margin-bottom:.85rem;
+  background:var(--surface); border:1px solid var(--line);
+  font-size:.88rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;
+  inset:auto; }
+/* El rail sale del circulo hacia el del paso siguiente y muere al final de fila. */
+.lp-step::before { content:""; position:absolute; left:2.4rem; top:1.2rem;
+  width:calc(100% - 2.4rem + 1.8rem); height:1px; background:var(--hair); }
+.lp-step:nth-child(3n)::before, .lp-step:last-child::before { content:none; }
+.lp-step h3 { font-size:1.02rem; font-weight:600; font-family:var(--sans); letter-spacing:-.01em; }
+.lp-step p { margin-top:.35rem; font-size:.85rem; color:var(--muted); line-height:1.45; }
+
+@media (max-width:900px){
+  .lp-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .lp-step:nth-child(3n)::before { content:""; }
+  .lp-step:nth-child(2n)::before, .lp-step:last-child::before { content:none; }
+}
+@media (max-width:640px){
+  /* Una columna y rail vertical continuo: es la forma en la que un telefono
+     lee una secuencia, y baja de 450px a ~330px. */
+  .lp-steps { grid-template-columns:1fr; gap:1.15rem; }
+  .lp-step { padding-left:2.85rem; }
+  .lp-step .n { position:absolute; left:0; top:0; width:2rem; height:2rem;
+    margin-bottom:0; font-size:.78rem; }
+  .lp-step::before { content:""; left:1rem; top:2rem; width:1px;
+    height:calc(100% - 2rem + 1.15rem); }
+  .lp-step:nth-child(2n)::before, .lp-step:nth-child(3n)::before { content:""; }
+  .lp-step:last-child::before { content:none; }
+  .lp-step h3 { font-size:.95rem; line-height:1.25; }
+  .lp-step p { margin-top:.2rem; font-size:.81rem; line-height:1.4; }
+}
+
+/* ── 6 · el formulario, mas compacto ───────────────────────────────
+   Seis campos apilados con rotulo propio median 1.206px. La etiqueta baja a
+   .72rem, el aire entre campos a .55rem y las cuatro garantias pasan a dos
+   columnas. La altura del campo se queda en 44px: es el minimo tactil. */
+@media (max-width:640px){
+  .lp-form { padding:1rem .9rem; gap:.55rem .6rem; }
+  .lp-form .fgroup label { font-size:.72rem; margin-bottom:.15rem; }
+  .lp .input { height:2.75rem; font-size:.9rem; padding:0 .7rem; }
+  .lp-guar { display:grid; grid-template-columns:1fr 1fr; gap:.4rem .7rem; margin-top:.8rem; }
+  .lp-guar li { font-size:.78rem; line-height:1.3; align-items:flex-start; }
+  .lp-priv { font-size:.76rem; line-height:1.35; }
+  .lp-form .btn { margin-top:.15rem; }
+}
+
+/* ══ CRITICO · el pliegue dejaba invisibles dos de los tres planes ══
+   El truco de v50 (`display:revert` sobre los hijos del <details>) funcionaba
+   cuando el navegador ocultaba el contenido con display:none. Chrome, Safari y
+   Firefox ya lo hacen con ::details-content{content-visibility:hidden}, asi que
+   revert no revela nada: en escritorio Lanzamiento y Cinetica mostraban cero
+   lineas de "que incluye" y su <summary> estaba display:none, sin ningun modo
+   de abrirlas. Veinte de las treinta y dos lineas de valor, invisibles. */
+@media (min-width:641px){
+  .lp-fold > summary { display:none; }
+  .lp-fold::details-content { content-visibility:visible; block-size:auto; }
+  .lp-fold > *:not(summary) { display:revert; }
+  /* revert devuelve el display:block del UA al <ul> y se lleva por delante el
+     gap: diez renglones quedaban pegados. */
+  .lp-fold > .lp-inc { display:flex; flex-direction:column; gap:.55rem; }
+}
+
+/* ══ CRITICO · en el telefono no se podia aceptar ni rechazar cookies ══
+   .lp-abar (z-index 500) y el banner (340) estan los dos fijos abajo: la barra
+   tapaba los dos botones. Como GA solo carga con ib_consent === 'all', desde un
+   telefono la analitica no arrancaba nunca y el banner no se iba jamas.
+   El JS ya marca body.has-consent mientras el banner esta visible. */
+body.has-consent .lp-abar { display:none; }
+
+/* ── objetivos tactiles que el propio proyecto fija en 44px ── */
+.lp-alt { display:flex; align-items:center; justify-content:center; min-height:2.75rem;
+  margin-top:.25rem; }
+@media (max-width:640px){
+  .lp-pill > span { min-height:2.75rem; }
+}
+
+/* ── la tabla de precios no promociona la tarjeta mas barata ──
+   gcls(3) añade g-feat-t, cuya regla de ≤900px sube el primer item a fila
+   completa para rellenar la cola de una rejilla impar. En una lista ordenada
+   por precio eso agranda Lanzamiento por encima de la recomendada. */
+@media (max-width:900px){
+  .lp-plans.g-feat-t > :first-child { grid-column:auto; }
+}
+
+/* ── el numero del veredicto ── */
+.lp-verdict .lp-score { grid-column:1 / -1; }
+@media (max-width:640px){
+  /* .lp-verdict b venia despues y ganaba por orden: el 100 salia a 18px, del
+     mismo tamano que su etiqueta, y el efecto se perdia entero. */
+  .lp-verdict .lp-score b { font-size:2.2rem; }
+}
+
+/* ── valores magicos fuera de la escala ── */
+.lp-pm::before, .lp-pm::after { height:.1rem; }
+@media (max-width:640px){
+  /* Abandonaba el token --fs-hero por un 2.35rem fijo y el H1 saltaba 4px al
+     cruzar el breakpoint. */
+  .lp-hero h1 { font-size:clamp(2.1rem, 8.8vw, 2.75rem); }
 }

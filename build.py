@@ -64,7 +64,9 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 </svg>"""
 
 def ic(name):
-    return f'<svg class="ic"><use href="#i-{name}"/></svg>'
+    # Decorativos sin excepcion: cada icono acompana a su texto. Sin aria-hidden
+    # el lector anuncia 104 "imagen" sin nombre y duplica cada linea de lista.
+    return f'<svg class="ic" aria-hidden="true" focusable="false"><use href="#i-{name}"/></svg>'
 
 
 # ---------------------------------------------------------------- layout helpers (v24)
@@ -151,7 +153,7 @@ def header(active=""):
     <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"></a>
     <nav class="nav-lk">{links}</nav>
     <div class="actions">
-      <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+      <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
       <a href="/contacto/" class="btn btn-primary">Hablemos</a>
       <button class="hamb" id="hambBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobnav">{ic('menu')}</button>
     </div>
@@ -166,7 +168,7 @@ def header(active=""):
     <div class="mmenu-foot">
       <a href="/contacto/" class="btn btn-primary mmenu-cta">Hablemos {ic('arw')}</a>
       <div class="mmenu-tools">
-        <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+        <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
         <div class="lang" role="group" aria-label="Idioma">
           <button aria-pressed="true" data-lang="es">ES</button>
           <button aria-pressed="false" data-lang="en">EN</button>
@@ -273,9 +275,15 @@ CONSENT = """<div class="consent" id="consent" hidden>
   var box=document.getElementById('consent'); if(!box) return;
   var v=null; try{ v=localStorage.getItem('ib_consent'); }catch(e){}
   if(!v) box.hidden=false;
+  // El banner y la barra de accion de /promos/ son los dos fixed abajo, y la
+  // barra gana por z-index: en un telefono tapaba "Aceptar" y "Solo esenciales",
+  // asi que nadie podia consentir y Analytics no arrancaba nunca. La bandera la
+  // publica el banner, que es quien sabe si esta en pantalla.
+  function marca(){ document.body.classList.toggle('has-consent', !box.hidden); }
+  marca();
   function set(val){
     try{ localStorage.setItem('ib_consent', val); }catch(e){}
-    box.hidden=true;
+    box.hidden=true; marca();
     if(val==='all' && window.ibLoadGA) window.ibLoadGA();
   }
   document.getElementById('cAll').addEventListener('click', function(){ set('all'); });
@@ -289,7 +297,7 @@ SCRIPTS = """<script>
   // ---- Tema: varios toggles (header + menu movil) ----
   function setMode(m){ root.setAttribute('data-mode',m); try{localStorage.setItem('ib_mode',m);}catch(e){}
     var ref = m==='dark' ? '#i-moon' : '#i-sun';
-    document.querySelectorAll('.theme-toggle').forEach(function(b){ b.innerHTML='<svg class="ic"><use href="'+ref+'"/></svg>'; }); }
+    document.querySelectorAll('.theme-toggle').forEach(function(b){ b.innerHTML='<svg class="ic" aria-hidden="true" focusable="false"><use href="'+ref+'"/></svg>'; }); }
   document.querySelectorAll('.theme-toggle').forEach(function(b){ b.addEventListener('click',function(){ setMode(root.getAttribute('data-mode')==='dark'?'light':'dark'); }); });
   setMode(root.getAttribute('data-mode')||'dark');
   // ---- Idioma (ES/EN, ambos grupos) ----
@@ -313,7 +321,7 @@ SCRIPTS = """<script>
   var isAndroid=/android/i.test(ua), isWin=/windows/i.test(ua), isMac=/macintosh/i.test(ua)&&!isIOS;
   var standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
   var picoId=isIOS||isMac?'i-apple':(isAndroid?'i-android':(isWin?'i-windows':'i-down'));
-  function icoSvg(id){ return '<svg class="ic ic-fill"><use href="#'+id+'"/></svg>'; }
+  function icoSvg(id){ return '<svg class="ic ic-fill" aria-hidden="true" focusable="false"><use href="#'+id+'"/></svg>'; }
   document.querySelectorAll('.pwaico').forEach(function(el){ el.innerHTML=icoSvg(picoId); });
   var mico=document.getElementById('pwaModalIco'); if(mico) mico.innerHTML=icoSvg(picoId);
   function showInstall(v){ pbs.forEach(function(b){ b.hidden=!v; }); }
@@ -386,7 +394,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=53">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=54">
 {GTAG}
 </head>
 <body>
@@ -2434,7 +2442,7 @@ PT = {
 
     # -- proceso · faq · cierre
     "ps_eye":   ("Cómo corre", "How it runs"),
-    "ps_h2":    ("Cuatro pasos y estás en línea.", "Four steps and you are live."),
+    "ps_h2":    ("Seis fases y estás en línea.", "Six phases and you are live."),
     "faq_eye":  ("Antes de que preguntes", "Before you ask"),
     "faq_h2":   ("Las dudas de siempre.", "The usual questions."),
     "fm_eye":   ("Arranquemos", "Let us start"),
@@ -2523,7 +2531,7 @@ def promo_agent():
         </div>
         <span class="lp-demo" data-i18n="ag_demo">{pt('ag_demo')}</span>
       </div>
-      <ol class="lp-chat" id="lpChat" aria-live="polite"></ol>
+      <ol class="lp-chat" id="lpChat" aria-live="polite" tabindex="0" aria-label="Conversación de demostración"></ol>
       <div class="lp-chat-foot">
         <span data-i18n="ag_ph">{pt('ag_ph')}</span>{ic('send')}
       </div>
@@ -2643,7 +2651,7 @@ def promo_card(p):
       <p class="lp-sub">{pt('sw_one')}</p>
       {cta}
       <a class="lp-alt" href="{wa_link(p['nombre'][0])}" target="_blank" rel="noopener" data-i18n="ask">{pt('ask')}</a>
-      <details class="lp-fold"{' open' if p['destacado'] else ''}>
+      <details class="lp-fold">
         <summary><span data-i18n="fold_ver">{pt('fold_ver')}</span>
           <span class="lp-foldn">{len(p['incluye'])}</span>
           <span class="lp-pm" aria-hidden="true"></span></summary>
@@ -2670,9 +2678,10 @@ def build_promos(projects):
         f'<em data-i18n="segd_{clave}">{desc[0]}</em></span></label>'
         for i, (clave, nom, desc) in enumerate(SEGMENTOS))
     pasos = "".join(
-        f'<div class="lp-step"><span class="n">{i + 1}</span><div class="ico">{ic(icono)}</div>'
-        f'<h4 data-i18n="paso_{i}">{tt[0]}</h4><p data-i18n="pasod_{i}">{dd[0]}</p></div>'
-        for i, (tt, dd, icono) in enumerate(PROMO_PASOS))
+        f'<li class="lp-step"><span class="n" aria-hidden="true">{i + 1}</span>'
+        f'<div class="lp-step-b"><h3 data-i18n="paso_{i}">{tt[0]}</h3>'
+        f'<p data-i18n="pasod_{i}">{dd[0]}</p></div></li>'
+        for i, (tt, dd, _ico) in enumerate(PROMO_PASOS))
     faq = "".join(
         f'<details name="lpfaq" class="lp-faq">'
         f'<summary><span data-i18n="faq_q{i}">{q[0]}</span>'
@@ -2716,10 +2725,11 @@ def build_promos(projects):
         </div>
         <aside class="lp-haside">
           <a class="lp-anchor" href="#precios">
-            <span data-i18n="anch_a">{pt('anch_a')}</span> <b>${money(p0['precio'])} MXN</b>
-            <span class="sep">·</span> <span data-i18n="anch_b">{pt('anch_b')}</span>
-            <span class="sep">·</span> <b>{p0['dias']}</b> <span data-i18n="anch_c">{pt('anch_c')}</span>
-            {ic('arwr')}
+            <span class="lp-anchor-k" data-i18n="anch_a">{pt('anch_a')}</span>
+            <b class="lp-anchor-n">${money(p0['precio'])} MXN</b>
+            <span class="lp-anchor-m"><span data-i18n="anch_b">{pt('anch_b')}</span>
+              <span class="sep">·</span> {p0['dias']} <span data-i18n="anch_c">{pt('anch_c')}</span></span>
+            <span class="lp-anchor-go" aria-hidden="true">{ic('arwr')}</span>
           </a>
           <div class="lp-count" id="lpCount" data-until="{PROMO_VENCE_ISO}">
             <span data-i18n="vence">{pt('vence')}</span> <b>{PROMO_VENCE}</b><span class="lp-clock" id="lpClock"></span>
@@ -2848,7 +2858,7 @@ def build_promos(projects):
         <span class="eyebrow" data-i18n="ps_eye">{pt('ps_eye')}</span>
         <h2 data-i18n="ps_h2">{pt('ps_h2')}</h2>
       </div>
-      <div class="lp-steps">{pasos}</div>
+      <ol class="lp-steps">{pasos}</ol>
     </div>
   </section>
 
@@ -2911,10 +2921,10 @@ def build_promos(projects):
 
   {pay_sheet}
 
-  <div class="lp-abar" aria-label="Acciones">
+  <nav class="lp-abar" aria-label="Acciones">
     <a class="lp-abar-wa" href="{wa_link('')}" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
     <a class="btn btn-primary grow" href="#precios" data-i18n="ab_cta">{pt('ab_cta')}</a>
-  </div>
+  </nav>
 
 </div>
 {promo_js()}
@@ -3315,7 +3325,7 @@ def build_404():
   <span class="eyebrow">Error 404</span>
   <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Esta página no existe.</h1>
   <p class="lede" style="margin-top:1.2rem">El enlace que seguiste no lleva a ningún lugar, o la página cambió de sitio. Volvamos a terreno firme.</p>
-  <div class="cta" style="margin-top:2rem"><a class="btn btn-primary" href="/">Ir al inicio <svg class="ic"><use href="#i-arw"/></svg></a>
+  <div class="cta" style="margin-top:2rem"><a class="btn btn-primary" href="/">Ir al inicio <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arw"/></svg></a>
   <a class="btn btn-secondary" href="/portafolio/">Ver portafolio</a></div>
 </div></section>
 """
