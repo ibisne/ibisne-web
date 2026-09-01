@@ -386,7 +386,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=49">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=50">
 {GTAG}
 </head>
 <body>
@@ -2169,23 +2169,26 @@ SEGMENTOS = [
 ]
 
 # ---- Guion del agente. (rol, es, en) · rol: "me" (el cliente) | "bot" (el agente).
-# El hilo es de albercas A PROPOSITO: abajo se muestran albercas-vip y albercasopia
-# como trabajo real, y la coherencia entre la demo y la prueba social suma.
+# v49: el hilo pasa de albercas a perfumeria por peticion de Eduardo. La razon que
+# lo ataba a albercas (coincidir con la prueba social de abajo) dejo de aplicar en
+# v45, cuando se retiro la rejilla de fichas. Perfumeria vende por descripcion y
+# matiz, que es donde un agente se luce: pregunta para quien es y acota a dos
+# opciones en vez de listar el catalogo.
 # ⚠️ El hilo va etiquetado como DEMOSTRACION en la interfaz. Es un guion, y presentarlo
 #    como conversacion en vivo seria enganoso.
 PROMO_CHAT = [
-    ("me", "Hola, ¿hacen albercas con calentador?",
-           "Hi, do you build pools with a heater?"),
-    ("bot", "Hola. Sí, es de lo que más nos piden. ¿La alberca ya existe o la vas a construir?",
-            "Hi. Yes, it is one of our most requested. Does the pool already exist or are you building it?"),
-    ("me", "Ya existe, mide 8 por 4.",
-           "It already exists, 8 by 4 meters."),
-    ("bot", "Perfecto. Para ese tamaño va bomba de calor de 90,000 BTU: sube unos 8 grados y aguanta todo el año. ¿Te paso la cotización por WhatsApp o prefieres una llamada?",
-            "Got it. For that size a 90,000 BTU heat pump fits: it raises about 8 degrees and holds all year. Should I send the quote on WhatsApp, or would you rather a call?"),
-    ("me", "WhatsApp está bien.",
-           "WhatsApp works."),
-    ("bot", "Listo, te la mando hoy. ¿A qué número la envío?",
-            "Done, I send it today. Which number should I use?"),
+    ("me", "Hola, busco un perfume para regalo. ¿Qué me recomiendan?",
+           "Hi, I am looking for a perfume as a gift. What do you recommend?"),
+    ("bot", "Hola. Con gusto. ¿Para quién es y qué suele usar? Con eso te doy dos o tres opciones, no veinte.",
+            "Hi. Happy to help. Who is it for and what do they usually wear? With that I give you two or three options, not twenty."),
+    ("me", "Para mi mamá, ella usa algo dulce pero no empalagoso.",
+           "For my mom, she wears something sweet but not cloying."),
+    ("bot", "Entonces te va un ámbar suave con vainilla, no un gourmand. Tengo dos en 100 ml dentro de tu rango y los dos duran toda la jornada. ¿Te los mando por WhatsApp con foto y precio?",
+            "Then a soft amber with vanilla suits her, not a gourmand. I have two in 100 ml within your range and both last all day. Should I send them on WhatsApp with photo and price?"),
+    ("me", "Sí, porfa.",
+           "Yes, please."),
+    ("bot", "Listo, te los mando ahora con la nota de cada uno. ¿A qué número?",
+            "Done, sending both now with a note on each. Which number?"),
 ]
 PROMO_CHAT_LEAD = (
     ("Lead capturado y enviado", "Lead captured and sent"),
@@ -2316,10 +2319,24 @@ PROMO_FAQ = [
 ]
 
 PROMO_PASOS = [
-    (("Eliges nivel", "Pick a tier"), ("Aquí mismo, en dos taps.", "Right here, in two taps."), "cart"),
-    (("Confirmas pago", "Confirm payment"), ("Tarjeta, PayPal o transferencia SPEI.", "Card, PayPal or SPEI transfer."), "coins"),
-    (("Nos das el material", "Send the material"), ("Tu logo y una idea de lo que quieres decir.", "Your logo and an idea of what you want to say."), "cms"),
-    (("Sale en línea", "It goes live"), ("Con tu dominio y tu agente atendiendo.", "On your domain, with your agent answering."), "zap"),
+    (("Brief", "Brief"),
+     ("Tu logo, tu oferta y a quién le hablas. Es lo único que pones.",
+      "Your logo, your offer and who you talk to. That is all you bring."), "cms"),
+    (("Wireframe", "Wireframe"),
+     ("La estructura en gris, sin color: primero se acomoda qué va y en qué orden.",
+      "The structure in grey, no color: first we settle what goes where."), "blocks"),
+    (("Diseño", "Design"),
+     ("Ya con tu marca, tus fotos y los textos de venta escritos.",
+      "Now with your brand, your images and the sales copy written."), "layers"),
+    (("MVP navegable", "Working MVP"),
+     ("Lo abres en tu teléfono y lo usas antes de que exista tu dominio.",
+      "You open it on your phone and use it before your domain exists."), "phone"),
+    (("QA y tu revisión", "QA and your review"),
+     ("Probamos navegadores, velocidad y accesibilidad. Después revisas tú.",
+      "We test browsers, speed and accessibility. Then you review."), "check"),
+    (("Lanzamiento", "Launch"),
+     ("Sale en tu dominio, con tu agente atendiendo desde el primer minuto.",
+      "It ships on your domain, with your agent answering from minute one."), "zap"),
 ]
 
 # Textos sueltos de la pagina. Clave -> (es, en). El HTML sale en espanol y lleva
@@ -2354,7 +2371,7 @@ PT = {
     "ag_p":     ("Lo entrenamos con tu catálogo, tus precios y tu forma de hablar. Corre sobre modelos de lenguaje, lo afinamos nosotros, y contesta en tres segundos a las once de la noche y en domingo.",
                  "We train it on your catalog, your prices and your way of speaking. It runs on language models, we tune it ourselves, and it answers in three seconds at eleven at night and on Sundays."),
     "ag_demo":  ("Demostración", "Demo"),
-    "ag_name":  ("Sofía · asistente de Albercas del Valle", "Sofía · assistant at Albercas del Valle"),
+    "ag_name":  ("Sofía · asistente de Casa Aroma", "Sofía · assistant at Casa Aroma"),
     "ag_live":  ("En línea, contesta en 3 segundos", "Online, answers in 3 seconds"),
     "ag_ph":    ("Escribe tu pregunta", "Type your question"),
     "ag_replay": ("Repetir", "Replay"),

@@ -1479,10 +1479,10 @@ label.opt span { line-height:1.25; }
 /* ============================================================
    7 · PROCESO
    ============================================================ */
-.lp-steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:var(--hair);
+.lp-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--hair);
   border:1px solid var(--hair); border-radius:var(--r-lg); overflow:hidden; }
-.lp-step { position:relative; background:var(--bg); padding:1.5rem 1.2rem; transition:background var(--t); }
-.lp-step:hover { background:var(--surface); }
+.lp-step { position:relative; background:var(--surface); padding:1.5rem 1.2rem; transition:background var(--t); }
+.lp-step:hover { background:var(--raise); }
 .lp-step .n { position:absolute; top:1rem; right:1.1rem; font-size:.72rem; font-weight:700; color:var(--faint); }
 .lp-step .ico { width:2.4rem; height:2.4rem; border-radius:.65rem; background:var(--surface-2);
   border:1px solid var(--line); display:flex; align-items:center; justify-content:center;

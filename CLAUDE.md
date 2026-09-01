@@ -47,11 +47,14 @@ fuera del `NAV`): `/empecemos/` (brief de reactivación) y `/promos/landing-page
 sitemap, es una regresión: publicar "$5,000 MXN" abierto al buscador contradice el
 posicionamiento que sostienen `/inversion/` y `/portafolio/`.
 
-### /promos/landing-pages/ (v44)
+### /promos/landing-pages/ (v49)
 
 Pieza de venta en frio con identidad visual propia. Storytelling en 10 bloques:
 hero, **el agente** (demo viva), **el filtro** (demo interactiva), lo hacemos todo,
-el estandar, trabajos, precios, como corre, dudas y reserva. El precio va en la
+el estandar, trabajos, precios, como corre, dudas y reserva. Desde v49 el bloque
+"como corre" publica las **seis fases reales de produccion** (Brief · Wireframe ·
+Diseno · MVP navegable · QA y revision · Lanzamiento), no los cuatro pasos de compra
+que tenia antes. El precio va en la
 posicion 7, despues de construir deseo, con tres atajos permanentes a `#precios`
 para el impaciente. Ocho cosas que hay que saber antes de tocarla:
 
@@ -74,11 +77,16 @@ para el impaciente. Ocho cosas que hay que saber antes de tocarla:
    del agente y el veredicto del filtro los pinta el JS y **no llevan `data-i18n`**:
    `setLang()` tiene que llamar a `chatRepaint()` y `score()` o se quedan en espanol.
 6. **El hilo del chat va etiquetado como Demostracion.** Es un guion. Presentarlo como
-   conversacion en vivo seria enganoso.
-7. **Prueba social curada en `PROMO_PROOF`, nunca `projects[:N]`.** El corte generico
-   metia `ibroker` (es un CRM) y `digitalife` (fue solo diseno UX/UI, sin desarrollo).
-   Una guarda rompe el build si un slug desaparece o entra a `OCULTOS`, y otra si los
-   diccionarios ES y EN dejan de tener las mismas claves.
+   conversacion en vivo seria enganoso. Desde v49 el mercado del hilo es **perfumeria**,
+   no albercas: la coherencia con la prueba social dejo de aplicar cuando se retiro la
+   rejilla de fichas en v45. Las capturas de AlbercasVIP que siguen en la pagina son
+   trabajo entregado real, no la demo.
+7. **La prueba social son las capturas, no una rejilla de fichas.** `PROMO_PROOF` y
+   `promo_proof()` se retiraron en v45: la rejilla repetia lo que ya muestran las
+   capturas de arriba y mandaba fuera de la pagina justo antes del precio. Quedan
+   `PROMO_SHOTS` (seis capturas reales de caso) y el CTA a `/portafolio/`. Sigue viva
+   la guarda que rompe el build si los diccionarios ES y EN dejan de tener las mismas
+   claves: es la que atrapa un plan nuevo sin traducir.
 8. **El movimiento va en dos carriles**: scroll driven animations nativas bajo `@supports`
    y, donde no hay soporte (Firefox), `.rv`/`.in` por IntersectionObserver. Ninguno corre
    bajo `prefers-reduced-motion`. Ambos carriles tienen un **piso duro por temporizador**:
@@ -86,11 +94,30 @@ para el impaciente. Ocho cosas que hay que saber antes de tocarla:
    agente se pinta completo a los 10s y las entradas se revelan a los 4s. Sin ese piso,
    la tarjeta que vende se queda vacia y la pagina invisible. Sin librerias (regla #8).
 
-**Decisiones comerciales de v44** (confirmadas por Eduardo, viven en el copy):
+**Decisiones comerciales vigentes** (confirmadas por Eduardo, viven en el copy):
 cambios de **contenido** ilimitados sin costo el primer ano (rediseños se cotizan) ·
 el agente de ventas entra **solo en Captacion y Cinetica**, con el primer ano de
-operacion incluido y cuota mensual a partir del segundo · precios sin cambio en
-5.000 / 10.000 / 15.000 MXN.
+operacion incluido y cuota mensual a partir del segundo.
+
+**Precios y forma de pago (v46-v48).** Dos segmentos con un toggle, y los tres mismos
+nombres en ambos porque describen el NIVEL, no el producto (Cinetica es la que lleva
+animacion, sea landing o sitio). Por eso cada tarjeta declara su segmento sobre el
+gancho: sin eso, alternar cambia el precio de "Cinetica" sin decir por que.
+
+| | Lanzamiento | Captacion | Cinetica |
+|---|---|---|---|
+| Landing pages | 5.000 | 15.000 | 28.500 |
+| Sitios web | 10.000 | 25.000 | 47.500 |
+
+⚠️ **`DESC_CONTADO` es 0 y asi se queda salvo orden de Eduardo.** No hay descuento por
+pago de contado: el precio es el mismo de una sola vez o a meses. Los meses sin
+intereses son el modo por omision y llevan el degradado. Si alguien reintroduce un
+descuento, tiene que tocar TAMBIEN el FAQ (`faq_a4`), la letra chica (`fine`) y la
+modalidad que viaja al formulario: en v46 quedaron prometiendo un 10% inexistente en
+esos tres sitios.
+
+⚠️ **La alarma del grep de v30 salta con `25.000`** y no es regresion: ver la seccion
+de reglas duras.
 
 ### Funciones clave de `build.py`
 
