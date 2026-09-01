@@ -386,7 +386,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=48">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=49">
 {GTAG}
 </head>
 <body>
@@ -2091,7 +2091,7 @@ PLANES_SITIO = [
             ("Cinco páginas: inicio, quiénes somos, servicios, portafolio y contacto",
              "Five pages: home, about, services, portfolio and contact"),
             ("Menú de navegación y estructura pensada para crecer",
-             "Navigation menú and structure built to grow"),
+             "Navigation menu and structure built to grow"),
             ("Diseñada en móvil primero, de arriba a abajo", "Designed mobile first, top to bottom"),
             ("Modo claro y modo oscuro", "Light and dark mode"),
             ("Formulario de contacto directo a tu correo", "Contact form straight to your inbox"),
@@ -2121,7 +2121,7 @@ PLANES_SITIO = [
             ("Hasta diez páginas y las que agregues desde el gestor",
              "Up to ten pages, plus the ones you add from the manager"),
             ("Blog o sección de novedades lista para publicar", "Blog or news section ready to publish"),
-            ("Google Analytics 4 con eventos de conversión", "Google Analytics 4 with conversión events"),
+            ("Google Analytics 4 con eventos de conversión", "Google Analytics 4 with conversion events"),
             ("Pixel de Meta y etiqueta de Google Ads", "Meta pixel and Google Ads tag"),
             ("SEO técnico por página y tarjetas para redes", "Per page technical SEO and social cards"),
             ("Bilingüe, español e inglés", "Bilingual, Spanish and English"),
@@ -2256,7 +2256,7 @@ PROMO_ESTANDAR = [
 PROMO_TU = [
     ("Tu logo", "Your logo"),
     ("Una idea de lo que quieres decir", "An idea of what you want to say"),
-    ("Diez minutos para revisar", "Ten minutes to review"),
+    ("Un rato para revisarlo", "A moment to review it"),
 ]
 PROMO_NOS = [
     ("cms", "Escribimos los textos de venta", "We write the sales copy"),
@@ -2299,8 +2299,8 @@ PROMO_FAQ = [
      ("Conectamos el dominio que ya tengas y el primer año de hospedaje va incluido. Si aún no tienes dominio, lo conseguimos al costo.",
       "We connect the domain you already own and the first year of hosting is included. No domain yet, we get it at cost.")),
     (("¿Puedo pagar a meses?", "Can I pay monthly?"),
-     ("Sí. Meses sin intereses a 3, 6 o 12 con tarjetas Visa y Mastercard participantes. Pagando en una sola exhibición son 10% menos.",
-      "Yes. Interest free at 3, 6 or 12 months with participating Visa and Mastercard. Paying in full is 10% less.")),
+     ("Sí. Meses sin intereses a 3, 6 o 12 con tarjetas Visa y Mastercard participantes. También puedes pagarlo de una sola vez: el precio es el mismo.",
+      "Yes. Interest free at 3, 6 or 12 months with participating Visa and Mastercard. You can also pay it in one go: the price is the same.")),
     (("¿Cuándo empiezan?", "When do you start?"),
      ("El mismo día que confirmamos el pago. El plazo de entrega corre en días hábiles desde ahí.",
       "The same day payment clears. The delivery window runs in business days from there.")),
@@ -2318,7 +2318,7 @@ PROMO_FAQ = [
 PROMO_PASOS = [
     (("Eliges nivel", "Pick a tier"), ("Aquí mismo, en dos taps.", "Right here, in two taps."), "cart"),
     (("Confirmas pago", "Confirm payment"), ("Tarjeta, PayPal o transferencia SPEI.", "Card, PayPal or SPEI transfer."), "coins"),
-    (("Nos das el material", "Send the material"), ("Logo y una idea. Diez minutos.", "Logo and an idea. Ten minutes."), "cms"),
+    (("Nos das el material", "Send the material"), ("Tu logo y una idea de lo que quieres decir.", "Your logo and an idea of what you want to say."), "cms"),
     (("Sale en línea", "It goes live"), ("Con tu dominio y tu agente atendiendo.", "On your domain, with your agent answering."), "zap"),
 ]
 
@@ -2410,8 +2410,8 @@ PT = {
     "spei_h":   ("Transferencia SPEI", "SPEI transfer"),
     "spei_c":   ("Copiar CLABE", "Copy CLABE"),
     "spei_ok":  ("Copiada", "Copied"),
-    "fine":     ("Precios en pesos mexicanos, más IVA. Los meses sin intereses aplican con tarjetas de crédito participantes de Visa y Mastercard, sujeto a la aprobación de tu banco. El descuento de 10% aplica únicamente al pago en una sola exhibición. El agente de ventas se incluye en Captación y Cinética, con el primer año de operación cubierto.",
-                 "Prices in Mexican pesos, plus VAT. Interest free months apply with participating Visa and Mastercard credit cards, subject to your bank's approval. The 10% discount applies only to the single payment option. The sales agent is included in Capture and Kinetic, with the first year of operation covered."),
+    "fine":     ("Precios en pesos mexicanos, más IVA. El precio es el mismo se pague de una sola vez o a meses. Los meses sin intereses aplican con tarjetas de crédito participantes de Visa y Mastercard, sujeto a la aprobación de tu banco. El agente de ventas se incluye en Captación y Cinética, con el primer año de operación cubierto.",
+                 "Prices in Mexican pesos, plus VAT. The price is the same whether you pay in one go or in monthly instalments. Interest free months apply with participating Visa and Mastercard credit cards, subject to your bank's approval. The sales agent is included in Capture and Kinetic, with the first year of operation covered."),
 
     # -- proceso · faq · cierre
     "ps_eye":   ("Cómo corre", "How it runs"),
@@ -3202,7 +3202,7 @@ PROMO_JS = """
     d.vertical='landing page';
     d.subtipo=card?card.querySelector('h3').textContent:slug;
     d.modalidad = (m==='contado')
-      ? (lang==='en'?'Single payment, 10% off':'Una exhibición, 10% de descuento')
+      ? (lang==='en'?'Single payment':'Pago en una sola exhibición')
       : (pl+(lang==='en'?' months interest free':' meses sin intereses'));
     d.total = m==='contado' ? String(Math.round(basep*(1-D))) : String(basep);
     d.currency='MXN';
