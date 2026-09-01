@@ -1,11 +1,9 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "static",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["_serve.py", "8787"],
-      "port": 8787
-    }
+    {"name":"static","runtimeExecutable":"python","runtimeArgs":["_serve.py","8787"],"port":8787},
+    {"name":"dossier3","runtimeExecutable":"python","runtimeArgs":["-m","http.server","8899","--directory","C:/Users/ibisn/OneDrive/Documentos/CLAUDE/ibisne-2/design"],"port":8899},
+    {"name":"sitiov2","runtimeExecutable":"python","runtimeArgs":["-m","http.server","8901","--directory","C:/Users/ibisn/OneDrive/Documentos/CLAUDE/ibisne-2/sitio-v2"],"port":8901},
+    {"name":"crm","runtimeExecutable":"python","runtimeArgs":["-m","http.server","8910","--directory","C:/Users/ibisn/OneDrive/Documentos/CLAUDE/ibisne-2/crm"],"port":8910}
   ]
 }

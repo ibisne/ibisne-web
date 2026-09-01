@@ -136,9 +136,17 @@ grep -rniE "socios?\b|socied|25[.,]?000|a tu nombre desde|primer commit" --inclu
   | grep -viE "sociedad mercantil|asociaci"
 ```
 
-También debe devolver cero. Se excluyen **"sociedad mercantil"** y **"asociación"**: son
-términos jurídicos correctos dentro de los legales (la forma societaria de la empresa), no
-el uso comercial que la regla prohíbe. La alarma vigila el copy de venta, no el derecho.
+También debe devolver cero. Tres exclusiones, cada una con su motivo:
+
+- **"sociedad mercantil"** y **"asociación"**: términos jurídicos correctos dentro de los
+  legales (la forma societaria de la empresa), no el uso comercial que la regla prohíbe.
+  La alarma vigila el copy de venta, no el derecho.
+- **`promos/landing-pages`** (desde v45): el `25.000` que esta regla vigilaba era el precio
+  viejo del Sprint de Validación. Desde v45 **$25,000 es el precio legítimo del plan
+  Sitio web · Captación**. Corriendo el grep sin excluir esa ruta saltan dos líneas de esa
+  página y **no son regresión**. Antes de excluir nada más, comprueba que el número no
+  aparezca fuera de ahí:
+  `grep -rniE "25[.,]?000" --include='*.html' . | grep -v "promos/landing-pages"`
 
 ## Reglas duras
 

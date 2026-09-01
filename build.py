@@ -385,7 +385,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=44">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=45">
 {GTAG}
 </head>
 <body>
@@ -1464,7 +1464,7 @@ fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},
 # Quiz de reactivacion para clientes con MVP y cotizacion ya entregados.
 # Bienvenida + 6 pasos + cierre. No usa .phero a proposito: esa clase se fuerza
 # a 100dvh en movil y empujaba el formulario bajo el pliegue.
-PROMO_FECHA = "31 de agosto de 2026"
+PROMO_FECHA = "30 de septiembre de 2026"
 
 # Los 6 incluidos sin costo de las cotizaciones. Todos los iconos ya existen
 # en el SPRITE del sitio: no hace falta agregar ninguno.
@@ -1958,8 +1958,8 @@ def build_empecemos():
 #    Mientras esten vacios NO se dibuja el boton: el CTA cae al formulario de
 #    reserva. Nunca se manda a nadie a un checkout roto.
 
-PROMO_VENCE = "31 de agosto de 2026"
-PROMO_VENCE_ISO = "2026-08-31T23:59:59-06:00"
+PROMO_VENCE = "30 de septiembre de 2026"
+PROMO_VENCE_ISO = "2026-09-30T23:59:59-06:00"
 WA_NUM = "523329575274"
 
 # Links de cobro hospedados. Cero captura de tarjeta en el sitio: sin alcance PCI
@@ -1977,6 +1977,18 @@ PAGOS = {
         "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
         "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
     },
+    "sitio-lanzamiento": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
+    "sitio-captacion": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
+    "sitio-cinetica": {
+        "contado": {"mercadopago": "", "paypal": "", "stripe": ""},
+        "msi":     {"mercadopago": "", "paypal": "", "stripe": ""},
+    },
 }
 
 # Transferencia SPEI. Sin link: son datos bancarios. Si CLABE viene vacia, el
@@ -1991,11 +2003,13 @@ METODOS = [
 
 PLAZOS = [3, 6, 12]          # meses sin intereses ofrecidos
 PLAZO_DEF = 12               # el que sale preseleccionado: la mensualidad mas baja
-DESC_CONTADO = 0.10          # 10% por pago en una sola exhibicion
+DESC_CONTADO = 0.05          # 5% por pago en una sola exhibicion.
+                             # Bajo a proposito: el empuje comercial esta en
+                             # los meses sin intereses, no en el contado.
 
 PLANES = [
     {
-        "slug": "lanzamiento", "precio": 5000, "dias": 5, "destacado": False,
+        "slug": "lanzamiento", "precio": 5000, "dias": 5, "destacado": False, "seg": "landing",
         "nombre": ("Lanzamiento", "Launch"),
         "tag": ("Tu presencia, bien hecha", "Your presence, done right"),
         "para": ("Para validar una oferta rápido y verte serio esta misma semana.",
@@ -2015,7 +2029,7 @@ PLANES = [
         ],
     },
     {
-        "slug": "captacion", "precio": 10000, "dias": 10, "destacado": True,
+        "slug": "captacion", "precio": 15000, "dias": 10, "destacado": True, "seg": "landing",
         "nombre": ("Captación", "Capture"),
         "tag": ("Con tu agente de ventas", "With your sales agent"),
         "para": ("Para que la página trabaje sola: atiende, califica y te pasa al que va en serio.",
@@ -2038,7 +2052,7 @@ PLANES = [
         ],
     },
     {
-        "slug": "cinetica", "precio": 15000, "dias": 15, "destacado": False,
+        "slug": "cinetica", "precio": 30000, "dias": 15, "destacado": False, "seg": "landing",
         "nombre": ("Cinética", "Kinetic"),
         "tag": ("Animada de punta a punta", "Animated end to end"),
         "para": ("Para cuando la página tiene que dejar huella al primer scroll. Esta que lees es de este nivel.",
@@ -2058,6 +2072,99 @@ PLANES = [
             ("Entrega en 15 días hábiles", "Delivered in 15 business days"),
         ],
     },
+]
+
+# ---- Sitios web. Mismos tres nombres que en landing: describen el NIVEL, no el
+# producto. Lo que cambia es el alcance, y por eso cada tarjeta declara su segmento
+# en la etiqueta ("Sitio web · Cinetica") para que el toggle no deje duda.
+PLANES_SITIO = [
+    {
+        "slug": "sitio-lanzamiento", "precio": 10000, "dias": 10, "destacado": False,
+        "seg": "sitio",
+        "nombre": ("Lanzamiento", "Launch"),
+        "tag": ("Tu sitio completo, bien hecho", "Your full site, done right"),
+        "para": ("Para dejar de mandar a la gente a tu Instagram y tener casa propia.",
+                 "To stop sending people to your Instagram and have a home of your own."),
+        "hereda": None,
+        "incluye": [
+            ("Cinco páginas: inicio, quiénes somos, servicios, portafolio y contacto",
+             "Five pages: home, about, services, portfolio and contact"),
+            ("Menú de navegación y estructura pensada para crecer",
+             "Navigation menú and structure built to grow"),
+            ("Diseñada en móvil primero, de arriba a abajo", "Designed mobile first, top to bottom"),
+            ("Modo claro y modo oscuro", "Light and dark mode"),
+            ("Formulario de contacto directo a tu correo", "Contact form straight to your inbox"),
+            ("Botón de WhatsApp con el mensaje ya escrito", "WhatsApp button with the message pre written"),
+            ("Tu dominio conectado y certificado SSL", "Your domain connected, SSL certificate"),
+            ("Hospedaje incluido el primer año", "Hosting included the first year"),
+            ("Carga optimizada, Core Web Vitals en verde", "Optimized load, Core Web Vitals in green"),
+            ("Cambios de contenido sin costo el primer año", "Content changes at no cost the first year"),
+            ("Entrega en 10 días hábiles", "Delivered in 10 business days"),
+        ],
+    },
+    {
+        "slug": "sitio-captacion", "precio": 25000, "dias": 20, "destacado": True,
+        "seg": "sitio",
+        "nombre": ("Captación", "Capture"),
+        "tag": ("Con tu agente y tu CMS", "With your agent and your CMS"),
+        "para": ("Para que el sitio venda solo y tú edites el contenido sin llamarnos.",
+                 "So the site sells on its own and you edit the content without calling us."),
+        "hereda": ("Todo lo de Lanzamiento, más:", "Everything in Launch, plus:"),
+        "incluye": [
+            ("Tu agente de ventas, entrenado con tu catalogo y tu forma de hablar",
+             "Your sales agent, trained on your catalog and your way of speaking"),
+            ("Primer año de operación del agente incluido", "First year of agent operation included"),
+            ("Filtro de leads: pasa el que va en serio", "Lead filter: the serious one gets through"),
+            ("Gestor de contenido: editas textos e imágenes tú mismo",
+             "Content manager: you edit text and images yourself"),
+            ("Hasta diez páginas y las que agregues desde el gestor",
+             "Up to ten pages, plus the ones you add from the manager"),
+            ("Blog o sección de novedades lista para publicar", "Blog or news section ready to publish"),
+            ("Google Analytics 4 con eventos de conversión", "Google Analytics 4 with conversión events"),
+            ("Pixel de Meta y etiqueta de Google Ads", "Meta pixel and Google Ads tag"),
+            ("SEO técnico por página y tarjetas para redes", "Per page technical SEO and social cards"),
+            ("Bilingüe, español e inglés", "Bilingual, Spanish and English"),
+            ("Capacitación grabada para tu equipo", "Recorded training for your team"),
+            ("Entrega en 20 días hábiles", "Delivered in 20 business days"),
+        ],
+    },
+    {
+        "slug": "sitio-cinetica", "precio": 50000, "dias": 30, "destacado": False,
+        "seg": "sitio",
+        "nombre": ("Cinética", "Kinetic"),
+        "tag": ("Animado de punta a punta", "Animated end to end"),
+        "para": ("Para cuando tu sitio tiene que competir de tú a tú con una marca grande.",
+                 "For when your site has to go head to head with a big brand."),
+        "hereda": ("Todo lo de Captación, más:", "Everything in Capture, plus:"),
+        "incluye": [
+            ("Animación ligada al scroll en cada sección", "Scroll linked animation in every section"),
+            ("Transiciones de vista al cambiar de página", "View transitions when moving between pages"),
+            ("Micro interacciones en todo lo accionable", "Micro interactions on everything clickable"),
+            ("Movimiento nativo del navegador, cero librerías, cero peso extra",
+             "Native browser motion, zero libraries, zero extra weight"),
+            ("Páginas ilimitadas y plantillas propias por tipo de contenido",
+             "Unlimited pages and custom templates per content type"),
+            ("Tu agente también atiende por WhatsApp", "Your agent also answers on WhatsApp"),
+            ("Instalable como app, con su icono en el teléfono", "Installable as an app, with its icon on the phone"),
+            ("Buscador interno y filtros en tus listados", "Internal search and filters on your listings"),
+            ("Accesibilidad AA y respeto a reducir movimiento", "AA accessibility, honors reduced motion"),
+            ("Sesión de estrategia de mensaje, 60 minutos", "Message strategy session, 60 minutes"),
+            ("Dos rondas de ajuste después de entregar", "Two rounds of adjustments after delivery"),
+            ("Entrega en 30 días hábiles", "Delivered in 30 business days"),
+        ],
+    },
+]
+
+SEG_NOMBRE = {
+    'landing': ('Landing page', 'Landing page'),
+    'sitio': ('Sitio web', 'Website'),
+}
+
+TODOS_LOS_PLANES = PLANES + PLANES_SITIO
+
+SEGMENTOS = [
+    ("landing", ("Landing pages", "Landing pages"), ("Una página que convierte", "One page that converts")),
+    ("sitio", ("Sitios web", "Websites"), ("Varias páginas y tu propio gestor", "Several pages and your own manager")),
 ]
 
 # ---- Guion del agente. (rol, es, en) · rol: "me" (el cliente) | "bot" (el agente).
@@ -2166,12 +2273,6 @@ PROMO_PLEDGE = (
      "For the first year, changes to copy, images and blocks come at no cost. You ask, we do them."),
 )
 
-# ---- Prueba social CURADA. Orden explicito.
-# NUNCA projects[:N] sobre el orden general: eso metia ibroker (es un CRM, no una
-# landing) y digitalife (fue solo diseno UX/UI, sin desarrollo), y dejaba fuera
-# albercas-vip y thcc, los unicos con set completo de capturas de caso.
-PROMO_PROOF = ("albercas-vip", "thcc", "otomi", "medical-mexicana", "dci",
-               "batauro", "albercasopia", "rancho-contento", "geneticas")
 # Capturas reales de caso. Solo las de 1600x900: las de movil son 575x1100 y
 # reventarian el aspect-ratio de la tira.
 PROMO_SHOTS = [
@@ -2225,6 +2326,10 @@ PROMO_PASOS = [
 # ⚠️ Ningun texto traducible lleva cifras dentro: los numeros se componen aparte
 #    desde PLANES, para que cambiar un precio no deje una traduccion mintiendo.
 PT = {
+    # v45 · segmentos y el empuje a meses sin intereses
+    "seg_lab": ("Tipo de proyecto", "Project type"),
+    "sw_msi_d": ("Sin intereses, tarjetas participantes", "Interest free, participating cards"),
+    "msi_hero": ("al mes", "per month"),
     "titulo":   ("Landing pages con agente de ventas, iBisne",
                  "Landing pages with a sales agent, iBisne"),
     "kicker":   ("Promoción vigente", "Live offer"),
@@ -2474,15 +2579,10 @@ def promo_shots():
     return f'<div class="lp-shots rail">{figs}</div>'
 
 
-def promo_proof(projects):
-    """Prueba social curada. Rompe el build si un slug desaparece o entra a OCULTOS,
-    en vez de imprimir en silencio una rejilla con huecos."""
-    by = {p["slug"]: p for p in projects}
-    faltan = [s for s in PROMO_PROOF if s not in by]
-    if faltan:
-        raise KeyError(f"PROMO_PROOF declara slugs inexistentes u ocultos: {faltan}")
-    cards = "".join(pf_card(by[s]) for s in PROMO_PROOF)
-    return f'<div class="pf-grid rail {gcls(len(PROMO_PROOF))}">{cards}</div>'
+# promo_proof() se retiro en v45: la rejilla de seis fichas repetia lo que ya
+# muestran las capturas de arriba y mandaba fuera de la pagina justo antes del
+# precio. Queda solo el CTA a /portafolio/. Las capturas se conservan: son la
+# prueba visual que sostiene un precio de $30,000.
 
 
 def promo_card(p):
@@ -2505,6 +2605,7 @@ def promo_card(p):
     return f"""<article class="lp-card{' is-reco lp-edge' if p['destacado'] else ''}" data-plan="{p['slug']}" data-base="{base_price}">
       {reco}
       <div class="lp-card-h">
+        <span class="lp-seglab" data-i18n="seg_{p['seg']}">{SEG_NOMBRE[p['seg']][0]}</span>
         <span class="lp-tag" data-i18n="tag_{p['slug']}">{p['tag'][0]}</span>
         <h3 data-i18n="nom_{p['slug']}">{p['nombre'][0]}</h3>
         <p class="lp-para" data-i18n="para_{p['slug']}">{p['para'][0]}</p>
@@ -2527,7 +2628,17 @@ def build_promos(projects):
     plazos = "".join(
         f'<option value="{m}"{" selected" if m == PLAZO_DEF else ""}>{m}</option>'
         for m in PLAZOS)
-    planes = "".join(promo_card(p) for p in PLANES)
+    planes = "".join(
+        f'<div class="lp-plans {gcls(len(grupo))}" data-seg="{clave}"'
+        f'{"" if i == 0 else " hidden"}>'
+        + "".join(promo_card(p) for p in grupo) + '</div>'
+        for i, (clave, grupo) in enumerate((('landing', PLANES), ('sitio', PLANES_SITIO))))
+    segpills = "".join(
+        f'<label class="lp-seg"><input type="radio" name="lpseg" value="{clave}"'
+        f'{" checked" if i == 0 else ""}>'
+        f'<span><b data-i18n="segn_{clave}">{nom[0]}</b>'
+        f'<em data-i18n="segd_{clave}">{desc[0]}</em></span></label>'
+        for i, (clave, nom, desc) in enumerate(SEGMENTOS))
     pasos = "".join(
         f'<div class="lp-step"><span class="n">{i + 1}</span><div class="ico">{ic(icono)}</div>'
         f'<h4 data-i18n="paso_{i}">{tt[0]}</h4><p data-i18n="pasod_{i}">{dd[0]}</p></div>'
@@ -2644,7 +2755,6 @@ def build_promos(projects):
         <p data-i18n="pf_p">{pt('pf_p')}</p>
       </div>
       {promo_shots()}
-      {promo_proof(projects)}
       <div class="sec-cta"><a class="btn btn-secondary" href="/portafolio/" data-i18n="pf_all">{pt('pf_all')}</a></div>
     </div>
   </section>
@@ -2658,24 +2768,26 @@ def build_promos(projects):
         <p data-i18n="pr_p">{pt('pr_p')}</p>
       </div>
 
+      <div class="lp-segs" role="radiogroup" aria-label="{pt('seg_lab')}">{segpills}</div>
+
       <div class="lp-switch" role="radiogroup" aria-label="{pt('sw_lab')}">
-        <label class="lp-sw">
-          <input type="radio" name="lpmodo" value="contado" checked>
-          <span><b data-i18n="sw_one">{pt('sw_one')}</b><em data-i18n="sw_save">{pt('sw_save')}</em></span>
+        <label class="lp-sw is-hero">
+          <input type="radio" name="lpmodo" value="msi" checked>
+          <span><b data-i18n="sw_msi">{pt('sw_msi')}</b><em data-i18n="sw_msi_d">{pt('sw_msi_d')}</em></span>
         </label>
         <label class="lp-sw">
-          <input type="radio" name="lpmodo" value="msi">
-          <span><b data-i18n="sw_msi">{pt('sw_msi')}</b><em data-i18n="cards">{pt('cards')}</em></span>
+          <input type="radio" name="lpmodo" value="contado">
+          <span><b data-i18n="sw_one">{pt('sw_one')}</b><em data-i18n="sw_save">{pt('sw_save')}</em></span>
         </label>
       </div>
 
-      <div class="lp-plazo" id="lpPlazoBox" hidden>
+      <div class="lp-plazo" id="lpPlazoBox">
         <label for="lpPlazo" data-i18n="plazo">{pt('plazo')}</label>
         <select id="lpPlazo" class="input">{plazos}</select>
         <span data-i18n="cards">{pt('cards')}</span>
       </div>
 
-      <div class="lp-plans {gcls(len(PLANES))}">{planes}</div>
+      {planes}
 
       <p class="lp-fine" data-i18n="fine">{pt('fine')}</p>
     </div>
@@ -2813,7 +2925,22 @@ PROMO_JS = """
   // ---------- precios ----------
   var plazoBox=document.getElementById('lpPlazoBox');
   var plazoSel=document.getElementById('lpPlazo');
-  function modo(){ var c=document.querySelector('input[name=lpmodo]:checked'); return c?c.value:'contado'; }
+  function modo(){ var c=document.querySelector('input[name=lpmodo]:checked'); return c?c.value:'msi'; }
+
+  // ---------- segmento: landing pages / sitios web ----------
+  // Los tres nombres se repiten en los dos segmentos porque describen el NIVEL, no
+  // el producto. El toggle es lo unico que cambia el precio de "Cinetica", asi que
+  // tiene que quedar claro cual esta activo.
+  function seg(){ var c=document.querySelector('input[name=lpseg]:checked'); return c?c.value:'landing'; }
+  function segApply(){
+    var v=seg();
+    document.querySelectorAll('[data-seg]').forEach(function(g){
+      g.hidden = (g.getAttribute('data-seg')!==v);
+    });
+    price();
+  }
+  document.querySelectorAll('input[name=lpseg]').forEach(function(r){
+    r.addEventListener('change',function(){ segApply(); ev('select_segment',{segment:seg()}); }); });
   function price(){
     var m=modo(), pl=plazoSel?parseInt(plazoSel.value,10):12;
     if(plazoBox) plazoBox.hidden=(m!=='msi');
@@ -2827,9 +2954,11 @@ PROMO_JS = """
         per.textContent='MXN';
         sub.textContent=T('sw_one');
       } else {
+        // El empuje comercial esta aqui: la mensualidad manda y el total pasa a la
+        // linea de abajo. Sin el tachado, que solo aplica al descuento de contado.
         was.hidden=true;
-        now.textContent='$'+fmt(base/pl,2);
-        per.textContent='MXN /'+(lang==='en'?'mo':'mes');
+        now.textContent='$'+fmt(Math.round(base/pl),0);
+        per.textContent='MXN '+T('msi_hero');
         sub.textContent=pl+' '+T('msi_low')+' · total $'+fmt(base,0);
       }
     });
@@ -2867,6 +2996,7 @@ PROMO_JS = """
     });
   }
   incSetup();
+  segApply();
 
   // ---------- cuenta regresiva ----------
   var cbox=document.getElementById('lpCount'), clockEl=document.getElementById('lpClock');
@@ -3080,7 +3210,12 @@ def promo_dict(i):
     dentro de las estructuras. El JS necesita AMBOS, porque el precio, el hilo del
     agente y el veredicto del filtro se reescriben en vivo y tienen que poder volver."""
     d = {k: v[i] for k, v in PT.items()}
-    for p in PLANES:
+    for clave, nom, desc in SEGMENTOS:
+        d[f"segn_{clave}"] = nom[i]
+        d[f"segd_{clave}"] = desc[i]
+    for clave, nom in SEG_NOMBRE.items():
+        d[f"seg_{clave}"] = nom[i]
+    for p in TODOS_LOS_PLANES:
         d[f"nom_{p['slug']}"] = p["nombre"][i]
         d[f"tag_{p['slug']}"] = p["tag"][i]
         d[f"para_{p['slug']}"] = p["para"][i]

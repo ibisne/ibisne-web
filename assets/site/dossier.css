@@ -1328,6 +1328,45 @@ label.opt span { line-height:1.25; }
 .lp-sw input:checked + span { background:var(--accent); border-color:var(--accent); }
 .lp-sw input:checked + span b, .lp-sw input:checked + span em { color:var(--accent-ink); }
 .lp-sw input:focus-visible + span { outline:2px solid var(--ia-2); outline-offset:2px; }
+/* ── v45 · toggle de segmento ──────────────────────────────────────
+   Es lo primero que decide el visitante y lo unico que cambia el precio de
+   "Cinetica", asi que pesa mas que el switch de pago: dos bloques anchos con
+   su descripcion, no dos pills sueltas. */
+.lp-segs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem;
+  max-width:34rem; margin-bottom:1rem; }
+.lp-seg { position:relative; cursor:pointer; }
+.lp-seg input { position:absolute; opacity:0; width:0; height:0; }
+.lp-seg > span { display:flex; flex-direction:column; gap:.15rem; padding:.85rem 1rem;
+  border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface);
+  transition:border-color var(--t), background var(--t), box-shadow var(--t); }
+.lp-seg b { font-size:.95rem; font-weight:600; color:var(--ink); }
+.lp-seg em { font-style:normal; font-size:.74rem; color:var(--muted); line-height:1.35; }
+.lp-seg input:checked + span { border-color:var(--accent-line); background:var(--raise);
+  box-shadow:0 18px 44px -30px var(--ia-glow); }
+.lp-seg input:checked + span b { color:var(--ink); }
+.lp-seg input:focus-visible + span { outline:2px solid var(--ia-2); outline-offset:2px; }
+.lp-seg:hover > span { border-color:var(--accent-line); }
+
+/* El segmento tambien va en la tarjeta: con los tres nombres repetidos en los dos
+   sets, sin esta linea "Cinetica" cambiaria de precio sin decir por que. */
+.lp-seglab { display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ia-2); margin-bottom:.35rem; }
+
+/* ── el modo de pago: los meses sin intereses van al frente ────────
+   El contado bajo a 5%, asi que el empuje esta aqui. El bloque de MSI ocupa mas
+   y lleva el degradado del sistema cuando esta activo; el contado se queda como
+   la alternativa sobria. */
+.lp-switch { grid-template-columns:1.25fr 1fr; }
+.lp-sw.is-hero input:checked + span { background:var(--ia-grad); border-color:transparent; }
+.lp-sw.is-hero input:checked + span b,
+.lp-sw.is-hero input:checked + span em { color:var(--ia-ink); }
+.lp-sw.is-hero em { font-weight:600; }
+
+@media (max-width:640px){
+  .lp-segs { grid-template-columns:1fr; }
+  .lp-switch { grid-template-columns:1fr; }
+}
+
 .lp-plazo { display:flex; align-items:center; flex-wrap:wrap; gap:.6rem; margin-bottom:1.4rem; }
 .lp-plazo label { font-size:.82rem; font-weight:600; color:var(--muted); }
 .lp-plazo select.input { width:auto; min-width:6.5rem; height:2.6rem; }
@@ -1343,7 +1382,7 @@ label.opt span { line-height:1.25; }
 .lp-reco { position:absolute; top:-.7rem; left:1.4rem; padding:.25rem .7rem; border-radius:var(--r-pill);
   background:var(--ia-grad); color:var(--ia-ink); font-size:.66rem; font-weight:700;
   letter-spacing:.12em; text-transform:uppercase; }
-.lp-tag { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+.lp-tag { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
 .lp-card h3 { font-size:1.75rem; margin-top:.4rem; }
 .lp-para { color:var(--muted); font-size:.9rem; margin-top:.5rem; line-height:1.5; text-wrap:pretty; }
 .lp-price { display:flex; align-items:baseline; flex-wrap:wrap; gap:.5rem; margin-top:1.3rem; }
@@ -1352,7 +1391,7 @@ label.opt span { line-height:1.25; }
 .lp-now { font-family:var(--serif); font-size:2.5rem; font-weight:500; letter-spacing:-.03em;
   color:var(--ink); font-variant-numeric:tabular-nums; line-height:1; }
 .lp-per { font-size:.82rem; font-weight:600; color:var(--muted); }
-.lp-sub { font-size:.78rem; color:var(--faint); margin:.35rem 0 1.2rem; min-height:1.2em; }
+.lp-sub { font-size:.78rem; color:var(--muted); margin:.35rem 0 1.2rem; min-height:1.2em; }
 .lp-card .btn { width:100%; justify-content:center; }
 .lp-alt { display:block; text-align:center; margin-top:.7rem; font-size:.8rem; font-weight:600; color:var(--muted); }
 .lp-alt:hover { color:var(--ink); }
