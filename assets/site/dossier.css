@@ -1796,3 +1796,229 @@ label.opt span { line-height:1.25; }
   .lp-todo .lp-tlist { justify-content:flex-start; }
   .lp-tcol-you .lp-tlist li { font-size:1.05rem; }
 }
+
+/* ── v50 · el plegado de "que incluye" ────────────────────────────
+   Doce renglones por tarjeta median 500px cada una. Plegados, la tarjeta
+   muestra lo que decide la compra (gancho, precio, CTA) y la lista queda a
+   un toque. La recomendada arranca abierta. */
+.lp-fold { margin-top:.9rem; border-top:1px solid var(--hair); }
+.lp-fold > summary { list-style:none; cursor:pointer; display:flex; align-items:center;
+  gap:.5rem; padding:.75rem 0; font-size:.86rem; font-weight:600; color:var(--muted);
+  min-height:2.75rem; transition:color var(--t-fast); }
+.lp-fold > summary::-webkit-details-marker { display:none; }
+.lp-fold > summary:hover { color:var(--ink); }
+.lp-foldn { margin-left:auto; font-size:.72rem; font-weight:700; color:var(--faint);
+  background:var(--surface-2); border-radius:var(--r-pill); padding:.1rem .5rem; }
+.lp-fold .lp-pm { flex:none; }
+.lp-fold .lp-inc { margin-top:.2rem; }
+.lp-fold .lp-her { margin-top:0; }
+
+/* En escritorio la lista se ve entera: el plegado existe para ahorrar scroll en
+   el telefono, y ahi sobra ancho. El <summary> desaparece y el contenido se
+   muestra siempre, sin depender del atributo open. */
+@media (min-width:641px){
+  .lp-fold > summary { display:none; }
+  .lp-fold > *:not(summary) { display:revert; }
+  .lp-fold:not([open]) > *:not(summary) { display:revert; }
+}
+
+
+/* ── v50 · el estado activo tiene que verse ────────────────────────
+   El toggle activo pintaba rgb(35,40,52) y el inactivo rgb(27,31,41): ocho
+   puntos de luminancia. En un telefono, a pulso y con reflejo, eso es
+   invisible. El elegido pasa a --accent con su tinta: 14:1 de diferencia. */
+.lp-ctrl .lp-seg input:checked + span {
+  background:var(--accent); border-color:var(--accent); box-shadow:none; }
+.lp-ctrl .lp-seg input:checked + span b { color:var(--accent-ink); }
+.lp-ctrl .lp-seg input:checked + span em { color:var(--accent-ink); opacity:.72; }
+
+@media (max-width:640px){
+  /* Los tres controles en dos filas, no en tres columnas apiladas: cada par de
+     opciones comparte renglon y la etiqueta va encima, compacta. */
+  .lp-ctrl { gap:.7rem .8rem; margin-bottom:1rem; }
+  .lp-cgroup { gap:.35rem; }
+  .lp-clab { font-size:.6rem; letter-spacing:.1em; }
+  .lp-ctrl .lp-segs,
+  .lp-ctrl .lp-switch { grid-template-columns:1fr 1fr; gap:.4rem; }
+  .lp-ctrl .lp-seg > span,
+  .lp-ctrl .lp-sw > span { min-height:2.9rem; height:2.9rem; padding:.3rem .6rem; }
+  .lp-ctrl .lp-seg b,
+  .lp-ctrl .lp-sw b { font-size:.82rem; }
+  /* La descripcion se va: en 44px de alto no cabe y el nombre ya lo dice todo. */
+  .lp-ctrl .lp-seg em,
+  .lp-ctrl .lp-sw em { display:none; }
+  .lp-cplazo { flex:1 1 100%; }
+  .lp-cplazo .lp-plazo { gap:.5rem; }
+  .lp-cplazo select.input { height:2.9rem; min-height:2.9rem; }
+
+  /* ── las tarjetas ── */
+  .lp-card { padding:1.1rem 1rem; }
+  .lp-card h3 { font-size:1.45rem; margin-top:.25rem; }
+  .lp-para { font-size:.85rem; line-height:1.4; }
+  .lp-price { margin-top:.9rem; }
+  .lp-now { font-size:2.1rem; }
+  .lp-sub { font-size:.74rem; margin:.25rem 0 .9rem; }
+  .lp-inc li { font-size:.85rem; }
+  .lp-plans { gap:.8rem; }
+  .lp-fine { font-size:.72rem; line-height:1.45; }
+}
+
+/* ── v50 · el veredicto se lee de un vistazo ───────────────────────
+   Antes solo cambiaba el ancho de una barra ambar: no se percibia que la
+   calificacion subiera o bajara. Ahora tres señales dicen lo mismo — el
+   numero, el ancho y el color — porque rojo/verde a solas es el par que
+   peor distingue el 8% de hombres con daltonismo. */
+.lp-score { display:flex; align-items:baseline; gap:.45rem; margin-bottom:.6rem; }
+.lp-score b { font-family:var(--serif); font-size:2.6rem; font-weight:500;
+  letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums;
+  transition:color var(--t); }
+.lp-score span { font-size:.74rem; color:var(--muted); }
+.lp-score b[data-state="ok"]   { color:var(--ok); }
+.lp-score b[data-state="warn"] { color:var(--ia-win); }
+.lp-score b[data-state="low"]  { color:var(--error); }
+
+.lp-meter i { transition:width var(--t), background var(--t); }
+.lp-verdict[data-state="ok"]   .lp-meter i { background:var(--ok); }
+.lp-verdict[data-state="warn"] .lp-meter i { background:var(--ia-win); }
+.lp-verdict[data-state="low"]  .lp-meter i { background:var(--error); }
+.lp-verdict[data-state="ok"]   b#lpVerH { color:var(--ok); }
+.lp-verdict[data-state="warn"] b#lpVerH { color:var(--ia-win); }
+.lp-verdict[data-state="low"]  b#lpVerH { color:var(--error); }
+.lp-verdict[data-state="ok"] { box-shadow:0 20px 60px -30px color-mix(in srgb,var(--ok) 45%,transparent); }
+
+/* ── v50 · el CTA que se ve de IA ──────────────────────────────────
+   Sin librerias: un angulo animado con @property mueve un gradiente conico
+   por el borde. Framer Motion habria costado ~50 KB y un bundler, para el
+   mismo efecto. Se aplica a DOS botones, no a todos: si el degradado se
+   derrama a los ocho CTA la pagina se lee a plantilla, que es justo lo que
+   la regla de color del proyecto evita. */
+@property --lpang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+.btn.lp-ia { position:relative; isolation:isolate; border-color:transparent;
+  background:var(--ia-grad); color:var(--ia-ink); font-weight:600; overflow:hidden; }
+.btn.lp-ia::before { content:""; position:absolute; inset:-140%; z-index:-1;
+  background:conic-gradient(from var(--lpang),
+    transparent 0 55%, color-mix(in srgb,#fff 85%,transparent) 72%, transparent 82% 100%);
+  animation:lpgiro 4.5s linear infinite; }
+.btn.lp-ia::after { content:""; position:absolute; inset:1px; z-index:-1;
+  border-radius:inherit; background:var(--ia-grad); }
+.btn.lp-ia:hover { filter:brightness(1.06); }
+@keyframes lpgiro { to { --lpang:360deg; } }
+
+@media (prefers-reduced-motion:reduce){
+  .btn.lp-ia::before { animation:none; opacity:0; }
+}
+
+/* ── v50 · el carrusel dice que se desliza ─────────────────────────
+   No estaban encimadas: es un rail de 1.700px dentro de 375px. Lo que
+   faltaba era la señal. */
+.lp-shots { position:relative; }
+.lp-shotswrap { position:relative; }
+.lp-shotswrap::after { content:""; position:absolute; top:0; right:0; bottom:.6rem;
+  width:3rem; pointer-events:none;
+  background:linear-gradient(90deg, transparent, var(--bg)); }
+.lp .sec-alt .lp-shotswrap::after { background:linear-gradient(90deg, transparent, var(--surface)); }
+
+@media (max-width:640px){
+  /* ── el agente ── */
+  .lp-agent { padding:.9rem; }
+  #lpChat { gap:.5rem; }
+  #lpChat > div { font-size:.86rem; line-height:1.4; padding:.6rem .75rem; max-width:88%; }
+  .lp-chat-lead { padding:.75rem .8rem; }
+  .lp-chat-lead b { font-size:.95rem; }
+  .lp-chat-lead p { font-size:.82rem; }
+
+  /* ── el filtro ── */
+  .lp-fgroup { gap:.4rem; }
+  .lp-flab { font-size:.8rem; }
+  .lp-fq { gap:.8rem; }
+  .lp-pills { gap:.35rem; }
+  .lp-pill > span { padding:.5rem .8rem; font-size:.82rem; min-height:2.5rem; }
+  .lp-verdict { padding:1rem; }
+  .lp-score b { font-size:2.2rem; }
+  .lp-verdict b { font-size:1.15rem; }
+  .lp-verdict p { font-size:.86rem; }
+  .lp-vroute { font-size:.78rem; }
+
+  /* ── el formulario ── */
+  .lp-form { padding:1.1rem 1rem; gap:.7rem .8rem; }
+  .lp-form .fgroup label { font-size:.76rem; margin-bottom:.2rem; }
+  .lp .input { height:2.75rem; font-size:.9rem; }
+  .lp-guar { margin-top:1rem; gap:.5rem .8rem; }
+  .lp-guar li { font-size:.82rem; }
+  .lp-priv { font-size:.78rem; line-height:1.4; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   v50 · DENSIDAD MOVIL DE LA LANDING DE PROMOS
+   ══════════════════════════════════════════════════════════════════
+   Medido en produccion a 375px: 10.596px de alto, 13 pantallas. La causa
+   raiz no era ningun componente suelto, era usar la escala de escritorio
+   en un telefono:
+
+   · .sec mete 88px de padding vertical por seccion · 10 secciones = 880px
+   · las nueve cabeceras suman 1.464px, casi dos pantallas de puro titulo
+   · el H2 arranca en 32px y parte en tres lineas
+
+   Todo esto vive dentro de .lp: las otras 60 paginas no se tocan. */
+
+@media (max-width:640px){
+
+  /* ── el aire entre secciones ── */
+  .lp .sec { padding:2rem 0; }
+  .lp .sec-h { margin-bottom:1.1rem; }
+
+  /* ── las cabeceras ──
+     El H2 baja de 2rem a 1.6rem y el interlineado se aprieta: el titular
+     sigue mandando, pero deja de ocupar media pantalla. */
+  .lp .sec-h h2 { font-size:1.6rem; line-height:1.12; letter-spacing:-.02em; }
+  .lp .sec-h p { font-size:.9rem; line-height:1.45; margin-top:.5rem; }
+  .lp .sec-h .eyebrow { font-size:.62rem; }
+  .lp .sec-h .sec-cta { margin-top:.9rem; }
+
+  /* ── el hero ── */
+  .lp-hero { padding:1.6rem 0 1.4rem; }
+  .lp-hero h1 { font-size:2.35rem; line-height:1.04; margin-top:.7rem; }
+  .lp-hero .lede { font-size:.95rem; line-height:1.5; margin-top:.8rem; }
+  .lp-hgrid { gap:1.1rem; }
+  .lp-acts { margin-top:1rem; }
+  .lp-haside { gap:.6rem; }
+  .lp-trust { gap:.4rem; }
+  .lp-trust li { font-size:.76rem; padding:.3rem .6rem; }
+  .lp-count { font-size:.76rem; }
+
+  /* ── listas y cuerpos ── */
+  .lp-tlist { gap:.45rem; }
+  .lp-std .it { padding:1rem .9rem; }
+  .lp-std h3 { font-size:.95rem; }
+  .lp-std p { font-size:.8rem; line-height:1.4; }
+  .lp-step { padding:1.1rem 1rem; }
+  .lp-step h4 { font-size:.98rem; }
+  .lp-step p { font-size:.82rem; line-height:1.4; }
+  .lp-pledge { padding:1.1rem 1rem; gap:.8rem; }
+  .lp-pledge b { font-size:1.15rem; }
+  .lp-pledge p { font-size:.88rem; }
+  .lp-pico { width:2.2rem; height:2.2rem; }
+
+  /* ── las rejillas de texto a dos columnas ──
+     El estandar (8 items) y los pasos (6) caian en una sola columna: 586px y
+     561px. En dos columnas son la mitad. NO van en carrusel: la regla 9 del
+     proyecto reserva el rail para colecciones visuales, porque esconder texto
+     tras un gesto perjudica lectura y SEO. */
+  .lp-std { grid-template-columns:1fr 1fr; }
+  .lp-std .it { padding:.85rem .75rem; }
+  .lp-std .ico { width:1.9rem; height:1.9rem; margin-bottom:.55rem; font-size:.9rem; }
+  .lp-std h3 { font-size:.86rem; line-height:1.2; }
+  .lp-std p { font-size:.75rem; line-height:1.35; margin-top:.25rem; }
+
+  .lp-steps { grid-template-columns:1fr 1fr; }
+  .lp-step { padding:.9rem .75rem; }
+  .lp-step .ico { width:1.9rem; height:1.9rem; margin-bottom:.55rem; }
+  .lp-step .n { top:.6rem; right:.7rem; font-size:.66rem; }
+  .lp-step h4 { font-size:.88rem; line-height:1.2; }
+  .lp-step p { font-size:.76rem; line-height:1.35; }
+
+  /* ── el acordeon de dudas ── */
+  .lp-faq summary { min-height:2.9rem; padding:.75rem 0; font-size:.94rem; }
+  .lp-faq p { font-size:.88rem; line-height:1.5; }
+}

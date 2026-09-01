@@ -386,7 +386,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=50">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=53">
 {GTAG}
 </head>
 <body>
@@ -2417,6 +2417,8 @@ PT = {
     "sw_save":  ("El total de una vez", "The full amount at once"),
     "plazo":    ("Plazo", "Term"),
     "cards":    ("Visa y Mastercard participantes", "Participating Visa and Mastercard"),
+    "fl_score":  ("de calificación", "qualification score"),
+    "fold_ver": ("Qué incluye", "What is included"),
     "reco":     ("El que más se contrata", "Most chosen"),
     "pay_now":  ("Pagar ahora", "Pay now"),
     "reserve":  ("Apartar mi lugar", "Reserve my slot"),
@@ -2549,6 +2551,7 @@ def promo_filter():
     return f"""<div class="lp-filter">
       <div class="lp-fq">{''.join(grupos)}</div>
       <aside class="lp-verdict" id="lpVerdict" data-state="{v0[0]}" aria-live="polite">
+        <div class="lp-score"><b id="lpScore">100</b><span data-i18n="fl_score">{pt('fl_score')}</span></div>
         <div class="lp-meter"><i style="--p:100%"></i></div>
         <div class="lp-vbody">
           <div class="lp-vmain">
@@ -2598,7 +2601,7 @@ def promo_shots():
         f'loading="lazy" width="1600" height="900">'
         f'<figcaption data-i18n="shot_{i}">{pie[0]}</figcaption></figure>'
         for i, (arch, pie) in enumerate(PROMO_SHOTS))
-    return f'<div class="lp-shots rail">{figs}</div>'
+    return f'<div class="lp-shotswrap"><div class="lp-shots rail">{figs}</div></div>'
 
 
 # promo_proof() se retiro en v45: la rejilla de seis fichas repetia lo que ya
@@ -2640,8 +2643,13 @@ def promo_card(p):
       <p class="lp-sub">{pt('sw_one')}</p>
       {cta}
       <a class="lp-alt" href="{wa_link(p['nombre'][0])}" target="_blank" rel="noopener" data-i18n="ask">{pt('ask')}</a>
-      {hereda}
-      <ul class="lp-inc">{lista}</ul>
+      <details class="lp-fold"{' open' if p['destacado'] else ''}>
+        <summary><span data-i18n="fold_ver">{pt('fold_ver')}</span>
+          <span class="lp-foldn">{len(p['incluye'])}</span>
+          <span class="lp-pm" aria-hidden="true"></span></summary>
+        {hereda}
+        <ul class="lp-inc">{lista}</ul>
+      </details>
     </article>"""
 
 
@@ -2735,7 +2743,7 @@ def build_promos(projects):
           <h2 data-i18n="ag_h2">{pt('ag_h2')}</h2>
           <p data-i18n="ag_p">{pt('ag_p')}</p>
           <div class="sec-cta">
-            <a class="btn btn-primary" href="#precios" data-i18n="ag_cta">{pt('ag_cta')}</a>
+            <a class="btn btn-primary lp-ia" href="#precios" data-i18n="ag_cta">{pt('ag_cta')}</a>
           </div>
         </div>
         {promo_agent()}
@@ -2887,7 +2895,7 @@ def build_promos(projects):
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
           <label class="lp-priv"><input type="checkbox" id="lpOk" required>
             <span><span data-i18n="f_priv">{pt('f_priv')}</span> <a href="/legal/privacidad/" data-i18n="f_privl">{pt('f_privl')}</a>.</span></label>
-          <button type="submit" class="btn btn-primary btn-lg" id="lpSend" data-i18n="f_send">{pt('f_send')}</button>
+          <button type="submit" class="btn btn-primary btn-lg lp-ia" id="lpSend" data-i18n="f_send">{pt('f_send')}</button>
           <p class="lp-msg" id="lpMsgBox" role="status"></p>
         </form>
 
@@ -3017,28 +3025,10 @@ PROMO_JS = """
   // ---------- recorte de la lista de incluidos en movil ----------
   // Tres listas completas apiladas miden ~2.100px a 375px. Se recortan a 4 y se
   // abren con un boton. En escritorio la lista sale entera y esto no corre.
-  var CUT=3;
-  function incSetup(){
-    if(!window.matchMedia||!window.matchMedia('(max-width:640px)').matches) return;
-    document.querySelectorAll('.lp-card .lp-inc').forEach(function(ul){
-      if(ul.children.length<=CUT+1 || ul.dataset.cut) return;
-      ul.dataset.cut='1';
-      var b=document.createElement('button');
-      b.type='button'; b.className='lp-inc-more'; b.textContent=T('more');
-      b.addEventListener('click',function(){
-        var open=ul.classList.toggle('is-open');
-        b.textContent=open?T('less'):T('more');
-      });
-      ul.parentNode.insertBefore(b, ul.nextSibling);
-    });
-  }
-  function incLabels(){
-    document.querySelectorAll('.lp-inc-more').forEach(function(b){
-      var ul=b.previousElementSibling;
-      b.textContent=(ul&&ul.classList.contains('is-open'))?T('less'):T('more');
-    });
-  }
-  incSetup();
+  // El recorte parcial (mostrar 4 de 12 tras un boton) se retiro en v50: la lista
+  // entera vive dentro de un <details>, que ahorra el triple y no obliga a
+  // inventar un umbral. Solo queda abierta la tarjeta recomendada.
+  function incLabels(){}
   segApply();
 
   // ---------- cuenta regresiva ----------
@@ -3126,6 +3116,10 @@ PROMO_JS = """
     verd.setAttribute('data-state', est);
     var bar=verd.querySelector('.lp-meter i');
     if(bar) bar.style.setProperty('--p', Math.max(8, total)+'%');
+    // El numero es la tercera señal, junto al ancho y al color: sin el, el
+    // cambio de estado se percibia solo como un tono distinto de ambar.
+    var sc=document.getElementById('lpScore');
+    if(sc){ sc.textContent=total; sc.setAttribute('data-state', est); }
     if(verH) verH.textContent=T('ver_'+est+'_h');
     if(verP) verP.textContent=T('ver_'+est+'_p');
   }
