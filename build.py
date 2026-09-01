@@ -386,7 +386,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=47">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=48">
 {GTAG}
 </head>
 <body>
@@ -2165,7 +2165,7 @@ TODOS_LOS_PLANES = PLANES + PLANES_SITIO
 
 SEGMENTOS = [
     ("landing", ("Landing pages", "Landing pages"), ("Una página que convierte", "One page that converts")),
-    ("sitio", ("Sitios web", "Websites"), ("Varias páginas y tu propio gestor", "Several pages and your own manager")),
+    ("sitio", ("Sitios web", "Websites"), ("Varias páginas y un gestor", "Several pages and a manager")),
 ]
 
 # ---- Guion del agente. (rol, es, en) · rol: "me" (el cliente) | "bot" (el agente).
@@ -2329,7 +2329,7 @@ PROMO_PASOS = [
 PT = {
     # v45 · segmentos y el empuje a meses sin intereses
     "seg_lab": ("Tipo de proyecto", "Project type"),
-    "sw_msi_d": ("Sin intereses, tarjetas participantes", "Interest free, participating cards"),
+    "sw_msi_d": ("Tarjetas participantes", "Participating cards"),
     "msi_hero": ("al mes", "per month"),
     "titulo":   ("Landing pages con agente de ventas, iBisne",
                  "Landing pages with a sales agent, iBisne"),
@@ -2397,7 +2397,7 @@ PT = {
     "sw_one":   ("Una sola exhibición", "Single payment"),
     "sw_msi":   ("Meses sin intereses", "Interest free months"),
     "msi_low":  ("meses sin intereses", "months interest free"),
-    "sw_save":  ("El total, de una sola vez", "The full amount, in one go"),
+    "sw_save":  ("El total de una vez", "The full amount at once"),
     "plazo":    ("Plazo", "Term"),
     "cards":    ("Visa y Mastercard participantes", "Participating Visa and Mastercard"),
     "reco":     ("El que más se contrata", "Most chosen"),

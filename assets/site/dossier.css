@@ -1372,28 +1372,59 @@ label.opt span { line-height:1.25; }
 .lp-plazo select.input { width:auto; min-width:6.5rem; height:2.6rem; }
 .lp-plazo > span { font-size:.76rem; color:var(--faint); }
 
-/* ── v46 · los tres controles en una sola fila ─────────────────────
-   Segmento, forma de pago y plazo son opciones del mismo producto, no tres
-   decisiones sucesivas. Apiladas median 260px de alto antes del primer precio. */
-.lp-ctrl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:.9rem 1.1rem;
+/* ── v46 · los tres controles, un solo componente ──────────────────
+   Estaban con tres tratamientos distintos: el segmento sin caja (64px de alto),
+   la forma de pago dentro de un contenedor con borde propio (78px, porque su
+   descripcion partia en dos lineas) y el plazo como un select suelto de 42px.
+   Tres alturas y dos lenguajes visuales en una misma fila.
+
+   Ahora los tres son el mismo componente: etiqueta arriba, control de 3.5rem de
+   alto, mismo radio y mismo borde. Se alinean por arriba, asi que las tres
+   etiquetas quedan en la misma linea. */
+.lp-ctrl { display:flex; flex-wrap:wrap; align-items:flex-start; gap:1rem 1.1rem;
   margin-bottom:1.6rem; }
-/* Los dos grupos de opciones reparten el ancho; el plazo solo pide lo suyo. */
-.lp-cgroup { display:flex; flex-direction:column; gap:.45rem; min-width:0; flex:1 1 16rem; }
+.lp-cgroup { display:flex; flex-direction:column; gap:.5rem; min-width:0; flex:1 1 18rem; }
 .lp-cplazo { flex:0 1 auto; }
 .lp-clab { font-size:.66rem; font-weight:700; letter-spacing:.12em;
   text-transform:uppercase; color:var(--muted); }
+
+/* El contenedor deja de pintar: la caja es cada opcion, no el grupo. */
 .lp-ctrl .lp-segs,
-.lp-ctrl .lp-switch { margin:0; max-width:none; }
-.lp-ctrl .lp-segs,
-.lp-ctrl .lp-switch { grid-template-columns:repeat(2,minmax(0,1fr)); }
-.lp-ctrl .lp-seg > span { padding:.6rem .85rem; }
-.lp-ctrl .lp-sw > span { min-height:2.9rem; }
-.lp-cplazo .lp-plazo { margin:0; }
-/* El plazo solo aplica a meses sin intereses. Se atenua en lugar de esconderse:
-   desaparecer mueve toda la fila y el ojo pierde el sitio. */
+.lp-ctrl .lp-switch { margin:0; max-width:none; padding:0; border:0; background:none;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; }
+
+/* La regla comun: misma altura, mismo radio, mismo borde para las cuatro cajas. */
+.lp-ctrl .lp-seg > span,
+.lp-ctrl .lp-sw > span,
+.lp-cplazo select.input { min-height:3.5rem; height:3.5rem; border-radius:var(--r);
+  border:1px solid var(--line); }
+.lp-ctrl .lp-seg > span,
+.lp-ctrl .lp-sw > span { display:flex; flex-direction:column; align-items:flex-start;
+  justify-content:center; gap:.1rem; padding:.4rem .85rem; text-align:left; }
+.lp-ctrl .lp-seg b,
+.lp-ctrl .lp-sw b { font-size:.88rem; font-weight:600; line-height:1.2; }
+.lp-ctrl .lp-seg em,
+.lp-ctrl .lp-sw em { font-size:.72rem; line-height:1.2; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.lp-ctrl .lp-sw b { color:var(--muted); }
+.lp-ctrl .lp-sw input:checked + span b { color:var(--accent-ink); }
+
+.lp-cplazo .lp-plazo { margin:0; display:flex; align-items:center; gap:.6rem; }
+.lp-cplazo select.input { width:auto; min-width:5.5rem; }
+.lp-cplazo .lp-plazo > span { font-size:.72rem; color:var(--muted); max-width:11ch; line-height:1.2; }
+/* El plazo solo aplica a meses sin intereses: se atenua en lugar de esconderse,
+   porque desaparecer mueve toda la fila y el ojo pierde el sitio. */
 .lp-cplazo { transition:opacity var(--t); }
 .lp-cplazo.is-off { opacity:.32; }
 .lp-cplazo.is-off select { cursor:not-allowed; }
+
+@media (max-width:980px){
+  .lp-cgroup { flex:1 1 100%; }
+  .lp-cplazo { flex:1 1 100%; }
+}
+@media (max-width:480px){
+  .lp-ctrl .lp-segs, .lp-ctrl .lp-switch { grid-template-columns:1fr; }
+}
 
 /* ── el toggle tiene que ocultar de verdad ─────────────────────────
    [hidden] aplica display:none, pero la rejilla trae display:grid desde gcls()
