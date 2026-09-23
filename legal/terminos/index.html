@@ -13,11 +13,11 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:title" content="Términos y condiciones, iBisne"><meta property="og:description" content="Términos y condiciones">
 <meta property="og:type" content="website"><meta property="og:image" content="/assets/og-default.png">
-<script>(function(){var h=document.documentElement;try{var s=location.search;if(s.indexOf('noloader')>-1){h.className+=' ldskip';}else if(s.indexOf('loader')>-1){h.className+=' ldhold';}var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}catch(e){}})();</script>
+<script>(function(){var h=document.documentElement;try{var s=location.search;var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=55">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=56">
 <script>
 (function(){
   var ID='G-XEW1TZEMNL';
@@ -35,12 +35,6 @@
 </script>
 </head>
 <body>
-<div id="loader"><canvas id="lcv"></canvas><div class="lwrap">
-  <img class="llogo" src="/brand/iBisne_blanco.png" alt="iBisne">
-  <div class="bits" id="lbits">01001001 01000010</div>
-  <div class="qbar"><i></i></div>
-  <div class="qlabel">Cargando</div>
-</div></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="i-arw" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
 <symbol id="i-arwr" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
@@ -339,30 +333,6 @@
   if(modal) modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeModal(); closeMenu(); } });
   window.addEventListener('appinstalled',function(){ showInstall(false); closeMenu(); closeModal(); });
-  // Loader: SOLO enhancement visual. El ocultado lo garantiza el CSS (@keyframes ldout a 2.4s).
-  try{
-    var L=document.getElementById('loader');
-    if(!L || root.classList.contains('ldskip')){ if(L&&L.parentNode) L.parentNode.removeChild(L); return; }
-    var bits=document.getElementById('lbits');
-    var bi=setInterval(function(){ if(!bits) return; var s=''; for(var i=0;i<24;i++){ s+=(Math.random()<.5?'0':'1'); if(i%8===7)s+=' '; } bits.textContent=s.trim(); },70);
-    var raf, cv=document.getElementById('lcv');
-    if(cv && cv.getContext){ var cx=cv.getContext('2d'), W,H,pts;
-      function rz(){ W=cv.width=cv.offsetWidth||window.innerWidth; H=cv.height=cv.offsetHeight||window.innerHeight; pts=[]; var n=Math.min(72,Math.floor(W*H/15000));
-        for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45}); }
-      rz(); window.addEventListener('resize',rz);
-      function draw(){ cx.clearRect(0,0,W,H);
-        for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy;
-          if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
-          cx.fillStyle='rgba(200,203,212,.55)'; cx.fillRect(p.x,p.y,1.7,1.7);
-          for(var j=i+1;j<pts.length;j++){ var q=pts[j],dx=p.x-q.x,dy=p.y-q.y,d=dx*dx+dy*dy;
-            if(d<9500){ cx.strokeStyle='rgba(154,160,174,'+((1-d/9500)*.16).toFixed(3)+')'; cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(q.x,q.y); cx.stroke(); } } }
-        raf=requestAnimationFrame(draw); }
-      raf=requestAnimationFrame(draw);
-    }
-    function stop(){ clearInterval(bi); if(raf) cancelAnimationFrame(raf); if(L&&L.parentNode) L.parentNode.removeChild(L); }
-    L.addEventListener('animationend',function(ev){ if(ev.animationName==='ldout') stop(); });
-    setTimeout(stop, 4200); // respaldo si animationend no dispara
-  }catch(e){ var l=document.getElementById('loader'); if(l){ l.style.opacity='0'; l.style.visibility='hidden'; l.style.pointerEvents='none'; } }
 })();
 </script>
 </body>
