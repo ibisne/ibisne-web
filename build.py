@@ -12,12 +12,38 @@ import json
 import re
 import sys
 from pathlib import Path
+from PIL import Image
 
 ROOT = Path(__file__).parent
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 CV = ROOT.parent / "ibisne-cv" / "cv-data.json"
+
+# ---------------------------------------------------------------- accesibilidad: peso de imagen
+_IMG_DIMS_CACHE = {}
+
+
+def img_dims(url):
+    """' width=".." height=".."' con las dimensiones REALES del archivo (Pillow),
+    para reservar el espacio de cada <img> y evitar salto de layout mientras carga.
+
+    `url` es la ruta publica que ya escribe el HTML (arranca en "/", ej.
+    "/assets/portfolio/thcc.webp"): se resuelve contra ROOT. Cadena vacia si el
+    archivo no existe o no se puede leer: nunca rompe el build por esto (a
+    diferencia de caso_html().img(), que si debe fallar ruidoso).
+    """
+    fs = ROOT / url.lstrip("/")
+    key = str(fs)
+    if key not in _IMG_DIMS_CACHE:
+        try:
+            with Image.open(fs) as im:
+                _IMG_DIMS_CACHE[key] = im.size
+        except Exception:
+            _IMG_DIMS_CACHE[key] = None
+    dims = _IMG_DIMS_CACHE[key]
+    return f' width="{dims[0]}" height="{dims[1]}"' if dims else ""
+
 
 # ---------------------------------------------------------------- sprite
 SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -142,37 +168,30 @@ def header(active=""):
     return f"""<div class="topbar"><div class="wrap row">
     <div class="msg"><span class="dot"></span>{TOPMSG}</div>
     <div class="util">
-      <div class="lang" role="group" aria-label="Idioma">
-        <button aria-pressed="true" data-lang="es">ES</button>
-        <button aria-pressed="false" data-lang="en">EN</button>
-      </div>
       <button class="ubtn" data-pwa hidden><span class="pwaico">{ic('down')}</span><span>Instalar app</span></button>
     </div>
   </div></div>
   <header class="shead"><div class="wrap row">
-    <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"></a>
+    <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"{img_dims("/brand/iBisne_blanco.png")}></a>
     <nav class="nav-lk">{links}</nav>
     <div class="actions">
       <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
-      <a href="/contacto/" class="btn btn-primary">Hablemos</a>
+      <a class="iconbtn wa-head" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" data-cta="whatsapp">{ic('wa')}</a>
+      <a href="/contacto/" class="btn btn-primary" data-cta="sesion-cero"><span class="full">Agenda tu Sesión cero</span><span class="short">Sesión cero</span></a>
       <button class="hamb" id="hambBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobnav">{ic('menu')}</button>
     </div>
   </div>
   </header>
   <div class="mmenu" id="mobnav" aria-hidden="true">
     <div class="mmenu-top">
-      <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"></a>
+      <a href="{HOME}" class="brand"><img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"{img_dims("/brand/iBisne_blanco.png")}></a>
       <button class="hamb" id="mmenuClose" aria-label="Cerrar menú">{ic('x')}</button>
     </div>
     <nav class="mmenu-links">{mob}</nav>
     <div class="mmenu-foot">
-      <a href="/contacto/" class="btn btn-primary mmenu-cta">Hablemos {ic('arw')}</a>
+      <a href="/contacto/" class="btn btn-primary mmenu-cta" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
       <div class="mmenu-tools">
         <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
-        <div class="lang" role="group" aria-label="Idioma">
-          <button aria-pressed="true" data-lang="es">ES</button>
-          <button aria-pressed="false" data-lang="en">EN</button>
-        </div>
         <button class="ubtn mmenu-install" data-pwa><span class="pwaico">{ic('down')}</span><span>Instalar app</span></button>
       </div>
       <div class="mmenu-social" aria-label="Redes y contacto">
@@ -188,7 +207,7 @@ def header(active=""):
 FOOTER = f"""<footer class="foot"><div class="wrap">
   <div class="cols">
     <div>
-      <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne">
+      <img class="logo" src="/brand/iBisne_blanco.png" alt="iBisne"{img_dims("/brand/iBisne_blanco.png")}>
       <p class="about">Tech Studio y arquitectos de software. Diseñamos, construimos y escalamos productos digitales de alto impacto desde Jalisco y Mérida, con mira en toda Latinoamérica.</p>
     </div>
     <div><div class="gl">Qué hacemos</div><ul>
@@ -207,7 +226,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   </div>
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
-<div class="sdock" aria-label="Redes y contacto">
+<div class="sdock" role="group" aria-label="Redes y contacto">
   <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
   <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
   <a href="https://www.facebook.com/ibisnecom" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">{ic('fb')}</a>
@@ -293,17 +312,27 @@ SCRIPTS = """<script>
     document.querySelectorAll('.theme-toggle').forEach(function(b){ b.innerHTML='<svg class="ic" aria-hidden="true" focusable="false"><use href="'+ref+'"/></svg>'; }); }
   document.querySelectorAll('.theme-toggle').forEach(function(b){ b.addEventListener('click',function(){ setMode(root.getAttribute('data-mode')==='dark'?'light':'dark'); }); });
   setMode(root.getAttribute('data-mode')||'dark');
-  // ---- Idioma (ES/EN, ambos grupos) ----
-  // Si la pagina trae diccionario propio marca data-i18n-ready en <html> y manda ella:
-  // sin esta guarda, el aviso de "proximamente" saldria encima de una pagina ya traducida.
-  if(!root.hasAttribute('data-i18n-ready')){
-    document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click',function(){
-      if(b.getAttribute('data-lang')==='en'){ alert('Versión en inglés, próximamente.'); } }); });
-  }
+  // ---- Medicion: helper global + clic en CTAs primarios, WhatsApp y correo ----
+  // El selector de idioma se retiro del sitio principal (era un control que no hacia
+  // nada mas que disculparse con un alert); /promos/landing-pages/ trae su propio i18n
+  // funcional y no usa esta funcion.
+  window.ibEv = function(name, params){ try{ if(window.gtag) window.gtag('event', name, params || {}); }catch(e){} };
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a, button');
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(a.classList.contains('btn-primary')){
+      window.ibEv('cta_click', {label: (a.textContent || '').trim().replace(/\\s+/g,' '), page: location.pathname});
+    } else if(href.indexOf('wa.me') > -1){
+      window.ibEv('cta_click', {label: 'whatsapp', page: location.pathname});
+    } else if(href.indexOf('mailto:') === 0){
+      window.ibEv('cta_click', {label: 'email', page: location.pathname});
+    }
+  });
   // ---- Menu movil: overlay unico con todas las acciones ----
   var mm=document.getElementById('mobnav'), hb=document.getElementById('hambBtn'), mx=document.getElementById('mmenuClose');
-  function openMenu(){ if(!mm)return; mm.classList.add('open'); mm.setAttribute('aria-hidden','false'); if(hb)hb.setAttribute('aria-expanded','true'); document.body.classList.add('menu-lock'); }
-  function closeMenu(){ if(!mm)return; mm.classList.remove('open'); mm.setAttribute('aria-hidden','true'); if(hb)hb.setAttribute('aria-expanded','false'); document.body.classList.remove('menu-lock'); }
+  function openMenu(){ if(!mm)return; mm.classList.add('open'); mm.setAttribute('aria-hidden','false'); if(hb)hb.setAttribute('aria-expanded','true'); document.body.classList.add('menu-lock'); if(mx) mx.focus(); }
+  function closeMenu(){ if(!mm)return; var estabaAbierto=mm.classList.contains('open'); mm.classList.remove('open'); mm.setAttribute('aria-hidden','true'); if(hb)hb.setAttribute('aria-expanded','false'); document.body.classList.remove('menu-lock'); if(estabaAbierto&&hb) hb.focus(); }
   if(hb) hb.addEventListener('click',function(){ (mm&&mm.classList.contains('open'))?closeMenu():openMenu(); });
   if(mx) mx.addEventListener('click',closeMenu);
   if(mm) mm.querySelectorAll('.mmenu-links a').forEach(function(a){ a.addEventListener('click',closeMenu); });
@@ -340,10 +369,14 @@ SCRIPTS = """<script>
 </script>"""
 
 
-def base(title, desc, body, active="", canonical="/", noindex=False):
+def base(title, desc, body, active="", canonical="/", noindex=False, og_image=None):
     # noindex="follow": la pagina sale de los buscadores pero sus enlaces internos
     # siguen contando, para no cortarle autoridad a las paginas que si se publican.
     robots = '\n<meta name="robots" content="noindex, follow">' if noindex else ""
+    # og_image: cuando una ficha de proyecto tiene portada propia, esa imagen se
+    # comparte en WhatsApp/redes en vez de la generica (og-default). Sin esto,
+    # compartir cualquier ficha mostraba siempre la misma imagen.
+    og_img = og_image or "/assets/og-default.png"
     return f"""<!doctype html>
 <html lang="es" data-theme="d" data-mode="dark">
 <head>
@@ -358,7 +391,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
-<meta property="og:type" content="website"><meta property="og:image" content="/assets/og-default.png">
+<meta property="og:type" content="website"><meta property="og:image" content="{og_img}">
 <script>(function(){{var h=document.documentElement;try{{var s=location.search;var m=new URLSearchParams(s).get('mode')||localStorage.getItem('ib_mode');if(m)h.setAttribute('data-mode',m);}}catch(e){{}}}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -367,9 +400,12 @@ def base(title, desc, body, active="", canonical="/", noindex=False):
 {GTAG}
 </head>
 <body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
 {SPRITE}
 {header(active)}
+<main id="contenido">
 {body}
+</main>
 {FOOTER}
 {CONSENT}
 {SCRIPTS}
@@ -386,10 +422,17 @@ def crumb(*parts):
 
 
 def contacto_band():
+    # v52 · la Sesion cero es la oferta explicita de todo el sitio (decision de
+    # Eduardo): 90 minutos sin costo, con lectura tecnica que el cliente se lleva
+    # aunque no siga con iBisne. Sustituye al "Hablemos" generico en todas las bandas.
     return f"""<section class="sec"><div class="wrap"><div class="ctaband">
-      <div><span class="eyebrow" style="color:var(--link)">Contacto</span>
-        <h2 style="margin-top:.8rem;">¿Estás construyendo algo con potencial de liderar?</h2></div>
-      <a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a>
+      <div><span class="eyebrow" style="color:var(--link)">Empieza sin costo</span>
+        <h2 style="margin-top:.8rem;">Noventa minutos sobre tu negocio. Sin costo, con o sin nosotros.</h2>
+        <p style="margin-top:.6rem;color:var(--muted);max-width:52ch">En la Sesión cero hablamos de tu mercado, tus números y el problema real. Sales con claridad y con el siguiente paso definido.</p></div>
+      <div class="cta">
+        <a href="/contacto/" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
+        <a href="https://wa.me/523329575274" target="_blank" rel="noopener" class="btn btn-secondary btn-lg" data-cta="whatsapp">Escríbenos por WhatsApp</a>
+      </div>
     </div></div></section>"""
 
 
@@ -414,6 +457,12 @@ DOMINIOS = [
          tag="El software que opera el negocio",
          lede="SaaS multi-tenant, CRM, ERP, apps y plataformas internas. Los sistemas que sostienen la operación y hacen posible el crecimiento.",
          resuelve="Negocios cuyo techo lo pone su propia operación: hojas de cálculo, procesos manuales y datos que nunca cuadran.",
+         para_ti=[
+             "Tu operación vive en hojas de cálculo y grupos de WhatsApp.",
+             "Tienes un producto que ya vende y necesita aguantar más cuentas.",
+             "Necesitas un solo lugar donde inventario, ventas y finanzas cuadren.",
+         ],
+         cta="Cuéntanos tu operación",
          sistemas=[
              ("cloud", "SaaS multi-tenant", "Producto en la nube con suscripción, métricas y arquitectura para servir a miles de cuentas."),
              ("users", "CRM", "El pipeline comercial completo: seguimiento, automatización y visibilidad de cada oportunidad."),
@@ -425,6 +474,12 @@ DOMINIOS = [
          tag="Donde el negocio encuentra su mercado",
          lede="Tiendas B2B y B2C, sitios institucionales y páginas de campaña. La superficie donde tu negocio se muestra, convence y cobra.",
          resuelve="Marcas que necesitan vender en línea sobre una base que aguante el volumen y crezca con el catálogo.",
+         para_ti=[
+             "Vendes por redes y quieres cobrar en tu propio sitio.",
+             "Tu tienda actual se cae en campaña o no crece con el catálogo.",
+             "Vendes a empresas y necesitas precios, pedidos y facturación en línea.",
+         ],
+         cta="Cuéntanos qué vendes",
          sistemas=[
              ("cart", "E-commerce", "Catálogo, checkout y operación pensados para el volumen, no para la demo."),
              ("monitor", "Sitios y plataformas", "Presencia institucional rápida y clara, lista para crecer con el negocio."),
@@ -436,6 +491,12 @@ DOMINIOS = [
          tag="Tecnología nueva, aplicada con criterio",
          lede="Agentes, automatización con modelos de lenguaje y aplicaciones on-chain. Lo que apenas se está definiendo, construido con seriedad de ingeniería.",
          resuelve="Equipos que quieren aplicar IA o blockchain donde de verdad mueve la aguja, y no donde solo suena bien.",
+         para_ti=[
+             "Tu equipo repite tareas que un agente puede ejecutar con trazabilidad.",
+             "Tienes datos propios y quieres consultarlos en lenguaje natural.",
+             "Necesitas contratos o activos on-chain auditables.",
+         ],
+         cta="Cuéntanos el proceso",
          sistemas=[
              ("spark", "Agentes de IA", "Sistemas que ejecutan trabajo real dentro de tu operación, con criterio y trazabilidad."),
              ("chart", "Datos y RAG", "Modelos que responden sobre tu propia información, con las fuentes a la vista."),
@@ -486,6 +547,33 @@ COMPROMISOS = [
      "La cotización se entrega cerrada, con fecha y 60 días de vigencia. Si después hay una conversación de capital, el número ya está puesto y se sostiene."),
 ]
 
+# ---------------------------------------------------------------- data: objeciones (Dudas)
+# Mismas 5 dudas en /como-trabajamos/ y en las 3 paginas de dominio: son la objecion
+# de cualquier prospecto sin importar el dominio. Respuestas basadas solo en lo que el
+# repo ya afirma (Protocolo, precio cerrado, titularidad, 60 dias de vigencia).
+FAQ_PROTOCOLO = [
+    ("¿Cuánto tarda un proyecto?",
+     "El Sprint de Validación toma de 2 a 4 semanas. El desarrollo completo queda con fecha por escrito en la cotización, antes de que decidas."),
+    ("¿Cuánto cuesta?",
+     "Cada cotización se entrega cerrada, con fecha y 60 días de vigencia. El Sprint se cobra al inicio y se acredita íntegro contra el desarrollo. Sitios y tiendas se cotizan directo."),
+    ("¿De quién es el código?",
+     "Tuyo al cerrar el desarrollo: repositorios, infraestructura y credenciales en tus cuentas, con el inventario completo de lo que recibes."),
+    ("Ya tengo un sistema y un equipo, ¿sirve?",
+     "Sí. La Lectura te dice qué conservar, qué migrar y qué construir, y el documento es tuyo trabajes con nosotros o no."),
+    ("¿Qué pasa después del lanzamiento?",
+     "Seguimos: soporte, evolución y métricas. Nos medimos por lo que la plataforma logra en producción."),
+]
+
+def faq_block(items, eyebrow="Dudas", h2="Antes de que preguntes."):
+    items_html = "".join(
+        f'<details class="faq-item"><summary><span>{q}</span>'
+        f'<span class="faq-pm" aria-hidden="true"></span></summary><p>{a}</p></details>'
+        for q, a in items)
+    return f"""<section class="sec sec-alt"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">{eyebrow}</span><h2>{h2}</h2></div>
+  <div class="faq-list">{items_html}</div>
+</div></section>"""
+
 # ---------------------------------------------------------------- data: insights
 INSIGHTS = [
     ("como-disenamos-para-escalar", "Cómo diseñamos para escalar desde el día uno", "Producto"),
@@ -523,6 +611,10 @@ BACK = ["vg", "farmacia-hdz", "sem"]
 OCULTOS = ("ifutbol", "gocer", "grupo-rmc", "sense", "emergente", "unframe",
            "breakit", "piscinamx", "elixier", "love-sex-and-more",
            "manufaktura", "ipool", "eleva", "vg", "farmacia-hdz", "hotel-panamera")
+
+# v33 · seis y seis para que gcls(6) de 3 columnas exactas (home y /por-que-ibisne/).
+VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "thcc", "semendomap")
+CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "albercas-vip", "steelbeird")
 
 
 def visibles(projs):
@@ -627,52 +719,66 @@ def pf_card(p, href_prefix="/portafolio/"):
     desc = p.get("descanso")
     shot = shot_for(p["slug"])
     if desc and (ASSET / f"{desc}.jpg").exists():
-        visual = f'<div class="shot"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}" loading="lazy"></div>'
+        desc_url = f"/assets/portfolio/{desc}.jpg"
+        visual = f'<div class="shot"><img src="{desc_url}" alt="{p["nombre"]}" loading="lazy"{img_dims(desc_url)}></div>'
     elif shot:
-        visual = f'<div class="shot"><img src="{shot}" alt="{p["nombre"]}" loading="lazy"></div>'
+        visual = f'<div class="shot"><img src="{shot}" alt="{p["nombre"]}" loading="lazy"{img_dims(shot)}></div>'
     else:
         # Sin captura: fondo abstracto en vez de una caja gris vacia.
         bgn = BGS[sum(ord(c) for c in p["slug"]) % len(BGS)]
         visual = (f'<div class="ph ph-bg" style="background-image:url(/assets/bg/{bgn}.webp)">'
                   f'<span>{p["estado"].title()}</span></div>')
+    # v52 · linea de resultado bajo el nombre: da un motivo para hacer clic. Prioriza
+    # el resultado real del proyecto; si no existe, el tipo de sistema que se construyo.
+    result_line = p.get("resultado") or p.get("tipo") or resultado_for(p)
     return (f'<a class="pcard" href="{href_prefix}{p["slug"]}/">{visual}'
             f'<div class="meta"><div class="top"><span class="vert">{p.get("vertical","")}</span>'
-            f'<span class="badge">{p["estado"].title()}</span></div><h3>{p["nombre"]}</h3></div></a>')
+            f'<span class="badge">{p["estado"].title()}</span></div><h3>{p["nombre"]}</h3>'
+            f'<p class="pf-result">{result_line}</p></div></a>')
 
 
 # ---------------------------------------------------------------- HOME
 def build_home(projects):
-    # v25 · el home separa por tipo de relación: arriba proyectos de cliente, abajo los
-    # de venture capital. Los slugs de abajo se excluyen de arriba por código, para que
-    # ningún proyecto pueda volver a salir dos veces si se editan estas listas.
+    # v52 · reorden UX y conversion: la prueba (Clientes) sube a la posicion 2, justo
+    # tras el hero. "Qué hacemos" (verbos) se retira del home, ya lo dicen los chips
+    # del hero. "El estándar", "Por qué iBisne" y "Protocolo" repetian la misma promesa
+    # con la misma forma (icono + h3 + parrafo): quedan dos bloques, no tres. El estándar
+    # se funde dentro de "Por qué iBisne" como una tarjeta destacada con los 6 puntos en
+    # linea, y el Protocolo baja a 4 lineas cerrando con la Sesión cero. Los tres pills
+    # de division (regla de negocio, sin explicacion) se mueven al cierre, junto al
+    # contacto. Las salidas secundarias bajan de nueve a tres: capacidades, el Protocolo
+    # completo y el portafolio completo; insights y la prueba pasan a enlaces de texto.
     by = {x["slug"]: x for x in projects}
-    # v33 · seis y seis para que gcls(6) de 3 columnas exactas. Al curar el portafolio
-    # salieron breakit e ifutbol de arriba y unframe de abajo; entran thcc y semendomap,
-    # y albercas-vip, que acaba de lanzar.
-    VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "thcc", "semendomap")
-    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "albercas-vip", "steelbeird")
     vc_feat = [by[s] for s in VC_HOME if s in by]
     cli_feat = [by[s] for s in CLI_HOME if s in by and s not in VC_HOME]
-    cards = "".join(pf_card(p) for p in cli_feat)
+    clientes_teaser = cli_feat[:3]
+    cards = "".join(pf_card(p) for p in clientes_teaser)
     vc_cards = "".join(pf_card(p) for p in vc_feat)
-    verbos = f"""<div class="verbos {gcls(3)}">
-      <div class="verbo"><div class="ico">{ic('layers')}</div><h3>Creamos</h3><p>Productos digitales de punta a punta: e-commerce, plataformas, apps, CRM, ERP, SaaS, IA y Web3. Diseño, ingeniería y estrategia bajo un mismo techo.</p></div>
-      <div class="verbo"><div class="ico">{ic('trend')}</div><h3>Escalamos</h3><p>Arquitectura pensada para crecer. Performance medible y seguridad de nivel empresarial. Construimos para durar, no para salir del paso.</p></div>
-      <div class="verbo"><div class="ico">{ic('gauge')}</div><h3>Optimizamos</h3><p>Aterrizamos ideas complejas mediante auditorías de viabilidad, diseño de flujos de usuario y creación de MVPs ágiles para mitigar riesgos antes de un lanzamiento a gran escala.</p></div>
-    </div>"""
     # Divisiones: pills limpios sin explicación (regla de negocio v23, ver MESSAGING.md).
+    # Se mueven al cierre de la home (v52): antes eran el primer elemento interactivo,
+    # tres etiquetas sin decodificar justo delante del visitante que busca prueba.
     pills = f"""<div class="cta hero-pills">
       <a href="/servicios/" class="btn btn-secondary">{ic('cpu')} Tech Studio</a>
       <a href="/inversion/" class="btn btn-secondary">{ic('trend')} Smart Capital</a>
       <a href="/portafolio/" class="btn btn-secondary">{ic('blocks')} Venture Builder</a>
     </div>"""
-    ventajas = "".join(f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in VENTAJAS)
+    # "Por qué iBisne" fusiona el estándar: 5 tarjetas normales + 1 destacada con los
+    # 6 puntos del estándar en línea, en vez de una sección propia que los repetía.
+    ventajas_norm = "".join(
+        f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>'
+        for i, t, d in VENTAJAS if t != "El estándar incluido")
+    estandar_inline = "".join(f'<li>{ic(i)}<span>{t}</span></li>' for i, t, _d in ESTANDAR)
+    estandar_card = (f'<div class="adv adv-feat estandar-feat"><div class="ico">{ic("check")}</div>'
+                      f'<h3>El estándar incluido</h3><p>CMS, dark/white, idioma, PWA, PageSpeed y analytics: siempre.</p>'
+                      f'<ul class="estandar-inline">{estandar_inline}</ul></div>')
+    ventajas = ventajas_norm + estandar_card
     doms = "".join(
         f'<a class="card" href="/servicios/{d["slug"]}/"><div class="ico">{ic(d["icon"])}</div>'
         f'<h3>{d["nombre"]}</h3><p>{d["lede"]}</p><span class="more">Ver el dominio {ic("arwr")}</span></a>'
         for d in DOMINIOS)
-    pledges = "".join(f'<div class="adv"><div class="ico">{ic(i)}</div><h3>{corto}</h3><p>{sust}</p></div>'
-                      for i, corto, _t, sust in COMPROMISOS)
+    protocolo_mini = "".join(
+        f'<li><span class="no">{n}</span><span class="tt">{t}</span><span class="meta">{m}</span></li>'
+        for n, t, _d, m in PROTOCOLO)
     # v23: el home no exhibe contenido de inversión (regla de negocio, ver MESSAGING.md).
     # Los artículos de esa categoría siguen publicados y visibles en /insights/.
     ins_home = [x for x in INSIGHTS if x[2] != "Inversión" and x[0] != "skin-in-the-game"][:3]
@@ -681,15 +787,15 @@ def build_home(projects):
 <section class="hero bg"><div class="wrap">
   <h1>Convertimos visiones en activos tecnológicos.</h1>
   <p class="lede">Diseñamos, desarrollamos y escalamos productos digitales de alto impacto. Somos los arquitectos tecnológicos que transforman tu visión en una plataforma robusta, segura y lista para liderar el mercado.</p>
-  <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
+  <div class="cta"><a href="/contacto/" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary btn-lg">Cómo trabajamos</a></div>
   <div class="tags"><span class="chip">Creamos</span><span class="chip">Escalamos</span><span class="chip">Optimizamos</span></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Qué hacemos</span><h2>Tecnología y escalabilidad de punta a punta.</h2>
-  <p>Somos una fábrica de negocios digitales. Construimos la arquitectura de software de tu empresa con los más altos estándares tecnológicos de la industria.</p></div>
-  {pills}
-  {verbos}
+  <div class="sec-h"><span class="eyebrow">Clientes</span><h2>Negocios que ya están en la cancha.</h2>
+  <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en una docena de verticales.</p></div>
+  <div class="pf-grid rail {gcls(len(clientes_teaser))}">{cards}</div>
+  <div class="sec-cta"><a href="/portafolio/" class="textlink">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec sec-alt"><div class="wrap">
@@ -700,31 +806,20 @@ def build_home(projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
-  <p>Más de 15 años construyendo software. {len(projects)} proyectos en portafolio, 12 verticales. Cuatro reglas iguales para todos: discreción, titularidad clara, análisis que te llevas y precio cerrado desde el inicio.</p></div>
-  <div class="why-grid {gcls(len(COMPROMISOS))}">{pledges}</div>
-  <div class="sec-cta"><a href="/como-trabajamos/" class="btn btn-secondary">Ver el Protocolo {ic('arw')}</a></div>
-</div></section>
-
-<section class="sec sec-alt"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Cada proyecto nace con lo esencial. Siempre incluido.</h2>
-  <p>Lo que debería ser el estándar, lo damos por hecho. Cada plataforma llega lista para durar, escalar y competir.</p></div>
-  {estandar_grid()}
-  <div class="std-note">{ic('arw')} Seis estándares, <span class="free">incluidos siempre</span>, porque un proyecto se hace para liderar.</div>
-</div></section>
-
-<section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Clientes</span><h2>Negocios que ya están en la cancha.</h2>
-  <p>Una muestra de lo que construimos para nuestros clientes. El portafolio completo suma {len(projects)} proyectos en una docena de verticales.</p></div>
-  <div class="pf-grid rail {gcls(len(cli_feat))}">{cards}</div>
-  <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver los {len(projects)} proyectos {ic('arw')}</a></div>
-</div></section>
-
-<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Por qué iBisne</span><h2>La diferencia entre contratar un proveedor y contratar arquitectos.</h2>
   <p>No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia y criterio de negocio.</p></div>
-  <div class="why-grid {gcls(len(VENTAJAS))}">{ventajas}</div>
-  <div class="sec-cta"><a href="/por-que-ibisne/" class="btn btn-secondary">Conoce nuestras ventajas {ic('arw')}</a></div>
+  <div class="why-grid {gcls(6)}">{ventajas}</div>
+  <div class="sec-cta"><a href="/por-que-ibisne/" class="textlink">Ver la prueba completa {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec sec-alt"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>El equipo que te escucha es el que escribe el código.</h2>
+  <p>Cuatro fases, iguales para todos: discreción, titularidad clara, análisis que te llevas y precio cerrado desde el inicio.</p></div>
+  <ol class="protocolo-mini">{protocolo_mini}</ol>
+  <div class="cta">
+    <a href="/contacto/" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
+    <a href="/como-trabajamos/" class="btn btn-secondary">Ver las cuatro fases {ic('arw')}</a>
+  </div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -734,11 +829,15 @@ def build_home(projects):
   <div class="pf-more"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec sec-alt"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Insights</span><h2>Perspectivas desde la trinchera.</h2>
   <p>Ideas, aprendizajes y notas de los proyectos que construimos.</p></div>
   <div class="ins-grid rail {gcls(len(ins_home))}">{ins}</div>
-  <div class="sec-cta"><a href="/insights/" class="btn btn-secondary">Ver todos los insights {ic('arw')}</a></div>
+  <div class="sec-cta"><a href="/insights/" class="textlink">Ver todos los insights {ic('arw')}</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  {pills}
 </div></section>
 
 {contacto_band()}
@@ -749,17 +848,24 @@ def build_home(projects):
 
 
 # ---------------------------------------------------------------- CAPACIDADES
+# v52 · el hub deja de ser spoiler de los 4 sistemas por dominio (eso vive solo en
+# /servicios/{slug}/). Aqui van 3 tarjetas: el problema que resuelve cada dominio y
+# un proyecto real que lo demuestra, con enlace al dominio para el detalle completo.
 def build_servicios_hub(projects):
-    bloques = ""
+    by = {p["slug"]: p for p in projects}
+    cards = ""
     for d in DOMINIOS:
-        sis = "".join(f'<div class="it"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{p}</p></div>'
-                      for i, t, p in d["sistemas"])
-        bloques += f"""
-<section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">{d["tag"]}</span><h2>{d["nombre"]}</h2><p>{d["lede"]}</p></div>
-  <div class="std-grid {gcls(len(d["sistemas"]), dense=True)}">{sis}</div>
-  <div class="sec-cta"><a href="/servicios/{d["slug"]}/" class="btn btn-secondary">Entrar a {d["nombre"]} {ic('arw')}</a></div>
-</div></section>"""
+        slugs = DOMAIN_PROJECTS.get(d["slug"], [])
+        ref = next((by[s] for s in slugs if s in by), None)
+        ref_html = (f'<a class="dom-ref" href="/portafolio/{ref["slug"]}/">{ic("arwr")} {ref["nombre"]} · {resultado_for(ref)}</a>'
+                    if ref else "")
+        cards += f"""<a class="card" href="/servicios/{d["slug"]}/">
+  <div class="ico">{ic(d["icon"])}</div>
+  <h3>{d["nombre"]}</h3>
+  <p>{d["resuelve"]}</p>
+  {ref_html}
+  <span class="more">Entrar a {d["nombre"]} {ic("arwr")}</span>
+</a>"""
     body = f"""
 <section class="phero">{bg_for("capacidades")}<div class="wrap">
   {crumb("Capacidades")}
@@ -767,10 +873,8 @@ def build_servicios_hub(projects):
   <h1>Tres dominios de ingeniería, una sola casa.</h1>
   <p class="lede">Diseño, ingeniería, datos y estrategia bajo un mismo techo. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p>
 </div></section>
-{bloques}
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">El estándar iBisne</span><h2>Incluido en todo lo que construimos.</h2></div>
-  {estandar_grid()}
+  <div class="grid-3 {gcls(len(DOMINIOS))}">{cards}</div>
 </div></section>
 {contacto_band()}
 """
@@ -798,22 +902,27 @@ def build_dominio(d, projects):
     rel = "".join(pf_card(p) for p in mapped[:3]) or "".join(pf_card(p) for p in projects[:3])
     vis_p = next((p for p in mapped if (ASSET / f"{p['slug']}.png").exists()), None)
     if vis_p:
+        vis_url = f"/assets/portfolio/{vis_p['slug']}.png"
         visual = (f'<a class="studio-photo" href="/portafolio/{vis_p["slug"]}/" style="display:block">'
-                  f'<img src="/assets/portfolio/{vis_p["slug"]}.png" alt="{vis_p["nombre"]}"></a>')
+                  f'<img src="{vis_url}" alt="{vis_p["nombre"]}"{img_dims(vis_url)}></a>')
     else:
         visual = '<div class="ph-photo"><div class="lbl">Imagen del dominio</div><div class="sub">Próximamente.</div></div>'
+    para_ti = "".join(f'<li>{f}</li>' for f in d.get("para_ti", []))
     body = f"""
 <section class="phero">{bg_for(d["slug"])}<div class="wrap">
   {crumb(("Capacidades", "/servicios/"), d["nombre"])}
   <span class="eyebrow">{d["tag"]}</span>
   <h1>{d["nombre"]}</h1>
   <p class="lede">{d["lede"]}</p>
-  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary">Cómo trabajamos</a></div>
+  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary">Cómo trabajamos</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="grid-2">
   <div><span class="eyebrow" style="color:var(--link)">Qué resolvemos</span>
-    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{d["resuelve"]}</h2></div>
+    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{d["resuelve"]}</h2>
+    <div class="para-ti"><span class="eyebrow">Es para ti si</span><ul class="para-ti-list">{para_ti}</ul>
+      <a href="/contacto/" class="btn btn-secondary" style="margin-top:1.2rem">{d.get("cta", "Cuéntanos tu proyecto")} {ic('arw')}</a></div>
+  </div>
   {visual}
 </div></div></section>
 
@@ -823,25 +932,11 @@ def build_dominio(d, projects):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Protocolo iBisne</span><h2>Cómo empieza un proyecto.</h2>
-  <p>Cuatro fases, un análisis que te llevas y un precio cerrado antes de cualquier conversación de capital.</p></div>
-  <div class="sec-cta"><a href="/como-trabajamos/" class="btn btn-secondary">Ver las cuatro fases {ic('arw')}</a></div>
-</div></section>
-
-<section class="sec"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">El estándar incluido</span><h2>Nace listo para durar y escalar.</h2></div>
-  {estandar_grid()}
-</div></section>
-
-<section class="sec sec-alt"><div class="wrap">
-  <div class="sec-h"><span class="eyebrow">Stack tecnológico</span><h2>Con qué lo construimos.</h2></div>
-  <div class="stack">{stack}</div>
-</div></section>
-
-<section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos de este dominio.</h2></div>
   <div class="pf-grid rail {gcls(len(mapped[:3]) or 3)}">{rel}</div>
+  <div class="stack" style="margin-top:2rem">{stack}</div>
 </div></section>
+{faq_block(FAQ_PROTOCOLO)}
 {contacto_band()}
 """
     return base(f"{d['nombre']} — iBisne", d["lede"], body, active="servicios", canonical=f"/servicios/{d['slug']}/")
@@ -862,7 +957,7 @@ def build_como_trabajamos():
   <span class="eyebrow">Protocolo iBisne</span>
   <h1>Del primer día al producto funcionando.</h1>
   <p class="lede">Cuatro fases para llevar una visión de negocio a software que opera, con un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
-  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -902,11 +997,12 @@ def build_como_trabajamos():
     <div class="sec-cta"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
   </div>
 </div></section>
-
+{faq_block(FAQ_PROTOCOLO)}
 <section class="sec"><div class="wrap"><div class="ctaband">
-  <div><span class="eyebrow" style="color:var(--link)">Empezar</span>
-    <h2 style="margin-top:.8rem;">Cuéntanos el proyecto. Te decimos cómo se construye.</h2></div>
-  <a href="/contacto/" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</a>
+  <div><span class="eyebrow" style="color:var(--link)">Empieza sin costo</span>
+    <h2 style="margin-top:.8rem;">El Protocolo arranca con tu Sesión cero.</h2>
+    <p style="margin-top:.6rem;color:var(--muted);max-width:52ch">Noventa minutos sin costo. Sales con la Lectura en marcha y el siguiente paso definido.</p></div>
+  <a href="/contacto/" class="btn btn-primary btn-lg">Agenda tu Sesión cero {ic('arw')}</a>
 </div></div></section>
 """
     return base("Cómo trabajamos — iBisne",
@@ -950,22 +1046,53 @@ def build_inversion():
     return base("Inversión · Smart Capital — iBisne", "Co-construimos e invertimos en negocios digitales con potencial de liderar su categoría.", body, active="inversion", canonical="/inversion/")
 
 
-# ---------------------------------------------------------------- POR QUÉ
-def build_porque():
-    adv = "".join(
-        f'<div class="card"><div class="ico">{ic(i)}</div><h3>{t}</h3><p>{d}</p></div>'
-        for i, t, d in VENTAJAS)
+# ---------------------------------------------------------------- POR QUÉ (la prueba)
+# v52 · /por-que-ibisne/ se queda viva pero cambia de trabajo: pasa de repetir la
+# rejilla de VENTAJAS de la home a ser la pagina de prueba (casos y resultados
+# verificables). Todo el copy sale de datos que ya existen en el repo: CASO,
+# resultado_for() y reto_for() sobre cv-data.json. Sin cifras ni testimonios
+# inventados (regla dura 10 de CLAUDE.md).
+CASOS_FEATURED = ("albercas-vip", "thcc")
+
+def build_porque(projects):
+    by = {p["slug"]: p for p in projects}
+    feat = [by[s] for s in CASOS_FEATURED if s in by]
+    feat_html = "".join(f"""<div class="proof-case">
+      <div class="ico">{ic('layers')}</div>
+      <span class="vert">{p.get("vertical","")}</span>
+      <h3>{p["nombre"]}</h3>
+      <p>{enfoque_for(p)}</p>
+      <a class="btn btn-secondary" href="/portafolio/{p["slug"]}/">Ver el caso completo {ic('arw')}</a>
+    </div>""" for p in feat)
+    resto_slugs = [s for s in (list(VC_HOME) + list(CLI_HOME)) if s not in CASOS_FEATURED]
+    resto = [by[s] for s in resto_slugs if s in by]
+    resto_html = "".join(f"""<a class="proof-tile" href="/portafolio/{p["slug"]}/">
+      <span class="vert">{p.get("vertical","")}</span>
+      <h3>{p["nombre"]}</h3>
+      <p class="reto">{reto_for(p)}</p>
+      <p class="res">{ic('check')} {resultado_for(p)}</p>
+    </a>""" for p in resto)
     body = f"""
 <section class="phero">{bg_for("por-que-ibisne")}<div class="wrap">
   {crumb("Por qué iBisne")}
-  <span class="eyebrow">Por qué iBisne</span>
-  <h1>La diferencia entre contratar un proveedor y contratar arquitectos.</h1>
-  <p class="lede">No entregamos y desaparecemos. Nos involucramos en el resultado, con tecnología propia, criterio de negocio y responsabilidad sobre lo que construimos.</p>
+  <span class="eyebrow">La prueba</span>
+  <h1>Lo que ya construimos, verificable.</h1>
+  <p class="lede">Nada de esto es una promesa: son sistemas que ya están operando. Cada tarjeta dice qué se construyó y para qué sirve, tomado directo de la ficha del proyecto.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="grid-3 {gcls(len(VENTAJAS))}">{adv}</div></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Casos con detalle completo</span><h2>Cómo se ve el trabajo por dentro.</h2></div>
+  <div class="proof-cases {gcls(len(feat))}">{feat_html}</div>
+</div></section>
+
+<section class="sec sec-alt"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Más proyectos verificables</span><h2>El reto y lo que hoy está en operación.</h2></div>
+  <div class="proof-grid {gcls(len(resto))}">{resto_html}</div>
+  <div class="sec-cta"><a href="/portafolio/" class="btn btn-secondary">Ver el portafolio completo {ic('arw')}</a></div>
+</div></section>
 {contacto_band()}
 """
-    return base("Por qué iBisne", "Skin in the game, tecnología propia, escalabilidad por diseño y el estándar incluido.", body, active="", canonical="/por-que-ibisne/")
+    return base("Por qué iBisne · La prueba", "Casos verificables: qué sistema construimos en cada proyecto y para qué sirve hoy, sin cifras inventadas.", body, active="", canonical="/por-que-ibisne/")
 
 
 # ---------------------------------------------------------------- ESTUDIO
@@ -1047,7 +1174,7 @@ def build_estudio():
   <div><span class="eyebrow" style="color:var(--link)">Nuestra historia</span>
   <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:400;margin-top:1rem;letter-spacing:-.02em;">De estudio a venture builder.</h2>
   <p style="color:var(--muted);margin-top:1rem;">Empezamos diseñando y lanzando plataformas para terceros. Con los años entendimos que el reto no era técnico, sino de estrategia y ejecución. Evolucionamos: dejamos de entregar proyectos para empezar a construir negocios, y a invertir en los que tienen potencial de liderar.</p></div>
-  <div class="studio-photo"><img src="/assets/equipo.jpg" alt="Equipo iBisne en el estudio"></div>
+  <div class="studio-photo"><img src="/assets/equipo.jpg" alt="Equipo iBisne en el estudio"{img_dims("/assets/equipo.jpg")}></div>
 </div></div></section>
 
 <section class="sec"><div class="wrap">
@@ -1304,7 +1431,8 @@ def caso_html(p):
                 f"CASO[{p['slug']}] declara assets/portfolio/casos/{archivo} y no existe. "
                 f"Corre: python tools/optimize-shots.py")
         lz = ' loading="lazy"' if lazy else ""
-        return (f'<img src="/assets/portfolio/casos/{archivo}" alt="{p["nombre"]} · {pie}"{lz}>'
+        url = f"/assets/portfolio/casos/{archivo}"
+        return (f'<img src="{url}" alt="{p["nombre"]} · {pie}"{lz}{img_dims(url)}>'
                 f'<div class="cap">{pie}</div>')
 
     notas = "".join(
@@ -1342,9 +1470,10 @@ def build_project(p, projects):
     shot = shot_for(p["slug"])
     # Lidera el descanso visual; si no hay, la captura del sitio; si no, un estado branded.
     if has_desc:
-        hero = f'<div class="proj-hero"><img src="/assets/portfolio/{desc}.jpg" alt="{p["nombre"]}"></div>'
+        desc_url = f"/assets/portfolio/{desc}.jpg"
+        hero = f'<div class="proj-hero"><img src="{desc_url}" alt="{p["nombre"]}"{img_dims(desc_url)}></div>'
     elif shot:
-        hero = f'<div class="proj-hero"><img src="{shot}" alt="{p["nombre"]}"></div>'
+        hero = f'<div class="proj-hero"><img src="{shot}" alt="{p["nombre"]}"{img_dims(shot)}></div>'
     else:
         hero = (f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem">'
                 f'<span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span>'
@@ -1355,7 +1484,7 @@ def build_project(p, projects):
     mockup = ""
     if has_desc and shot and p["slug"] not in CASO:
         mockup = (f'<div class="proj-mockup"><img src="{shot}" '
-                  f'alt="{p["nombre"]} · en vivo" loading="lazy"><div class="cap">El sitio en vivo</div></div>')
+                  f'alt="{p["nombre"]} · en vivo" loading="lazy"{img_dims(shot)}><div class="cap">El sitio en vivo</div></div>')
     rel = [x for x in projects if x["slug"] != p["slug"] and x.get("vertical") == p.get("vertical")][:3]
     if len(rel) < 3:
         for x in projects:
@@ -1371,7 +1500,7 @@ def build_project(p, projects):
   <h1>{p["nombre"]}</h1>
   <p class="lede">{p["resumen"]}</p>
   <div class="proj-tags">{tags}</div>
-  <div class="cta" style="margin-top:1.6rem">{live}<a href="/contacto/" class="btn btn-primary">Hablemos {ic('arw')}</a></div>
+  <div class="cta" style="margin-top:1.6rem">{live}<a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec" style="border-top:0;padding-top:1rem"><div class="wrap">{hero}
@@ -1392,49 +1521,73 @@ def build_project(p, projects):
 """
     return base(f"{p['nombre']} — Portafolio iBisne", p["resumen"][:150], body,
                 active="portafolio", canonical=f"/portafolio/{p['slug']}/",
-                noindex=p["slug"] in OCULTOS)
+                noindex=p["slug"] in OCULTOS, og_image=shot)
 
 
 # ---------------------------------------------------------------- CONTACTO
+# v52 · el formulario califica en vez de solo recibir. Reutiliza el texto exacto de
+# los radios de urgencia e inversion que ya existen en /empecemos/, para que ambos
+# formularios hablen del mismo dato con las mismas palabras.
 def build_contacto():
     body = f"""
 <section class="phero">{bg_for("contacto")}<div class="wrap">
   {crumb("Contacto")}
   <span class="eyebrow">Contacto</span>
   <h1>Cuéntanos tu proyecto.</h1>
-  <p class="lede">Si estás construyendo algo con potencial de liderar su categoría, hablemos. Nos sentamos del mismo lado de la mesa.</p>
+  <p class="lede">Cuéntanos qué estás construyendo. La primera conversación, la Sesión cero, es sin costo y sales con el siguiente paso claro.</p>
 </div></section>
 <section class="sec" style="border-top:0"><div class="wrap"><div class="apply">
-  <div><span class="eyebrow">Escríbenos</span>
-    <h2 style="margin-top:1rem;">Del concepto al liderazgo.</h2>
-    <p class="sub">Cuéntanos qué estás construyendo, en qué vertical y qué buscas escalar. Respondemos a los proyectos que encajan con lo que hacemos.</p>
+  <div><span class="eyebrow">Qué pasa después</span>
+    <h2 style="margin-top:1rem;">Del formulario a tu Sesión cero.</h2>
+    <ol class="pasos-despues">
+      <li><span class="no">01</span><p>Te respondemos en un día hábil con la fecha de tu Sesión cero.</p></li>
+      <li><span class="no">02</span><p>Noventa minutos sobre tu negocio, sin costo.</p></li>
+      <li><span class="no">03</span><p>Recibes la Lectura: tesis, riesgos, arquitectura y alcance. Es tuya, con o sin nosotros.</p></li>
+    </ol>
     <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
-    <a class="btn btn-secondary" href="/empecemos/" style="margin-top:1.6rem">Me interesa, quiero empezar {ic('arw')}</a>
   </div>
   <form class="form" id="applyForm" novalidate>
-    <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name"></div>
+    <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name" required></div>
     <div class="field"><label for="empresa">Empresa / proyecto</label><input class="input" id="empresa" name="empresa"></div></div>
-    <div class="two"><div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email"></div>
-    <div class="field"><label for="telefono">Teléfono</label><input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel"></div></div>
+    <div class="two"><div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email" required></div>
+    <div class="field"><label for="telefono">WhatsApp</label><input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel" placeholder="33 1234 5678"></div></div>
     <div class="field"><label for="mensaje">¿Qué estás construyendo?</label><textarea class="ta" id="mensaje" name="mensaje" placeholder="Vertical, tracción actual y qué buscas escalar."></textarea></div>
+    <fieldset class="field">
+      <legend>¿Qué tan urgente es arrancar?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="urgencia" value="Urgente, ya quiero arrancar"><span>Urgente, ya quiero arrancar</span></label>
+        <label class="opt"><input type="radio" name="urgencia" value="Me puedo esperar"><span>Me puedo esperar</span></label>
+        <label class="opt"><input type="radio" name="urgencia" value="Lo sigo pensando"><span>Lo sigo pensando</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="field">
+      <legend>¿Qué rango de inversión contemplas?</legend>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="inversion" value="Hasta $15,000"><span>Hasta $15,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="$15,000 a $35,000"><span>$15,000 a $35,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="$35,000 a $75,000"><span>$35,000 a $75,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="Más de $75,000"><span>Más de $75,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
+      </div>
+    </fieldset>
     <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-    <button type="submit" class="btn btn-primary btn-lg">Hablemos {ic('arw')}</button>
-    <div class="fine" id="formMsg">Respondemos a los proyectos que encajan con lo que construimos.</div>
+    <button type="submit" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agendar mi Sesión cero {ic('arw')}</button>
+    <div class="fine" id="formMsg" role="status">Tus datos se usan solo para dar seguimiento a tu proyecto.</div>
   </form>
 </div></div></section>
 <script>
 var f=document.getElementById('applyForm');
 f.addEventListener('submit',function(e){{e.preventDefault();var m=document.getElementById('formMsg');
 var d=Object.fromEntries(new FormData(f).entries());
-if(!d.email&&!d.telefono){{m.textContent='Déjanos al menos un email o teléfono.';m.style.color='#E5766B';return;}}
+if(!d.nombre||!d.email){{m.textContent='Falta tu nombre y tu correo.';m.style.color='#E5766B';return;}}
 if(d.website){{return;}} m.textContent='Enviando…';m.style.color='var(--muted)';
-fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(Object.assign({{}},d,{{vertical:'contacto',locale:'es-MX'}}))}})
+fetch('/api/lead',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(Object.assign({{}},d,{{origen:'contacto',vertical:'contacto',locale:'es-MX'}}))}})
 .then(function(r){{return r.json().catch(function(){{return{{}};}});}})
-.then(function(){{f.reset();m.textContent='Recibido. Te contactamos muy pronto.';m.style.color='var(--ok)';}})
+.then(function(){{if(window.ibEv) window.ibEv('generate_lead',{{origen:'contacto'}});f.reset();m.textContent='Recibido. Te escribimos en un día hábil para fijar tu Sesión cero.';m.style.color='var(--ok)';}})
 .catch(function(){{m.textContent='Escríbenos a proyectos@ibisne.com.';m.style.color='var(--muted)';}});}});
 </script>
 """
-    return base("Contacto — iBisne", "Cuéntanos tu proyecto. Del concepto al liderazgo de su categoría.", body, active="", canonical="/contacto/")
+    return base("Contacto — iBisne", "Cuéntanos tu proyecto y agenda tu Sesión cero: noventa minutos sin costo, con la Lectura técnica incluida.", body, active="", canonical="/contacto/")
 
 
 # ---------------------------------------------------------------- BRIEF /empecemos/
@@ -1545,13 +1698,16 @@ EMPECEMOS_JS = r"""
   function pintarChips(){
     chips.forEach(function(ch, n){
       ch.className = 'qs';
-      if (n === 0 && errorEn1) ch.classList.add('is-error');
+      var tieneError = (n === 0 && errorEn1);
+      if (tieneError) ch.classList.add('is-error');
       else if (respondido(n)) ch.classList.add('is-done');
       else if (visto[n] && n !== i) ch.classList.add('is-empty');
       if (n === i) ch.classList.add('is-now');
       var alcanzable = visto[n];
       ch.classList.toggle('can-go', alcanzable && n !== i);
       ch.setAttribute('aria-current', n === i ? 'step' : 'false');
+      // El paso con error lo comunica tambien el boton del stepper, no solo el color.
+      ch.setAttribute('aria-invalid', tieneError ? 'true' : 'false');
       if (!alcanzable) ch.setAttribute('aria-disabled', 'true');
       else ch.removeAttribute('aria-disabled');
     });
@@ -1672,6 +1828,7 @@ EMPECEMOS_JS = r"""
   });
 
   function listo(payload, degradado){
+    if (window.ibEv) window.ibEv('generate_lead', { origen: 'empecemos' });
     document.getElementById('sumPrint').innerHTML = document.getElementById('sumBox').innerHTML;
     form.hidden = true;
     document.getElementById('briefDone').hidden = false;
@@ -1743,7 +1900,7 @@ def build_empecemos():
     <div class="qsteps" id="qSteps">
       {_stepper()}
     </div>
-    <div class="qsnum" id="qbNum">Paso 1 de 6</div>
+    <div class="qsnum" id="qbNum" aria-live="polite">Paso 1 de 6</div>
 
     <div class="qbody">
 
@@ -1754,13 +1911,13 @@ def build_empecemos():
           <div class="qmain">
             <div class="fgrid">
               <div class="fgroup"><label for="nombre">Nombre</label>
-                <input class="input" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre"></div>
+                <input class="input" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre" required></div>
               <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
                 <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
             </div>
             <div class="fgrid" style="margin-top:.9rem">
               <div class="fgroup"><label for="email">Correo</label>
-                <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com"></div>
+                <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com" required></div>
               <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
                 <input class="input" id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="17" placeholder="33 1234 5678"></div>
             </div>
@@ -1885,7 +2042,7 @@ def build_empecemos():
       <button type="button" class="btn btn-primary grow" id="btnNext">Continuar {ic('arw')}</button>
       <button type="submit" class="btn btn-primary grow" id="btnSend" hidden>Enviar {ic('arw')}</button>
     </div>
-    <div class="qmsg" id="qMsg"></div>
+    <div class="qmsg" id="qMsg" role="alert"></div>
   </form>
 
   <!-- ══════ CIERRE ══════ -->
@@ -3382,7 +3539,7 @@ def main():
         "servicios/index.html": build_servicios_hub(projects),
         "como-trabajamos/index.html": build_como_trabajamos(),
         "inversion/index.html": build_inversion(),
-        "por-que-ibisne/index.html": build_porque(),
+        "por-que-ibisne/index.html": build_porque(projects),
         "estudio/index.html": build_estudio(),
         "insights/index.html": build_insights_hub(),
         "portafolio/index.html": build_portfolio_hub(projects),
