@@ -396,7 +396,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False, og_image=No
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=56">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=57">
 {GTAG}
 </head>
 <body>
@@ -426,9 +426,9 @@ def contacto_band():
     # Eduardo): 90 minutos sin costo, con lectura tecnica que el cliente se lleva
     # aunque no siga con iBisne. Sustituye al "Hablemos" generico en todas las bandas.
     return f"""<section class="sec"><div class="wrap"><div class="ctaband">
-      <div><span class="eyebrow" style="color:var(--link)">Empieza sin costo</span>
-        <h2 style="margin-top:.8rem;">Noventa minutos sobre tu negocio. Sin costo, con o sin nosotros.</h2>
-        <p style="margin-top:.6rem;color:var(--muted);max-width:52ch">En la Sesión cero hablamos de tu mercado, tus números y el problema real. Sales con claridad y con el siguiente paso definido.</p></div>
+      <div><span class="eyebrow eyebrow-accent">Empieza sin costo</span>
+        <h2>Noventa minutos sobre tu negocio. Sin costo, con o sin nosotros.</h2>
+        <p>En la Sesión cero hablamos de tu mercado, tus números y el problema real. Sales con claridad y con el siguiente paso definido.</p></div>
       <div class="cta">
         <a href="/contacto/" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
         <a href="https://wa.me/523329575274" target="_blank" rel="noopener" class="btn btn-secondary btn-lg" data-cta="whatsapp">Escríbenos por WhatsApp</a>
@@ -903,7 +903,7 @@ def build_dominio(d, projects):
     vis_p = next((p for p in mapped if (ASSET / f"{p['slug']}.png").exists()), None)
     if vis_p:
         vis_url = f"/assets/portfolio/{vis_p['slug']}.png"
-        visual = (f'<a class="studio-photo" href="/portafolio/{vis_p["slug"]}/" style="display:block">'
+        visual = (f'<a class="studio-photo" href="/portafolio/{vis_p["slug"]}/">'
                   f'<img src="{vis_url}" alt="{vis_p["nombre"]}"{img_dims(vis_url)}></a>')
     else:
         visual = '<div class="ph-photo"><div class="lbl">Imagen del dominio</div><div class="sub">Próximamente.</div></div>'
@@ -914,14 +914,14 @@ def build_dominio(d, projects):
   <span class="eyebrow">{d["tag"]}</span>
   <h1>{d["nombre"]}</h1>
   <p class="lede">{d["lede"]}</p>
-  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary">Cómo trabajamos</a></div>
+  <div class="cta"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a><a href="/como-trabajamos/" class="btn btn-secondary">Cómo trabajamos</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="grid-2">
-  <div><span class="eyebrow" style="color:var(--link)">Qué resolvemos</span>
-    <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.02em;margin-top:1rem;">{d["resuelve"]}</h2>
+  <div class="dominio-resolvemos"><span class="eyebrow eyebrow-accent">Qué resolvemos</span>
+    <h2>{d["resuelve"]}</h2>
     <div class="para-ti"><span class="eyebrow">Es para ti si</span><ul class="para-ti-list">{para_ti}</ul>
-      <a href="/contacto/" class="btn btn-secondary" style="margin-top:1.2rem">{d.get("cta", "Cuéntanos tu proyecto")} {ic('arw')}</a></div>
+      <a href="/contacto/" class="btn btn-secondary">{d.get("cta", "Cuéntanos tu proyecto")} {ic('arw')}</a></div>
   </div>
   {visual}
 </div></div></section>
@@ -934,7 +934,7 @@ def build_dominio(d, projects):
 <section class="sec"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos de este dominio.</h2></div>
   <div class="pf-grid rail {gcls(len(mapped[:3]) or 3)}">{rel}</div>
-  <div class="stack" style="margin-top:2rem">{stack}</div>
+  <div class="stack">{stack}</div>
 </div></section>
 {faq_block(FAQ_PROTOCOLO)}
 {contacto_band()}
@@ -957,7 +957,7 @@ def build_como_trabajamos():
   <span class="eyebrow">Protocolo iBisne</span>
   <h1>Del primer día al producto funcionando.</h1>
   <p class="lede">Cuatro fases para llevar una visión de negocio a software que opera, con un producto funcional en tus manos antes de que decidas nada. Así trabajamos con todos, sin excepción.</p>
-  <div class="cta" style="margin-top:2rem"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
+  <div class="cta"><a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -966,7 +966,7 @@ def build_como_trabajamos():
   <div class="fases-2col">
     <div class="tl">{fases}</div>
     <aside class="price-anchor compact">
-      <span class="eyebrow" style="color:var(--link)">Sprint de Validación</span>
+      <span class="eyebrow eyebrow-accent">Sprint de Validación</span>
       <h3>Sales de la sesión con el producto funcionando enfrente.</h3>
       <p>Construimos el núcleo de tu producto y te lo mostramos en vivo: qué hace, cómo está armado por dentro y qué falta para llevarlo a producción.</p>
       <ul class="takeaways">
@@ -993,15 +993,15 @@ def build_como_trabajamos():
       <div class="adv"><div class="ico">{ic('layers')}</div><h3>Desarrollo</h3><p>Nos contratas, construimos, eres dueño de todo. Es la ruta por defecto y donde termina la mayoría de los proyectos.</p></div>
       <div class="adv"><div class="ico">{ic('coins')}</div><h3>Smart Capital</h3><p>En algunos casos el análisis muestra un proyecto que preferimos financiar en lugar de facturar. Entonces entramos con capital y equipo, y el riesgo también corre por nuestra cuenta.</p></div>
     </div>
-    <div class="std-note" style="margin-top:var(--sp-6)">{ic('arw')} Ponemos Smart Capital sobre la mesa solo después de analizar el proyecto, cuando el estudio muestra cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una promesa de entrada.</div>
+    <div class="std-note">{ic('arw')} Ponemos Smart Capital sobre la mesa solo después de analizar el proyecto, cuando el estudio muestra cuatro cosas: <span class="free">demanda demostrada, unidad económica con margen, un mercado que aguante un negocio grande y un fundador que se queda a operarlo</span>. Es una tesis de inversión, no una promesa de entrada.</div>
     <div class="sec-cta"><a href="/inversion/" class="btn btn-secondary">Cómo invertimos {ic('arw')}</a></div>
   </div>
 </div></section>
 {faq_block(FAQ_PROTOCOLO)}
 <section class="sec"><div class="wrap"><div class="ctaband">
-  <div><span class="eyebrow" style="color:var(--link)">Empieza sin costo</span>
-    <h2 style="margin-top:.8rem;">El Protocolo arranca con tu Sesión cero.</h2>
-    <p style="margin-top:.6rem;color:var(--muted);max-width:52ch">Noventa minutos sin costo. Sales con la Lectura en marcha y el siguiente paso definido.</p></div>
+  <div><span class="eyebrow eyebrow-accent">Empieza sin costo</span>
+    <h2>El Protocolo arranca con tu Sesión cero.</h2>
+    <p>Noventa minutos sin costo. Sales con la Lectura en marcha y el siguiente paso definido.</p></div>
   <a href="/contacto/" class="btn btn-primary btn-lg">Agenda tu Sesión cero {ic('arw')}</a>
 </div></div></section>
 """
@@ -1033,7 +1033,7 @@ def build_inversion():
 
 <section class="sec"><div class="wrap"><div class="vent">
   <div class="head"><div><span class="eyebrow">Casos propios</span>
-  <h2 style="margin-top:1rem;">Proyectos que financiamos para desarrollar y lanzar.</h2></div>
+  <h2>Proyectos que financiamos para desarrollar y lanzar.</h2></div>
   <p>Skin in the game hecho tangible: negocios donde no solo construimos, también invertimos.</p></div>
   <div class="vent-grid">
     <div class="vcard"><div class="nm">iBroker</div><div class="ty">CRM inmobiliario · Lanzado</div><div class="fin">{ic('arw')} Financiado por iBisne</div></div>
@@ -1112,7 +1112,7 @@ def build_estudio():
                ("Honestidad operativa", "Decimos la verdad de los datos, con claridad y respeto."),
                ("Control total", "Gobernamos el sistema completo: tecnología, diseño y estrategia."),
                ("Crecimiento real", "Construimos sobre ventas, márgenes y valor sostenido, no sobre vanidad.")]
-    vg = "".join(f'<div class="card"><h3 style="font-size:1.2rem">{t}</h3><p>{d}</p></div>' for t, d in valores)
+    vg = "".join(f'<div class="card card-value"><h3>{t}</h3><p>{d}</p></div>' for t, d in valores)
     # v38 · nueve personas en (icono, nombre, cargo, disciplina, sede, correo).
     #
     # El icono viene del sprite del sitio y apunta a la FUNCION, no a la persona: dos
@@ -1171,9 +1171,9 @@ def build_estudio():
 </div></section>
 
 <section class="sec"><div class="wrap"><div class="grid-2">
-  <div><span class="eyebrow" style="color:var(--link)">Nuestra historia</span>
-  <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:400;margin-top:1rem;letter-spacing:-.02em;">De estudio a venture builder.</h2>
-  <p style="color:var(--muted);margin-top:1rem;">Empezamos diseñando y lanzando plataformas para terceros. Con los años entendimos que el reto no era técnico, sino de estrategia y ejecución. Evolucionamos: dejamos de entregar proyectos para empezar a construir negocios, y a invertir en los que tienen potencial de liderar.</p></div>
+  <div class="historia"><span class="eyebrow eyebrow-accent">Nuestra historia</span>
+  <h2>De estudio a venture builder.</h2>
+  <p>Empezamos diseñando y lanzando plataformas para terceros. Con los años entendimos que el reto no era técnico, sino de estrategia y ejecución. Evolucionamos: dejamos de entregar proyectos para empezar a construir negocios, y a invertir en los que tienen potencial de liderar.</p></div>
   <div class="studio-photo"><img src="/assets/equipo.jpg" alt="Equipo iBisne en el estudio"{img_dims("/assets/equipo.jpg")}></div>
 </div></div></section>
 
@@ -1212,14 +1212,14 @@ def build_insight(slug, title, cat):
     # Contenido real por artículo en content/insights/<slug>.html (redactado, sin placeholders).
     article = (ROOT / "content" / "insights" / f"{slug}.html").read_text(encoding="utf-8").strip()
     body = f"""
-<section class="phero">{bg_for(slug)}<div class="wrap" style="max-width:44rem">
+<section class="phero phero-insight">{bg_for(slug)}<div class="wrap wrap-narrow">
   {crumb(("Insights", "/insights/"), cat)}
   <span class="eyebrow">{cat}</span>
-  <h1 style="font-size:clamp(1.9rem,4vw,3rem)">{title}</h1>
+  <h1>{title}</h1>
   <p class="lede">por el equipo iBisne</p>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:1rem;padding-bottom:0"><div class="wrap" style="max-width:44rem"><div class="ins-hero" style="background-image:url({bg_url(slug)})" role="img" aria-label="{title}"></div></div></section>
-<section class="sec" style="border-top:0;padding-top:2rem"><div class="wrap"><div class="prose">
+<section class="sec insight-media"><div class="wrap wrap-narrow"><div class="ins-hero" style="background-image:url({bg_url(slug)})" role="img" aria-label="{title}"></div></div></section>
+<section class="sec insight-body"><div class="wrap"><div class="prose">
 {article}
 </div></div></section>
 {contacto_band()}
@@ -1475,9 +1475,9 @@ def build_project(p, projects):
     elif shot:
         hero = f'<div class="proj-hero"><img src="{shot}" alt="{p["nombre"]}"{img_dims(shot)}></div>'
     else:
-        hero = (f'<div class="proj-hero" style="display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center;text-align:center;padding:2rem">'
-                f'<span class="eyebrow" style="color:var(--link)">{p.get("vertical","")}</span>'
-                f'<span style="font-family:var(--serif);font-size:1.5rem;color:var(--ink)">{p["estado"].title()}</span></div>')
+        hero = (f'<div class="proj-hero proj-hero-empty">'
+                f'<span class="eyebrow eyebrow-accent">{p.get("vertical","")}</span>'
+                f'<span class="estado">{p["estado"].title()}</span></div>')
     stack = "".join(f'<span class="chip">{x}</span>' for x in stack_for(p))
     # Banda secundaria: la captura del sitio en vivo (cuando ya lideramos con el descanso).
     # Se suprime si el proyecto tiene caso de estudio: ahi la imagen ya va con contexto.
@@ -1500,17 +1500,17 @@ def build_project(p, projects):
   <h1>{p["nombre"]}</h1>
   <p class="lede">{p["resumen"]}</p>
   <div class="proj-tags">{tags}</div>
-  <div class="cta" style="margin-top:1.6rem">{live}<a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
+  <div class="cta">{live}<a href="/contacto/" class="btn btn-primary">Agenda tu Sesión cero {ic('arw')}</a></div>
 </div></section>
 
-<section class="sec" style="border-top:0;padding-top:1rem"><div class="wrap">{hero}
+<section class="sec project-body"><div class="wrap">{hero}
   <div class="rrr">
     <div class="blk"><div class="lab">El reto</div><h3>Lo que había que lograr</h3><p>{reto_for(p)}</p></div>
     <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h3>Nuestro enfoque</h3><p>{enfoque_for(p)}</p></div>
     <div class="blk"><div class="lab">El resultado</div><h3>Lo que entregamos</h3><p>{resultado_for(p)}</p></div>
   </div>
   {mockup}
-  <div style="margin-top:var(--sp-7)"><span class="eyebrow" style="color:var(--link)">{p.get("stack_lab","Stack tecnológico")}</span><div class="stack">{stack}</div></div>
+  <div class="stack-block"><span class="eyebrow eyebrow-accent">{p.get("stack_lab","Stack tecnológico")}</span><div class="stack">{stack}</div></div>
 </div></section>
 {caso_html(p)}
 <section class="sec"><div class="wrap">
@@ -1536,15 +1536,15 @@ def build_contacto():
   <h1>Cuéntanos tu proyecto.</h1>
   <p class="lede">Cuéntanos qué estás construyendo. La primera conversación, la Sesión cero, es sin costo y sales con el siguiente paso claro.</p>
 </div></section>
-<section class="sec" style="border-top:0"><div class="wrap"><div class="apply">
+<section class="sec contact-form-sec"><div class="wrap"><div class="apply">
   <div><span class="eyebrow">Qué pasa después</span>
-    <h2 style="margin-top:1rem;">Del formulario a tu Sesión cero.</h2>
+    <h2>Del formulario a tu Sesión cero.</h2>
     <ol class="pasos-despues">
       <li><span class="no">01</span><p>Te respondemos en un día hábil con la fecha de tu Sesión cero.</p></li>
       <li><span class="no">02</span><p>Noventa minutos sobre tu negocio, sin costo.</p></li>
       <li><span class="no">03</span><p>Recibes la Lectura: tesis, riesgos, arquitectura y alcance. Es tuya, con o sin nosotros.</p></li>
     </ol>
-    <p class="sub" style="font-size:.95rem;margin-top:1.4rem;">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
+    <p class="sub">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
   </div>
   <form class="form" id="applyForm" novalidate>
     <div class="two"><div class="field"><label for="nombre">Nombre</label><input class="input" id="nombre" name="nombre" autocomplete="name" required></div>
@@ -1570,7 +1570,7 @@ def build_contacto():
         <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
       </div>
     </fieldset>
-    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button type="submit" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agendar mi Sesión cero {ic('arw')}</button>
     <div class="fine" id="formMsg" role="status">Tus datos se usan solo para dar seguimiento a tu proyecto.</div>
   </form>
@@ -1872,7 +1872,7 @@ def _qside(titulo, sub):
 
 def build_empecemos():
     body = f"""
-<section class="quiz"><div class="wrap" style="max-width:58rem">
+<section class="quiz"><div class="wrap wrap-quiz">
 
   <!-- ══════ BIENVENIDA ══════ -->
   <div class="qwel" id="qwelcome">
@@ -1890,7 +1890,7 @@ def build_empecemos():
       <span class="ptxt">Y sumamos un <b>5% extra de descuento</b> sobre la última cotización que preparamos para ti. Se aplica encima de las condiciones que ya tienes.</span>
     </div>
 
-    <p class="lede" style="margin-bottom:1.4rem">Llena este formato y lancemos juntos. Toma menos de dos minutos.</p>
+    <p class="lede">Llena este formato y lancemos juntos. Toma menos de dos minutos.</p>
     <button type="button" class="btn btn-primary btn-lg" id="btnStart">Empecemos {ic('arw')}</button>
   </div>
 
@@ -1915,7 +1915,7 @@ def build_empecemos():
               <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
                 <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
             </div>
-            <div class="fgrid" style="margin-top:.9rem">
+            <div class="fgrid">
               <div class="fgroup"><label for="email">Correo</label>
                 <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com" required></div>
               <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
@@ -2035,7 +2035,7 @@ def build_empecemos():
 
     </div>
 
-    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <div class="qnav">
       <button type="button" class="btn btn-secondary" id="btnPrev" hidden>Atrás</button>
@@ -2050,7 +2050,7 @@ def build_empecemos():
     <div class="mark">{ic('check')}</div>
     <h3>Listo, ya lo tenemos.</h3>
     <p>Gracias por tomarte el tiempo. Revisamos tu información y te contactamos para afinar los detalles y cerrar el arranque.</p>
-    <p style="margin-top:.9rem"><b style="color:var(--ink)">Tu 5% extra sigue en pie</b> si cierras antes del {PROMO_FECHA}.</p>
+    <p><b>Tu 5% extra sigue en pie</b> si cierras antes del {PROMO_FECHA}.</p>
 
     <div class="acts">
       <button type="button" class="btn btn-secondary" id="btnPdf">Descargar mi resumen en PDF</button>
@@ -2062,10 +2062,10 @@ def build_empecemos():
       <a class="btn btn-primary" id="mailFallback" href="mailto:proyectos@ibisne.com">Enviar por correo</a>
     </div>
 
-    <div class="prt" style="margin-top:2rem;text-align:left">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:.5rem">iBisne · Brief de proyecto</div>
+    <div class="prt">
+      <div class="prt-label">iBisne · Brief de proyecto</div>
       <div class="summary" id="sumPrint"></div>
-      <div style="font-size:.75rem;color:#888;margin-top:1rem">proyectos@ibisne.com · ibisne.com · 5% extra vigente hasta el {PROMO_FECHA}</div>
+      <div class="prt-foot">proyectos@ibisne.com · ibisne.com · 5% extra vigente hasta el {PROMO_FECHA}</div>
     </div>
   </div>
 
@@ -3002,7 +3002,7 @@ def build_promos(projects):
   <section class="sec" id="reservar">
     <div class="wrap">
       <div class="lp-form-grid">
-        <div class="sec-h" style="margin-bottom:0">
+        <div class="sec-h">
           <span class="eyebrow" data-i18n="fm_eye">{pt('fm_eye')}</span>
           <h2 data-i18n="fm_h2">{pt('fm_h2')}</h2>
           <p data-i18n="fm_p">{pt('fm_p')}</p>
@@ -3027,7 +3027,7 @@ def build_promos(projects):
             <select class="input" id="lpPlan" name="plan">{opciones}</select></div>
           <div class="fgroup"><label for="lpMsg" data-i18n="f_msg">{pt('f_msg')}</label>
             <input class="input" id="lpMsg" name="mensaje"></div>
-          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <label class="lp-priv"><input type="checkbox" id="lpOk" required>
             <span><span data-i18n="f_priv">{pt('f_priv')}</span> <a href="/legal/privacidad/" data-i18n="f_privl">{pt('f_privl')}</a>.</span></label>
           <button type="submit" class="btn btn-primary btn-lg lp-ia" id="lpSend" data-i18n="f_send">{pt('f_send')}</button>
@@ -3446,11 +3446,11 @@ def promo_js():
 # ---------------------------------------------------------------- LEGAL
 def build_404():
     body = """
-<section class="phero">{bg_for("error404")}<div class="wrap" style="max-width:44rem">
+<section class="phero phero-404">{bg_for("error404")}<div class="wrap wrap-narrow">
   <span class="eyebrow">Error 404</span>
-  <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Esta página no existe.</h1>
-  <p class="lede" style="margin-top:1.2rem">El enlace que seguiste no lleva a ningún lugar, o la página cambió de sitio. Volvamos a terreno firme.</p>
-  <div class="cta" style="margin-top:2rem"><a class="btn btn-primary" href="/">Ir al inicio <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arw"/></svg></a>
+  <h1>Esta página no existe.</h1>
+  <p class="lede">El enlace que seguiste no lleva a ningún lugar, o la página cambió de sitio. Volvamos a terreno firme.</p>
+  <div class="cta"><a class="btn btn-primary" href="/">Ir al inicio <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arw"/></svg></a>
   <a class="btn btn-secondary" href="/portafolio/">Ver portafolio</a></div>
 </div></section>
 """
@@ -3470,11 +3470,11 @@ LEGAL_NOTA = ('<p class="legal-nota"><strong>Este documento no constituye asesor
 
 def build_legal(slug, title, prose):
     body = f"""
-<section class="phero">{bg_for(slug)}<div class="wrap" style="max-width:44rem">
+<section class="phero phero-legal">{bg_for(slug)}<div class="wrap wrap-narrow">
   {crumb(("Legal", "/legal/terminos/"), title)}
-  <span class="eyebrow">Legal</span><h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">{title}</h1>
+  <span class="eyebrow">Legal</span><h1>{title}</h1>
 </div></section>
-<section class="sec" style="border-top:0;padding-top:0"><div class="wrap"><div class="prose">{LEGAL_NOTA}{prose}</div></div></section>
+<section class="sec legal-body"><div class="wrap"><div class="prose">{LEGAL_NOTA}{prose}</div></div></section>
 """
     return base(f"{title} — iBisne", title, body, active="", canonical=f"/legal/{slug}/")
 

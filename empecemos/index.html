@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=56">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=57">
 <script>
 (function(){
   var ID='G-XEW1TZEMNL';
@@ -118,7 +118,7 @@
   </div>
 <main id="contenido">
 
-<section class="quiz"><div class="wrap" style="max-width:58rem">
+<section class="quiz"><div class="wrap wrap-quiz">
 
   <!-- ══════ BIENVENIDA ══════ -->
   <div class="qwel" id="qwelcome">
@@ -141,7 +141,7 @@
       <span class="ptxt">Y sumamos un <b>5% extra de descuento</b> sobre la última cotización que preparamos para ti. Se aplica encima de las condiciones que ya tienes.</span>
     </div>
 
-    <p class="lede" style="margin-bottom:1.4rem">Llena este formato y lancemos juntos. Toma menos de dos minutos.</p>
+    <p class="lede">Llena este formato y lancemos juntos. Toma menos de dos minutos.</p>
     <button type="button" class="btn btn-primary btn-lg" id="btnStart">Empecemos <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arw"/></svg></button>
   </div>
 
@@ -171,7 +171,7 @@
               <div class="fgroup"><label for="empresa">Proyecto o negocio</label>
                 <input class="input" id="empresa" name="empresa" autocomplete="organization" placeholder="Cómo se llama"></div>
             </div>
-            <div class="fgrid" style="margin-top:.9rem">
+            <div class="fgrid">
               <div class="fgroup"><label for="email">Correo</label>
                 <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@dominio.com" required></div>
               <div class="fgroup"><label for="telefono">WhatsApp, 10 dígitos</label>
@@ -291,7 +291,7 @@
 
     </div>
 
-    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <div class="qnav">
       <button type="button" class="btn btn-secondary" id="btnPrev" hidden>Atrás</button>
@@ -306,7 +306,7 @@
     <div class="mark"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></div>
     <h3>Listo, ya lo tenemos.</h3>
     <p>Gracias por tomarte el tiempo. Revisamos tu información y te contactamos para afinar los detalles y cerrar el arranque.</p>
-    <p style="margin-top:.9rem"><b style="color:var(--ink)">Tu 5% extra sigue en pie</b> si cierras antes del 30 de septiembre de 2026.</p>
+    <p><b>Tu 5% extra sigue en pie</b> si cierras antes del 30 de septiembre de 2026.</p>
 
     <div class="acts">
       <button type="button" class="btn btn-secondary" id="btnPdf">Descargar mi resumen en PDF</button>
@@ -318,10 +318,10 @@
       <a class="btn btn-primary" id="mailFallback" href="mailto:proyectos@ibisne.com">Enviar por correo</a>
     </div>
 
-    <div class="prt" style="margin-top:2rem;text-align:left">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:.5rem">iBisne · Brief de proyecto</div>
+    <div class="prt">
+      <div class="prt-label">iBisne · Brief de proyecto</div>
       <div class="summary" id="sumPrint"></div>
-      <div style="font-size:.75rem;color:#888;margin-top:1rem">proyectos@ibisne.com · ibisne.com · 5% extra vigente hasta el 30 de septiembre de 2026</div>
+      <div class="prt-foot">proyectos@ibisne.com · ibisne.com · 5% extra vigente hasta el 30 de septiembre de 2026</div>
     </div>
   </div>
 

@@ -2158,3 +2158,350 @@ body.has-consent .lp-abar { display:none; }
      cruzar el breakpoint. */
   .lp-hero h1 { font-size:clamp(2.1rem, 8.8vw, 2.6rem); }
 }
+
+/* v55 · inline a clases
+   12 estilos inline que trajo un cambio reciente (mas otros de arrastre que el
+   mismo grep destapo) migrados a clases semanticas. Regla del proyecto:
+   cuando la separacion vertical se repite en el mismo componente, la resuelve
+   el contenedor (selector descendiente / hermano adyacente) en vez de una
+   clase utilitaria nueva en cada elemento. */
+
+/* --- eyebrow con color de acento, reutilizado en varias secciones --- */
+.eyebrow-accent { color:var(--link); }
+
+/* --- banda de contacto (contacto_band()): tipografia interna --- */
+.ctaband .eyebrow { color:var(--link); }
+.ctaband h2 { margin-top:.8rem; }
+.ctaband p { margin-top:.6rem; color:var(--muted); max-width:52ch; }
+
+/* --- foto del dominio: el <a> necesita display:block para no colapsar --- */
+.studio-photo { display:block; }
+
+/* --- CTA justo despues del lede en el hero interior (.phero) --- */
+.phero .lede + .cta { margin-top:2rem; }
+
+/* --- bloque "Que resolvemos" del hero de dominio (servicios/producto|comercio|frontera) --- */
+.dominio-resolvemos h2 { font-size:clamp(1.6rem,3.2vw,2.3rem); font-weight:400; letter-spacing:-.02em; margin-top:1rem; }
+.para-ti .btn { margin-top:1.2rem; }
+
+/* --- stack justo tras la rejilla de proyectos del dominio --- */
+.pf-grid.rail + .stack { margin-top:2rem; }
+
+/* --- nota bajo la bifurcacion Desarrollo / Smart Capital en /como-trabajamos/ --- */
+.subsplit .std-note { margin-top:var(--sp-6); }
+
+/* --- titulo de "Casos propios" en /inversion/ --- */
+.vent h2 { margin-top:1rem; }
+
+/* --- tarjetas del Codigo iBisne (valores): titulo mas chico que .card por defecto --- */
+.card-value h3 { font-size:1.2rem; }
+
+/* --- bloque "Nuestra historia" en /estudio/ --- */
+.historia h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:400; margin-top:1rem; letter-spacing:-.02em; }
+.historia p { color:var(--muted); margin-top:1rem; }
+
+/* --- wrap angosto para paginas de una columna (insight, 404, legal) --- */
+.wrap-narrow { max-width:var(--maxw-prose); }
+
+/* --- hero y bandas del articulo de insight --- */
+.phero-insight h1 { font-size:clamp(1.9rem,4vw,3rem); }
+.insight-media { border-top:0; padding-top:1rem; padding-bottom:0; }
+.insight-body { border-top:0; padding-top:2rem; }
+
+/* --- ficha de proyecto sin foto: estado centrado a falta de imagen --- */
+.proj-hero-empty { display:flex; flex-direction:column; gap:.5rem; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+.proj-hero-empty .estado { font-family:var(--serif); font-size:1.5rem; color:var(--ink); }
+
+/* --- CTA tras las etiquetas del hero de proyecto --- */
+.proj-tags + .cta { margin-top:1.6rem; }
+
+/* --- cuerpo de la ficha de proyecto, justo bajo el hero --- */
+.project-body { border-top:0; padding-top:1rem; }
+
+/* --- rotulo del stack tecnologico en la ficha de proyecto --- */
+.stack-block { margin-top:var(--sp-7); }
+
+/* --- seccion del formulario en /contacto/ --- */
+.contact-form-sec { border-top:0; }
+.apply h2 { margin-top:1rem; }
+.apply .sub { font-size:.95rem; margin-top:1.4rem; }
+
+/* --- honeypot anti-spam, reutilizado en los tres formularios del sitio --- */
+.hp { position:absolute; left:-9999px; }
+
+/* --- wrap del formato de /empecemos/ --- */
+.wrap-quiz { max-width:58rem; }
+
+/* --- segundo parrafo de la bienvenida del formato, tras el gancho del 5% --- */
+.promo + .lede { margin-bottom:1.4rem; }
+
+/* --- segunda fila de campos dentro de un paso del formato --- */
+.fgrid + .fgrid { margin-top:.9rem; }
+
+/* --- pantalla de cierre del formato: segundo parrafo y su destacado --- */
+.done p + p { margin-top:.9rem; }
+.done b { color:var(--ink); }
+
+/* --- resumen imprimible del formato. .prt solo se muestra en @media print
+   (ver regla existente mas arriba); el gris fijo es intencional: es texto
+   sobre papel blanco, no sigue el tema claro/oscuro de la pantalla. --- */
+.prt { margin-top:2rem; text-align:left; }
+.prt-label { font-size:.72rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:#888; margin-bottom:.5rem; }
+.prt-foot { font-size:.75rem; color:#888; margin-top:1rem; }
+
+/* --- sec-h sin margen inferior cuando comparte fila con el formulario (landing pages) --- */
+.lp-form-grid .sec-h { margin-bottom:0; }
+
+/* --- hero de la pagina 404 --- */
+.phero-404 h1 { font-size:clamp(2rem,5vw,3.2rem); }
+.phero-404 .lede { margin-top:1.2rem; }
+
+/* --- hero y cuerpo de las paginas legales --- */
+.phero-legal h1 { font-size:clamp(1.9rem,4vw,2.8rem); }
+.legal-body { border-top:0; padding-top:0; }
+
+
+/* v55 · navegacion */
+
+/* ---- skip link: primer hijo del body, invisible hasta foco de teclado.
+   Mismo tratamiento visual que una tarjeta flotante (surface + line + e3),
+   z-index por encima de todo lo fijo del sitio (.pwa-modal, el mas alto hoy, usa 600). ---- */
+.skip {
+  position:fixed; top:.75rem; left:.75rem; z-index:1000;
+  display:inline-flex; align-items:center; min-height:2.75rem;
+  padding:0 1.1rem; background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); border-radius:var(--r-sm); box-shadow:var(--e3);
+  font-family:var(--sans); font-weight:600; font-size:.9rem;
+  transform:translateY(-150%); opacity:0;
+  transition:transform var(--t), opacity var(--t);
+}
+.skip:focus {
+  transform:translateY(0); opacity:1;
+  outline:2px solid var(--accent); outline-offset:3px;
+}
+
+/* ---- wa-head: icono de WhatsApp en el header, junto al CTA primario.
+   .iconbtn (linea 99) ya resuelve caja, borde y hover; el unico ajuste que
+   le falta es no encogerse dentro de .shead .actions en pantallas chicas,
+   donde ya conviven con el boton primario y la hamburguesa (bloque @640px,
+   linea 452). ---- */
+.wa-head { flex:none; }
+
+/* ---- full/short: los dos <span> del CTA primario del header. Se alternan
+   en el mismo corte que ya usa .shead para pasar a layout movil (linea 452):
+   el largo cabe con nav completo, el corto entra en la fila logo+CTA+hamb. ---- */
+.btn-primary .full { display:inline; }
+.btn-primary .short { display:none; }
+@media (max-width:640px) {
+  .btn-primary .full { display:none; }
+  .btn-primary .short { display:inline; }
+}
+
+/* ---- textlink: cierre de seccion con flecha (.sec-cta). Subrayado que solo
+   se pinta al hover (evita el "cintillo" permanente de .prose a) y el icono
+   se desplaza como ya hace .arw dentro de .btn (linea 76-77). ---- */
+.textlink {
+  display:inline-flex; align-items:center; gap:.4rem;
+  color:var(--link); font-weight:600; font-size:.9375rem; letter-spacing:-.005em;
+  text-decoration:underline; text-decoration-color:transparent; text-underline-offset:4px;
+  transition:color var(--t-fast), text-decoration-color var(--t);
+}
+.textlink:hover { color:var(--ink); text-decoration-color:currentColor; }
+.textlink svg.ic { transition:transform var(--t); }
+.textlink:hover svg.ic { transform:translateX(3px); }
+
+/* ---- protocolo-mini: protocolo condensado de la portada, en fila en
+   escritorio. NOTA: .no ya existe pero solo dentro de .steps .st (linea 289)
+   y .tl-item (linea 298); .meta ya existe como pill dentro de .tl-item
+   (linea 301) y como uppercase dentro de .pcard .meta .vert (linea 248).
+   Ninguno cubre este marcado (li con no/tt/meta sueltos, sin timeline ni
+   pill), asi que van con su propio scope en vez de heredar esas reglas. */
+.protocolo-mini { list-style:none; display:grid; grid-template-columns:repeat(4,1fr); }
+.protocolo-mini li {
+  display:flex; flex-direction:column; gap:.4rem;
+  padding:0 1.35rem; border-left:1px solid var(--hair);
+}
+.protocolo-mini li:first-child { padding-left:0; border-left:0; }
+.protocolo-mini li:last-child { padding-right:0; }
+.protocolo-mini .no {
+  font-family:var(--serif); font-weight:600; font-size:1.15rem;
+  color:var(--accent-text); letter-spacing:-.01em; line-height:1;
+}
+.protocolo-mini .tt { font-family:var(--sans); font-weight:600; font-size:.95rem; color:var(--ink); letter-spacing:-.01em; }
+.protocolo-mini .meta { font-size:.8rem; color:var(--faint); line-height:1.45; }
+@media (max-width:640px) {
+  .protocolo-mini { grid-template-columns:1fr; gap:1.1rem; }
+  .protocolo-mini li { padding:1.1rem 0 0; border-left:0; border-top:1px solid var(--hair); }
+  .protocolo-mini li:first-child { padding-top:0; border-top:0; }
+}
+
+/* ---- pasos-despues: version vertical del mismo lenguaje, en /contacto/.
+   El numero reutiliza el tratamiento de .protocolo-mini .no; el divisor
+   pasa de border-left a border-top porque aqui siempre es una columna. ---- */
+.pasos-despues { list-style:none; display:flex; flex-direction:column; }
+.pasos-despues li {
+  display:flex; align-items:flex-start; gap:1rem;
+  padding:1.1rem 0; border-top:1px solid var(--hair);
+}
+.pasos-despues li:first-child { padding-top:0; border-top:0; }
+.pasos-despues .no {
+  flex:none; min-width:2ch; font-family:var(--serif); font-weight:600;
+  font-size:1.15rem; color:var(--accent-text); letter-spacing:-.01em; line-height:1.3;
+}
+.pasos-despues p { color:var(--muted); font-size:.92rem; line-height:1.55; }
+
+
+/* v55 · prueba (.pf-result, .proof-cases/.proof-case, .proof-grid/.proof-tile/.reto/.res, .dom-ref)
+   Ninguna de estas clases tenia reglas propias en el archivo. Se heredan los patrones
+   vecinos: .pcard/.meta (portafolio), .card/.adv (tarjetas con icono), .vent/.vcard
+   (feature card grande) y el par borde+hover de .pcard/.adv. */
+
+/* ---- portafolio: linea de resultado bajo el h3 (dentro de .pcard .meta) ---- */
+/* v52 la agrego al marcado; hereda el tamano/uppercase de .pcard .meta .vert pero
+   sin mayusculas, como dato de una sola idea. line-clamp evita que un resultado largo
+   descuadre la altura de las tarjetas en la misma fila del .g. */
+.pcard .meta .pf-result { margin-top:.4rem; color:var(--muted); font-size:.82rem; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+@media (max-width:640px){
+  .pcard .meta .pf-result { font-size:.8rem; margin-top:.3rem; }
+}
+
+/* ---- la prueba: casos con detalle completo ---- */
+/* .proof-cases ya trae .g .g-2 vía gcls(): aqui solo el gap, regla 6 de CLAUDE.md.
+   Aire generoso porque son solo 2 tarjetas grandes, no una rejilla densa. */
+.proof-cases.g { --g-gap:1.5rem; }
+/* .proof-case es un .card mas grande y sin link propio (el link vive en el .btn de
+   adentro): mismo lenguaje que .card (borde, radio, icono en caja) con mas padding y
+   los elementos en columna para dar aire al parrafo largo del caso. */
+.proof-case { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:clamp(1.75rem,2vw + 1rem,2.4rem); display:flex; flex-direction:column; align-items:flex-start; transition:border-color var(--t); }
+.proof-case:hover { border-color:var(--accent-line); }
+.proof-case .ico { width:2.75rem; height:2.75rem; border-radius:.7rem; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--ink); margin-bottom:1.2rem; }
+.proof-case .vert { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+.proof-case h3 { font-family:var(--serif); font-size:1.5rem; font-weight:500; letter-spacing:-.02em; margin-top:.5rem; }
+.proof-case p { color:var(--muted); font-size:.98rem; line-height:1.6; margin-top:.75rem; max-width:60ch; }
+.proof-case .btn { margin-top:1.5rem; }
+@media (max-width:640px){
+  .proof-case { padding:1.3rem 1.15rem; }
+  .proof-case h3 { font-size:1.25rem; }
+  .proof-case p { font-size:.92rem; }
+}
+
+/* ---- la prueba: mosaico de mas proyectos ---- */
+/* .proof-grid ya trae .g .g-3 .g-feat-d: solo el gap, igual que .pf-grid. */
+.proof-grid.g { --g-gap:1.25rem; }
+/* .proof-tile es la tarjeta completa como link, mismo par borde/hover/radio que
+   .pcard pero sin imagen. Sin color propio: hereda var(--link) de "a" como .pcard y
+   .card, asi el h3 se ve atenuado hasta el hover (mismo lenguaje en todo el sitio);
+   .reto y .res si llevan color explicito porque son los datos que hay que leer primero. */
+.proof-tile { display:block; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:1.6rem 1.5rem; text-decoration:none; transition:border-color var(--t), transform var(--t), box-shadow var(--t); }
+.proof-tile:hover { border-color:var(--accent-line); transform:translateY(-3px); box-shadow:var(--e2); }
+.proof-tile:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.proof-tile .vert { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+.proof-tile h3 { font-family:var(--serif); font-size:1.25rem; font-weight:500; letter-spacing:-.02em; margin-top:.5rem; }
+/* .reto: el problema, texto normal sin competir con el resultado. */
+.proof-tile .reto { color:var(--muted); font-size:.9rem; line-height:1.55; margin-top:.65rem; }
+/* .res: el resultado, destacado en --ink con el check en color de acento. flex con
+   align-items:flex-start alinea el icono a la primera linea (no al centro del bloque
+   si el texto envuelve a 2 lineas) y flex:none evita que el check se deforme. */
+.proof-tile .res { display:flex; align-items:flex-start; gap:.45rem; color:var(--ink); font-weight:600; font-size:.92rem; line-height:1.5; margin-top:.6rem; }
+.proof-tile .res svg.ic { flex:none; color:var(--accent-text); margin-top:.2rem; }
+@media (max-width:640px){
+  .proof-tile { padding:1.25rem 1.15rem; }
+  .proof-tile h3 { font-size:1.1rem; }
+  .proof-tile .reto,.proof-tile .res { font-size:.88rem; }
+}
+
+/* ---- capacidades: referencia de dominio dentro de la tarjeta ---- */
+/* Discreto, una sola linea. min-width:0 + text-overflow permite truncar sin romper
+   el layout si el nombre del proyecto + resultado es largo; el icono no se encoge. */
+.dom-ref { display:flex; align-items:center; gap:.4rem; margin-top:.9rem; color:var(--faint); font-size:.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.dom-ref:hover { color:var(--ink); }
+.dom-ref svg.ic { flex:none; }
+@media (max-width:640px){
+  .dom-ref { font-size:.78rem; margin-top:.7rem; }
+}
+
+
+/* v55 · contenido */
+
+/* ---- FAQ (acordeon nativo <details>, fuera de .lp) --------------------
+   Mismo lenguaje que .lp-faq/.lp-pm (bloque "Dudas" de la landing) pero
+   con los tokens globales en vez de --ia-2, que es exclusivo de esa pagina.
+   .lp-faq/.lp-pm no se tocan: siguen vivos y con su paleta propia. */
+.faq-list { border-top:1px solid var(--hair); max-width:var(--maxw-prose); }
+.faq-item { border-bottom:1px solid var(--hair); }
+.faq-item summary {
+  list-style:none; display:flex; align-items:center; justify-content:space-between;
+  gap:1.25rem; min-height:2.75rem; padding:1.05rem 0; cursor:pointer;
+  font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink);
+  transition:color var(--t-fast);
+}
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary:hover { color:var(--link); }
+.faq-item summary:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--r-sm); }
+.faq-item p { padding:0 0 1.15rem; max-width:60ch; color:var(--muted); font-size:.94rem; line-height:1.6; }
+
+/* Signo +/- dibujado con dos barras (nada de emoji ni fuente de iconos).
+   Al abrir, la barra horizontal se apaga y queda el signo "-": mismo truco
+   que .lp-pm, sin depender de rotate para poder reusar la barra vertical
+   como "activa" (var(--link)) igual que el resto de estados abiertos. */
+.faq-pm { position:relative; flex:none; width:1.1rem; height:1.1rem; }
+.faq-pm::before, .faq-pm::after {
+  content:""; position:absolute; inset:50% 0 auto 0; height:1.6px;
+  background:var(--muted); border-radius:1px; translate:0 -50%;
+  transition:opacity var(--t), background var(--t);
+}
+.faq-pm::after { rotate:90deg; }
+.faq-item[open] .faq-pm::after { opacity:0; }
+.faq-item[open] .faq-pm::before { background:var(--link); }
+.faq-item summary:hover .faq-pm::before,
+.faq-item summary:hover .faq-pm::after { background:var(--ink); }
+@media (prefers-reduced-motion:reduce){
+  .faq-pm::before, .faq-pm::after { transition:none; }
+}
+
+/* ---- "Es para ti si" (paginas de servicio, columna izquierda de .grid-2) */
+.para-ti {
+  margin-top:1.75rem; border:1px solid var(--line); border-radius:var(--r-lg);
+  background:var(--surface); padding:1.6rem 1.75rem;
+}
+.para-ti .eyebrow { color:var(--link); }
+.para-ti-list { list-style:none; margin:1.05rem 0 0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
+.para-ti-list li { position:relative; padding-left:1.4rem; color:var(--muted); font-size:.94rem; line-height:1.5; }
+/* marca propia: rombo (cuadrado a 45°), no el punto de .takeaways (ese es
+   "incluido" en --ok); aqui es un criterio de calce, por eso va en --link. */
+.para-ti-list li::before {
+  content:""; position:absolute; left:.1rem; top:.5em; width:.4rem; height:.4rem;
+  background:var(--link); rotate:45deg;
+}
+
+/* ---- tarjeta destacada del estandar (portada, dentro de .why-grid) ----
+   Modificadores sobre .adv (no se toca .adv): mismo componente, mas
+   presencia y un <ul> en linea con los 6 puntos del estandar. Ocupa toda
+   la fila del grid con grid-column en el ITEM, nunca grid-template-columns
+   en .why-grid: eso lo sigue decidiendo gcls(6) via .g. */
+.adv-feat, .estandar-feat {
+  grid-column:1 / -1; padding:2rem 2.2rem;
+  background-image:radial-gradient(90% 140% at 0 0, var(--halo), transparent 55%);
+}
+.adv-feat .ico, .estandar-feat .ico { width:3rem; height:3rem; font-size:1.3rem; }
+.adv-feat h3, .estandar-feat h3 { font-size:1.15rem; }
+.adv-feat p, .estandar-feat p { max-width:none; }
+
+.estandar-inline {
+  list-style:none; margin:1.3rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.6rem .8rem;
+}
+.estandar-inline li {
+  display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .8rem;
+  border-radius:var(--r-pill); background:var(--surface-2);
+  font-size:.8rem; font-weight:600; color:var(--muted); white-space:nowrap;
+}
+.estandar-inline svg.ic { color:var(--ink); flex:none; }
+
+@media (max-width:640px){
+  /* La card destacada hereda el grid icono-izquierda/texto-derecha de .adv
+     en movil (linea ~526), pero ese grid no reserva fila para un tercer
+     bloque de contenido: sin esto el <ul> cae en la columna del icono. */
+  .adv-feat, .estandar-feat { grid-column:1 / -1; padding:1rem 1.05rem; }
+  .adv-feat .estandar-inline, .estandar-feat .estandar-inline { grid-area:3 / 2; margin-top:.5rem; }
+  .estandar-inline li { font-size:.78rem; padding:.35rem .7rem; }
+}
