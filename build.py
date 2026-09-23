@@ -12,6 +12,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import quote
 from PIL import Image
 
 ROOT = Path(__file__).parent
@@ -156,6 +157,13 @@ NAV = [
 ]
 HOME = "/"
 
+WA_NUM = "523329575274"
+WA_MSG_GENERICO = "Hola, quiero platicar sobre un proyecto"
+
+def wa_url(texto=WA_MSG_GENERICO):
+    """Link de WhatsApp con mensaje precargado, codificado para URL."""
+    return f"https://wa.me/{WA_NUM}?text=" + quote(texto)
+
 
 TOPMSG = "Arquitectos de software. Construimos productos digitales de alto impacto."
 
@@ -165,6 +173,14 @@ def header(active=""):
         for n, u, a in NAV
     )
     mob = "".join(f'<a href="{u}">{n}</a>' for n, u, a in NAV)
+    # v58 · /promos/landing-pages/ vende landings a precio cerrado, con su propio
+    # formulario. El CTA generico de Sesion cero compite con esa oferta, asi que
+    # en esa pagina el header lleva el CTA propio de la promo (reusa "ab_cta",
+    # el mismo texto que ya usa la barra de acciones de la promo).
+    if active == "promos":
+        cta_href, cta_full, cta_short, cta_id, cta_i18n = "#precios", pt("ab_cta"), pt("ab_cta"), "promo-precios", ' data-i18n="ab_cta"'
+    else:
+        cta_href, cta_full, cta_short, cta_id, cta_i18n = "/contacto/", "Agenda tu Sesión cero", "Sesión cero", "sesion-cero", ""
     return f"""<div class="topbar"><div class="wrap row">
     <div class="msg"><span class="dot"></span>{TOPMSG}</div>
     <div class="util">
@@ -176,8 +192,8 @@ def header(active=""):
     <nav class="nav-lk">{links}</nav>
     <div class="actions">
       <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
-      <a class="iconbtn wa-head" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" data-cta="whatsapp">{ic('wa')}</a>
-      <a href="/contacto/" class="btn btn-primary" data-cta="sesion-cero"><span class="full">Agenda tu Sesión cero</span><span class="short">Sesión cero</span></a>
+      <a class="iconbtn wa-head" href="{wa_url()}" target="_blank" rel="noopener" aria-label="WhatsApp" data-cta="whatsapp">{ic('wa')}</a>
+      <a href="{cta_href}" class="btn btn-primary" data-cta="{cta_id}"{cta_i18n}><span class="full">{cta_full}</span><span class="short">{cta_short}</span></a>
       <button class="hamb" id="hambBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobnav">{ic('menu')}</button>
     </div>
   </div>
@@ -189,13 +205,13 @@ def header(active=""):
     </div>
     <nav class="mmenu-links">{mob}</nav>
     <div class="mmenu-foot">
-      <a href="/contacto/" class="btn btn-primary mmenu-cta" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
+      <a href="{cta_href}" class="btn btn-primary mmenu-cta" data-cta="{cta_id}"{cta_i18n}>{cta_full} {ic('arw')}</a>
       <div class="mmenu-tools">
         <button class="iconbtn theme-toggle" aria-label="Cambiar tema"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg></button>
         <button class="ubtn mmenu-install" data-pwa><span class="pwaico">{ic('down')}</span><span>Instalar app</span></button>
       </div>
       <div class="mmenu-social" aria-label="Redes y contacto">
-        <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
+        <a class="wa" href="{wa_url()}" target="_blank" rel="noopener" aria-label="WhatsApp">{ic('wa')}</a>
         <a href="mailto:proyectos@ibisne.com" aria-label="Correo">{ic('mail')}</a>
         <a href="https://www.facebook.com/ibisnecom" target="_blank" rel="noopener" aria-label="Facebook">{ic('fb')}</a>
         <a href="https://www.instagram.com/ibisnemx" target="_blank" rel="noopener" aria-label="Instagram">{ic('ig')}</a>
@@ -227,7 +243,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   <div class="base"><span>© 2026 iBisne S.A.P.I. de C.V.</span><span>Construimos imperios digitales.</span></div>
 </div></footer>
 <div class="sdock" role="group" aria-label="Redes y contacto">
-  <a class="wa" href="https://wa.me/523329575274" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
+  <a class="wa" href="{wa_url()}" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">{ic('wa')}</a>
   <a href="mailto:proyectos@ibisne.com" aria-label="Correo" title="proyectos@ibisne.com">{ic('mail')}</a>
   <a href="https://www.facebook.com/ibisnecom" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">{ic('fb')}</a>
   <a href="https://www.instagram.com/ibisnemx" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">{ic('ig')}</a>
@@ -236,7 +252,7 @@ FOOTER = f"""<footer class="foot"><div class="wrap">
   <div class="card">
     <button class="x" id="pwaClose" aria-label="Cerrar">&times;</button>
     <div class="badge-ico" id="pwaModalIco">{ic('down')}</div>
-    <h3 id="pwaTitle">Instala iBisne en tu dispositivo</h3>
+    <h2 id="pwaTitle">Instala iBisne en tu dispositivo</h2>
     <p>Quédate cerca de lo que viene. Al instalar la app recibes primero nuestras novedades y no te pierdes nada de lo que estamos publicando y evaluando para participar.</p>
     <ul><li>Nuevos proyectos</li><li>Convocatorias</li><li>Torneos</li><li>Lanzamientos</li><li>Novedades</li></ul>
     <div class="ios" id="pwaIos">En iPhone o iPad: toca el botón <strong>Compartir</strong> y luego <strong>Añadir a pantalla de inicio</strong>.</div>
@@ -396,7 +412,7 @@ def base(title, desc, body, active="", canonical="/", noindex=False, og_image=No
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/dossier.css?v=57">
+<link rel="stylesheet" href="/assets/site/dossier.css?v=58">
 {GTAG}
 </head>
 <body>
@@ -421,7 +437,7 @@ def crumb(*parts):
     return '<div class="crumb">' + "".join(out) + "</div>"
 
 
-def contacto_band():
+def contacto_band(wa_texto=WA_MSG_GENERICO):
     # v52 · la Sesion cero es la oferta explicita de todo el sitio (decision de
     # Eduardo): 90 minutos sin costo, con lectura tecnica que el cliente se lleva
     # aunque no siga con iBisne. Sustituye al "Hablemos" generico en todas las bandas.
@@ -431,7 +447,7 @@ def contacto_band():
         <p>En la Sesión cero hablamos de tu mercado, tus números y el problema real. Sales con claridad y con el siguiente paso definido.</p></div>
       <div class="cta">
         <a href="/contacto/" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agenda tu Sesión cero {ic('arw')}</a>
-        <a href="https://wa.me/523329575274" target="_blank" rel="noopener" class="btn btn-secondary btn-lg" data-cta="whatsapp">Escríbenos por WhatsApp</a>
+        <a href="{wa_url(wa_texto)}" target="_blank" rel="noopener" class="btn btn-secondary btn-lg" data-cta="whatsapp">Escríbenos por WhatsApp</a>
       </div>
     </div></div></section>"""
 
@@ -439,7 +455,7 @@ def contacto_band():
 ESTANDAR = [
     ("cms", "CMS autoadministrable", "Edita textos, imágenes y contenido sin depender de nadie."),
     ("contrast", "Dark / White", "Modo claro y oscuro, cuidados ambos al detalle."),
-    ("lang", "Multi-idioma", "Español e inglés listos desde el día uno."),
+    ("lang", "Listo para multi-idioma", "Arquitectura preparada para sumar idiomas sin rehacer el sitio."),
     ("phone", "PWA instalable", "Se instala como app en iOS y Android sobre la misma base."),
     ("gauge", "PageSpeed optimizado", "Las métricas de Google ajustadas para velocidad y SEO."),
     ("chart", "Analytics + SEO", "Alta en analítica y metadatos, para medir y crecer."),
@@ -553,7 +569,7 @@ COMPROMISOS = [
 # repo ya afirma (Protocolo, precio cerrado, titularidad, 60 dias de vigencia).
 FAQ_PROTOCOLO = [
     ("¿Cuánto tarda un proyecto?",
-     "El Sprint de Validación toma de 2 a 4 semanas. El desarrollo completo queda con fecha por escrito en la cotización, antes de que decidas."),
+     "Depende del camino. En el Sprint de Validación de producto, de 2 a 4 semanas. Sitios y tiendas se cotizan directo, con fecha de entrega por escrito en la cotización."),
     ("¿Cuánto cuesta?",
      "Cada cotización se entrega cerrada, con fecha y 60 días de vigencia. El Sprint se cobra al inicio y se acredita íntegro contra el desarrollo. Sitios y tiendas se cotizan directo."),
     ("¿De quién es el código?",
@@ -686,6 +702,20 @@ def reto_for(p):
     if p.get("reto"):
         return p["reto"]
     return f"Llevar {p['nombre']} a una plataforma digital que estuviera a la altura de la marca y lista para escalar, no un sitio de paso."
+
+def reto_tarjeta(p):
+    """Linea descriptiva para las tarjetas de /por-que-ibisne/.
+
+    Usa el reto escrito cuando existe. Cuando no, describe el sistema con lo que
+    consta en la ficha en vez de caer en la plantilla de reto_for(): nueve de las
+    diez tarjetas decian la misma frase con el nombre cambiado, precisamente en la
+    pagina que el sitio presenta como la prueba. En cuanto cv-data.json traiga el
+    reto real de cada proyecto, entra solo.
+    """
+    if p.get("reto"):
+        return p["reto"]
+    return (p.get("tipo") or p.get("vertical") or "").strip()
+
 
 def resultado_for(p):
     if p.get("resultado"):
@@ -857,7 +887,11 @@ def build_servicios_hub(projects):
     for d in DOMINIOS:
         slugs = DOMAIN_PROJECTS.get(d["slug"], [])
         ref = next((by[s] for s in slugs if s in by), None)
-        ref_html = (f'<a class="dom-ref" href="/portafolio/{ref["slug"]}/">{ic("arwr")} {ref["nombre"]} · {resultado_for(ref)}</a>'
+        # Va como <span>, no como <a>: esta referencia vive DENTRO de la tarjeta, que
+        # ya es un enlace. Un <a> anidado es invalido y el navegador cerraba la tarjeta
+        # antes de tiempo: la rejilla de tres dominios salia con nueve celdas y el
+        # "Entrar a ..." dejaba de ser clicable.
+        ref_html = (f'<span class="dom-ref">{ic("arwr")}<span>{ref["nombre"]} · {resultado_for(ref)}</span></span>'
                     if ref else "")
         cards += f"""<a class="card" href="/servicios/{d["slug"]}/">
   <div class="ico">{ic(d["icon"])}</div>
@@ -874,6 +908,7 @@ def build_servicios_hub(projects):
   <p class="lede">Diseño, ingeniería, datos y estrategia bajo un mismo techo. Elegimos el alcance por el potencial del negocio y por dónde está su cuello de botella real.</p>
 </div></section>
 <section class="sec"><div class="wrap">
+  <h2 class="sr-only">Los tres dominios</h2>
   <div class="grid-3 {gcls(len(DOMINIOS))}">{cards}</div>
 </div></section>
 {contacto_band()}
@@ -937,7 +972,7 @@ def build_dominio(d, projects):
   <div class="stack">{stack}</div>
 </div></section>
 {faq_block(FAQ_PROTOCOLO)}
-{contacto_band()}
+{contacto_band(f"Hola, quiero platicar sobre un proyecto de {d['nombre']}")}
 """
     return base(f"{d['nombre']} — iBisne", d["lede"], body, active="servicios", canonical=f"/servicios/{d['slug']}/")
 
@@ -1069,7 +1104,7 @@ def build_porque(projects):
     resto_html = "".join(f"""<a class="proof-tile" href="/portafolio/{p["slug"]}/">
       <span class="vert">{p.get("vertical","")}</span>
       <h3>{p["nombre"]}</h3>
-      <p class="reto">{reto_for(p)}</p>
+      {f'<p class="reto">{reto_tarjeta(p)}</p>' if reto_tarjeta(p) else ''}
       <p class="res">{ic('check')} {resultado_for(p)}</p>
     </a>""" for p in resto)
     body = f"""
@@ -1092,7 +1127,7 @@ def build_porque(projects):
 </div></section>
 {contacto_band()}
 """
-    return base("Por qué iBisne · La prueba", "Casos verificables: qué sistema construimos en cada proyecto y para qué sirve hoy, sin cifras inventadas.", body, active="", canonical="/por-que-ibisne/")
+    return base("Por qué iBisne · La prueba", "Casos verificables: qué sistema construimos en cada proyecto y para qué sirve hoy.", body, active="", canonical="/por-que-ibisne/")
 
 
 # ---------------------------------------------------------------- ESTUDIO
@@ -1202,7 +1237,7 @@ def build_insights_hub():
   <h1>Perspectivas desde la trinchera.</h1>
   <p class="lede">Ideas, aprendizajes y notas sobre cómo construimos, escalamos e invertimos en negocios digitales de alto impacto.</p>
 </div></section>
-<section class="sec"><div class="wrap"><div class="ins-grid rail {gcls(len(INSIGHTS))}">{cards}</div></div></section>
+<section class="sec"><div class="wrap"><h2 class="sr-only">Todos los artículos</h2><div class="ins-grid rail {gcls(len(INSIGHTS))}">{cards}</div></div></section>
 {contacto_band()}
 """
     return base("Insights — iBisne", "Perspectivas sobre construir, escalar e invertir en negocios digitales.", body, active="insights", canonical="/insights/")
@@ -1289,6 +1324,7 @@ def build_portfolio_hub(projects):
   <p class="lede">Proyectos que construimos para clientes y proyectos en los que además pusimos capital. {lede_filtro}</p>
 </div></section>
 <section class="sec"><div class="wrap">
+  <h2 class="sr-only">Todos los proyectos</h2>
   <div class="filters ftabs" id="pf-modelo">{mbtns}</div>
   {fbar}
   <div class="pf-count" id="pf-count" aria-live="polite"></div>
@@ -1505,9 +1541,9 @@ def build_project(p, projects):
 
 <section class="sec project-body"><div class="wrap">{hero}
   <div class="rrr">
-    <div class="blk"><div class="lab">El reto</div><h3>Lo que había que lograr</h3><p>{reto_for(p)}</p></div>
-    <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h3>Nuestro enfoque</h3><p>{enfoque_for(p)}</p></div>
-    <div class="blk"><div class="lab">El resultado</div><h3>Lo que entregamos</h3><p>{resultado_for(p)}</p></div>
+    <div class="blk"><div class="lab">El reto</div><h2>Lo que había que lograr</h2><p>{reto_for(p)}</p></div>
+    <div class="blk"><div class="lab">{enfoque_lab(p)}</div><h2>Nuestro enfoque</h2><p>{enfoque_for(p)}</p></div>
+    <div class="blk"><div class="lab">El resultado</div><h2>Lo que entregamos</h2><p>{resultado_for(p)}</p></div>
   </div>
   {mockup}
   <div class="stack-block"><span class="eyebrow eyebrow-accent">{p.get("stack_lab","Stack tecnológico")}</span><div class="stack">{stack}</div></div>
@@ -1517,7 +1553,7 @@ def build_project(p, projects):
   <div class="sec-h"><span class="eyebrow">Del portafolio</span><h2>Proyectos relacionados.</h2></div>
   <div class="pf-grid rail {gcls(3)}">{relc}</div>
 </div></section>
-{contacto_band()}
+{contacto_band(f"Hola, vi {p['nombre']} en el portafolio y quiero platicar de algo similar")}
 """
     return base(f"{p['nombre']} — Portafolio iBisne", p["resumen"][:150], body,
                 active="portafolio", canonical=f"/portafolio/{p['slug']}/",
@@ -1530,7 +1566,7 @@ def build_project(p, projects):
 # formularios hablen del mismo dato con las mismas palabras.
 def build_contacto():
     body = f"""
-<section class="phero">{bg_for("contacto")}<div class="wrap">
+<section class="phero phero-compact">{bg_for("contacto")}<div class="wrap">
   {crumb("Contacto")}
   <span class="eyebrow">Contacto</span>
   <h1>Cuéntanos tu proyecto.</h1>
@@ -1540,9 +1576,9 @@ def build_contacto():
   <div><span class="eyebrow">Qué pasa después</span>
     <h2>Del formulario a tu Sesión cero.</h2>
     <ol class="pasos-despues">
-      <li><span class="no">01</span><p>Te respondemos en un día hábil con la fecha de tu Sesión cero.</p></li>
+      <li><span class="no">01</span><p>Te escribimos para fijar la fecha de tu Sesión cero.</p></li>
       <li><span class="no">02</span><p>Noventa minutos sobre tu negocio, sin costo.</p></li>
-      <li><span class="no">03</span><p>Recibes la Lectura: tesis, riesgos, arquitectura y alcance. Es tuya, con o sin nosotros.</p></li>
+      <li><span class="no">03</span><p>Cuando el proyecto encaja, arranca la Lectura: tesis, riesgos, arquitectura y alcance. Es tuya, con o sin nosotros.</p></li>
     </ol>
     <p class="sub">proyectos@ibisne.com<br>Oficina · +52 33 2957 5274<br>Zapopan, Jalisco · Mérida, Yucatán</p>
   </div>
@@ -1561,18 +1597,18 @@ def build_contacto():
       </div>
     </fieldset>
     <fieldset class="field">
-      <legend>¿Qué rango de inversión contemplas?</legend>
+      <legend>¿Qué rango de inversión contemplas? (MXN)</legend>
       <div class="opts">
         <label class="opt"><input type="radio" name="inversion" value="Hasta $15,000"><span>Hasta $15,000</span></label>
-        <label class="opt"><input type="radio" name="inversion" value="$15,000 a $35,000"><span>$15,000 a $35,000</span></label>
-        <label class="opt"><input type="radio" name="inversion" value="$35,000 a $75,000"><span>$35,000 a $75,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="$15,001 a $35,000"><span>$15,001 a $35,000</span></label>
+        <label class="opt"><input type="radio" name="inversion" value="$35,001 a $75,000"><span>$35,001 a $75,000</span></label>
         <label class="opt"><input type="radio" name="inversion" value="Más de $75,000"><span>Más de $75,000</span></label>
         <label class="opt"><input type="radio" name="inversion" value="Prefiero definirlo juntos"><span>Prefiero definirlo juntos</span></label>
       </div>
     </fieldset>
     <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button type="submit" class="btn btn-primary btn-lg" data-cta="sesion-cero">Agendar mi Sesión cero {ic('arw')}</button>
-    <div class="fine" id="formMsg" role="status">Tus datos se usan solo para dar seguimiento a tu proyecto.</div>
+    <div class="fine" id="formMsg" role="status">Tus datos se usan solo para dar seguimiento a tu proyecto, conforme al <a href="/legal/privacidad/">aviso de privacidad</a>.</div>
   </form>
 </div></div></section>
 <script>
@@ -1867,7 +1903,7 @@ def _stepper():
 
 def _qside(titulo, sub):
     """Columna de contexto. Sin numeral ni icono: ambos viven en el stepper."""
-    return f'<div class="qside"><h3>{titulo}</h3><p>{sub}</p></div>'
+    return f'<div class="qside"><h2>{titulo}</h2><p>{sub}</p></div>'
 
 
 def build_empecemos():
@@ -2048,7 +2084,7 @@ def build_empecemos():
   <!-- ══════ CIERRE ══════ -->
   <div class="done" id="briefDone" hidden>
     <div class="mark">{ic('check')}</div>
-    <h3>Listo, ya lo tenemos.</h3>
+    <h2>Listo, ya lo tenemos.</h2>
     <p>Gracias por tomarte el tiempo. Revisamos tu información y te contactamos para afinar los detalles y cerrar el arranque.</p>
     <p><b>Tu 5% extra sigue en pie</b> si cierras antes del {PROMO_FECHA}.</p>
 
@@ -2094,7 +2130,6 @@ def build_empecemos():
 
 PROMO_VENCE = "30 de septiembre de 2026"
 PROMO_VENCE_ISO = "2026-09-30T23:59:59-06:00"
-WA_NUM = "523329575274"
 
 # Links de cobro hospedados. Cero captura de tarjeta en el sitio: sin alcance PCI
 # y sin tocar la CSP (son <a href>, no formularios ni scripts de terceros).
@@ -2608,8 +2643,7 @@ def money(n):
 
 
 def wa_link(plan_nombre):
-    msg = f"{pt('wa_msg')} {plan_nombre}."
-    return f"https://wa.me/{WA_NUM}?text=" + msg.replace(" ", "%20").replace(",", "%2C")
+    return wa_url(f"{pt('wa_msg')} {plan_nombre}.")
 
 
 def promo_pay_links(slug):
@@ -2769,7 +2803,7 @@ def promo_card(p):
         <p class="lp-para" data-i18n="para_{p['slug']}">{p['para'][0]}</p>
       </div>
       <div class="lp-price">
-        <span class="lp-was"><s>${money(base_price)}</s></span>
+        <span class="lp-was"{' hidden' if DESC_CONTADO == 0 else ''}><s>${money(base_price)}</s></span>
         <span class="lp-now">${money(contado)}</span>
         <span class="lp-per">MXN</span>
       </div>
@@ -3056,7 +3090,7 @@ def build_promos(projects):
 """
     return base(pt('titulo'),
                 "Landing pages con tu propio agente de ventas: atiende, califica y te entrega solo a los que van en serio. Precio cerrado, entrega por escrito y pago a meses sin intereses.",
-                body, active="", canonical="/promos/landing-pages/", noindex=True)
+                body, active="promos", canonical="/promos/landing-pages/", noindex=True)
 
 
 # JS de la promo. Va como constante plana (no f-string) para no duplicar cada llave.

@@ -60,6 +60,9 @@ a { color:var(--link); text-decoration:none; transition:color var(--t-fast); }
 a:hover { color:var(--ink); }
 img { display:block; max-width:100%; }
 .wrap { max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
+/* ---- utilidad: oculto visual, presente para lectores de pantalla (WCAG 1.3.1) ---- */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .serif-it { font-family:var(--serif); font-weight:600; color:var(--accent-text); }
 .eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); display:inline-block; }
 svg.ic { width:1em; height:1em; flex:none; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.13em; }
@@ -346,7 +349,7 @@ section { position:relative; }
 .rrr { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:var(--sp-7); }
 .rrr .blk { border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); padding:1.6rem; }
 .rrr .blk .lab { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--link); }
-.rrr .blk h3 { font-family:var(--serif); font-size:1.25rem; font-weight:500; margin-top:.5rem; letter-spacing:-.018em; }
+.rrr .blk h2 { font-family:var(--serif); font-size:1.25rem; font-weight:500; margin-top:.5rem; letter-spacing:-.018em; }
 .rrr .blk p { color:var(--muted); font-size:.92rem; margin-top:.6rem; line-height:1.55; }
 .stack { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.1rem; }
 
@@ -472,6 +475,10 @@ section { position:relative; }
   .hero,.phero{ min-height:calc(100vh - 3.6rem); min-height:calc(100dvh - 3.6rem);
     display:flex; align-items:center; padding:2.25rem 0; }
   .hero .wrap,.phero .wrap{ width:100%; }
+  /* v58 · /contacto/: el formulario ES la pagina, no una promesa antes de ella.
+     Sin esto hereda el hero a pantalla completa y el primer campo queda a casi
+     dos pantallas de scroll. */
+  .phero-compact{ min-height:0; padding:1.5rem 0 1.75rem; }
   .sec-h{ margin-bottom:1.4rem; }
 
   /* 1 columna, gaps compactos */
@@ -687,7 +694,7 @@ svg.ic-fill { fill:currentColor; stroke:none; }
 .pwa-modal.open { display:flex; }
 .pwa-modal .card { position:relative; width:100%; max-width:26rem; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); box-shadow:var(--e3); padding:2rem 1.75rem 1.75rem; text-align:left; }
 .pwa-modal .badge-ico { width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; border-radius:var(--r-lg); background:var(--surface-2); border:1px solid var(--line); font-size:1.5rem; color:var(--ink); margin-bottom:1.1rem; }
-.pwa-modal h3 { font-family:var(--serif); font-weight:500; font-size:1.4rem; letter-spacing:-.02em; line-height:1.12; }
+.pwa-modal h2 { font-family:var(--serif); font-weight:500; font-size:1.4rem; letter-spacing:-.02em; line-height:1.12; }
 .pwa-modal p { color:var(--muted); font-size:.95rem; line-height:1.6; margin-top:.7rem; }
 .pwa-modal ul { list-style:none; margin:1rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.4rem; }
 .pwa-modal ul li { font-size:.74rem; font-weight:600; letter-spacing:.02em; color:var(--link); border:1px solid var(--line); border-radius:var(--r-pill); padding:.28rem .7rem; }
@@ -941,7 +948,7 @@ body.has-consent .quiz { padding-bottom:13rem; }
   border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
   margin-bottom:1rem; }
 .qside .qic .ic { width:1.3rem; height:1.3rem; color:var(--ink); }
-.qside h3 { font-size:1.4rem; font-weight:500; letter-spacing:-.025em; line-height:1.15;
+.qside h2 { font-size:1.4rem; font-weight:500; letter-spacing:-.025em; line-height:1.15;
   margin-bottom:.5rem; }
 .qside p { font-size:.87rem; color:var(--muted); line-height:1.5; }
 .qmain > .fgroup:first-child { margin-top:0; }
@@ -1033,7 +1040,7 @@ label.opt span { line-height:1.25; }
   background:var(--accent); color:var(--accent-ink); display:flex; align-items:center;
   justify-content:center; }
 .done .mark .ic { width:1.4rem; height:1.4rem; }
-.done h3 { font-size:1.5rem; font-weight:500; letter-spacing:-.025em; margin-bottom:.6rem; }
+.done h2 { font-size:1.5rem; font-weight:500; letter-spacing:-.025em; margin-bottom:.6rem; }
 .done p { color:var(--muted); font-size:.94rem; line-height:1.6; }
 .done .acts { display:flex; gap:.7rem; justify-content:center; margin-top:1.6rem; flex-wrap:wrap; }
 .warnbox { border:1px solid var(--error); border-radius:var(--r-sm); background:var(--surface);
@@ -1056,7 +1063,7 @@ label.opt span { line-height:1.25; }
   .qsnum { margin-bottom:1rem; font-size:.64rem; }
   .fgrid { grid-template-columns:1fr; gap:.75rem; }
   .opts.two-up { grid-template-columns:1fr 1fr; }
-  .qside h3 { font-size:1.2rem; }
+  .qside h2 { font-size:1.2rem; }
   .qside p { font-size:.82rem; }
   .qside .qic { width:2.2rem; height:2.2rem; margin-bottom:.6rem; }
   .fgroup { margin-bottom:.85rem; }
@@ -2312,7 +2319,9 @@ body.has-consent .lp-abar { display:none; }
    de este archivo y moverlo cambiaria el layout de todo el sitio. */
 @media (min-width:641px) and (max-width:980px) {
   .shead .nav-lk { display:none; }
-  .hamb { display:flex; }
+  /* Con el tamano base (2.3rem) la hamburguesa se quedaba en 37px justo donde pasa
+     a ser la unica via a los seis enlaces, y son tablets tactiles. */
+  .hamb { display:flex; width:2.75rem; height:2.75rem; }
 }
 
 /* ---- textlink: cierre de seccion con flecha (.sec-cta). Subrayado que solo
@@ -2327,6 +2336,11 @@ body.has-consent .lp-abar { display:none; }
 .textlink:hover { color:var(--ink); text-decoration-color:currentColor; }
 .textlink svg.ic { transition:transform var(--t); }
 .textlink:hover svg.ic { transform:translateX(3px); }
+/* Los cierres de seccion pasaron de boton a enlace de texto y con ello de 44px de
+   alto a 24. En movil son la unica salida de su seccion, asi que recuperan el area. */
+@media (max-width:640px) {
+  .textlink { min-height:2.75rem; }
+}
 
 /* ---- protocolo-mini: protocolo condensado de la portada, en fila en
    escritorio. NOTA: .no ya existe pero solo dentro de .steps .st (linea 289)
@@ -2335,6 +2349,11 @@ body.has-consent .lp-abar { display:none; }
    Ninguno cubre este marcado (li con no/tt/meta sueltos, sin timeline ni
    pill), asi que van con su propio scope en vez de heredar esas reglas. */
 .protocolo-mini { list-style:none; display:grid; grid-template-columns:repeat(4,1fr); }
+/* Escalon intermedio: a 768px las cuatro columnas dejaban 172px cada una, con el
+   titulo y la meta partidos. .steps, que es la misma forma 4-up, ya baja a 2 aqui. */
+@media (max-width:900px) {
+  .protocolo-mini { grid-template-columns:repeat(2,1fr); gap:1.2rem 0; }
+}
 .protocolo-mini li {
   display:flex; flex-direction:column; gap:.4rem;
   padding:0 1.35rem; border-left:1px solid var(--hair);
@@ -2431,8 +2450,12 @@ body.has-consent .lp-abar { display:none; }
 /* ---- capacidades: referencia de dominio dentro de la tarjeta ---- */
 /* Discreto, una sola linea. min-width:0 + text-overflow permite truncar sin romper
    el layout si el nombre del proyecto + resultado es largo; el icono no se encoge. */
-.dom-ref { display:flex; align-items:center; gap:.4rem; margin-top:.9rem; color:var(--faint); font-size:.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-.dom-ref:hover { color:var(--ink); }
+/* Es un <span> dentro de la tarjeta-enlace, no un enlace propio: el hover cuelga de
+   la tarjeta. El texto va en su propia caja porque text-overflow no llega a los
+   hijos anonimos de un contenedor flex, y antes se cortaba en seco. */
+.dom-ref { display:flex; align-items:center; gap:.4rem; margin-top:.9rem; color:var(--faint); font-size:.8rem; font-weight:600; min-width:0; }
+.dom-ref > span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.card:hover .dom-ref { color:var(--ink); }
 .dom-ref svg.ic { flex:none; }
 @media (max-width:640px){
   .dom-ref { font-size:.78rem; margin-top:.7rem; }
@@ -2497,8 +2520,11 @@ body.has-consent .lp-abar { display:none; }
    presencia y un <ul> en linea con los 6 puntos del estandar. Ocupa toda
    la fila del grid con grid-column en el ITEM, nunca grid-template-columns
    en .why-grid: eso lo sigue decidiendo gcls(6) via .g. */
+/* Ocupa una celda como las demas: con grid-column:1/-1 el bloque tenia 5 tarjetas
+   normales mas una a fila completa dentro de un gcls(6) de tres columnas, y la
+   segunda fila quedaba con la tercera columna vacia. La destaca el halo, no el ancho. */
 .adv-feat, .estandar-feat {
-  grid-column:1 / -1; padding:2rem 2.2rem;
+  padding:2rem 2.2rem;
   background-image:radial-gradient(90% 140% at 0 0, var(--halo), transparent 55%);
 }
 .adv-feat .ico, .estandar-feat .ico { width:3rem; height:3rem; font-size:1.3rem; }
@@ -2511,6 +2537,9 @@ body.has-consent .lp-abar { display:none; }
 .estandar-inline li {
   display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .8rem;
   border-radius:var(--r-pill); background:var(--surface-2);
+  /* El pill vive dentro de una .adv, y --surface-2 contra --surface da 1.03:1 en
+     claro: sin borde, los seis puntos del estandar se leian como texto suelto. */
+  border:1px solid var(--line);
   font-size:.8rem; font-weight:600; color:var(--muted); white-space:nowrap;
 }
 .estandar-inline svg.ic { color:var(--ink); flex:none; }
