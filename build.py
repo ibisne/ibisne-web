@@ -552,8 +552,8 @@ BACK = ["vg", "farmacia-hdz", "sem"]
 # del sitemap, pero su ficha se sigue generando con <meta robots="noindex, follow">:
 # nada se borra, ningun enlace compartido se rompe y salen de Google igual.
 # Revertir un proyecto = borrar su linea de aqui y reconstruir.
-OCULTOS = ("ifutbol", "gocer", "grupo-rmc", "sense", "steelbeird", "unframe",
-           "neoterre", "breakit", "piscinamx", "elixier", "love-sex-and-more",
+OCULTOS = ("ifutbol", "gocer", "grupo-rmc", "sense", "emergente", "unframe",
+           "breakit", "piscinamx", "elixier", "love-sex-and-more",
            "manufaktura", "ipool", "eleva", "vg", "farmacia-hdz", "hotel-panamera")
 
 
@@ -682,7 +682,7 @@ def build_home(projects):
     # salieron breakit e ifutbol de arriba y unframe de abajo; entran thcc y semendomap,
     # y albercas-vip, que acaba de lanzar.
     VC_HOME = ("ibroker", "medical-mexicana", "dci", "sem", "thcc", "semendomap")
-    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "albercas-vip", "emergente")
+    CLI_HOME = ("batauro", "otomi", "digitalife", "albercasopia", "albercas-vip", "steelbeird")
     vc_feat = [by[s] for s in VC_HOME if s in by]
     cli_feat = [by[s] for s in CLI_HOME if s in by and s not in VC_HOME]
     cards = "".join(pf_card(p) for p in cli_feat)
@@ -815,7 +815,7 @@ def build_servicios_hub(projects):
 # silencioso (los 3 primeros del portafolio global) si un dominio se queda sin
 # proyectos mapeados, asi que cada lista debe conservar >=3 slugs visibles.
 DOMAIN_PROJECTS = {
-    "producto": ["ibroker", "sem", "emergente"],
+    "producto": ["ibroker", "sem", "neoterre"],
     "comercio": ["thcc", "albercas-vip", "batauro", "medical-mexicana", "albercasopia"],
     "frontera": ["sem", "semendomap", "otomi"],
 }
@@ -1140,7 +1140,7 @@ MODELO_PROJECTS = {
     "inversion": ["ibroker", "rancho-contento", "piscinamx", "geneticas", "elixier",
                   "love-sex-and-more", "ipool", "ifutbol", "medical-mexicana", "sem",
                   "semendomap", "dci", "thcc", "eleva", "breakit"],
-    "clientes": ["steelbeird", "neoterre", "gocer", "grupo-rmc", "sense", "vg",
+    "clientes": ["steelbeird", "neoterre", "semilla", "gocer", "grupo-rmc", "sense", "vg",
                  "farmacia-hdz", "hotel-panamera", "manufaktura", "albercas-vip",
                  "emergente", "unframe", "batauro", "albercasopia", "digitalife", "otomi"],
     "incubadora": [],   # categoria oficial del CRM, sin proyectos por ahora
