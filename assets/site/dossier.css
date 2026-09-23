@@ -2286,15 +2286,33 @@ body.has-consent .lp-abar { display:none; }
    donde ya conviven con el boton primario y la hamburguesa (bloque @640px,
    linea 452). ---- */
 .wa-head { flex:none; }
+/* En movil es un boton de contacto, no un adorno: .iconbtn mide 37px y el minimo
+   tactil del sitio son 44. El resto de controles del header ya estan en 2.75rem. */
+@media (max-width:640px) {
+  .actions .wa-head { width:2.75rem; height:2.75rem; }
+}
 
 /* ---- full/short: los dos <span> del CTA primario del header. Se alternan
    en el mismo corte que ya usa .shead para pasar a layout movil (linea 452):
    el largo cabe con nav completo, el corto entra en la fila logo+CTA+hamb. ---- */
 .btn-primary .full { display:inline; }
 .btn-primary .short { display:none; }
-@media (max-width:640px) {
+/* El corte es 980px, no 640: entre 641 y 880 el nav completo sigue en pantalla y
+   ahi es donde el texto largo no cabe. Con el boton largo, el header medi­a 873px
+   dentro de un contenedor de 753 y la pagina entera cogia scroll horizontal. */
+@media (max-width:980px) {
   .btn-primary .full { display:none; }
   .btn-primary .short { display:inline; }
+}
+
+/* Aun con el texto corto, seis enlaces + dos iconos + el CTA no caben en una
+   tablet: a 768px el header pedia 801px dentro de 753 y la pagina entera cogia
+   scroll horizontal. En esa franja los enlaces pasan al menu, que ya existe.
+   Va acotado al header a proposito: el corte de 640px lo comparten trece bloques
+   de este archivo y moverlo cambiaria el layout de todo el sitio. */
+@media (min-width:641px) and (max-width:980px) {
+  .shead .nav-lk { display:none; }
+  .hamb { display:flex; }
 }
 
 /* ---- textlink: cierre de seccion con flecha (.sec-cta). Subrayado que solo
