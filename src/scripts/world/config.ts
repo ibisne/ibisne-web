@@ -112,11 +112,47 @@ export const B_CURSOR_RADIUS = 0.42;
 /** grosor de la B (volumen), en alturas de B */
 export const B_THICKNESS = 0.07;
 
-/* ---------- Polvo ---------- */
-export const DUST_HIGH = 700;
-export const DUST_LOW = 260;
-export const DUST_NEAR_MIN = 1.3;
-export const DUST_FAR_MAX = 20;
+/* ---------- Glitch (pase de post-proceso, glitch.ts + postFrag) ---------- */
+// Senal digital que se reconecta: rafagas breves y esporadicas; entre rafagas, imagen limpia
+// (el pase no corre). Sin glitch en modo estatico ni con prefers-reduced-motion.
+/** Pausa entre rafagas, segundos (aleatoria en el rango) */
+export const GLITCH_EVERY_MIN_S = 4;
+export const GLITCH_EVERY_MAX_S = 9;
+/** Duracion de cada rafaga, segundos */
+export const GLITCH_BURST_MIN_S = 0.12;
+export const GLITCH_BURST_MAX_S = 0.28;
+/** Intensidad de una rafaga (0..1, aleatoria en el rango). 1 = cortes de GLITCH_SLICE_SHIFT */
+export const GLITCH_AMP_MIN = 0.55;
+export const GLITCH_AMP_MAX = 0.95;
+/** Una rafaga salta de patron cada 35-70 ms (tramos): eso la hace "digital" y no ruido */
+export const GLITCH_STEP_MIN_S = 0.035;
+export const GLITCH_STEP_MAX_S = 0.07;
+/** Probabilidad de que un tramo de la rafaga quede limpio (parpadeo de reconexion) */
+export const GLITCH_GAP_CHANCE = 0.2;
+/** Desplazamiento maximo en X de una rebanada, en anchos de pantalla (con intensidad 1) */
+export const GLITCH_SLICE_SHIFT = 0.035;
+/** Separacion RGB maxima, en anchos de pantalla (dentro de una rebanada; fuera, ~30 %) */
+export const GLITCH_RGB = 0.007;
+/** Fraccion de zonas de pantalla con macrobloques a intensidad 1 (zonas de 6x6 bloques) */
+export const GLITCH_BLOCK_ZONES = 0.07;
+/** Probabilidad de que un tramo traiga 1-2 lineas de escaneo cian/magenta */
+export const GLITCH_LINE_CHANCE = 0.45;
+/** Mouse rapido: velocidad (anchos de pantalla por segundo) desde la que reacciona */
+export const GLITCH_MOUSE_SPEED = 2.2;
+/** Mouse rapido: segundos que adelanta la siguiente rafaga por cada segundo de movimiento rapido */
+export const GLITCH_MOUSE_PULL = 1.5;
+/** Mouse rapido: micro-glitch (probabilidad por segundo, intensidad, duracion y pausa minima) */
+export const GLITCH_MOUSE_RATE = 0.9;
+export const GLITCH_MOUSE_AMP = 0.3;
+export const GLITCH_MOUSE_DUR_S = 0.09;
+export const GLITCH_MOUSE_COOLDOWN_S = 1.4;
+/** Viaje: intensidad maxima (por velocidad de camara 0..1; pico a mitad del viaje) */
+export const GLITCH_TRAVEL = 0.55;
+/** Viaje: fraccion de tramos con glitch (el resto limpio: tartamudeo, no ruido constante) */
+export const GLITCH_TRAVEL_DUTY = 0.5;
+/** Movil: pausas mas largas (factor) y glitch mas suave (factor de intensidad) */
+export const GLITCH_MOBILE_EVERY_K = 1.7;
+export const GLITCH_MOBILE_AMP_K = 0.6;
 
 /* ---------- Viaje ---------- */
 export const TRAVEL_MIN_S = 1.6;

@@ -258,82 +258,7 @@ void main() {
 }
 `;
 
-/* ---------------- Polvo y escombros ---------------- */
-
-export const dustVert = /* glsl */ `
-uniform float uTime;
-uniform float uP;          // posicion en el panorama
-uniform float uTanHalf;
-uniform float uAspect;
-uniform float uPxPerUnit;  // px de dibujo por unidad a distancia 1
-uniform vec3 uLam;         // viewports por unidad de panorama: lejana, media, cercana
-uniform vec3 uInvD;        // 1/profundidad de lejana, media, cercana
-uniform float uSpeed;
-uniform float uDim;
-attribute vec4 aD;         // x, y (0..1), profundidad, semilla
-varying float vA;
-varying float vShard;
-varying float vSpin;
-varying vec3 vColor;
-
-float lambdaAt(float d) {
-  float k = 1.0 / d;
-  if (k <= uInvD.y) return mix(uLam.x, uLam.y, clamp((k - uInvD.x) / (uInvD.y - uInvD.x), 0.0, 1.0));
-  return mix(uLam.y, uLam.z, clamp((k - uInvD.y) / (uInvD.z - uInvD.y), 0.0, 1.5));
-}
-
-void main() {
-  float d = aD.z;
-  float seed = aD.w;
-  float hh = d * uTanHalf;
-  float hw = hh * uAspect;
-  float W = hw * 2.0 * 1.35;
-  float shift = -uP * lambdaAt(d) * hw * 2.0;
-  float drift = uTime * (0.012 + seed * 0.03) * hw;
-  float x = mod(aD.x * W + shift + drift, W) - W * 0.5;
-  float yf = fract(aD.y + uTime * 0.004 * (0.4 + seed));
-  float y = (yf - 0.5) * hh * 2.3 + sin(uTime * (0.25 + seed * 0.4) + seed * 30.0) * hh * 0.03;
-  vec4 mv = modelViewMatrix * vec4(x, y, -d, 1.0);
-  gl_Position = projectionMatrix * mv;
-
-  vShard = step(0.86, seed);
-  float worldSize = vShard > 0.5 ? 0.03 : 0.011;
-  float near = 1.0 - smoothstep(1.5, 4.5, d);
-  worldSize *= 1.0 + near * 2.4;
-  gl_PointSize = clamp(worldSize * uPxPerUnit / -mv.z, 1.0, 56.0);
-
-  float tw = 0.6 + 0.4 * sin(uTime * (0.5 + seed * 1.7) + seed * 50.0);
-  float fog = exp(-d * 0.06);
-  float edge = smoothstep(0.0, 0.08, yf) * smoothstep(1.0, 0.92, yf);
-  vA = (0.25 + 0.6 * fog) * tw * edge * (1.0 - near * 0.35) * uDim * (1.0 + uSpeed * 0.8);
-  vSpin = seed * 40.0 + uTime * (0.3 + seed);
-  vColor = seed < 0.18 ? vec3(1.0, 0.45, 0.78) : mix(vec3(0.62, 0.92, 1.0), vec3(0.95, 0.95, 1.0), fract(seed * 7.0));
-}
-`;
-
-export const dustFrag = /* glsl */ `
-varying float vA;
-varying float vShard;
-varying float vSpin;
-varying vec3 vColor;
-void main() {
-  vec2 q = gl_PointCoord - 0.5;
-  float a;
-  if (vShard > 0.5) {
-    float s = sin(vSpin);
-    float c = cos(vSpin);
-    q = mat2(c, s, -s, c) * q;
-    vec2 e = abs(q) * vec2(1.0, 2.2);
-    a = smoothstep(0.32, 0.22, max(e.x, e.y)) * 0.85;
-  } else {
-    a = smoothstep(0.5, 0.0, length(q));
-    a *= a;
-  }
-  gl_FragColor = vec4(vColor, a * vA);
-}
-`;
-
-/* ---------------- Pase de viaje: aberracion, estela y vortice ---------------- */
+/* ---------------- Pase de post-proceso: viaje (aberracion, estela, vortice) y glitch ---------------- */
 
 export const postVert = /* glsl */ `
 varying vec2 vUv;
@@ -351,9 +276,20 @@ uniform float uZoom;    // 0..1 velocidad en Z
 uniform float uDir;     // -1 o 1
 uniform int uTaps;
 uniform float uMosaic;  // 0 apagado, 1 mosaico por teselas
+uniform float uGlitch;  // 0..1 intensidad del glitch (0 = limpio)
+uniform float uGSeed;   // semilla del tramo (cambia cada 35-70 ms)
+uniform float uGLines;  // 0..1 lineas de escaneo
+uniform vec3 uGlitchK;  // GLITCH_SLICE_SHIFT, GLITCH_RGB, GLITCH_BLOCK_ZONES
+uniform vec3 uCyan;
+uniform vec3 uMagenta;
 varying vec2 vUv;
 
 float hash1(float n) { return fract(sin(n * 91.3458) * 47453.5453); }
+float hash2(vec2 p) {
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
 
 void main() {
   vec2 asp = vec2(uRes.x / uRes.y, 1.0);
@@ -375,8 +311,56 @@ void main() {
     uv.x += uDir * (hash1(floor(uv.y * 28.0)) - 0.5) * 0.03 * smoothstep(0.6, 1.0, uSpeed);
   }
 
+  // glitch: rebanadas horizontales desplazadas, macrobloques en pocas zonas, RGB y lineas
+  float gAb = 0.0;
+  float gSign = 1.0;
+  vec3 gAdd = vec3(0.0);
+  if (uGlitch > 0.001) {
+    float s = uGSeed;
+    float nb = 3.0 + floor(hash1(s * 1.7) * 6.0); // 3..8 rebanadas
+    float shift = 0.0;
+    float inAny = 0.0;
+    for (int i = 0; i < 8; i++) {
+      float fi = float(i);
+      if (fi >= nb) break;
+      float y0 = hash1(s + fi * 3.17);
+      float hg = mix(0.004, 0.075, pow(hash1(s + fi * 7.73), 2.2)); // alto variable
+      float inb = step(y0, vUv.y) * step(vUv.y, y0 + hg);
+      shift += inb * (hash1(s + fi * 13.31) * 2.0 - 1.0);
+      inAny = max(inAny, inb);
+    }
+    uv.x += clamp(shift, -1.0, 1.0) * uGlitchK.x * uGlitch;
+    gSign = hash1(s * 4.9) > 0.5 ? 1.0 : -1.0;
+    gAb = uGlitchK.y * uGlitch * (0.3 + 0.7 * inAny);
+
+    // macrobloques: bloques de 16-40 px (a 900 de alto) en zonas chicas; pixelan y saltan
+    float bs = mix(16.0, 40.0, hash1(s * 2.3)) * max(uRes.y / 900.0, 0.5);
+    vec2 px = vUv * uRes;
+    vec2 cell = floor(px / bs);
+    float zone = hash2(floor(cell / 6.0) + s);
+    float on = step(1.0 - uGlitchK.z * uGlitch, zone) * step(0.4, hash2(cell + s * 1.3));
+    vec2 q = (cell + 0.5) * bs / uRes;
+    q.x += floor((hash2(cell + s * 2.1) - 0.5) * 4.0) * bs / uRes.x;
+    uv = mix(uv, q, on);
+    gAb += on * uGlitchK.y * uGlitch * 0.6;
+
+    // 1-2 lineas de escaneo finas, en un tramo del ancho
+    if (uGLines > 0.0) {
+      float lw = 1.25 / uRes.y;
+      float y1 = hash1(s * 5.1);
+      float y2 = hash1(s * 9.7);
+      float x1 = hash1(s * 6.3) * 0.6;
+      float x2 = hash1(s * 8.9) * 0.6;
+      float l1 = (1.0 - smoothstep(0.0, lw, abs(vUv.y - y1))) * step(x1, vUv.x) * step(vUv.x, x1 + 0.4 + hash1(s * 3.3) * 0.4);
+      float l2 = step(0.5, hash1(s * 8.3)) * (1.0 - smoothstep(0.0, lw, abs(vUv.y - y2))) * step(x2, vUv.x) * step(vUv.x, x2 + 0.3 + hash1(s * 2.7) * 0.4);
+      gAdd = (uCyan * l1 + uMagenta * l2) * 0.42 * uGLines * uGlitch;
+    }
+  }
+
   vec2 dir = vec2(uDir, 0.0);
   vec2 ab = dir * uSpeed * 0.014 + (uv - 0.5) * (uSpeed + uZoom) * 0.01;
+  // el glitch solo completa la aberracion del viaje hasta su propio maximo (no la duplica)
+  ab.x += gSign * max(0.0, gAb - abs(ab.x));
   vec2 bl = dir * uSpeed * 0.04 + (uv - 0.5) * uZoom * 0.04;
   vec3 acc = vec3(0.0);
   float n = 0.0;
@@ -389,6 +373,6 @@ void main() {
     acc.b += texture2D(tScene, o - ab).b;
     n += 1.0;
   }
-  gl_FragColor = vec4(acc / n, 1.0);
+  gl_FragColor = vec4(acc / n + gAdd, 1.0);
 }
 `;

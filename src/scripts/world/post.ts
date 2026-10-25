@@ -1,8 +1,9 @@
 /**
- * Pase de viaje: solo corre mientras la camara se mueve. La escena se pinta a un
- * render target y un triangulo a pantalla completa la compone con aberracion
- * cromatica, estela direccional y un vortice leve, proporcionales a la velocidad.
- * En reposo se pinta directo a pantalla (cero costo extra).
+ * Pase de post-proceso: solo corre mientras la camara se mueve o hay glitch. La escena
+ * se pinta a un render target y un triangulo a pantalla completa la compone con
+ * aberracion cromatica, estela direccional y un vortice leve (proporcionales a la
+ * velocidad) y con el glitch (rebanadas, RGB, macrobloques, lineas; ver glitch.ts).
+ * En reposo y entre rafagas se pinta directo a pantalla (cero costo extra).
  */
 import {
   BufferAttribute,
@@ -15,10 +16,11 @@ import {
   ShaderMaterial,
   UnsignedByteType,
   Vector2,
+  Vector3,
   WebGLRenderTarget,
 } from 'three';
 import type { Camera, IUniform, WebGLRenderer } from 'three';
-import { POST_MOSAIC } from './config';
+import { CYAN, GLITCH_BLOCK_ZONES, GLITCH_RGB, GLITCH_SLICE_SHIFT, MAGENTA, POST_MOSAIC } from './config';
 import { postFrag, postVert } from './shaders';
 
 export class TravelPass {
@@ -50,6 +52,12 @@ export class TravelPass {
       uDir: { value: 1 },
       uTaps: { value: this.taps },
       uMosaic: { value: POST_MOSAIC ? 1 : 0 },
+      uGlitch: { value: 0 },
+      uGSeed: { value: 0 },
+      uGLines: { value: 0 },
+      uGlitchK: { value: new Vector3(GLITCH_SLICE_SHIFT, GLITCH_RGB, GLITCH_BLOCK_ZONES) },
+      uCyan: { value: new Vector3(...CYAN) },
+      uMagenta: { value: new Vector3(...MAGENTA) },
     };
     this.mesh = new Mesh(
       g,
@@ -70,11 +78,23 @@ export class TravelPass {
     (this.u.uRes.value as Vector2).set(w, h);
   }
 
-  render(renderer: WebGLRenderer, scene: Scene, camera: Camera, speed: number, zoom: number, dir: number): void {
+  render(
+    renderer: WebGLRenderer,
+    scene: Scene,
+    camera: Camera,
+    speed: number,
+    zoom: number,
+    dir: number,
+    glitch: { level: number; seed: number; lines: number },
+  ): void {
     this.u.uSpeed.value = speed;
     this.u.uZoom.value = zoom;
     this.u.uDir.value = dir;
-    this.u.uTaps.value = this.taps;
+    // sin viaje la estela no existe: una sola muestra (rafaga de glitch en reposo)
+    this.u.uTaps.value = speed > 0.004 || zoom > 0.004 ? this.taps : 1;
+    this.u.uGlitch.value = glitch.level;
+    this.u.uGSeed.value = glitch.seed;
+    this.u.uGLines.value = glitch.lines;
     renderer.setRenderTarget(this.rt);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);

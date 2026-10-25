@@ -11,8 +11,6 @@ import {
   DPR_HIGH,
   DPR_LOW,
   DPR_MOBILE,
-  DUST_HIGH,
-  DUST_LOW,
   FOV,
   FPS_MIN,
   FPS_PROBE_S,
@@ -36,8 +34,8 @@ import {
 import type { BMode, Quality, Station, StationPose, TravelPhase } from './config';
 import { Layer } from './layers';
 import type { LayerBlend, LayerName, LayerSource } from './layers';
-import { Dust } from './dust';
 import { BMatrix } from './bmatrix';
+import { Glitch } from './glitch';
 import type { BPointer } from './bmatrix';
 import { TravelPass } from './post';
 import { StaticWorld, STATIC_FADE_MS } from './static';
@@ -245,7 +243,8 @@ export interface WorldStats {
   dpr: number;
   particles: number;
   glyphs: number;
-  dust: number;
+  /** intensidad del glitch en este cuadro (0 = imagen limpia) */
+  glitch: number;
   /** desplazamiento en px CSS de cada capa con el mouse en el borde (traslacion pura) */
   parallaxPx: { far: number; mid2: number; mid: number; near: number; b: number };
   traveling: boolean;
@@ -264,7 +263,7 @@ export function getWorldStats(): WorldStats {
         dpr: 1,
         particles: 0,
         glyphs: 0,
-        dust: 0,
+        glitch: 0,
         parallaxPx: { far: 0, mid2: 0, mid: 0, near: 0, b: 0 },
         traveling: !!travel,
         b: null,
@@ -355,9 +354,12 @@ class GLWorld {
   private scene = new Scene();
   private camera: PerspectiveCamera;
   private layers: Partial<Record<LayerName, Layer>> = {};
-  private dust: Dust;
   private b: BMatrix | null = null;
   private pass = new TravelPass();
+  private glitch: Glitch;
+  private mobileMq = window.matchMedia(MOBILE_QUERY);
+  private lastCX = -1;
+  private lastCY = -1;
   private tanHalf = Math.tan(((FOV / 2) * Math.PI) / 180);
 
   private raf = 0;
@@ -433,12 +435,10 @@ class GLWorld {
     this.initialQuality = startLow ? 'low' : 'high';
     this.dprCap = this.coarse ? DPR_MOBILE : DPR_HIGH;
     this.camera = new PerspectiveCamera(FOV, 1, 0.05, 100);
-    this.dust = new Dust(startLow ? DUST_LOW : DUST_HIGH);
-    this.scene.add(this.dust.back, this.dust.front);
+    this.glitch = new Glitch(() => this.coarse || this.mobileMq.matches);
 
     // solo en desarrollo: acceso desde la consola para depurar capas
     if (import.meta.env.DEV) (window as unknown as { __worldGL?: unknown }).__worldGL = this;
-
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(canvas);
     this.listen();
@@ -535,7 +535,6 @@ class GLWorld {
   private applyQuality(q: 'high' | 'low'): void {
     const native = window.devicePixelRatio || 1;
     this.dpr = Math.min(native, q === 'low' ? Math.min(this.dprCap, this.coarse ? DPR_MOBILE : DPR_LOW) : this.dprCap);
-    this.dust.setCount(q === 'low' ? DUST_LOW : DUST_HIGH);
     this.b?.setCount(q === 'low' ? B_PARTICLES_LOW : B_PARTICLES_HIGH);
     this.pass.taps = q === 'low' ? 4 : 7;
     if (this.ready) quality = q;
@@ -611,6 +610,10 @@ class GLWorld {
         else {
           this.mouse = true;
           this.mouseIn = true;
+          // recorrido del mouse para el glitch reactivo (anchos de pantalla)
+          if (this.lastCX >= 0) this.glitch.pointer(Math.hypot(e.clientX - this.lastCX, e.clientY - this.lastCY) / this.cw);
+          this.lastCX = e.clientX;
+          this.lastCY = e.clientY;
         }
       },
       { passive: true },
@@ -792,7 +795,15 @@ class GLWorld {
     if (!this.running) return;
     this.raf = requestAnimationFrame(this.frame);
     // tactil en reposo: ~30 fps (el telefono no se calienta). Viaje y dedo encima, a pleno ritmo.
-    if (this.coarse && !travel && now >= this.touchUntil && this.postS < 0.004 && now - this.last < MOBILE_IDLE_FRAME_MS) return;
+    if (
+      this.coarse &&
+      !travel &&
+      now >= this.touchUntil &&
+      this.postS < 0.004 &&
+      this.glitch.level < 0.001 &&
+      now - this.last < MOBILE_IDLE_FRAME_MS
+    )
+      return;
     const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000));
     this.last = now;
     this.time += dt;
@@ -876,22 +887,8 @@ class GLWorld {
       l.update(u, cur.dim, time, this.glow, this.res, l.name === 'near' ? nearAlpha : 1);
     }
 
-    // polvo
-    const lam: [number, number, number] = [
-      this.layers.far?.lambda ?? 3,
-      this.layers.mid?.lambda ?? 4,
-      this.layers.near?.lambda ?? 6,
-    ];
-    this.dust.update({
-      time,
-      p: cur.u,
-      tanHalf: this.tanHalf,
-      aspect: this.cw / this.ch,
-      pxPerUnit: (this.ch * this.dpr) / (2 * this.tanHalf),
-      lam,
-      speed: this.postS,
-      dim: cur.dim,
-    });
+    // glitch: rafagas esporadicas, mouse rapido y viaje (velocidad del pase)
+    this.glitch.update(time, dt, this.postS);
 
     // B
     if (this.b) {
@@ -913,8 +910,8 @@ class GLWorld {
     }
 
     // pintar
-    if (this.postS > 0.004 || this.postZ > 0.004) {
-      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir);
+    if (this.postS > 0.004 || this.postZ > 0.004 || this.glitch.level > 0.001) {
+      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir, this.glitch);
     } else {
       this.renderer.setRenderTarget(null);
       this.renderer.render(this.scene, cam);
@@ -947,7 +944,7 @@ class GLWorld {
       dpr: this.dpr,
       particles: this.b?.particleCount ?? 0,
       glyphs: this.b?.glyphCount ?? 0,
-      dust: this.dust.count,
+      glitch: this.glitch.level,
       parallaxPx: {
         far: px(LAYERS.far.depth),
         mid2: px(LAYERS.mid2.depth),
@@ -968,7 +965,6 @@ class GLWorld {
     this.anchorRo?.disconnect();
     for (const f of this.off) f();
     for (const l of Object.values(this.layers)) l?.dispose();
-    this.dust.dispose();
     this.b?.dispose();
     this.pass.dispose();
     this.renderer.dispose();

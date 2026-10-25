@@ -14,12 +14,12 @@ de `vercel.json` tal como está.
 |---|---|
 | `index.ts` | API pública (lo único que deben importar las páginas). |
 | `engine.ts` | Renderer, cámara, bucle, viaje entre estaciones, calidad adaptativa, modo estático. |
-| `config.ts` | **Todo lo que se afina a ojo**: estaciones, profundidades, zoom por capa, amplitud del mouse, partículas, duraciones. |
+| `config.ts` | **Todo lo que se afina a ojo**: estaciones, profundidades, zoom por capa, amplitud del mouse, partículas de la B, glitch, duraciones. |
 | `assets.ts` | Única fuente de los assets (solo servidor). Usa `src/assets/world/{far,mid,near}.*` si existen; si no, `c4-fondo` / `c4-ciudad` repetidas en espejo y una capa cercana procedural. |
 | `layers.ts` | Capas de imagen (planos a distinta Z, ventana del panorama según la posición de viaje). |
 | `bmatrix.ts` | La B en GPU: partículas, glifos que llueven, halo, remolino con resortes y giro hacia el cursor. |
-| `dust.ts` | Polvo y escombros a varias profundidades. |
-| `post.ts` | Pase de viaje (aberración cromática, estela, vórtice). Solo corre mientras hay movimiento. |
+| `glitch.ts` | Reloj del glitch (solo CPU): cuándo hay ráfaga, su intensidad y la semilla del patrón. |
+| `post.ts` | Pase de post-proceso: viaje (aberración cromática, estela, vórtice) y glitch. Solo corre mientras hay movimiento o ráfaga. |
 | `procedural.ts` | Atlas de glifos (código y numerales mayas), muestreo de la silueta, capa cercana provisional. |
 | `static.ts` | Modo estático: fundido cruzado entre dos pilas de `<img>`. |
 | `router.ts` | Enganche opcional con el ClientRouter (`connectRouter`). |
@@ -126,8 +126,9 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
 
 - **Escena**: lejana (Z 22, opaca, bruma índigo y banda de horizonte), media (Z 9,
   aditiva sobre negro, se enciende alrededor del cursor), cercana (Z 2.6, aditiva; se
-  aparta alrededor de la B para no taparla y se desvanece al empujar hacia `proyecto`),
-  polvo y escombros (~440 / 170) delante y detrás de la cercana.
+  aparta alrededor de la B para no taparla y se desvanece al empujar hacia `proyecto`).
+  Sin polvo ni partículas flotantes: la capa de polvo y escombros se retiró el 25-oct-2026
+  (se leía como confeti); su lugar lo toma el glitch.
 - **Mouse = cámara** con inercia (lerp 0.06): ±50 px la cercana, ±14 la media, ±6 la
   lejana a 1440 px, roll ±0.7°. Táctil: deriva automática suave; tocar la B la agita.
 - **La B**: 32 000 partículas (alta) / 8 000 (baja), contorno reforzado, volumen (dos
@@ -137,6 +138,16 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
 - **Calidad**: DPR ≤ 1.5 (táctil ≤ 1.25; baja en escritorio 1.0). Arranca en `low` en
   táctil o con `deviceMemory ≤ 4`; si no, mide 2 s tras armar la B (mediana del tiempo
   por cuadro) y baja a `low` si da < 45 fps. Pausa con `document.hidden`.
+- **Glitch** (señal digital que se reconecta): cada 4-9 s, una ráfaga de 120-280 ms partida
+  en tramos de 35-70 ms, cada tramo con patrón nuevo (algunos limpios): 3-8 rebanadas
+  horizontales de alto variable desplazadas en X, separación RGB, macrobloques que pixelan y
+  saltan en pocas zonas chicas y, a veces, 1-2 líneas de escaneo cian/magenta. Entre ráfagas
+  la imagen queda limpia y el pase no corre (costo cero). Mouse rápido: adelanta la siguiente
+  ráfaga y a veces dispara un micro-glitch (0.3, 90 ms). Viaje: rebanadas y bloques en tramos
+  alternos, proporcionales a la velocidad de cámara (pico a mitad del viaje); su RGB solo
+  completa la aberración del viaje hasta su propio máximo, no la duplica. Móvil: pausas ×1.7 e
+  intensidad ×0.6. Estático / `prefers-reduced-motion`: sin glitch. Constantes `GLITCH_*` en
+  `config.ts`; para forzar una ráfaga en desarrollo: `__worldGL.glitch.trigger(2, 0.9)`.
 - **Estático** (sin WebGL, `prefers-reduced-motion`, o contexto perdido): las `<img>`
   encuadradas en la estación; `goTo` = fundido cruzado de 420 ms entre dos pilas.
 
@@ -154,3 +165,8 @@ suman). Si `near` llega con transparencia real, cambia su `blend` a `'alpha'` en
 - Velocidad relativa de las capas al viajar: `LAYERS.*.zoom`.
 - Encuadre/brillo de cada estación: `STATIONS`.
 - Fuerza de la B: `B_CURSOR_RADIUS`, `B_MAX_TILT`; brillo de capas en `layers.ts` (`LOOK`).
+- Glitch: frecuencia `GLITCH_EVERY_MIN_S` / `GLITCH_EVERY_MAX_S`, duración `GLITCH_BURST_*`,
+  intensidad `GLITCH_AMP_*`, corte `GLITCH_SLICE_SHIFT`, RGB `GLITCH_RGB`, bloques
+  `GLITCH_BLOCK_ZONES`, líneas `GLITCH_LINE_CHANCE`, mouse `GLITCH_MOUSE_*`, viaje
+  `GLITCH_TRAVEL*`, móvil `GLITCH_MOBILE_*`. Para apagarlo: `GLITCH_AMP_MIN = GLITCH_AMP_MAX = 0`,
+  `GLITCH_MOUSE_AMP = 0` y `GLITCH_TRAVEL = 0`.
