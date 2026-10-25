@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import BParticles from '../components/BParticles.astro';
+---
+
+<Base title="Página no encontrada" description="Esta página no existe." page="404" noindex>
+  <section class="nf" data-travel-ui>
+    <BParticles size="clamp(140px, 26vh, 240px)" interactive={false} intensity={0.8} />
+    <p class="label faint">Error 404</p>
+    <h1 class="title title--h2">
+      <span class="title__thin">Esta ruta</span>
+      <span class="title__bold">no existe.</span>
+    </h1>
+    <a class="btn btn-outline" href="/">Volver al inicio <span class="btn__arrow" aria-hidden="true">↳</span></a>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: calc(var(--header-h) + 2rem) var(--gutter) 4rem;
+    text-align: center;
+  }
+</style>

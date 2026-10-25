@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import BParticles from '../components/BParticles.astro';
+---
+
+<Base
+  title="iBisne · Diseñamos tecnología para marcas selectas"
+  description="Diseñamos tecnología para marcas selectas. Estudio de producto y software en Zapopan, Jalisco."
+  page="home"
+>
+  {/* TODO(agente HOME): reemplazar este placeholder. Mantener <Base page="home">,
+      las capas [data-travel-bg] / [data-travel-ui] y el registerPage de abajo. */}
+  <div class="stage ph">
+    <div class="bg-layer ph__bg" data-travel-bg></div>
+    <div class="ph__ui ui-layer">
+      <div data-travel-ui><BParticles size="min(52vh, 480px)" /></div>
+      <h1 class="title" data-travel-ui>
+        <span class="title__thin">Diseñamos tecnología</span>
+        <span class="title__bold">para marcas selectas.</span>
+      </h1>
+      <p class="muted" data-travel-ui>
+        <a class="pill" href="/trabajo/">Trabajo</a>
+        <a class="pill" href="/contacto/">Contacto</a>
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .ph {
+    height: 100%;
+  }
+  .ph__bg {
+    background:
+      radial-gradient(40% 40% at 72% 62%, rgb(77 243 255 / 0.35), transparent 70%),
+      radial-gradient(40% 40% at 22% 64%, rgb(255 62 165 / 0.35), transparent 70%),
+      var(--ink-2);
+  }
+  .ph__ui {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    text-align: center;
+    padding-inline: var(--gutter);
+  }
+</style>
+
+<script>
+  import { registerPage } from '../scripts/travel';
+  // Punto focal en el fondo de Inicio de cada destino: torre derecha -> Trabajo, piramide izquierda -> Contacto.
+  registerPage('home', { focal: { trabajo: { x: 0.72, y: 0.62 }, contacto: { x: 0.22, y: 0.64 } } });
+</script>

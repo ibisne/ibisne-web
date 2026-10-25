@@ -1,0 +1,101 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Consent from '../components/Consent.astro';
+import LegalFooter from '../components/LegalFooter.astro';
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+
+export type PageKind = 'home' | 'trabajo' | 'contacto' | 'legal' | '404';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Define data-page en <html>: gobierna el scroll de escritorio y el motor de viaje */
+  page: PageKind;
+  /** none | mini | full. Por defecto: mini en home/trabajo, full en contacto/legal, none en 404 */
+  legalFooter?: 'none' | 'mini' | 'full';
+  /** Alias booleano: true = pie completo, false = sin pie */
+  footerLegal?: boolean;
+  /** Ruta absoluta (desde /) de la imagen OG; por defecto /og.jpg */
+  image?: string;
+  noindex?: boolean;
+  /** Pasa true para no anteponer/sufijar la marca al titulo */
+  rawTitle?: boolean;
+}
+
+const DEFAULT_DESC = 'Diseñamos tecnología para marcas selectas. Estudio de producto y software en Zapopan, Jalisco.';
+const { title, description = DEFAULT_DESC, page, image = '/og.jpg', noindex = false, rawTitle = false } = Astro.props;
+const footerDefault = { home: 'mini', trabajo: 'mini', contacto: 'full', legal: 'full', '404': 'none' } as const;
+const aliasFooter = Astro.props.footerLegal === undefined ? undefined : Astro.props.footerLegal ? 'full' : 'none';
+const legalFooter = Astro.props.legalFooter ?? aliasFooter ?? footerDefault[page];
+
+const fullTitle = rawTitle || title.includes('iBisne') ? title : `${title} · iBisne`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'iBisne',
+  legalName: 'iBisne S.A.S. de C.V.',
+  url: 'https://www.ibisne.com/',
+  logo: new URL('/icon-512.png', Astro.site).href,
+  description: DEFAULT_DESC,
+  address: { '@type': 'PostalAddress', addressLocality: 'Zapopan', addressRegion: 'Jalisco', addressCountry: 'MX' },
+};
+---
+
+<!doctype html>
+<html lang="es-MX" data-page={page} data-boot>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta name="theme-color" content="#0B0820" />
+    <meta name="color-scheme" content="dark" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="iBisne" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+
+    <ClientRouter />
+    <noscript><style>html[data-boot] main#page { opacity: 1; }</style></noscript>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <slot name="head" />
+    <script>
+      import '../scripts/travel.ts';
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#page">Saltar al contenido</a>
+    <Header />
+    <main id="page" tabindex="-1">
+      <slot />
+      {legalFooter !== 'none' && <LegalFooter variant={legalFooter} />}
+    </main>
+    <Consent />
+  </body>
+</html>

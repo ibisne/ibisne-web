@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="Trabajo"
+  description="Marcas con las que hemos diseñado y construido producto, software y plataformas."
+  page="trabajo"
+>
+  {/* TODO(agente TRABAJO): reemplazar este placeholder. Mantener <Base page="trabajo">,
+      las capas [data-travel-bg] / [data-travel-ui] y el registerPage. */}
+  <div class="stage ph">
+    <div class="bg-layer ph__bg" data-travel-bg></div>
+    <div class="ph__ui ui-layer">
+      <h1 class="title title--h2" data-travel-ui>
+        <span class="title__thin">Trabajo</span>
+        <span class="title__bold">(placeholder)</span>
+      </h1>
+      <p data-travel-ui><a class="pill" href="/">Inicio</a> <a class="pill" href="/contacto/">Contacto</a></p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .ph {
+    height: 100%;
+  }
+  .ph__bg {
+    background: radial-gradient(50% 50% at 50% 60%, rgb(77 243 255 / 0.25), transparent 70%), var(--ink-2);
+  }
+  .ph__ui {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    text-align: center;
+    padding-inline: var(--gutter);
+  }
+</style>
+
+<script>
+  import { registerPage } from '../../scripts/travel';
+  registerPage('trabajo', { focal: { home: { x: 0.5, y: 0.5 } } });
+</script>

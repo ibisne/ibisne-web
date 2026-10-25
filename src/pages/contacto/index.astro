@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="Contacto"
+  description="Cuéntanos qué quieres construir. Respondemos por WhatsApp o correo."
+  page="contacto"
+>
+  {/* TODO(agente CONTACTO): reemplazar este placeholder. Mantener <Base page="contacto">,
+      las capas [data-travel-bg] / [data-travel-ui] y el registerPage. */}
+  <div class="stage ph">
+    <div class="bg-layer ph__bg" data-travel-bg></div>
+    <div class="ph__ui ui-layer">
+      <h1 class="title title--h2" data-travel-ui>
+        <span class="title__thin">Contacto</span>
+        <span class="title__bold">(placeholder)</span>
+      </h1>
+      <p data-travel-ui><a class="pill" href="/">Inicio</a> <a class="pill" href="/trabajo/">Trabajo</a></p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .ph {
+    height: 100%;
+  }
+  .ph__bg {
+    background: radial-gradient(50% 50% at 50% 60%, rgb(255 62 165 / 0.25), transparent 70%), var(--ink-2);
+  }
+  .ph__ui {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    text-align: center;
+    padding-inline: var(--gutter);
+  }
+</style>
+
+<script>
+  import { registerPage } from '../../scripts/travel';
+  registerPage('contacto', { focal: { home: { x: 0.5, y: 0.5 } } });
+</script>

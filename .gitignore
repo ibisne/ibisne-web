@@ -23,7 +23,7 @@ nohup.out
 # Logs
 *.log
 
-# Node (por si en algún momento se agrega)
+# Node
 node_modules/
 
 # OneDrive temporales
@@ -37,3 +37,7 @@ node_modules/
 # Fuentes de los fondos: PNG de 1-3 MB cada uno. Lo que se sirve son los
 # WebP optimizados en assets/bg/ (~30 KB). Ver regla 7 de CLAUDE.md.
 Fondo/
+
+# Astro (sitio 2026)
+dist/
+.astro/

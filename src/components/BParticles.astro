@@ -1,0 +1,95 @@
+---
+import { getImage } from 'astro:assets';
+import bTrim from '../assets/b/b-trim.png';
+
+interface Props {
+  /** Alto de la B: numero (px) o cualquier longitud CSS, p. ej. "min(62vh, 560px)" */
+  size?: number | string;
+  /** Particulas que se apartan del cursor (solo escritorio con puntero fino) */
+  interactive?: boolean;
+  /** 0.2 a 1.2: cantidad de particulas, brillo y glifos */
+  intensity?: number;
+  class?: string;
+}
+
+const { size = 520, interactive = true, intensity = 1, class: cls = '' } = Astro.props;
+const height = typeof size === 'number' ? `${size}px` : size;
+const ratio = bTrim.width / bTrim.height;
+const mask = await getImage({ src: bTrim, format: 'webp', width: 512, quality: 82 });
+const k = Math.min(1.2, Math.max(0.2, intensity));
+---
+
+<div
+  class:list={['bp', cls]}
+  data-bparticles
+  data-interactive={String(interactive)}
+  data-intensity={String(k)}
+  data-src={mask.src}
+  data-mode="static"
+  role="img"
+  aria-label="Logotipo de iBisne"
+  style={`--bp-h:${height};--bp-ratio:${ratio};--bp-i:${k};--bp-mask:url(${mask.src})`}
+>
+  <div class="bp__halo"></div>
+  <div class="bp__core"></div>
+  <canvas class="bp__canvas" aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .bp {
+    position: relative;
+    height: min(var(--bp-h), calc((100vw - 2 * var(--gutter)) / var(--bp-ratio)));
+    aspect-ratio: var(--bp-ratio);
+    flex: none;
+    contain: layout style;
+  }
+  /* Brillo: capas con la silueta de la B como mascara. Estaticas, sin costo por cuadro. */
+  .bp__halo,
+  .bp__core {
+    position: absolute;
+    -webkit-mask: var(--bp-mask) center / contain no-repeat;
+    mask: var(--bp-mask) center / contain no-repeat;
+    pointer-events: none;
+    transition: opacity 0.3s linear;
+  }
+  .bp__halo {
+    inset: -3%;
+    background: var(--grad-brand);
+    filter: blur(clamp(14px, calc(var(--bp-h) * 0.045), 30px));
+    opacity: calc(0.3 * var(--bp-i));
+  }
+  .bp__core {
+    inset: 0;
+    background: var(--text);
+    filter: blur(1.5px);
+    opacity: calc(0.04 * var(--bp-i));
+  }
+  /* Sin canvas animado (movil, movimiento reducido, o aun cargando): la B se lee por el nucleo. */
+  .bp[data-mode='static'] .bp__core {
+    opacity: calc(0.34 * var(--bp-i));
+  }
+  .bp[data-mode='static'] .bp__halo {
+    opacity: calc(0.55 * var(--bp-i));
+  }
+  .bp.is-dissolved .bp__halo,
+  .bp.is-dissolved .bp__core {
+    opacity: 0 !important;
+  }
+  .bp__canvas {
+    position: absolute;
+    left: -18%;
+    top: -18%;
+    width: 136%;
+    height: 136%;
+    max-width: none;
+    pointer-events: none;
+    transition: opacity 0.3s linear;
+  }
+  .bp.is-dissolved[data-mode='static'] .bp__canvas {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  import '../scripts/b-particles.ts';
+</script>
