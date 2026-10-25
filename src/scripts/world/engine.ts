@@ -25,8 +25,11 @@ import {
   MOUSE_Y,
   PIVOT,
   STATIONS,
+  MOBILE_IDLE_FRAME_MS,
+  MOBILE_QUERY,
   TRAVEL_MAX_S,
   TRAVEL_MID_K,
+  TRAVEL_MOBILE_K,
   TRAVEL_MIN_S,
   TRAVEL_PUSH,
 } from './config';
@@ -180,7 +183,8 @@ export function goTo(to: Station, opts: { instant?: boolean } = {}): Promise<voi
 
   return new Promise<void>((resolve) => {
     const dist = Math.max(Math.abs(du) / 0.66, Math.abs(b.z - a.z) / 1.35 * 0.4, Math.abs(b.dim - a.dim) * 0.3);
-    const dur = gl ? (TRAVEL_MIN_S + (TRAVEL_MAX_S - TRAVEL_MIN_S) * clamp01(dist)) * 1000 : STATIC_FADE_MS;
+    const speed = window.matchMedia(MOBILE_QUERY).matches ? TRAVEL_MOBILE_K : 1;
+    const dur = gl ? (TRAVEL_MIN_S + (TRAVEL_MAX_S - TRAVEL_MIN_S) * clamp01(dist)) * 1000 * speed : STATIC_FADE_MS;
     const t: Travel = {
       from,
       to,
@@ -326,6 +330,9 @@ function toStatic(): void {
   if (rootEl) {
     delete rootEl.dataset.worldReady;
     rootEl.dataset.worldMode = 'static';
+    // Respaldo definitivo (reduced-motion, sin WebGL o fallo de escena); a diferencia de
+    // worldMode, que arranca en 'static' mientras carga. Las paginas lo usan para mostrar la B estatica.
+    rootEl.dataset.worldFallback = '';
   }
   still?.set(cur);
 }
@@ -454,7 +461,12 @@ class GLWorld {
           // El <img> lleva srcset/sizes: su naturalWidth viene corregido por densidad y no
           // coincide con los pixeles reales (three reservaria mal la textura). Se carga una
           // copia sin srcset con la URL ya elegida: sale de la cache HTTP, sin red.
-          await l.img.decode().catch(() => undefined);
+          if (!(l.img.complete && l.img.naturalWidth)) {
+            await new Promise((r) => {
+              l.img.addEventListener('load', r, { once: true });
+              l.img.addEventListener('error', r, { once: true });
+            });
+          }
           const img = await loadImage(l.img.currentSrc || l.img.src);
           return { ...l, img };
         } catch {
@@ -575,7 +587,9 @@ class GLWorld {
     this.res.set(bw, bh);
     this.pass.setSize(bw, bh);
     this.anchorDirty = true;
-    if (this.ready && !this.running) this.renderFrame(0);
+    // setSize vacia el canvas y ResizeObserver corre antes de pintar: sin este cuadro inmediato
+    // (rotar el telefono, cambiar de tamano) se veria un destello vacio hasta el siguiente rAF.
+    if (this.ready) this.renderFrame(0);
   }
 
   /* ---------- puntero ---------- */
@@ -777,6 +791,8 @@ class GLWorld {
   private frame = (now: number): void => {
     if (!this.running) return;
     this.raf = requestAnimationFrame(this.frame);
+    // tactil en reposo: ~30 fps (el telefono no se calienta). Viaje y dedo encima, a pleno ritmo.
+    if (this.coarse && !travel && now >= this.touchUntil && this.postS < 0.004 && now - this.last < MOBILE_IDLE_FRAME_MS) return;
     const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000));
     this.last = now;
     this.time += dt;

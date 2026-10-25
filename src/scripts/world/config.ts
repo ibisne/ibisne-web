@@ -125,6 +125,12 @@ export const TRAVEL_MAX_S = 2.2;
 export const TRAVEL_PUSH = 1.0;
 /** Momento del cambio de DOM (fraccion del viaje): la UI nueva llega con la camara frenando */
 export const TRAVEL_MID_K = 0.66;
+/**
+ * Movil / modo scroll (mismo umbral que global.css): el viaje dura esta fraccion. Con el dedo
+ * en la mano 1.6-2.2 s se siente lento y la UI se queda en blanco; ~1.0-1.4 s se siente directo.
+ */
+export const TRAVEL_MOBILE_K = 0.62;
+export const MOBILE_QUERY = 'not ((min-width: 1024px) and (min-height: 700px))';
 /** Mosaico por teselas en el pase de viaje (firma tipo emotion). Apagado: decidir con Eduardo */
 export const POST_MOSAIC = false;
 
@@ -134,3 +140,6 @@ export const DPR_MOBILE = 1.25;
 export const DPR_LOW = 1.0;
 export const FPS_PROBE_S = 2;
 export const FPS_MIN = 45;
+/** Tactil en reposo (sin viaje ni dedo encima): se pinta como mucho cada MOBILE_IDLE_FRAME_MS
+ *  (~30 fps). La deriva es lenta y la B respira; a 30 fps no se nota y el telefono gasta la mitad. */
+export const MOBILE_IDLE_FRAME_MS = 28;

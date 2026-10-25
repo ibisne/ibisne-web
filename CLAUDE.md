@@ -27,8 +27,8 @@ automático de Vercel desde `main`. URL: https://www.ibisne.com
 ```
 src/pages/        index · trabajo/ · contacto/ · legal/[slug] (privacidad, terminos, cookies, aviso-legal) · 404
 src/layouts/Base.astro   shell de todas las páginas (head, header, consent, scroll por página)
-src/components/   Header, BParticles, Consent, LegalFooter, HomeLayerImg, contact-option, work-*
-src/scripts/      travel.ts (motor de viaje), b-particles.ts, consent.ts, home-light, work-gallery, contact-enter
+src/components/   Header, Consent, LegalFooter, HomeLayerImg, contact-option, work-*
+src/scripts/      travel.ts (motor de viaje), world/ (mundo WebGL), consent.ts, home-light, work-gallery, contact-enter
 src/data/brands.ts      datos de las marcas de Trabajo
 src/content/legal/*.md  textos legales
 src/styles/       tokens.css + global.css
@@ -37,15 +37,14 @@ public/           iconos, og.jpg, manifest, robots, sw.js
 scripts/prune-dist.mjs  limpia imágenes huérfanas de dist/ tras el build
 ```
 
-Detalle del motor de viaje, `BParticles` y los props de `Base`: **`src/README-dev.md`**.
+Detalle del motor de viaje, la B y los props de `Base`: **`src/README-dev.md`**.
 Léelo antes de tocar transiciones o layout.
 
 - **Motor `travel.ts`**: navegación SPA con `ClientRouter`. Cada página registra puntos
   focales y hooks con `registerPage`; salida = zoom al punto focal con blur, entrada en
   cascada. Los hooks crean sus animaciones de forma **síncrona**. Con reduced motion todo
   es un fundido de 200 ms.
-- **BParticles**: canvas con ~2200 partículas muestreadas de `src/assets/b/b-trim.png`.
-  Estática (con brillo CSS) bajo `prefers-reduced-motion` y bajo 1024x700.
+- **La B**: la dibuja el mundo WebGL (`src/scripts/world/`). Sin WebGL o con reduced-motion se muestra la silueta estática `src/assets/b/b-trim.png` (Inicio y 404).
 - **Scroll**: en Inicio, Trabajo y Contacto **no hay scroll en escritorio ≥1024x700**
   (`100dvh`, `overflow:hidden`). Debajo de eso (móvil) hay scroll normal, layout apilado,
   efectos simplificados y tap en lugar de hover. Legales y 404 siempre scrollean.

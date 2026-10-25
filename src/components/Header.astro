@@ -104,7 +104,8 @@ const links = [
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     .hdr {
       grid-template-columns: 1fr;
-      background: linear-gradient(to bottom, color-mix(in srgb, var(--ink) 96%, transparent), color-mix(in srgb, var(--ink) 75%, transparent) 55%, transparent);
+      /* el contenido que scrollea pasa por debajo del logo: velo casi opaco arriba para que no se mezclen */
+      background: linear-gradient(to bottom, var(--ink), color-mix(in srgb, var(--ink) 88%, transparent) 55%, transparent);
     }
     .hdr__nav,
     .hdr__cta {

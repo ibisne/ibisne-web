@@ -55,18 +55,18 @@ const description = `${b.tagline} ${b.reto}`;
             }
           </div>
 
-          <div class="proj-foot" data-travel-ui>
+          <div class="proj-foot">
             {
               b.stack && b.stack.length > 0 && (
-                <ul class="proj-chips" role="list" aria-label="Stack">
+                <ul class="proj-chips proj-stack" role="list" aria-label="Stack" data-travel-ui>
                   {b.stack.map((s) => (
                     <li class="proj-chip">{s}</li>
                   ))}
                 </ul>
               )
             }
-            <div class="proj-actions">
-              <a class="work-btn work-btn--outline" href="/trabajo/">
+            <div class="proj-actions" data-travel-ui>
+              <a class="work-btn work-btn--outline" href="/trabajo/" data-back-to-work>
                 <span aria-hidden="true">←</span>&nbsp;Volver a Trabajo
               </a>
               {
@@ -121,7 +121,7 @@ const description = `${b.tagline} ${b.reto}`;
   let cleanup: (() => void) | undefined;
   let mounted: Element | null = null;
   const mount = () => {
-    if (document.documentElement.dataset.page !== 'trabajo') return;
+    if (document.documentElement.dataset.page !== 'proyecto') return;
     const el = document.querySelector('[data-tilt]');
     if (!el || el === mounted) return;
     cleanup?.();

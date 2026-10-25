@@ -271,6 +271,25 @@ document.addEventListener('astro:page-load', () => {
   runEnter(from);
 });
 
+/* ---------- "Volver a Trabajo": regresa, no avanza ---------- */
+// Si la ficha se abrio desde la rejilla, "Volver" es history.back(): la rejilla reaparece con su
+// scroll y su filtro (el filtro vive en la URL), como en una app. Con una carga directa de la
+// ficha no hay a donde volver y el enlace normal lleva a /trabajo/.
+let prevUrl = '';
+document.addEventListener('astro:before-preparation', (ev) => {
+  const e = ev as TransitionBeforePreparationEvent;
+  prevUrl = e.from.pathname + e.from.search;
+});
+document.addEventListener('click', (ev) => {
+  const a = (ev.target as Element | null)?.closest?.('[data-back-to-work]');
+  if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+  if (history.length > 1 && /^\/trabajo\/(\?.*)?$/.test(prevUrl)) {
+    ev.preventDefault();
+    ev.stopPropagation(); // el ClientRouter escucha en burbuja: este toque ya no es suyo
+    history.back();
+  }
+}, true);
+
 /* ---------- Carga directa ---------- */
 let booted = false;
 function boot(): void {

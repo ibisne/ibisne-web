@@ -95,16 +95,37 @@ function banner(): HTMLElement | null {
   return document.getElementById('consent');
 }
 
+/**
+ * Alto del banner cuando va como barra inferior (movil): lo exponen las paginas como --consent-h
+ * para dejarle sitio y que el banner no tape contenido. 0 si esta oculto o flota (>= 640 px).
+ * ClientRouter reescribe los atributos de <html> en cada viaje: se vuelve a poner tras el swap.
+ */
+let consentRo: ResizeObserver | null = null;
+function syncHeight(): void {
+  const el = banner();
+  const bar = window.matchMedia('(max-width: 639px)').matches;
+  const h = el && !el.hidden && bar ? Math.round(el.getBoundingClientRect().height) : 0;
+  document.documentElement.style.setProperty('--consent-h', `${h}px`);
+  if (el && !consentRo && typeof ResizeObserver === 'function') {
+    consentRo = new ResizeObserver(syncHeight);
+    consentRo.observe(el);
+  }
+}
+document.addEventListener('astro:after-swap', syncHeight);
+window.addEventListener('resize', syncHeight, { passive: true });
+
 function show(focus = false): void {
   const el = banner();
   if (!el) return;
   el.hidden = false;
+  syncHeight();
   if (focus) el.querySelector<HTMLElement>('[data-consent="all"]')?.focus();
 }
 
 function hide(): void {
   const el = banner();
   if (el) el.hidden = true;
+  syncHeight();
 }
 
 function decide(v: Consent): void {

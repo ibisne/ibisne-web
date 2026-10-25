@@ -80,30 +80,7 @@ Reglas:
 5. Lógica de inicialización de la página (montar widgets, listeners): usa `document.addEventListener('astro:page-load', ...)`, no código suelto; los módulos corren una sola vez pero el DOM cambia en cada navegación.
 6. Seguros: el CSS revela `<main>` a los 2.2 s aunque el JS falle, y `<noscript>` lo muestra siempre.
 
-Eventos de la B (en `window`): el motor emite `b:dissolve` al empezar cualquier salida y `b:assemble` al entrar (a ~45 % de la entrada).
+## La B
 
-## BParticles (`src/components/BParticles.astro`)
+La B ya no es un componente: la dibuja el motor del mundo (WebGL, `src/scripts/world/`). Inicio solo deja el ancla `<div data-world-b>`. Cuando el mundo cae al respaldo estatico (reduced-motion, sin WebGL o fallo de escena; `engine.ts` pone `data-world-fallback` en `[data-world]`), Inicio muestra la silueta `src/assets/b/b-trim.png` con brillo CSS. La 404 usa esa misma silueta estatica sin ancla.
 
-```astro
-<BParticles size="min(52vh, 480px)" interactive={true} intensity={1} />
-```
-
-| Prop | Tipo | Defecto | Qué hace |
-|---|---|---|---|
-| `size` | `number \| string` | `520` | Alto de la B: px o cualquier longitud CSS. El ancho sale de la proporción de la imagen y nunca pasa del ancho de pantalla. |
-| `interactive` | `boolean` | `true` | Las partículas se apartan del cursor (radio ~90 px). Solo escritorio con puntero fino. |
-| `intensity` | `0.2 – 1.2` | `1` | Cantidad de partículas (hasta 2200), brillo, glifos y halo. |
-| `class` | `string` | | Clase extra del contenedor. |
-
-Eventos (en `window`, `CustomEvent`):
-
-- `b:dissolve`: las partículas explotan hacia afuera en 300 ms y desaparecen (el brillo CSS también se apaga).
-- `b:assemble`: se vuelven a armar desde dispersión con llegada escalonada (~0.55 s) y aparición en ~400 ms. Al montar, la B ya se arma sola.
-
-Comportamiento:
-
-- Canvas 2D con ~2200 partículas muestreadas de `src/assets/b/b-trim.png` (la silueta de `b-solid.png` recortada a su caja): ~32 % sobre el contorno, resto adentro. Brillo en blanco, cian y magenta con composición aditiva, y pocos glifos tipo matrix cayendo dentro de la silueta.
-- Resorte con amortiguación, oscilación mínima en reposo, DPR máximo 2, pausa con `document.hidden` y fuera de viewport, sin allocations por cuadro.
-- Modo estático (B dibujada una sola vez + brillo CSS con la silueta como máscara) con `prefers-reduced-motion` y en pantallas menores a 1024x700. Cambia solo si cambia la media query.
-- Varias B por página son válidas (cada instancia es independiente; se destruye sola si su nodo sale del DOM).
-- El contenedor de la B puede llevar `data-travel-ui` sin problema.

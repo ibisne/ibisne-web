@@ -110,7 +110,7 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
    `'mid'` (el DOM nuevo ya está). Con `fill:'both'` y animaciones síncronas, como hoy.
 
 4. Quita los fondos propios de las páginas (`.hm { background: var(--ink) }`, capas
-   `bg-layer` de imagen, `HomeLayerImg`, `home-light.ts`, `BParticles`): taparían el
+   `bg-layer` de imagen, `HomeLayerImg`, `home-light.ts`): taparían el
    canvas. `body` puede conservar `background: var(--ink)` (el canvas va encima).
    Para legibilidad del texto, viñetas o vidrio en CSS encima del canvas.
 

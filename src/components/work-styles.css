@@ -26,7 +26,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding: calc(var(--header-h) + 0.5rem) var(--work-px) calc(var(--tabbar-h, 0px) + 1.25rem);
+  /* la barra inferior y el banner de cookies los reserva <main> (global.css), no esta capa */
+  padding: calc(var(--header-h) + 0.5rem) var(--work-px) 0.75rem;
 }
 .work-eyebrow {
   display: block;
@@ -434,12 +435,32 @@
     --ang: 360deg;
   }
 }
-/* Tactil: sin hover pegajoso; el toque viaja directo a la ficha */
+/* Tactil: sin hover pegajoso; el toque viaja directo a la ficha. Mientras el dedo esta abajo la
+   tarjeta se hunde y se enciende (respuesta inmediata: el viaje tarda unos cientos de ms en verse) */
 @media (hover: none), (pointer: coarse) {
   .work-grid > .work-card:hover {
     border-color: rgb(242 238 255 / 0.14);
     box-shadow: none;
     background: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+  .work-grid > .work-card {
+    transition:
+      border-color 0.12s ease,
+      box-shadow 0.12s ease,
+      background 0.12s ease,
+      opacity 0.22s ease,
+      scale 0.12s ease;
+  }
+  .work-grid > .work-card:active {
+    scale: 0.965;
+    border-color: color-mix(in srgb, var(--cyan) 90%, transparent);
+    background:
+      linear-gradient(color-mix(in srgb, var(--cyan) 10%, transparent), color-mix(in srgb, var(--cyan) 10%, transparent)),
+      color-mix(in srgb, var(--ink) 62%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--cyan) 40%, transparent);
+  }
+  .work-pill:active {
+    scale: 0.96;
   }
 }
 @media (prefers-reduced-motion: reduce) {

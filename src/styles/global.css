@@ -348,9 +348,26 @@ html[data-boot] main#page {
     scroll-snap-align: start;
   }
 
-  /* Paginas que scrollean y son nuestras: el final no queda bajo la barra */
-  html:is([data-page='home'], [data-page='legal']) main#page {
+  /* Paginas que scrollean: el final no queda bajo la barra ni bajo el banner de cookies.
+     Inicio es una pantalla fija: su propio estilo reserva el banner (index.astro). */
+  html[data-page='home'] main#page {
     padding-bottom: var(--tabbar-h);
+  }
+  html:is([data-page='legal'], [data-page='trabajo'], [data-page='proyecto'], [data-page='404']) main#page {
+    padding-bottom: calc(var(--tabbar-h) + var(--consent-h, 0px));
+  }
+  /* Respuesta inmediata al tocar: sin el destello gris del navegador, con :active propio */
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Contacto: el pie legal se pega abajo, justo sobre la barra */
+  html[data-page='contacto'] main#page {
+    display: flex;
+    flex-direction: column;
+  }
+  html[data-page='contacto'] .legal-foot {
+    margin-top: auto;
   }
   /* Enlace "Privacidad" de Inicio: compacto, sin sumar otra vez el safe-area (ya lo cubre la barra) */
   main#page > .legal-mini {

@@ -124,8 +124,14 @@ export interface BSample {
 export async function loadImage(src: string): Promise<HTMLImageElement> {
   const img = new Image();
   img.decoding = 'async';
-  img.src = src;
-  await img.decode();
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`no cargo ${src}`));
+    img.src = src;
+  });
+  // decode() es solo una mejora: Chrome puede dejarlo sin resolver en pestanas ocultas,
+  // y la textura se sube igual con la imagen cargada.
+  await Promise.race([img.decode().catch(() => undefined), new Promise((r) => setTimeout(r, 1500))]);
   return img;
 }
 

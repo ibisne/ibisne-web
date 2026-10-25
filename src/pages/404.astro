@@ -1,11 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import BParticles from '../components/BParticles.astro';
+import bStill from '../assets/b/b-trim.png';
 ---
 
 <Base title="Página no encontrada" description="Esta página no existe." page="404" noindex>
   <section class="nf" data-travel-ui>
-    <BParticles size="clamp(140px, 26vh, 240px)" interactive={false} intensity={0.8} />
+    <!-- Silueta estática de la B: la 404 no monta partículas, el mundo (estación legal) va de fondo -->
+    <Image class="nf__b" src={bStill} alt="" width={240} loading="eager" decoding="async" aria-hidden="true" />
     <p class="label faint">Error 404</p>
     <h1 class="title title--h2">
       <span class="title__thin">Esta ruta</span>
@@ -25,5 +27,12 @@ import BParticles from '../components/BParticles.astro';
     gap: 1.25rem;
     padding: calc(var(--header-h) + 2rem) var(--gutter) 4rem;
     text-align: center;
+  }
+  .nf__b {
+    height: clamp(140px, 26vh, 240px);
+    width: auto;
+    object-fit: contain;
+    opacity: 0.42;
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--cyan) 45%, transparent)) drop-shadow(0 0 60px color-mix(in srgb, var(--magenta) 30%, transparent));
   }
 </style>

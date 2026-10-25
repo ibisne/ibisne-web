@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import bStill from '../assets/b/b-trim.png';
 ---
 
 <Base
@@ -12,7 +14,10 @@ import Base from '../layouts/Base.astro';
     <div class="hm-vig" aria-hidden="true"></div>
 
     <!-- Ancla de la B: la dibuja el motor del mundo (WebGL); este div solo marca dónde y de qué alto -->
-    <div class="hm-b" data-world-b aria-hidden="true"></div>
+    <div class="hm-b" data-world-b aria-hidden="true">
+      <!-- Solo con el mundo en respaldo estatico (movimiento reducido o sin WebGL): silueta con brillo, sin particulas -->
+      <Image class="hm-b__still" src={bStill} alt="" width={420} loading="lazy" decoding="async" />
+    </div>
 
     <div class="hm-copy">
       <h1 id="hm-h1" class="hm-title" data-travel-ui>
@@ -28,10 +33,14 @@ import Base from '../layouts/Base.astro';
   /* ---------- Móvil: apilado. Una pantalla menos barra inferior menos el enlace "Privacidad" ---------- */
   .hm {
     position: relative;
-    min-height: calc(100svh - var(--tabbar-h) - 2rem);
+    /* Pantalla fija: la B (flexible) cede alto si hace falta. Mientras el banner de cookies esta
+       abierto (--consent-h) se reserva su sitio para que no tape el subtitulo. */
+    height: calc(100svh - var(--tabbar-h) - 2rem);
+    min-height: 30rem;
+    transition: padding-bottom 0.35s var(--ease-out); /* la B crece suave al cerrar el banner */
     display: flex;
     flex-direction: column;
-    padding: calc(var(--header-h) + 0.75rem) var(--gutter) 1.5rem;
+    padding: calc(var(--header-h) + 0.75rem) var(--gutter) calc(1.5rem + max(0px, var(--consent-h, 0px) - 2rem));
   }
 
   .hm-vig {
@@ -46,9 +55,24 @@ import Base from '../layouts/Base.astro';
   .hm-b {
     position: relative;
     align-self: center;
-    height: min(36svh, 300px);
+    flex: 1 1 0;
+    min-height: 7rem;
+    max-height: min(36svh, 300px);
     aspect-ratio: 0.95;
-    margin-block: 0.5rem 1.5rem;
+    margin-block: 0.5rem 1.25rem;
+  }
+
+  .hm-b__still {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.42; /* silueta de fondo, no un sello blanco: el titular sigue siendo lo primero */
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--cyan) 45%, transparent)) drop-shadow(0 0 60px color-mix(in srgb, var(--magenta) 30%, transparent));
+  }
+  /* Respaldo: reduced-motion, sin WebGL o fallo de escena (engine.ts marca data-world-fallback) */
+  :global(html:has([data-world][data-world-fallback])) .hm-b__still {
+    display: block;
   }
 
   .hm-copy {
@@ -81,6 +105,37 @@ import Base from '../layouts/Base.astro';
     line-height: 1.4;
     color: var(--text-2);
     text-wrap: pretty;
+  }
+
+  /* ---------- Telefono horizontal: la B a un lado y el titular al otro, todo en una pantalla ---------- */
+  @media (max-height: 499px) and (not ((min-width: 1024px) and (min-height: 700px))) {
+    .hm {
+      flex-direction: row;
+      align-items: center;
+      gap: 2rem;
+      height: auto;
+      min-height: calc(100svh - var(--tabbar-h) - 2rem);
+      padding-top: calc(var(--header-h) - 0.5rem);
+      padding-inline: max(3rem, calc(env(safe-area-inset-left, 0px) + 2rem)) max(1.5rem, env(safe-area-inset-right, 0px));
+    }
+    .hm-b {
+      flex: 0 0 auto;
+      height: min(50svh, 200px);
+      min-height: 0;
+      max-height: none;
+      margin: 0;
+    }
+    .hm-copy {
+      flex: 1;
+      margin-top: 0;
+    }
+    .hm-title {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+    }
+    .hm-sub {
+      margin-top: 0.75rem;
+      font-size: 1rem;
+    }
   }
 
   /* ---------- Escritorio sin scroll (mismo umbral que global.css) ---------- */

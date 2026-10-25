@@ -9,13 +9,17 @@
  */
 import { STATIONS } from './world/config';
 import type { Station } from './world/config';
+import { MOBILE_QUERY } from './world/config';
+
+/** Movil / modo scroll: la entrada es mas corta (el viaje del mundo tambien lo es) */
+const compact = typeof matchMedia === 'function' && matchMedia(MOBILE_QUERY).matches;
 
 export const UI_EASE_IN = 'cubic-bezier(0.25, 0.1, 0.25, 1)';
 export const UI_EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
 export const UI_EXIT_MS = 300;
-export const UI_IN_MS = 760;
-export const UI_STAGGER_MS = 60;
-export const UI_STAGGER_MAX_MS = 560;
+export const UI_IN_MS = compact ? 520 : 760;
+export const UI_STAGGER_MS = compact ? 40 : 60;
+export const UI_STAGGER_MAX_MS = compact ? 320 : 560;
 
 const SHIFT_OUT = 64;
 const SHIFT_IN = 80;
