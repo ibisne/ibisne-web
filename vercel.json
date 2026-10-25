@@ -74,57 +74,112 @@
   ],
   "redirects": [
     {
-      "source": "/servicios/:path*",
+      "source": "/servicios",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/como-trabajamos/:path*",
+      "source": "/servicios/(.*)",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/inversion/:path*",
+      "source": "/como-trabajamos",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/por-que-ibisne/:path*",
+      "source": "/como-trabajamos/(.*)",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/estudio/:path*",
+      "source": "/inversion",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/insights/:path*",
+      "source": "/inversion/(.*)",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/portafolio/:path*",
+      "source": "/por-que-ibisne",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-ibisne/(.*)",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/estudio",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/estudio/(.*)",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/insights",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/insights/(.*)",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/portafolio",
       "destination": "/trabajo/",
       "permanent": true
     },
     {
-      "source": "/promos/:path*",
+      "source": "/portafolio/(.*)",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/promos",
       "destination": "/contacto/",
       "permanent": true
     },
     {
-      "source": "/empecemos/:path*",
+      "source": "/promos/(.*)",
       "destination": "/contacto/",
       "permanent": true
     },
     {
-      "source": "/legal/cancelacion/:path*",
+      "source": "/empecemos",
+      "destination": "/contacto/",
+      "permanent": true
+    },
+    {
+      "source": "/empecemos/(.*)",
+      "destination": "/contacto/",
+      "permanent": true
+    },
+    {
+      "source": "/legal/cancelacion",
+      "destination": "/legal/terminos/",
+      "permanent": true
+    },
+    {
+      "source": "/legal/cancelacion/(.*)",
       "destination": "/legal/terminos/",
       "permanent": true
     },
     {
       "source": "/webs",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/webs/",
       "destination": "/",
       "permanent": true
     },
