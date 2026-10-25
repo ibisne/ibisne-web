@@ -74,6 +74,46 @@
   ],
   "redirects": [
     {
+      "source": "/trabajo/ipools",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/ipools/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/acefap",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/acefap/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/cluster",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/cluster/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/endomap",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/endomap/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
       "source": "/servicios",
       "destination": "/",
       "permanent": true

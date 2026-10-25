@@ -12,13 +12,10 @@ import logoSteelbeird from '../assets/logos/steelbeird.png';
 import logoSemilla from '../assets/logos/semilla.png';
 import logoUnframe from '../assets/logos/unframe.png';
 import logoDistenvases from '../assets/logos/distenvases.png';
-import logoAcefap from '../assets/logos/acefap.png';
-import logoIpools from '../assets/logos/ipools.png';
+import logoDigitalife from '../assets/logos/digitalife.png';
 import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
 import logoCgcac from '../assets/logos/cgcac.png';
-import logoEndomap from '../assets/logos/endomap.png';
-import logoCluster from '../assets/logos/cluster.svg';
 
 import mkIbroker from '../assets/mockups/ibroker.webp';
 import mkNeoterre from '../assets/mockups/neoterre.webp';
@@ -32,9 +29,9 @@ import mkSteelbeird from '../assets/mockups/steelbeird.webp';
 import mkSemilla from '../assets/mockups/semilla.webp';
 import mkUnframe from '../assets/mockups/unframe.webp';
 import mkAlbercasvip from '../assets/mockups/albercasvip.webp';
-import mkEndomap from '../assets/mockups/endomap.webp';
 import mkAlbercasopia from '../assets/mockups/albercasopia.webp';
 import mkDigitalife from '../assets/mockups/digitalife.webp';
+import mkBatauro from '../assets/mockups/batauro.webp';
 import mkRancho from '../assets/mockups/rancho-contento.webp';
 
 export type Nicho =
@@ -111,6 +108,23 @@ export interface Brand {
 // publicada en la ficha vieja; confirmar si se muestra como enlace público.
 export const brands: Brand[] = [
   {
+    slug: 'thcc',
+    name: 'THCC',
+    logo: logoThcc,
+    mockup: mkThcc,
+    nicho: 'Salud y bienestar',
+    tipos: ['eCommerce'],
+    url: 'https://www.thcc.com.mx',
+    stack: ['Shopify', 'Liquid', 'Asistente IA', 'Verificación de edad', 'PWA', 'Vercel'],
+    resumen:
+      'Tienda multimarca que ordena varias marcas bajo un mismo catálogo, con verificación de edad, carrito, buscador y filtros, tres idiomas y un asistente conversacional que devuelve tarjetas de producto comparables dentro del chat.',
+    tagline: 'Varias marcas, un solo catálogo y una tienda confiable.',
+    reto: 'Vender varias marcas de cannabinoides sin que la tienda se sintiera como catálogos pegados, y sin dejar el cumplimiento regulatorio para el final.',
+    solucion: 'Una tienda en Shopify que ordena las marcas bajo un mismo catálogo, con verificación de edad antes de comprar y fichas con el etiquetado que exige la norma. Fily, un asistente con IA, responde dudas y recomienda productos dentro del chat.',
+    resultado: 'La tienda está en línea y se puede instalar como app desde el navegador.',
+    borrador: true,
+  },
+  {
     slug: 'ibroker',
     name: 'iBroker',
     logo: logoIbroker,
@@ -141,23 +155,6 @@ export const brands: Brand[] = [
     tagline: 'Desarrollos de la Riviera Maya, en español e inglés.',
     reto: 'Presentar los desarrollos de una inmobiliaria con una identidad sobria y captar a cada interesado desde el primer vistazo.',
     solucion: 'Sitio bilingüe con catálogo de desarrollos y animaciones suaves, conectado a un CRM de leads para dar seguimiento a cada contacto.',
-    borrador: true,
-  },
-  {
-    slug: 'thcc',
-    name: 'THCC',
-    logo: logoThcc,
-    mockup: mkThcc,
-    nicho: 'Salud y bienestar',
-    tipos: ['eCommerce'],
-    url: 'https://www.thcc.com.mx',
-    stack: ['Shopify', 'Liquid', 'Asistente IA', 'Verificación de edad', 'PWA', 'Vercel'],
-    resumen:
-      'Tienda multimarca que ordena varias marcas bajo un mismo catálogo, con verificación de edad, carrito, buscador y filtros, tres idiomas y un asistente conversacional que devuelve tarjetas de producto comparables dentro del chat.',
-    tagline: 'Varias marcas, un solo catálogo y una tienda confiable.',
-    reto: 'Vender varias marcas de cannabinoides sin que la tienda se sintiera como catálogos pegados, y sin dejar el cumplimiento regulatorio para el final.',
-    solucion: 'Una tienda en Shopify que ordena las marcas bajo un mismo catálogo, con verificación de edad antes de comprar y fichas con el etiquetado que exige la norma. Fily, un asistente con IA, responde dudas y recomienda productos dentro del chat.',
-    resultado: 'La tienda está en línea y se puede instalar como app desde el navegador.',
     borrador: true,
   },
   {
@@ -305,36 +302,6 @@ export const brands: Brand[] = [
     borrador: true,
   },
   {
-    slug: 'acefap',
-    name: 'ACEFAP',
-    logo: logoAcefap,
-    mockup: null,
-    nicho: 'Educación y servicios',
-    tipos: ['eCommerce', 'PWA'],
-    stack: ['HTML, CSS y JS', 'Design system', 'PWA', 'WCAG AA'],
-    tagline: 'Cursos y certificaciones con constancia verificable.',
-    reto: 'Mostrar a una academia de capacitación cómo se vería su plataforma de cursos antes de construirla completa.',
-    solucion: 'MVP demostrativo de seis pantallas navegables: portada, catálogo con filtros, ficha de curso, perfil de instructor, verificación de constancia y carrito. Tema claro y oscuro, con contraste verificado.',
-    resultado: 'La propuesta se presenta sin servidor, en un solo archivo.',
-    borrador: true,
-  },
-  {
-    slug: 'ipools',
-    name: 'iPools',
-    logo: logoIpools, // logo HIDROSITE
-    mockup: null,
-    nicho: 'Construcción',
-    tipos: ['ERP', 'SaaS'],
-    stack: ['Next.js', 'Multi-tenant', 'PostgreSQL', 'Prisma'],
-    resumen:
-      'SaaS para la gestión integral de albercas y servicio: operación, clientes y mantenimiento administrados desde la nube.',
-    propio: true,
-    tagline: 'El ERP en la nube para constructoras de albercas.',
-    reto: 'Digitalizar el recorrido completo de una constructora de albercas, del primer contacto al último pago.',
-    solucion: 'ERP multiempresa con leads, clientes, cotizaciones con liga pública y PDF, proyectos por etapas, pagos y calendario, más un tablero con indicadores.',
-    borrador: true,
-  },
-  {
     slug: 'docer',
     name: 'Docer',
     logo: logoDocer,
@@ -379,32 +346,20 @@ export const brands: Brand[] = [
     borrador: true,
   },
   {
-    slug: 'endomap',
-    name: 'SEM EndoMap',
-    logo: logoEndomap,
-    mockup: mkEndomap,
-    nicho: 'Salud y bienestar',
-    tipos: ['SaaS'],
-    url: 'https://www.sem-org.store',
-    stack: ['Python', 'API REST', 'Integraciones', 'Datos'],
+    slug: 'batauro',
+    name: 'Batauro',
+    logo: null,
+    mockup: mkBatauro,
+    nicho: 'Industria y comercio',
+    tipos: ['eCommerce'],
+    url: 'https://batauro.com/',
+    stack: ['Shopify', 'Liquid', 'Checkout', 'Integraciones'],
     resumen:
-      'API de tecnología CBD: dosificación endocannabinoide de precisión, lista para integrarse en negocios digitales y físicos. El motor detrás de múltiples productos.',
-    tagline: 'Un perfilador que calcula la dosis antes de comprar.',
-    reto: 'Ayudar a cada persona a saber cuánta dosis de CBD necesita, con el criterio de seguridad por delante.',
-    solucion: 'Un perfilador de pocas preguntas que pasa por un filtro de seguridad antes de recomendar la dosis. Su motor es independiente: se integra en Medical Mexicanna y recomienda también productos de terceros.',
-    borrador: true,
-  },
-  {
-    slug: 'cluster',
-    name: 'Cluster',
-    logo: logoCluster,
-    mockup: null,
-    nicho: 'Turismo y hospitalidad',
-    tipos: ['SaaS'],
-    tagline: 'Una plataforma pensada con el cliente, antes de construirla.',
-    reto: 'Entender a fondo el negocio del cliente antes de escribir una sola línea de código.',
-    solucion: 'Se documentó la plataforma completa: recorridos de usuario, páginas del sitio y del panel administrativo, permisos por rol y un sistema de diseño propio.',
-    resultado: 'El cliente cuenta con un documento maestro que reúne todo lo acordado.',
+      'Tienda gamer premium de gabinetes, componentes y periféricos, con una experiencia de compra cinematográfica. Catálogo y eCommerce en Shopify orientado a conversión.',
+    tagline: 'Tienda gamer premium, con compra cinematográfica.',
+    reto: 'Llevar la marca a una plataforma digital a su altura y lista para escalar.',
+    solucion: 'Una tienda Shopify cinematográfica orientada a conversión, con catálogo de gabinetes, componentes y periféricos.',
+    resultado: 'Hoy está en línea y operando.',
     borrador: true,
   },
   {
@@ -439,7 +394,7 @@ export const brands: Brand[] = [
   {
     slug: 'digitalife',
     name: 'Digitalife',
-    logo: null,
+    logo: logoDigitalife,
     mockup: mkDigitalife,
     nicho: 'Industria y comercio',
     tipos: ['eCommerce'],
