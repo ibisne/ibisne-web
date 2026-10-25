@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import bLogo from '../assets/b/b-trim.png';
+import logo from '../assets/brand/ibisne-blanco.png';
 
 const path = Astro.url.pathname;
 const current = path === '/' ? 'home' : path.startsWith('/trabajo') ? 'trabajo' : path.startsWith('/contacto') ? 'contacto' : '';
@@ -14,8 +14,8 @@ const links = [
 
 <header class="hdr" transition:persist="hdr">
   <a class="hdr__logo" href="/" aria-label="iBisne, ir al inicio">
-    <Image src={bLogo} alt="" width={26} height={28} densities={[1, 2]} loading="eager" decoding="async" />
-    <span>iBisne</span>
+    <!-- Logo completo oficial (blanco, recortado: 794x208). Alto fijado en CSS; width/height reservan el sitio. -->
+    <Image src={logo} alt="iBisne" width={115} densities={[1, 2, 3]} loading="eager" decoding="async" fetchpriority="high" />
   </a>
 
   <nav class="hdr__nav" aria-label="Principal">
@@ -26,6 +26,8 @@ const links = [
         </a>
       ))
     }
+    <!-- Indicador unico del item activo: se desliza (transform) hacia el nuevo item; el script lo posiciona -->
+    <span class="hdr__ind" aria-hidden="true"></span>
   </nav>
 
   <a class="btn btn-outline hdr__cta" href={WA} target="_blank" rel="noopener">
@@ -52,17 +54,14 @@ const links = [
     justify-self: start;
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
     min-height: var(--touch);
-    font-weight: var(--w-bold);
-    font-size: 1.15rem;
-    letter-spacing: -0.01em;
   }
   .hdr__logo img {
-    width: 26px;
-    height: 28px;
+    width: auto;
+    height: 30px; /* escritorio */
   }
   .hdr__nav {
+    position: relative;
     display: flex;
     gap: clamp(1rem, 2.5vw, 2.5rem);
   }
@@ -73,9 +72,39 @@ const links = [
     min-height: var(--touch);
     padding-inline: 0.25rem;
     color: var(--text-3);
-    transition: color 0.2s;
+    transition: color 0.3s var(--ease-out);
   }
-  .hdr__link::after {
+  .hdr__link:hover {
+    color: var(--text);
+  }
+  .hdr__link[aria-current='page'] {
+    color: var(--text);
+  }
+  /* Indicador del item activo: UNA sola raya que viaja de un item al otro. Solo se anima
+     transform (el ancho de los items no cambia) y arranca al tocar, junto con el viaje. */
+  .hdr__ind {
+    position: absolute;
+    left: 0;
+    bottom: 0.45rem;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--grad-accent);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(var(--ind-x, 0px));
+    transition:
+      transform 0.3s var(--ease-out),
+      opacity 0.2s;
+  }
+  .hdr__ind[data-on] {
+    opacity: 1;
+  }
+  .hdr__ind[data-snap] {
+    transition: none;
+  }
+  /* Sin JS no hay indicador deslizante: se conserva la raya fija bajo el item activo */
+  .hdr:not([data-js]) .hdr__link[aria-current='page']::after {
     content: '';
     position: absolute;
     left: 50%;
@@ -84,17 +113,7 @@ const links = [
     height: 2px;
     border-radius: 2px;
     background: var(--grad-accent);
-    transform: translateX(-50%) scaleX(0);
-    transition: transform 0.35s var(--ease-out);
-  }
-  .hdr__link:hover {
-    color: var(--text);
-  }
-  .hdr__link[aria-current='page'] {
-    color: var(--text);
-  }
-  .hdr__link[aria-current='page']::after {
-    transform: translateX(-50%) scaleX(1);
+    transform: translateX(-50%);
   }
   .hdr__cta {
     justify-self: end;
@@ -107,6 +126,9 @@ const links = [
       /* el contenido que scrollea pasa por debajo del logo: velo casi opaco arriba para que no se mezclen */
       background: linear-gradient(to bottom, var(--ink), color-mix(in srgb, var(--ink) 88%, transparent) 55%, transparent);
     }
+    .hdr__logo img {
+      height: 25px; /* movil */
+    }
     .hdr__nav,
     .hdr__cta {
       display: none;
@@ -115,15 +137,68 @@ const links = [
 </style>
 
 <script>
-  function syncNav(): void {
-    const path = location.pathname;
-    const id = path === '/' ? 'home' : path.startsWith('/trabajo') ? 'trabajo' : path.startsWith('/contacto') ? 'contacto' : '';
-    for (const a of document.querySelectorAll<HTMLAnchorElement>('.hdr__link')) {
-      if (a.dataset.nav === id) a.setAttribute('aria-current', 'page');
-      else a.removeAttribute('aria-current');
+  const idFor = (pathname: string): string =>
+    pathname === '/' ? 'home' : pathname.startsWith('/trabajo') ? 'trabajo' : pathname.startsWith('/contacto') ? 'contacto' : '';
+
+  const header = (): HTMLElement | null => document.querySelector<HTMLElement>('.hdr');
+
+  /** Marca el item activo (solo escribe si cambia: nada de quitar y poner el mismo atributo) y desliza el indicador. */
+  function setActive(id: string, snap = false): void {
+    const hdr = header();
+    if (!hdr) return;
+    let target: HTMLAnchorElement | null = null;
+    for (const a of hdr.querySelectorAll<HTMLAnchorElement>('.hdr__link')) {
+      const on = a.dataset.nav === id;
+      if (on) target = a;
+      if (on !== a.hasAttribute('aria-current')) {
+        if (on) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+      }
     }
+    placeIndicator(target, snap);
   }
-  syncNav();
-  document.addEventListener('astro:after-swap', syncNav);
-  document.addEventListener('astro:page-load', syncNav);
+
+  function placeIndicator(target: HTMLAnchorElement | null, snap: boolean): void {
+    const ind = header()?.querySelector<HTMLElement>('.hdr__ind');
+    if (!ind) return;
+    if (!target || !target.offsetWidth) {
+      // legales / 404 (sin item) o nav oculto (movil): sin raya
+      if (ind.hasAttribute('data-on')) ind.removeAttribute('data-on');
+      return;
+    }
+    const x = target.offsetLeft + target.offsetWidth / 2 - ind.offsetWidth / 2;
+    // viniendo de "sin item" (legales / 404) la raya aparece en su sitio en vez de cruzar desde la izquierda
+    if (snap || !ind.hasAttribute('data-on')) {
+      ind.setAttribute('data-snap', '');
+      ind.style.setProperty('--ind-x', `${x}px`);
+      void ind.offsetWidth; // aplica el salto sin transicion
+      ind.removeAttribute('data-snap');
+    } else {
+      ind.style.setProperty('--ind-x', `${x}px`);
+    }
+    ind.setAttribute('data-on', '');
+  }
+
+  function current(): HTMLAnchorElement | null {
+    return header()?.querySelector<HTMLAnchorElement>('.hdr__link[aria-current="page"]') ?? null;
+  }
+
+  const hdr = header();
+  if (hdr) {
+    hdr.setAttribute('data-js', '');
+    setActive(idFor(location.pathname), true);
+    // el indicador espera a que Geist cargue: los anchos de los items cambian con la fuente
+    void document.fonts?.ready.then(() => placeIndicator(current(), true));
+    const nav = hdr.querySelector('.hdr__nav');
+    if (nav && 'ResizeObserver' in window) new ResizeObserver(() => placeIndicator(current(), true)).observe(nav);
+  }
+
+  // Respuesta inmediata, como la barra movil: el indicador sale al tocar, a la vez que el viaje
+  // (antes esperaba al cambio de DOM, ~1.4 s despues del toque).
+  document.addEventListener('astro:before-preparation', (ev) => {
+    const to = (ev as Event & { to?: URL }).to;
+    if (to) setActive(idFor(to.pathname));
+  });
+  // Red de seguridad: si la navegacion fallo o llego por atras/adelante, se alinea con la URL real.
+  document.addEventListener('astro:page-load', () => setActive(idFor(location.pathname)));
 </script>

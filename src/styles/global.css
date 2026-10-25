@@ -326,6 +326,10 @@ html[data-boot] main#page {
 @media not ((min-width: 1024px) and (min-height: 700px)) {
   :root {
     --tabbar-h: calc(64px + env(safe-area-inset-bottom, 0px));
+    /* Velo sobre la barra inferior (MobileTabBar) y hueco que deja el pie legal para quedar POR ENCIMA
+       del velo: al final del scroll "Privacidad" se lee entero; mientras se scrollea, se funde con la barra. */
+    --veil-h: 2.75rem;
+    --veil-gap: 1.75rem;
   }
   .only-lock {
     display: none !important;
@@ -356,6 +360,13 @@ html[data-boot] main#page {
   html:is([data-page='legal'], [data-page='trabajo'], [data-page='proyecto'], [data-page='404']) main#page {
     padding-bottom: calc(var(--tabbar-h) + var(--consent-h, 0px));
   }
+  /* La UI entra/sale del viaje con translateX de +-64/80 px (ui-motion.ts). Sin recorte, ese
+     desborde horizontal agranda el ancho de contenido y el navegador movil encoge el layout
+     viewport (375 -> 443 px, innerHeight 812 -> 960): toda la pagina se aleja un 15 %, la barra
+     inferior se sale de pantalla y al terminar la animacion TODO vuelve de golpe (el "salto" final). */
+  main#page {
+    overflow-x: clip;
+  }
   /* Respuesta inmediata al tocar: sin el destello gris del navegador, con :active propio */
   a,
   button {
@@ -371,8 +382,13 @@ html[data-boot] main#page {
   }
   /* Enlace "Privacidad" de Inicio: compacto, sin sumar otra vez el safe-area (ya lo cubre la barra) */
   main#page > .legal-mini {
+    position: relative; /* por encima de la viñeta de Inicio */
     min-height: 2rem;
     padding-bottom: 0;
+    margin-bottom: var(--veil-gap);
+  }
+  .legal-foot {
+    margin-bottom: var(--veil-gap);
   }
   /* Banner de cookies: encima de la barra, sin taparla (#consent gana a los estilos del componente) */
   #consent.consent {

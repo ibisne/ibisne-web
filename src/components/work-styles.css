@@ -225,7 +225,8 @@
 .work-card__logo-ph {
   transition:
     translate 0.22s var(--ease-out),
-    opacity 0.22s ease;
+    opacity 0.22s ease,
+    filter 0.22s ease;
 }
 
 /* Wordmark de marca sin logo (LOGO PENDIENTE: [data-logo-pending]; sustituir por el logo real) */
@@ -363,9 +364,15 @@
     opacity: 1;
     animation: work-orbit 1.4s linear infinite;
   }
+  /* Logos en reposo un poco atenuados para que el activo contraste; al activar la tarjeta el logo
+     se enciende (100 %, mas blanco, brillo cian suave) y sube para dejar sitio a los botones */
+  .work-card :is(.work-card__logo, .work-card__logo-ph) {
+    opacity: 0.85;
+  }
   .work-grid > .work-card:is(:hover, :has(:focus-visible)) :is(.work-card__logo, .work-card__logo-ph) {
     translate: 0 -14px;
-    opacity: 0.35;
+    opacity: 1;
+    filter: brightness(1.25) drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 38%, transparent));
   }
   .work-grid > .work-card:is(:hover, :has(:focus-visible)) .work-card__actions {
     visibility: visible;

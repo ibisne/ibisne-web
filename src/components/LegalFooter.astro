@@ -90,6 +90,8 @@ const { variant = 'mini' } = Astro.props;
       display: flex;
       justify-content: center;
       padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+      /* vive dentro del velo de la barra inferior: un tono mas claro para que se lea sobre el mundo */
+      color: var(--text-2);
     }
   }
 </style>

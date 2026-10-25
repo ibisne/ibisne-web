@@ -61,6 +61,22 @@ import { WA_BASE } from './contact-data';
       backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
       border-top: 1px solid var(--line);
     }
+    /* Velo: el contenido que pasa por debajo (rejilla, texto, "Privacidad") se funde con la barra
+       en vez de cortarse en seco. Mismo color que el cristal de la barra, de opaco a transparente. */
+    .tabbar::before {
+      content: '';
+      position: absolute;
+      inset: auto 0 100% 0;
+      height: var(--veil-h, 2.75rem);
+      pointer-events: none;
+      background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--ink) 80%, transparent),
+        color-mix(in srgb, var(--ink) 52%, transparent) 40%,
+        color-mix(in srgb, var(--ink) 18%, transparent) 75%,
+        transparent
+      );
+    }
   }
 
   .tab {
