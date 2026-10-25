@@ -24,6 +24,8 @@ export type IconName =
 
 export interface ContactOption {
   label: string;
+  /** Texto corto para los tiles compactos de movil (una linea). Si falta, se usa label */
+  short?: string;
   /** Sublinea opcional bajo el titulo */
   sub?: string;
   icon: IconName;
@@ -39,12 +41,14 @@ export const OPTIONS: ContactOption[] = [
   { label: 'Landing page', icon: 'landing', message: 'Landing page' },
   {
     label: 'Sistema a la medida',
+    short: 'Sistema a la medida',
     sub: 'CRM, ERP, SaaS o Backoffice',
     icon: 'cube',
     message: 'Sistema a la medida: CRM, ERP, SaaS o Backoffice',
   },
   {
     label: 'Asesoría para implementar tecnología en tu empresa',
+    short: 'Asesoría tech',
     icon: 'compass',
     message: 'Asesoría para implementar tecnología en mi empresa',
   },
@@ -70,3 +74,13 @@ export const ICONS: Record<IconName, string> = {
 /** Icono lineal de WhatsApp (globo con cola y auricular), caja 20x20 */
 export const WHATSAPP_ICON =
   '<path d="M10 2.1a7.9 7.9 0 0 0-6.8 11.9L2.1 17.9l4-1.05A7.9 7.9 0 1 0 10 2.1z"/><path d="M7.5 6.4c-.35.4-.5 1-.2 1.8.5 1.3 1.6 2.6 3 3.3.9.4 1.5.4 2-.1l.4-.7-1.5-.9-.6.5c-.8-.3-1.7-1.2-2-2l.5-.6-.9-1.5z"/>';
+
+/** Iconos lineales de la fila de contacto movil (telefono, correo, Instagram, Facebook), caja 20x20, trazo 1.5 */
+export const SOCIAL_ICONS = {
+  phone:
+    '<path d="M5.7 2.75h2.2l1.2 3.4-1.6 1.15a9.4 9.4 0 0 0 5.2 5.2l1.15-1.6 3.4 1.2v2.2a1.9 1.9 0 0 1-2.05 1.9A13.8 13.8 0 0 1 3.8 4.8a1.9 1.9 0 0 1 1.9-2.05z"/>',
+  mail: '<rect x="2.25" y="4" width="15.5" height="12" rx="2.2"/><path d="m2.9 5.6 7.1 5.4 7.1-5.4"/>',
+  instagram:
+    '<rect x="2.5" y="2.5" width="15" height="15" rx="4.4"/><circle cx="10" cy="10" r="3.5"/><path d="M14.35 5.65h.01"/>',
+  facebook: '<path d="M11.6 17.5v-6.4h2.2l.4-2.6h-2.6V6.9c0-.8.4-1.4 1.5-1.4h1.2V3.3A14 14 0 0 0 12.5 3C10.5 3 9.1 4.2 9.1 6.4v2.1H7v2.6h2.1v6.4"/>',
+} as const;

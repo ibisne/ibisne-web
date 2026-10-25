@@ -1,42 +1,12 @@
 ---
-import { getImage, Image } from 'astro:assets';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { brands, NICHOS, TIPOS } from '../../data/brands';
 import { TIPO_ICONS } from '../../components/work-icons';
 import '../../components/work-styles.css';
-import bgDesktop from '../../assets/bg/c4-trabajo-fondo.png';
-import bgMobile from '../../assets/bg/m-trabajo.png';
-
-const [bgD, bgM] = await Promise.all([
-  getImage({ src: bgDesktop, width: 1920, format: 'webp', quality: 62 }),
-  getImage({ src: bgMobile, width: 828, format: 'webp', quality: 62 }),
-]);
 
 /** Ancho de salida de cada logo: suficiente para 2x en la tarjeta de escritorio. */
 const logoWidth = (w: number) => Math.min(w, 400);
-
-// Datos para el cliente (panel 3x3 y modal): URLs ya optimizadas en build.
-const data = await Promise.all(
-  brands.map(async (b) => {
-    const logo = b.logo
-      ? await getImage({ src: b.logo, width: logoWidth(b.logo.width) })
-      : null;
-    const mockup = b.mockup ? await getImage({ src: b.mockup, width: 1000, format: 'webp', quality: 74 }) : null;
-    return {
-      slug: b.slug,
-      name: b.name,
-      nicho: b.nicho,
-      tipos: b.tipos,
-      url: b.url ?? null,
-      year: b.year ?? null,
-      stack: b.stack ?? null,
-      resumen: b.resumen ?? null,
-      logo: logo ? { src: logo.src, w: logo.attributes.width, h: logo.attributes.height } : null,
-      mockup: mockup ? { src: mockup.src, w: mockup.attributes.width, h: mockup.attributes.height } : null,
-    };
-  }),
-);
-const dataJson = JSON.stringify(data).replace(/</g, '\\u003c');
 ---
 
 <Base
@@ -45,23 +15,8 @@ const dataJson = JSON.stringify(data).replace(/</g, '\\u003c');
   page="trabajo"
 >
   <div class="stage work-stage">
-    <div class="bg-layer work-bglayer" data-travel-bg>
-      <div class="work-bg" data-work-bg>
-        <picture>
-          <source media="(min-width: 768px)" srcset={bgD.src} width={bgD.attributes.width} height={bgD.attributes.height} />
-          <img
-            src={bgM.src}
-            width={bgM.attributes.width}
-            height={bgM.attributes.height}
-            alt=""
-            decoding="async"
-            fetchpriority="high"
-          />
-        </picture>
-        <div class="work-bg__veil"></div>
-      </div>
-      <div class="work-vignette"></div>
-    </div>
+    <!-- Velo de legibilidad sobre el mundo 3D (el fondo lo pone el canvas persistente) -->
+    <div class="work-veil" data-travel-bg aria-hidden="true"></div>
 
     <div class="ui-layer work-ui">
       <header>
@@ -104,89 +59,69 @@ const dataJson = JSON.stringify(data).replace(/</g, '\\u003c');
 
       <div class="work-gridwrap">
         <p class="sr-only" role="status" aria-live="polite" id="work-status"></p>
-        <div class="work-grid" role="group" aria-label="Marcas con las que hemos trabajado">
+        <ul class="work-grid" role="list" aria-label="Marcas con las que hemos trabajado">
           {
             brands.map((b, i) => (
-              <button
-                type="button"
+              <li
                 class="card work-card"
-                aria-haspopup="dialog"
                 data-slug={b.slug}
                 data-nicho={b.nicho}
                 data-tipos={b.tipos.join('|')}
                 data-travel-ui
               >
-                {b.logo ? (
-                  <span class="work-card__logo">
-                    <Image
-                      src={b.logo}
-                      alt={b.name}
-                      width={logoWidth(b.logo.width)}
-                      loading={i < 12 ? 'eager' : 'lazy'}
-                      decoding="async"
-                    />
-                  </span>
-                ) : (
-                  /* LOGO PENDIENTE: wordmark provisional, sustituir por el logo real */
-                  <span class="work-ph work-card__logo-ph" data-logo-pending>
-                    {b.name}
-                  </span>
-                )}
-              </button>
+                <a class="work-card__link" href={`/trabajo/${b.slug}/`} data-astro-prefetch="hover">
+                  {b.logo ? (
+                    <span class="work-card__logo">
+                      <Image
+                        src={b.logo}
+                        alt={b.name}
+                        width={logoWidth(b.logo.width)}
+                        loading={i < 12 ? 'eager' : 'lazy'}
+                        decoding="async"
+                      />
+                    </span>
+                  ) : (
+                    /* LOGO PENDIENTE: wordmark provisional, sustituir por el logo real */
+                    <span class="work-ph work-card__logo-ph" data-logo-pending>
+                      {b.name}
+                    </span>
+                  )}
+                </a>
+                <div class="work-card__actions">
+                  <a
+                    class="work-btn work-btn--solid"
+                    href={`/trabajo/${b.slug}/`}
+                    aria-label={`Ver proyecto ${b.name}`}
+                    style="--i:0"
+                  >
+                    Ver proyecto
+                  </a>
+                  {b.url && (
+                    <a
+                      class="work-btn work-btn--outline"
+                      href={b.url}
+                      target="_blank"
+                      rel="noopener"
+                      aria-label={`Sitio en vivo de ${b.name} (se abre en otra pestaña)`}
+                      title="Sitio en vivo"
+                      style="--i:1"
+                    >
+                      <span class="work-btn__t">Sitio en vivo </span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
+                </div>
+              </li>
             ))
           }
-        </div>
+        </ul>
       </div>
     </div>
-
-    <dialog class="work-modal" id="work-modal" aria-labelledby="work-modal-name" aria-describedby="work-modal-text">
-      <button type="button" class="work-modal__close" data-work-close aria-label="Cerrar">
-        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 3l10 10M13 3 3 13"></path></svg>
-      </button>
-      <figure class="work-modal__shot" data-f="shot" hidden>
-        <img data-f="shot-img" alt="" width="1000" height="563" />
-      </figure>
-      <div class="work-modal__body">
-        <div class="work-modal__head">
-          <div class="work-modal__logo" data-f="logo" hidden>
-            <img data-f="logo-img" alt="" />
-          </div>
-          <div>
-            <h2 class="work-modal__name" id="work-modal-name" data-f="name"></h2>
-            <p class="work-modal__meta" data-f="meta"></p>
-          </div>
-        </div>
-        <p class="work-modal__text" id="work-modal-text" data-f="text"></p>
-        <div data-f="stack-wrap" hidden>
-          <p class="work-modal__sub">Stack</p>
-          <ul class="work-modal__stack" role="list" data-f="stack"></ul>
-        </div>
-        <dl class="work-modal__facts" data-f="facts" hidden>
-          <div data-f="year-wrap" hidden>
-            <dt class="work-modal__sub">Año</dt>
-            <dd data-f="year"></dd>
-          </div>
-          <div data-f="url-wrap" hidden>
-            <dt class="work-modal__sub">Sitio</dt>
-            <dd><a data-f="url" target="_blank" rel="noopener"></a></dd>
-          </div>
-        </dl>
-        <div class="work-modal__actions" data-f="actions" hidden>
-          <a class="work-btn work-btn--solid" data-f="visit" target="_blank" rel="noopener">Ver proyecto</a>
-        </div>
-      </div>
-    </dialog>
-
-    <script type="application/json" id="work-data" set:html={dataJson} />
   </div>
 </Base>
 
 <script>
-  import { registerPage } from '../../scripts/travel';
   import { initWork } from '../../scripts/work-gallery';
-
-  // Puntos focales (en el fondo de ESTA pagina) hacia Inicio y Contacto.
-  registerPage('trabajo', { focal: { home: { x: 0.5, y: 0.5 }, contacto: { x: 0.5, y: 0.45 } } });
 
   let cleanup: (() => void) | undefined;
   let mounted: Element | null = null;

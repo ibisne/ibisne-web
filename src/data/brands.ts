@@ -92,6 +92,16 @@ export interface Brand {
   resumen?: string;
   /** Producto propio de iBisne. */
   propio?: boolean;
+  /** Ficha corta del proyecto (página /trabajo/<slug>/). Máximo 10 palabras. */
+  tagline: string;
+  /** El reto, en una frase. */
+  reto: string;
+  /** La solución, en 1-2 frases. */
+  solucion: string;
+  /** Resultado en una frase. Sin cifras inventadas; se omite si no hay evidencia. */
+  resultado?: string;
+  /** Textos de la ficha en borrador, pendientes de aprobación de Eduardo. */
+  borrador: boolean;
 }
 
 // TIPOS PROVISIONALES: confirmar con Eduardo
@@ -108,10 +118,14 @@ export const brands: Brand[] = [
     nicho: 'Construcción',
     tipos: ['CRM'],
     url: 'https://ibroker.com.mx',
-    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
+    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards', 'IA'],
     resumen:
       'CRM inmobiliario que automatiza el seguimiento de cada prospecto y publica propiedades en minutos. Un panel que trabaja solo para que el bróker capture menos y cierre más.',
     propio: true,
+    tagline: 'Un ARM que agentiza el día del broker.',
+    reto: 'El broker vivía entre hojas de cálculo y chats, sin un lugar donde viera todo su día.',
+    solucion: 'Junto con el cliente se concluyó que el CRM ya no basta, y se creó un ARM que agentiza su día. Seguimiento de prospectos, agenda, inventario y publicación de propiedades en un mismo panel, con un portal público de inmuebles al frente.',
+    borrador: true,
   },
   {
     slug: 'neoterre',
@@ -121,9 +135,13 @@ export const brands: Brand[] = [
     nicho: 'Construcción',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://www.neoterre.org/es',
-    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
+    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards', 'i18n'],
     resumen:
       'Web inmobiliaria con CRM de leads: catálogo de desarrollos y captación, con una identidad sobria y contemporánea.',
+    tagline: 'Desarrollos de la Riviera Maya, en español e inglés.',
+    reto: 'Presentar los desarrollos de una inmobiliaria con una identidad sobria y captar a cada interesado desde el primer vistazo.',
+    solucion: 'Sitio bilingüe con catálogo de desarrollos y animaciones suaves, conectado a un CRM de leads para dar seguimiento a cada contacto.',
+    borrador: true,
   },
   {
     slug: 'thcc',
@@ -133,9 +151,14 @@ export const brands: Brand[] = [
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce'],
     url: 'https://www.thcc.com.mx',
-    stack: ['Next.js', 'Checkout propio', 'Asistente IA', 'i18n', 'Vercel'],
+    stack: ['Shopify', 'Liquid', 'Asistente IA', 'Verificación de edad', 'PWA', 'Vercel'],
     resumen:
       'Tienda multimarca que ordena varias marcas bajo un mismo catálogo, con verificación de edad, carrito, buscador y filtros, tres idiomas y un asistente conversacional que devuelve tarjetas de producto comparables dentro del chat.',
+    tagline: 'Varias marcas, un solo catálogo y una tienda confiable.',
+    reto: 'Vender varias marcas de cannabinoides sin que la tienda se sintiera como catálogos pegados, y sin dejar el cumplimiento regulatorio para el final.',
+    solucion: 'Una tienda en Shopify que ordena las marcas bajo un mismo catálogo, con verificación de edad antes de comprar y fichas con el etiquetado que exige la norma. Fily, un asistente con IA, responde dudas y recomienda productos dentro del chat.',
+    resultado: 'La tienda está en línea y se puede instalar como app desde el navegador.',
+    borrador: true,
   },
   {
     slug: 'sem',
@@ -145,9 +168,13 @@ export const brands: Brand[] = [
     nicho: 'Salud y bienestar',
     tipos: ['SaaS'],
     url: 'https://sem-org.com',
-    stack: ['Next.js', 'React', 'Tailwind', 'CMS', 'Vercel'],
+    stack: ['Next.js', 'React', 'Tailwind', 'Design system', 'CMS', 'Vercel'],
     resumen:
       'Centro de mando que concentra, como un marketplace, todos los sistemas dados de alta: un ecommerce que unifica el ecosistema de marcas en una sola plataforma.',
+    tagline: 'La casa de marcas de un ecosistema de bienestar.',
+    reto: 'Un ecosistema de marcas con tiendas separadas necesitaba un solo lugar que lo explicara completo.',
+    solucion: 'Un sitio-catálogo con una hoja propia por marca: la explica, muestra sus productos y lleva a su tienda. Un sistema de diseño compartido mantiene todo coherente.',
+    borrador: true,
   },
   {
     slug: 'dci',
@@ -157,9 +184,14 @@ export const brands: Brand[] = [
     nicho: 'Construcción',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://www.inmobiliariadci.com',
-    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
+    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards', 'Chatbot IA', 'i18n'],
     resumen:
       'Conjunto inmobiliario enfocado en la península de Yucatán: catálogo de inmuebles validados con lógica de inversión y CRM de leads.',
+    tagline: 'Inmuebles de la península, con lógica de inversión.',
+    reto: 'Mostrar propiedades y desarrollos de Yucatán y Quintana Roo de forma clara, con lotes que se pudieran explorar a detalle.',
+    solucion: 'Sitio bilingüe con catálogo de inmuebles, masterplans interactivos para elegir lote y un blog con guías. Nicté, un chatbot con IA, atiende dudas, y un CRM aparte da seguimiento a los leads.',
+    resultado: 'Los visitantes recorren los masterplans y resuelven dudas con el chatbot sin salir del sitio.',
+    borrador: true,
   },
   {
     slug: 'medical-mexicanna',
@@ -169,9 +201,13 @@ export const brands: Brand[] = [
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce', 'Landing page'],
     url: 'https://medicalmexicanna.store',
-    stack: ['Next.js', 'Checkout propio', 'Animaciones', 'PWA'],
+    stack: ['Tailwind', 'JavaScript', 'Serverless', 'PWA', 'Vercel'],
     resumen:
       'Tienda en línea de gomitas CBD full spectrum con dosis a medida. Landing de conversión y checkout propio dentro de un ecosistema de bienestar.',
+    tagline: 'Gomitas CBD con la dosis calculada para cada persona.',
+    reto: 'Explicar el CBD con claridad y ayudar a cada persona a decidir cuántas gomitas necesita.',
+    solucion: 'Una landing educativa y SEM EndoMap, un perfilador que estima la dosis después de un filtro de seguridad. La compra se concentra en la tienda oficial de THCC.',
+    borrador: true,
   },
   {
     slug: 'otomi',
@@ -181,9 +217,13 @@ export const brands: Brand[] = [
     nicho: 'Alimentos y bebidas',
     tipos: ['eCommerce', 'PWA'],
     url: 'https://otomitequila.com',
-    stack: ['Next.js', 'Checkout propio', 'Animaciones', 'PWA'],
+    stack: ['HTML, CSS y JS', 'Botella 3D', 'Animaciones', 'PWA', 'i18n'],
     resumen:
       'Sitio animado premium para una marca de tequila artesanal inspirada en la cultura Otomí: narrativa envolvente, catálogo y checkout propio con versión instalable (PWA).',
+    tagline: 'Tequila plata super premium, con su botella en 3D.',
+    reto: 'Contar la marca y su cultura Otomí de forma envolvente, en dos idiomas y desde el teléfono.',
+    solucion: 'Sitio animado en HTML, CSS y JavaScript, sin dependencias: botella 3D interactiva, doce recetas de cocteles, modo claro y oscuro y versión instalable. Para comprar, lleva a la compra en línea o a WhatsApp.',
+    borrador: true,
   },
   {
     slug: 'farmacias-hernandez',
@@ -196,6 +236,10 @@ export const brands: Brand[] = [
     stack: ['Shopify', 'Liquid', 'Checkout', 'Integraciones'],
     resumen:
       'Rediseño de marca y e-commerce para una farmacia homeopática con 107 años de tradición: catálogo amplio, flujo de compra y sistema de diseño propio.',
+    tagline: 'Farmacia homeopática desde 1919, lista para vender en línea.',
+    reto: 'Renovar la presencia digital de una farmacia homeopática centenaria, con un catálogo amplio y normativa sanitaria por cumplir.',
+    solucion: 'Primero se trabajó la base: rescate del sitio actual, mapa del sitio, flujos de usuario, modelo de datos y dos direcciones visuales para elegir. Sobre eso se arma la tienda en Shopify, con un sistema de diseño propio.',
+    borrador: true,
   },
   {
     slug: 'steelbeird',
@@ -205,9 +249,13 @@ export const brands: Brand[] = [
     nicho: 'Industria y comercio',
     tipos: ['Landing page'],
     url: 'https://www.steelbeird.com',
-    stack: ['Next.js', 'React', 'Tailwind', 'SEO'],
+    stack: ['Next.js', 'React', 'Tailwind', 'Motion', 'SEO'],
     resumen:
       'Constructora industrial en Yucatán: sistema de cuatro landing pages bajo una misma identidad de obra y acero, lista para escalar por página.',
+    tagline: 'La infraestructura industrial de Yucatán, en versión cinematográfica.',
+    reto: 'Dar a una constructora industrial una presencia digital que transmitiera obra, equipo y confianza.',
+    solucion: 'Sitio con landing pages bajo una identidad de obra y acero: logo animado, servicios, proyectos, equipo y un momento de soldadura en video. Acompaña una propuesta comercial en PDF.',
+    borrador: true,
   },
   {
     slug: 'semilla',
@@ -217,9 +265,13 @@ export const brands: Brand[] = [
     nicho: 'Construcción',
     tipos: ['Sitio web'],
     // url de staging oculta hasta tener dominio propio: https://semilla.ibisne-apps.com
-    stack: ['Next.js', 'React', 'CMS', 'Vercel'],
+    stack: ['Vite', 'React', 'Tailwind', 'Framer Motion', 'PWA', 'Vercel'],
     resumen:
       'Desarrollo residencial en la península: sitio institucional con apertura en video, recorrido del proyecto y contacto directo con ventas.',
+    tagline: 'Un colectivo habitable en Mérida, con apertura en video.',
+    reto: 'Presentar un desarrollo residencial como un colectivo habitable, con una identidad cálida y propia.',
+    solucion: 'Landing interactiva con apertura en video, manifiesto, hábitat y galería. Tema claro y oscuro, español e inglés, e instalable como app.',
+    borrador: true,
   },
   {
     slug: 'unframe',
@@ -229,9 +281,14 @@ export const brands: Brand[] = [
     nicho: 'Educación y servicios',
     tipos: ['Sitio web'],
     // url de staging oculta hasta tener dominio propio: https://unframe.ibisne-apps.com
-    stack: ['Next.js', 'CMS headless', 'React', 'Vercel'],
+    stack: ['Vite', 'React', 'Framer Motion', 'Tailwind', 'Vercel'],
     resumen:
       'Plataforma editorial "motion as memory", con CMS autoadministrable e identidad ultra-minimal. Ritmo, tipografía y movimiento como eje del contenido.',
+    tagline: 'Motion as memory, hecho sitio web.',
+    reto: 'Que el sitio de un estudio de motion se moviera con la misma intención que su trabajo.',
+    solucion: 'Sitio multipágina con transiciones cinematográficas entre páginas y cuatro modos para que el cliente elija el que más le guste. Tipografía y ritmo llevan el contenido.',
+    resultado: 'El sitio funciona hoy como MVP, listo para validarse y crecer.',
+    borrador: true,
   },
   {
     slug: 'distenvases',
@@ -240,6 +297,12 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Alimentos y bebidas',
     tipos: ['Sitio web'],
+    stack: ['Python', 'Visión por IA', 'Sitio estático', 'Datos curados'],
+    tagline: 'Envases de vidrio, comparados a escala real.',
+    reto: 'El catálogo en línea había perdido las especificaciones, y los catálogos impresos no tenían texto que se pudiera copiar.',
+    solucion: 'Se digitalizaron los catálogos del fabricante y se unieron al inventario en una sola base verificada. De ahí se genera el sitio, con un estante de envases a escala, catálogo y los datos técnicos en cada tarjeta.',
+    resultado: 'El catálogo completo vive en una sola base y el sitio se genera desde ella.',
+    borrador: true,
   },
   {
     slug: 'acefap',
@@ -248,6 +311,12 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Educación y servicios',
     tipos: ['eCommerce', 'PWA'],
+    stack: ['HTML, CSS y JS', 'Design system', 'PWA', 'WCAG AA'],
+    tagline: 'Cursos y certificaciones con constancia verificable.',
+    reto: 'Mostrar a una academia de capacitación cómo se vería su plataforma de cursos antes de construirla completa.',
+    solucion: 'MVP demostrativo de seis pantallas navegables: portada, catálogo con filtros, ficha de curso, perfil de instructor, verificación de constancia y carrito. Tema claro y oscuro, con contraste verificado.',
+    resultado: 'La propuesta se presenta sin servidor, en un solo archivo.',
+    borrador: true,
   },
   {
     slug: 'ipools',
@@ -256,10 +325,14 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Construcción',
     tipos: ['ERP', 'SaaS'],
-    stack: ['Next.js', 'Multi-tenant', 'PostgreSQL', 'Stripe'],
+    stack: ['Next.js', 'Multi-tenant', 'PostgreSQL', 'Prisma'],
     resumen:
       'SaaS para la gestión integral de albercas y servicio: operación, clientes y mantenimiento administrados desde la nube.',
     propio: true,
+    tagline: 'El ERP en la nube para constructoras de albercas.',
+    reto: 'Digitalizar el recorrido completo de una constructora de albercas, del primer contacto al último pago.',
+    solucion: 'ERP multiempresa con leads, clientes, cotizaciones con liga pública y PDF, proyectos por etapas, pagos y calendario, más un tablero con indicadores.',
+    borrador: true,
   },
   {
     slug: 'docer',
@@ -268,6 +341,11 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Turismo y hospitalidad',
     tipos: ['Backoffice'],
+    stack: ['Next.js', 'Supabase', 'Importación de Excel'],
+    tagline: 'La operación de material y flete, medida y en orden.',
+    reto: 'Toda la operación vivía en un Excel donde distintos tipos de viaje convivían en la misma tabla.',
+    solucion: 'Se midió el Excel de la empresa y se separaron los tipos de operación. Un backoffice organiza viajes, notas y folios, y avisa de lo que falta o está por confirmar.',
+    borrador: true,
   },
   {
     slug: 'albercasvip',
@@ -277,9 +355,14 @@ export const brands: Brand[] = [
     nicho: 'Construcción',
     tipos: ['Sitio web', 'PWA'],
     url: 'https://albercasvip.com',
-    stack: ['Next.js', 'PWA', 'CMS', 'i18n', 'Vercel'],
+    stack: ['Astro', 'Tailwind', 'GSAP', 'PWA', 'i18n'],
     resumen:
       'Sitio y catálogo para constructor de albercas premium, distribuidor RENOLIT Alkorplan: diez colecciones, cotizador y PWA instalable.',
+    tagline: 'Catálogo técnico de albercas premium, instalable como app.',
+    reto: 'Un catálogo técnico muy amplio, con garantía y uso por acabado, tenía que caber en el teléfono de un vendedor parado en obra.',
+    solucion: 'Catálogo por colecciones RENOLIT con ficha técnica navegable, cotizador, selector de idioma y moneda, modo oscuro, un chatbot y versión instalable sin pasar por las tiendas de apps.',
+    resultado: 'El vendedor consulta el catálogo en obra, y la ficha técnica dejó de ser un PDF adjunto.',
+    borrador: true,
   },
   {
     slug: 'cgcac',
@@ -288,6 +371,12 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Educación y servicios',
     tipos: ['Landing page'],
+    stack: ['Registro en línea', 'Pases con QR', 'Verificador', 'Vercel'],
+    tagline: 'Registro y pases con QR para un foro nacional.',
+    reto: 'Registrar a los asistentes de un foro nacional y validar su pase en la puerta.',
+    solucion: 'Sitio del evento con formulario de registro, pase personal con código QR y un verificador para validarlo el día del foro. Terminado el evento, el sitio se sustituyó por un cartel de agradecimiento.',
+    resultado: 'El foro se celebró con registro en línea, y los registros quedaron exportados.',
+    borrador: true,
   },
   {
     slug: 'endomap',
@@ -300,6 +389,10 @@ export const brands: Brand[] = [
     stack: ['Python', 'API REST', 'Integraciones', 'Datos'],
     resumen:
       'API de tecnología CBD: dosificación endocannabinoide de precisión, lista para integrarse en negocios digitales y físicos. El motor detrás de múltiples productos.',
+    tagline: 'Un perfilador que calcula la dosis antes de comprar.',
+    reto: 'Ayudar a cada persona a saber cuánta dosis de CBD necesita, con el criterio de seguridad por delante.',
+    solucion: 'Un perfilador de pocas preguntas que pasa por un filtro de seguridad antes de recomendar la dosis. Su motor es independiente: se integra en Medical Mexicanna y recomienda también productos de terceros.',
+    borrador: true,
   },
   {
     slug: 'cluster',
@@ -308,6 +401,11 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Turismo y hospitalidad',
     tipos: ['SaaS'],
+    tagline: 'Una plataforma pensada con el cliente, antes de construirla.',
+    reto: 'Entender a fondo el negocio del cliente antes de escribir una sola línea de código.',
+    solucion: 'Se documentó la plataforma completa: recorridos de usuario, páginas del sitio y del panel administrativo, permisos por rol y un sistema de diseño propio.',
+    resultado: 'El cliente cuenta con un documento maestro que reúne todo lo acordado.',
+    borrador: true,
   },
   {
     slug: 'albercasopia',
@@ -320,6 +418,10 @@ export const brands: Brand[] = [
     stack: ['Shopify', 'Liquid', 'Checkout', 'Integraciones'],
     resumen:
       'E-commerce de construcción, mantenimiento y renovación de albercas: catálogo de equipamiento y refacciones con tienda en línea propia.',
+    tagline: 'Equipo y refacciones para albercas, en tienda propia.',
+    reto: 'Vender en línea equipamiento y refacciones para albercas con un catálogo fácil de recorrer.',
+    solucion: 'Tienda en Shopify con catálogo de equipamiento y refacciones, carrito y pago en línea, lista para escalar.',
+    borrador: true,
   },
   {
     slug: 'iwellscore',
@@ -328,6 +430,11 @@ export const brands: Brand[] = [
     mockup: null,
     nicho: 'Salud y bienestar',
     tipos: ['SaaS'],
+    stack: ['React', 'TypeScript', 'Tailwind', 'IA'],
+    tagline: 'Salario emocional administrado en un solo lugar.',
+    reto: 'Ordenar las prestaciones de salario emocional de varias empresas, con aprobación y evidencia de cada entrega.',
+    solucion: 'Plataforma multiempresa con plantilla por empresa, clasificación por estrato, conjuntos de prestaciones, órdenes con aprobación, entregas con evidencia y expediente documental. Incluye un asistente con IA y gráficas.',
+    borrador: true,
   },
   {
     slug: 'digitalife',
@@ -337,8 +444,14 @@ export const brands: Brand[] = [
     nicho: 'Industria y comercio',
     tipos: ['eCommerce'],
     url: 'https://www.digitalife.com.mx',
+    stack: ['Figma', 'Adobe XD', 'UX/UI', 'Design system'],
     resumen:
       'Renovación completa de la experiencia y la identidad visual del e-commerce de tecnología: investigación, arquitectura de información, flujo de compra y sistema visual, diseñados en Figma y Adobe XD. Participación en la capa de diseño UX/UI.',
+    tagline: 'Rediseño UX/UI de una tienda de tecnología de referencia.',
+    reto: 'Modernizar la experiencia y la identidad de una tienda de tecnología de referencia en México, con una interfaz más clara para comprar.',
+    solucion: 'Investigación, arquitectura de información, flujo de compra y sistema visual, diseñados en Figma y Adobe XD con metodologías ágiles. La participación fue en la capa de diseño UX/UI, sin desarrollo.',
+    resultado: 'Se entregó el rediseño UX/UI completo, listo para implementación.',
+    borrador: true,
   },
   {
     slug: 'rancho-contento',
@@ -351,5 +464,9 @@ export const brands: Brand[] = [
     stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
     resumen:
       'Plataforma de renta de ranchos y eventos al aire libre, con reservas y CRM de leads. Naturaleza, animales y experiencia presentados con una estética cálida y editorial.',
+    tagline: 'Ranchos y eventos al aire libre, con reservas en línea.',
+    reto: 'Dar a una renta de ranchos una plataforma que transmitiera su naturaleza y ordenara las reservas.',
+    solucion: 'Plataforma con reservas y CRM de leads, con una estética cálida y editorial que presenta naturaleza, animales y experiencia.',
+    borrador: true,
   },
 ];

@@ -1,0 +1,138 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { brands } from '../../data/brands';
+import type { Brand } from '../../data/brands';
+import '../../components/work-styles.css';
+import '../../components/work-proyecto.css';
+
+export function getStaticPaths() {
+  return brands.map((brand) => ({ params: { slug: brand.slug }, props: { brand } }));
+}
+
+interface Props {
+  brand: Brand;
+}
+const { brand: b } = Astro.props;
+
+const description = `${b.tagline} ${b.reto}`;
+---
+
+<Base title={`${b.name} · Trabajo`} description={description} page="proyecto">
+  <div class="stage proj-stage">
+    <!-- Velo de legibilidad sobre el mundo 3D -->
+    <div class="proj-veil" data-travel-bg aria-hidden="true"></div>
+
+    <div class="ui-layer proj-ui">
+      <article class="proj">
+        <div class="proj-info">
+          <header class="proj-head" data-travel-ui>
+            <!-- Solo el nombre (Geist 700): el logo ya no lo repite encima -->
+            <p class="label proj-eyebrow">{b.nicho}</p>
+            <h1 class="proj-name">{b.name}</h1>
+            <p class="proj-tagline">{b.tagline}</p>
+            <ul class="proj-chips" role="list" aria-label="Tipo de proyecto">
+              {b.tipos.map((t) => <li class="proj-chip proj-chip--tipo">{t}</li>)}
+            </ul>
+          </header>
+
+          <div class="proj-story" data-travel-ui>
+            <section>
+              <h2 class="label proj-h">Reto</h2>
+              <p>{b.reto}</p>
+            </section>
+            <section>
+              <h2 class="label proj-h">Qué hicimos</h2>
+              <p>{b.solucion}</p>
+            </section>
+            {
+              b.resultado && (
+                <section>
+                  <h2 class="label proj-h">Resultado</h2>
+                  <p>{b.resultado}</p>
+                </section>
+              )
+            }
+          </div>
+
+          <div class="proj-foot" data-travel-ui>
+            {
+              b.stack && b.stack.length > 0 && (
+                <ul class="proj-chips" role="list" aria-label="Stack">
+                  {b.stack.map((s) => (
+                    <li class="proj-chip">{s}</li>
+                  ))}
+                </ul>
+              )
+            }
+            <div class="proj-actions">
+              <a class="work-btn work-btn--outline" href="/trabajo/">
+                <span aria-hidden="true">←</span>&nbsp;Volver a Trabajo
+              </a>
+              {
+                b.url && (
+                  <a class="work-btn work-btn--solid" href={b.url} target="_blank" rel="noopener">
+                    Sitio en vivo&nbsp;<span aria-hidden="true">↗</span>
+                    <span class="sr-only"> (se abre en otra pestaña)</span>
+                  </a>
+                )
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-media" data-travel-ui>
+          <figure class="card proj-shot" data-tilt>
+            {
+              b.mockup ? (
+                <Image
+                  class="proj-shot__img"
+                  src={b.mockup}
+                  alt={`Captura de ${b.name}`}
+                  widths={[640, 960, 1280]}
+                  sizes="(min-width: 1024px) 55vw, 100vw"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+              ) : (
+                <div class="proj-shot__brand">
+                  {b.logo ? (
+                    <Image src={b.logo} alt={b.name} width={Math.min(b.logo.width, 640)} loading="eager" decoding="async" />
+                  ) : (
+                    /* LOGO PENDIENTE: wordmark provisional, sustituir por el logo real */
+                    <span class="work-ph proj-shot__ph" data-logo-pending>
+                      {b.name}
+                    </span>
+                  )}
+                </div>
+              )
+            }
+          </figure>
+        </div>
+      </article>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import { initTilt } from '../../scripts/work-gallery';
+
+  let cleanup: (() => void) | undefined;
+  let mounted: Element | null = null;
+  const mount = () => {
+    if (document.documentElement.dataset.page !== 'trabajo') return;
+    const el = document.querySelector('[data-tilt]');
+    if (!el || el === mounted) return;
+    cleanup?.();
+    mounted = el;
+    cleanup = initTilt();
+  };
+  document.addEventListener('astro:page-load', mount);
+  document.addEventListener('astro:before-swap', () => {
+    cleanup?.();
+    cleanup = undefined;
+    mounted = null;
+  });
+  mount();
+</script>

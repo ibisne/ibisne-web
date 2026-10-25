@@ -1,17 +1,18 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import World from '../components/World.astro';
 import Header from '../components/Header.astro';
+import MobileTabBar from '../components/MobileTabBar.astro';
 import Consent from '../components/Consent.astro';
 import LegalFooter from '../components/LegalFooter.astro';
-import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 
-export type PageKind = 'home' | 'trabajo' | 'contacto' | 'legal' | '404';
+export type PageKind = 'home' | 'trabajo' | 'proyecto' | 'contacto' | 'legal' | '404';
 
 interface Props {
   title: string;
   description?: string;
-  /** Define data-page en <html>: gobierna el scroll de escritorio y el motor de viaje */
+  /** Define data-page en <html>: gobierna el scroll de escritorio. La estacion del mundo sale de la URL (world/stationForPath) */
   page: PageKind;
   /** none | mini | full. Por defecto: mini en home/trabajo, full en contacto/legal, none en 404 */
   legalFooter?: 'none' | 'mini' | 'full';
@@ -26,7 +27,7 @@ interface Props {
 
 const DEFAULT_DESC = 'Diseñamos tecnología para marcas selectas. Estudio de producto y software en Zapopan, Jalisco.';
 const { title, description = DEFAULT_DESC, page, image = '/og.jpg', noindex = false, rawTitle = false } = Astro.props;
-const footerDefault = { home: 'mini', trabajo: 'mini', contacto: 'full', legal: 'full', '404': 'none' } as const;
+const footerDefault = { home: 'mini', trabajo: 'mini', proyecto: 'mini', contacto: 'full', legal: 'full', '404': 'none' } as const;
 const aliasFooter = Astro.props.footerLegal === undefined ? undefined : Astro.props.footerLegal ? 'full' : 'none';
 const legalFooter = Astro.props.legalFooter ?? aliasFooter ?? footerDefault[page];
 
@@ -78,8 +79,6 @@ const jsonLd = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
-
     <ClientRouter />
     <noscript><style>html[data-boot] main#page { opacity: 1; }</style></noscript>
 
@@ -91,11 +90,13 @@ const jsonLd = {
   </head>
   <body>
     <a class="skip-link" href="#page">Saltar al contenido</a>
+    <World />
     <Header />
     <main id="page" tabindex="-1">
       <slot />
       {legalFooter !== 'none' && <LegalFooter variant={legalFooter} />}
     </main>
+    <MobileTabBar />
     <Consent />
   </body>
 </html>

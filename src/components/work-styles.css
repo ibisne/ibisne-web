@@ -1,6 +1,6 @@
-/* Trabajo · estilos de pagina. Prefijo work-. Global a proposito: el panel 3x3 y el
-   modal se construyen con JS y no llevan el atributo de alcance de Astro.
-   Solo tokens de tokens.css; los valores sueltos vienen del Figma (26:2 / 26:114 / 28:2). */
+/* Trabajo · estilos de pagina (rejilla de marcas). Prefijo work-. Global a proposito:
+   lo comparten la rejilla y la ficha (work-proyecto.css). Solo tokens de tokens.css.
+   El fondo lo pone el mundo WebGL persistente (canvas en Base): aqui solo hay un velo. */
 
 /* ---------- Escenario ---------- */
 .work-stage {
@@ -10,33 +10,15 @@
   min-height: 100dvh;
 }
 
-/* Fondo: imagen + velo #0B0820 35% + vineta superior. El parallax mueve .work-bg. */
-.bg-layer.work-bglayer {
-  overflow: visible;
-}
-.work-bg {
+/* Velo de legibilidad: oscurece arriba (titular) y baja un poco el brillo del mundo bajo las tarjetas */
+.work-veil {
   position: fixed;
   inset: 0;
-  will-change: transform;
-}
-.work-bg picture,
-.work-bg img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-.work-bg__veil {
-  position: absolute;
-  inset: 0;
-  background: rgb(11 8 32 / 0.35);
-}
-.work-vignette {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 15rem;
-  background: linear-gradient(rgb(11 8 32 / 0.85), rgb(11 8 32 / 0));
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(color-mix(in srgb, var(--ink) 82%, transparent), transparent 16rem),
+    color-mix(in srgb, var(--ink) 38%, transparent);
 }
 
 /* ---------- UI ---------- */
@@ -44,7 +26,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding: calc(var(--header-h) + 1rem) var(--work-px) 0;
+  padding: calc(var(--header-h) + 0.5rem) var(--work-px) calc(var(--tabbar-h, 0px) + 1.25rem);
 }
 .work-eyebrow {
   display: block;
@@ -53,7 +35,7 @@
 }
 .work-title {
   margin-top: 0.125rem;
-  font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.4rem);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.4rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -68,8 +50,8 @@
 /* ---------- Filtros ---------- */
 .work-filters {
   display: grid;
-  gap: 0.375rem;
-  margin-top: 1rem;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
 }
 .work-filter {
   display: flex;
@@ -90,7 +72,7 @@
   flex: 1;
   gap: 0.5rem;
   min-width: 0;
-  /* margen negativo + relleno: el anillo de foco no se recorta dentro del scroll */
+  /* margen negativo + relleno: el anillo de foco no se recorta dentro del carril */
   margin: -4px;
   padding: 4px;
   overflow-x: auto;
@@ -108,11 +90,11 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: var(--touch);
+  min-height: 2.5rem;
   padding: 0 14px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
-  background: rgb(11 8 32 / 0.35);
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
   color: var(--text-2);
   font-size: var(--fs-label);
   font-weight: var(--w-medium);
@@ -159,167 +141,127 @@
 
 /* ---------- Rejilla y tarjetas ---------- */
 .work-gridwrap {
-  margin-top: 1rem;
-  padding-bottom: 1rem;
+  margin-top: 0.75rem;
 }
 .work-grid {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+  padding: 0;
+  list-style: none;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .work-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Angulo del borde de luz: registrado para poder animarlo */
+@property --ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .work-card {
   position: relative;
   display: grid;
   place-items: center;
   width: 100%;
   min-width: 0;
-  aspect-ratio: 213 / 144;
+  aspect-ratio: 1 / 0.88;
   padding: 0;
   border-radius: 14px;
-  color: inherit;
-  cursor: pointer;
-  /* declarada aqui porque pisa la transicion de .card: suma opacity para el atenuado */
+  container-type: inline-size;
+  /* declarada aqui porque pisa la transicion de .card */
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease,
-    opacity 0.3s ease;
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    opacity 0.22s ease,
+    translate 0.22s var(--ease-out);
 }
-.work-card:focus-visible {
-  border-radius: 14px;
+@media (min-width: 640px) {
+  .work-card {
+    aspect-ratio: 213 / 144;
+  }
+}
+
+/* Enlace que cubre toda la tarjeta: tocar = viajar a la ficha */
+.work-card__link {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  color: inherit;
+}
+.work-card__link:focus-visible {
+  outline: none;
+}
+.work-card:has(.work-card__link:focus-visible) {
   outline: 2px solid var(--cyan);
   outline-offset: 3px;
 }
+
 .work-card__logo {
   position: absolute;
-  inset: 25% 19%; /* caja de 62% x 50% centrada */
+  inset: 28% 14%; /* caja de 72% x 44% en la tarjeta cuadrada */
+}
+@media (min-width: 640px) {
+  .work-card__logo {
+    inset: 25% 19%; /* caja de 62% x 50% centrada */
+  }
 }
 .work-card__logo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-.work-grid.has-open > .work-card:not(.is-active) {
-  opacity: 0.3;
+.work-card__logo,
+.work-card__logo-ph {
+  transition:
+    translate 0.22s var(--ease-out),
+    opacity 0.22s ease;
 }
 
 /* Wordmark de marca sin logo (LOGO PENDIENTE: [data-logo-pending]; sustituir por el logo real) */
 .work-ph {
   display: block;
-  max-width: 80%;
-  font-size: 20px;
+  max-width: 86%;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.15;
   text-align: center;
-  color: #f2eeff;
+  color: var(--text);
+  text-wrap: balance;
+}
+@media (min-width: 640px) {
+  .work-ph {
+    max-width: 80%;
+    font-size: 20px;
+  }
 }
 
-/* ---------- Panel 3x3 (solo escritorio con puntero fino) ---------- */
-.work-panel {
-  position: absolute;
-  z-index: 5;
-  transform-style: preserve-3d;
-  will-change: left, top, width, height, transform;
-}
-.work-face {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid rgb(77 243 255 / 0.9);
-  border-radius: 14px;
-  background: var(--ink);
-  box-shadow:
-    0 0 24px rgb(77 243 255 / 0.35),
-    0 24px 48px rgb(0 0 0 / 0.5);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-.work-face--front {
-  background:
-    linear-gradient(rgb(77 243 255 / 0.07), rgb(77 243 255 / 0.07)),
-    var(--ink);
-}
-.work-face--front > * {
-  flex: none;
-}
-.work-face--back {
-  transform: rotateY(180deg);
-}
-.work-face__shot {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-}
-.work-face__fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: radial-gradient(60% 60% at 50% 50%, var(--ink-2), var(--ink));
-}
-/* Reverso sin mockup: logo/wordmark grande arriba, degradado tenue de marca, botones abajo */
-.work-face--nomock {
-  place-items: end center;
-  padding-bottom: 10%;
-}
-.work-face--nomock .work-face__fallback {
-  place-items: start center;
-  padding-top: 14%;
-  background:
-    radial-gradient(70% 55% at 25% 20%, rgb(77 243 255 / 0.12), transparent 70%),
-    radial-gradient(70% 55% at 80% 85%, rgb(255 62 165 / 0.1), transparent 70%),
-    var(--ink);
-}
-.work-face__fallback img {
-  width: min(50%, 22rem);
-  height: auto;
-  max-height: 35%;
-  object-fit: contain;
-  opacity: 0.9;
-}
-.work-face__fallback .work-ph {
-  font-size: 40px;
-  opacity: 0.9;
-  max-width: 50%;
-}
-.work-face__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgb(11 8 32 / 0.82);
-}
-.work-face__actions {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 1rem;
+/* Botones: viven dentro de la tarjeta y solo aparecen al activarla (puntero fino) */
+.work-card__actions {
+  display: none;
 }
 
-/* Botones del panel y del modal */
+/* Botones compactos (tarjeta y ficha) */
 .work-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
-  padding: 0 26px;
+  gap: 4px;
+  height: 30px;
+  padding: 0 12px;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  font-size: 15px;
+  font-size: 12px;
   font-weight: var(--w-medium);
   line-height: 1;
   white-space: nowrap;
@@ -339,209 +281,172 @@
   color: var(--ink);
 }
 .work-btn--solid:hover {
-  box-shadow: 0 0 24px rgb(77 243 255 / 0.4);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 45%, transparent);
 }
 .work-btn--outline {
-  background: transparent;
-  border-color: rgb(242 238 255 / 0.55);
+  background: color-mix(in srgb, var(--ink) 40%, transparent);
+  border-color: color-mix(in srgb, var(--text) 55%, transparent);
   color: var(--text);
 }
 .work-btn--outline:hover {
   border-color: var(--text);
-  background: rgb(242 238 255 / 0.08);
+  background: color-mix(in srgb, var(--text) 10%, transparent);
 }
 
-/* ---------- Modal de resumen tecnico ---------- */
-.work-modal {
-  width: min(560px, calc(100vw - 2rem));
-  max-height: min(88dvh, 780px);
-  margin: auto;
-  padding: 0;
-  overflow: auto;
-  border: 1px solid rgb(242 238 255 / 0.14);
-  border-radius: 14px;
-  background: rgb(11 8 32 / 0.92);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
-  color: var(--text);
-  box-shadow:
-    0 0 24px rgb(77 243 255 / 0.18),
-    0 24px 64px rgb(0 0 0 / 0.6);
-  overscroll-behavior: contain;
-  opacity: 0;
-  transform: translateY(12px) scale(0.98);
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s var(--ease-out),
-    overlay 0.25s allow-discrete,
-    display 0.25s allow-discrete;
-}
-.work-modal[open] {
-  opacity: 1;
-  transform: none;
-}
-@starting-style {
-  .work-modal[open] {
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
+/* ---------- Activacion EN SU LUGAR (solo puntero fino; tambien con foco de teclado) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .work-card__actions {
+    position: absolute;
+    inset: auto 8px 8px;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility 0s 0.22s;
   }
-}
-.work-modal::backdrop {
-  background: rgb(11 8 32 / 0.62);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  opacity: 0;
-  transition:
-    opacity 0.25s ease,
-    overlay 0.25s allow-discrete,
-    display 0.25s allow-discrete;
-}
-.work-modal[open]::backdrop {
-  opacity: 1;
-}
-@starting-style {
-  .work-modal[open]::backdrop {
+  .work-card__actions .work-btn {
+    pointer-events: auto;
     opacity: 0;
+    translate: 0 6px;
+    transition:
+      opacity 0.22s ease,
+      translate 0.22s var(--ease-out),
+      background-color 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s,
+      color 0.2s;
   }
-}
-/* Con el modal abierto la pagina de fondo no se desplaza */
-html:has(.work-modal[open]) {
-  overflow: hidden;
-}
 
-.work-modal__close {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: var(--touch);
-  height: var(--touch);
-  padding: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background: rgb(11 8 32 / 0.7);
-  color: var(--text);
-  transition:
-    border-color 0.2s,
-    background-color 0.2s;
+  /* Borde de luz que recorre el perimetro: cian a magenta, solo el anillo (mascara) */
+  .work-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 1;
+    padding: 1.5px;
+    border-radius: 15px;
+    background: conic-gradient(
+      from var(--ang),
+      transparent 0deg 190deg,
+      var(--cyan) 270deg,
+      var(--magenta) 340deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+
+  /* Estado activo: hover o foco de teclado en cualquier parte de la tarjeta */
+  .work-grid > .work-card:is(:hover, :has(:focus-visible)) {
+    z-index: 2;
+    translate: 0 -4px;
+    border-color: color-mix(in srgb, var(--cyan) 28%, transparent);
+    background:
+      linear-gradient(color-mix(in srgb, var(--cyan) 7%, transparent), color-mix(in srgb, var(--cyan) 7%, transparent)),
+      color-mix(in srgb, var(--ink) 62%, transparent);
+    box-shadow:
+      0 16px 32px rgb(0 0 0 / 0.45),
+      0 0 26px color-mix(in srgb, var(--cyan) 16%, transparent);
+  }
+  .work-grid > .work-card:is(:hover, :has(:focus-visible))::before {
+    opacity: 1;
+    animation: work-orbit 1.4s linear infinite;
+  }
+  .work-grid > .work-card:is(:hover, :has(:focus-visible)) :is(.work-card__logo, .work-card__logo-ph) {
+    translate: 0 -14px;
+    opacity: 0.35;
+  }
+  .work-grid > .work-card:is(:hover, :has(:focus-visible)) .work-card__actions {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .work-grid > .work-card:is(:hover, :has(:focus-visible)) .work-btn {
+    opacity: 1;
+    translate: 0 0;
+    transition-delay: calc(var(--i, 0) * 60ms), calc(var(--i, 0) * 60ms), 0s, 0s, 0s, 0s;
+  }
+
+  /* Las demas bajan un poco; ninguna cambia de tamano (no hay reflujo) */
+  .work-grid:has(.work-card:hover, :focus-visible) > .work-card:not(:hover):not(:has(:focus-visible)) {
+    opacity: 0.55;
+  }
+
+  /* Espacio justo: dos etiquetas completas no caben en fila (< 232px). Con altura de sobra se
+     apilan; si no, el segundo boton queda en icono. */
+  @container (max-width: 232px) {
+    .work-card__actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .work-btn {
+      min-width: 7.5rem;
+    }
+    .work-grid > .work-card:is(:hover, :has(:focus-visible)) :is(.work-card__logo, .work-card__logo-ph) {
+      translate: 0 -22px;
+    }
+  }
 }
-.work-modal__close:hover {
-  border-color: var(--text);
-  background: rgb(242 238 255 / 0.1);
+@media (hover: hover) and (pointer: fine) and (max-height: 859px) {
+  @container (max-width: 232px) {
+    .work-card__actions {
+      flex-direction: row;
+    }
+    .work-btn {
+      min-width: 0;
+    }
+    .work-btn__t {
+      display: none;
+    }
+    .work-btn--outline {
+      width: 30px;
+      padding: 0;
+      font-size: 14px;
+    }
+    .work-grid > .work-card:is(:hover, :has(:focus-visible)) :is(.work-card__logo, .work-card__logo-ph) {
+      translate: 0 -14px;
+    }
+  }
 }
-.work-modal__close:focus-visible {
-  border-radius: var(--radius-pill);
+@media (hover: hover) and (pointer: fine) {
+  @container (max-width: 170px) {
+    .work-card__actions {
+      inset-inline: 6px;
+      bottom: 6px;
+    }
+    .work-btn {
+      padding-inline: 10px;
+    }
+  }
 }
-.work-modal__close svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
+@keyframes work-orbit {
+  to {
+    --ang: 360deg;
+  }
 }
-.work-modal__shot {
-  margin: 0;
-  aspect-ratio: 16 / 9;
-  background: var(--ink-2);
+/* Tactil: sin hover pegajoso; el toque viaja directo a la ficha */
+@media (hover: none), (pointer: coarse) {
+  .work-grid > .work-card:hover {
+    border-color: rgb(242 238 255 / 0.14);
+    box-shadow: none;
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
 }
-.work-modal__shot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-}
-.work-modal__body {
-  display: grid;
-  gap: 1.1rem;
-  padding: 1.5rem;
-}
-.work-modal__head {
-  display: grid;
-  gap: 0.9rem;
-  padding-right: 2.75rem;
-}
-.work-modal__logo {
-  width: min(11rem, 60%);
-  height: 3.5rem;
-}
-.work-modal__logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: left center;
-}
-.work-modal__name {
-  font-size: 1.5rem;
-  font-weight: var(--w-bold);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-.work-modal__meta {
-  margin-top: 0.3rem;
-  font-size: var(--fs-label-lg);
-  font-weight: var(--w-medium);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cyan);
-}
-.work-modal__text {
-  color: var(--text-2);
-  font-weight: var(--w-light);
-  line-height: 1.6;
-  text-wrap: pretty;
-}
-.work-modal__text.is-empty {
-  color: var(--text-3);
-  font-style: italic;
-}
-.work-modal__sub {
-  margin-bottom: 0.5rem;
-  font-size: 11px;
-  font-weight: var(--w-medium);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-.work-modal__stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding: 0;
-  list-style: none;
-}
-.work-modal__stack li {
-  padding: 0.3rem 0.75rem;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background: rgb(242 238 255 / 0.04);
-  font-size: var(--fs-label-lg);
-  color: var(--text-2);
-}
-.work-modal__facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 2rem;
-  margin: 0;
-}
-.work-modal__facts dd {
-  margin: 0;
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-.work-modal__facts a {
-  border-bottom: 1px solid rgb(77 243 255 / 0.5);
-  color: var(--cyan);
-}
-.work-modal__facts a:hover {
-  border-bottom-color: var(--cyan);
-}
-.work-modal__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+@media (prefers-reduced-motion: reduce) {
+  .work-grid > .work-card:is(:hover, :has(:focus-visible))::before {
+    animation: none;
+    --ang: 120deg;
+  }
 }
 
 /* ---------- Escritorio: sin scroll, rejilla de 6 x 4 que llena hasta abajo ---------- */
@@ -551,18 +456,14 @@ html:has(.work-modal[open]) {
     height: 100%;
     min-height: 0;
   }
-  .bg-layer.work-bglayer {
-    overflow: hidden;
-  }
-  .work-bg {
-    position: absolute;
-    inset: -14px;
-  }
   .ui-layer.work-ui {
     height: 100%;
     min-height: 0;
     /* abajo queda 44px para el enlace "Privacidad" */
     padding: calc(var(--header-h) + 1.75rem) var(--work-px) 44px;
+  }
+  .work-title {
+    font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.4rem);
   }
   .work-filters {
     gap: 6px;
@@ -585,7 +486,6 @@ html:has(.work-modal[open]) {
     flex: 1;
     min-height: 0;
     margin-top: 14px;
-    padding-bottom: 0;
   }
   .work-grid {
     height: 100%;

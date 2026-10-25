@@ -33,6 +33,7 @@
   /* Espacio y forma */
   --gutter: clamp(1rem, 0.5rem + 2.2vw, 2.5rem);
   --header-h: 4.5rem;
+  --tabbar-h: 0px; /* barra inferior movil: global.css la define en modo scroll */
   --radius-pill: 999px;
   --radius-card: 1.25rem;
   --touch: 2.75rem; /* 44px minimo tactil */
@@ -49,10 +50,4 @@
   --z-ui: 10;
   --z-header: 50;
   --z-consent: 80;
-}
-
-@media (max-width: 639px) {
-  :root {
-    --header-h: 6.5rem; /* dos filas: logo + boton, nav */
-  }
 }

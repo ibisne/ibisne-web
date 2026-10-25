@@ -5,12 +5,22 @@ interface Props {
   option: ContactOption;
 }
 const { option } = Astro.props;
+const short = option.short && option.short !== option.label ? option.short : null;
 ---
 
-<a class="card opt" href={waLink(option.message)} target="_blank" rel="noopener" data-travel-ui data-opt>
+<a class="card opt" href={waLink(option.message)} target="_blank" rel="noopener" data-ct-in data-opt>
   <svg class="opt__icon" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={ICONS[option.icon]} />
   <span class="opt__text">
-    <span class="opt__label">{option.label}</span>
+    {
+      short ? (
+        <>
+          <span class="opt__label opt__label--long">{option.label}</span>
+          <span class="opt__label opt__label--short">{short}</span>
+        </>
+      ) : (
+        <span class="opt__label">{option.label}</span>
+      )
+    }
     {option.sub && <span class="opt__sub">{option.sub}</span>}
     <span class="sr-only">(abre WhatsApp)</span>
   </span>
@@ -50,6 +60,9 @@ const { option } = Astro.props;
     line-height: 16px;
     color: var(--text-3);
   }
+  .opt__label--short {
+    display: none;
+  }
   .opt__arrow {
     flex: none;
     margin-right: 6px; /* la caja de 22px deja sitio al desplazamiento de 6px */
@@ -71,21 +84,82 @@ const { option } = Astro.props;
     outline-offset: 3px;
     border-radius: 14px;
   }
-  /* Sin hover real (tactil): el desplazamiento queda quieto */
-  @media (hover: none) {
-    .opt:hover .opt__arrow {
-      transform: none;
-    }
-  }
   @media (prefers-reduced-motion: reduce) {
     .opt:is(:hover, :focus-visible) .opt__arrow {
       transform: none;
     }
   }
+
+  /* Movil/tablet: tile compacto (icono arriba, texto de una linea), sin flecha ni sublinea */
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     .opt {
-      min-height: 64px;
-      padding-block: 10px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 60px;
+      padding: 10px 14px 9px;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+    .opt__text {
+      flex: none;
+      width: 100%;
+    }
+    .opt__label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 13px;
+      line-height: 17px;
+    }
+    .opt__label--long {
+      display: none;
+    }
+    .opt__label--short {
+      display: block;
+    }
+    .opt__sub,
+    .opt__arrow {
+      display: none;
+    }
+  }
+
+  @media (max-height: 760px) and (not ((min-width: 1024px) and (min-height: 700px))) {
+    .opt {
+      gap: 6px;
+      min-height: 54px;
+      padding: 8px 12px 8px;
+    }
+  }
+  @media (max-height: 620px) and (not ((min-width: 1024px) and (min-height: 700px))) {
+    .opt {
+      gap: 4px;
+      min-height: 50px;
+      padding: 7px 12px;
+    }
+  }
+
+  .opt:active {
+    border-color: color-mix(in srgb, var(--cyan) 90%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 35%, transparent);
+  }
+  .opt:active .opt__icon {
+    color: var(--cyan);
+  }
+
+  /* Sin hover real (tactil): el resaltado vive en :active, no se queda pegado tras el toque */
+  @media (hover: none) {
+    .opt:hover:not(:focus-visible):not(:active) {
+      background: var(--glass);
+      border-color: color-mix(in srgb, var(--text) 14%, transparent);
+      box-shadow: none;
+    }
+    .opt:hover:not(:focus-visible):not(:active) .opt__icon {
+      color: var(--text-2);
+    }
+    .opt:hover .opt__arrow {
+      transform: none;
     }
   }
 </style>

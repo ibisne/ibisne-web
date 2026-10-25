@@ -1,0 +1,179 @@
+---
+/**
+ * Mundo WebGL persistente (un solo <canvas> para todo el sitio).
+ * Va UNA vez en Base.astro, antes de <main>. Persiste entre paginas con
+ * transition:persist, asi el canvas nunca se destruye ni se ve negro.
+ *
+ * Sin JS, sin WebGL o con reduced motion: se ven las capas <img> (las mismas URLs
+ * que usa WebGL como textura, sin doble descarga) encuadradas en la estacion.
+ */
+import { getImage } from 'astro:assets';
+import { worldLayers, bSilhouette } from '../scripts/world/assets';
+import type { WorldLayerAsset } from '../scripts/world/assets';
+import { FOV, LAYERS, layerMargin, PORTRAIT_ZOOM_FACTOR, STATIONS } from '../scripts/world/config';
+import type { Station } from '../scripts/world/config';
+
+interface Props {
+  /** Estacion inicial (solo afecta el encuadre sin JS; el motor la lee de la URL) */
+  station?: Station;
+}
+const { station = 'home' } = Astro.props;
+const u = STATIONS[station].u;
+
+// El arte lejano y medio mide 6144 px: se sirve nativo (el motor reduce si la GPU no llega)
+const MAX_W = 6144;
+const TAN_HALF = Math.tan(((FOV / 2) * Math.PI) / 180);
+
+/**
+ * Encuadre del modo estatico identico al del motor (layers.ts resize): alto del arte en
+ * pantallas (--h) y su borde superior (--t), para escritorio y para retrato. Asi el fundido
+ * estatico -> WebGL no salta.
+ */
+function framing(layer: WorldLayerAsset, aspect: number) {
+  const spec = LAYERS[layer.name];
+  const fh = 2 * spec.depth * TAN_HALF;
+  const fw = fh * aspect;
+  const [mx, my] = layerMargin(spec.depth, fw / 2, fh / 2);
+  const pw = fw * spec.overscan + mx * 2;
+  const ph = fh * spec.overscan + my * 2;
+  const panAspect = (layer.image.width / layer.image.height) * layer.repeat;
+  let zoom = aspect < 1 ? 1 + (spec.zoom - 1) * PORTRAIT_ZOOM_FACTOR : spec.zoom;
+  if (pw / ph / (panAspect * zoom) > 1) zoom = pw / ph / panAspect;
+  const spanY = 1 / zoom;
+  const va = spec.vAnchor;
+  const v = va === 'bottom' ? spanY / 2 + 0.002 : Math.min(Math.max(va, spanY / 2), 1 - spanY / 2);
+  const h = (ph / fh) * zoom;
+  const t = 0.5 - (1 - v) * h;
+  return { h: h.toFixed(4), t: t.toFixed(4) };
+}
+
+async function variant(layer: WorldLayerAsset) {
+  const { image } = layer;
+  const ladder = [1024, 1536, 2048, 3072, 4096, 6144].filter((w) => w < image.width && w <= MAX_W);
+  const widths = [...ladder, Math.min(image.width, MAX_W)];
+  const img = await getImage({ src: image, widths, format: 'webp', quality: 74 });
+  const aspect = image.width / image.height;
+  const zoom = LAYERS[layer.name].zoom;
+  // ancho de UNA repeticion del arte en pantalla: ~1.15 alturas de viewport x aspecto x zoom
+  const k = (1.15 * aspect * zoom).toFixed(2);
+  const kMobile = (0.6 * aspect * zoom).toFixed(2);
+  const d = framing(layer, 1.6);
+  const m = framing(layer, 0.46);
+  return {
+    layer,
+    style: `--h:${d.h};--t:${d.t};--hm:${m.h};--tm:${m.t}`,
+    src: img.src,
+    srcset: img.srcSet.attribute,
+    sizes: `(max-width: 767px) calc(${kMobile} * 100vh), calc(${k} * 100vh)`,
+  };
+}
+
+const list = [worldLayers.far, worldLayers.mid, worldLayers.near].filter((l): l is WorldLayerAsset => !!l);
+const imgs = await Promise.all(list.map(variant));
+---
+
+<div class="world" data-world data-world-mode="static" transition:persist="world" aria-hidden="true">
+  <div class="world__static" data-world-static>
+    <div class="world__stack" data-world-stack style={`--u:${u}`}>
+      {
+        imgs.map((v) => (
+          <img
+            class={`world__img world__img--${v.layer.name}`}
+            style={v.style}
+            src={v.src}
+            srcset={v.srcset}
+            sizes={v.sizes}
+            width={v.layer.image.width}
+            height={v.layer.image.height}
+            alt=""
+            loading="eager"
+            decoding="async"
+            fetchpriority={v.layer.name === 'far' ? 'high' : 'auto'}
+            draggable="false"
+            data-world-layer={v.layer.name}
+            data-repeat={v.layer.repeat}
+            data-blend={v.layer.blend}
+          />
+        ))
+      }
+    </div>
+  </div>
+  <canvas class="world__canvas" data-world-canvas data-b-src={bSilhouette.src}></canvas>
+</div>
+
+<script>
+  import { initWorld } from '../scripts/world';
+
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-world-canvas]');
+  if (canvas) initWorld(canvas);
+</script>
+
+<style>
+  .world {
+    position: fixed;
+    inset: 0 auto auto 0;
+    width: 100%;
+    /* lvh: la barra del navegador movil no redimensiona el canvas al hacer scroll */
+    height: 100lvh;
+    z-index: var(--z-bg);
+    pointer-events: none;
+    /* Antes de que pinten las capas: un degradado con la luz de la escena (cielo, banda de
+       bruma en el horizonte, suelo oscuro), nunca tinta lisa */
+    --haze: color-mix(in srgb, color-mix(in srgb, var(--magenta) 45%, var(--cyan)) 17%, var(--ink));
+    background:
+      radial-gradient(120% 55% at 50% 58%, var(--haze), transparent 70%),
+      linear-gradient(to bottom, var(--ink-2) 0%, color-mix(in srgb, var(--haze) 70%, var(--ink)) 52%, var(--ink) 100%);
+    background-color: var(--ink);
+    overflow: hidden;
+    contain: strict;
+  }
+  .world__static,
+  .world__stack {
+    position: absolute;
+    inset: 0;
+  }
+  /* Mismo encuadre que WebGL: el punto u del arte queda al centro de la pantalla */
+  .world__img {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--t, 0) * 100%);
+    width: auto;
+    max-width: none;
+    height: calc(var(--h, 1) * 100%);
+    transform: translateX(calc(var(--u, 0.17) * -100%));
+    user-select: none;
+  }
+  @media (max-aspect-ratio: 1/1) {
+    .world__img {
+      top: calc(var(--tm, 0) * 100%);
+      height: calc(var(--hm, 1) * 100%);
+    }
+  }
+  .world__img--mid,
+  .world__img--near {
+    mix-blend-mode: screen;
+  }
+  .world__img--mid {
+    opacity: 0.8;
+  }
+  .world__img--near {
+    opacity: 0.55;
+  }
+  .world__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+  }
+  .world[data-world-ready] .world__canvas {
+    opacity: 1;
+  }
+  /* las imagenes siguen vivas (son la fuente de las texturas), solo dejan de pintarse */
+  .world[data-world-ready] .world__static {
+    visibility: hidden;
+    transition: visibility 0s 0.7s;
+  }
+</style>

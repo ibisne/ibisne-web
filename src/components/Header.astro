@@ -100,28 +100,15 @@ const links = [
     justify-self: end;
   }
 
-  /* Telefono: dos filas (logo + boton / nav) */
-  @media (max-width: 639px) {
+  /* Movil (modo scroll): solo el logo. La navegacion vive en la barra inferior (MobileTabBar). */
+  @media not ((min-width: 1024px) and (min-height: 700px)) {
     .hdr {
-      grid-template-columns: 1fr auto;
-      grid-template-rows: 3.5rem 2.75rem;
-      align-content: start;
-      padding-top: 0.25rem;
-      background: linear-gradient(to bottom, rgb(11 8 32 / 0.92), rgb(11 8 32 / 0));
+      grid-template-columns: 1fr;
+      background: linear-gradient(to bottom, color-mix(in srgb, var(--ink) 96%, transparent), color-mix(in srgb, var(--ink) 75%, transparent) 55%, transparent);
     }
-    .hdr__nav {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      justify-content: center;
-      gap: 1.75rem;
-    }
+    .hdr__nav,
     .hdr__cta {
-      padding-inline: 1.1rem;
-    }
-  }
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .hdr__cta {
-      padding-inline: 1.1rem;
+      display: none;
     }
   }
 </style>

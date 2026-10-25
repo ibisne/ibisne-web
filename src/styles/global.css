@@ -16,6 +16,8 @@ html {
   color-scheme: dark;
   background: var(--ink);
   scrollbar-color: rgb(242 238 255 / 0.25) transparent;
+  scroll-padding-top: var(--header-h);
+  scroll-padding-bottom: var(--tabbar-h);
 }
 body {
   min-height: 100dvh;
@@ -240,11 +242,13 @@ a.pill:hover {
   border: 1px solid var(--line);
 }
 
-/* ---------- Escenario y capas de viaje ---------- */
-/* <main id="page"> es el contenedor de cada pagina. */
+/* ---------- Mundo y paginas ---------- */
+/* El fondo es el mundo WebGL persistente (World.astro, position:fixed, z-bg). <main id="page">
+   va encima y es transparente: cada pagina pone solo interfaz, nunca fondos propios. */
 main#page {
   position: relative;
   min-height: 100dvh;
+  background: transparent;
   outline: none;
 }
 /* El header es fijo y flota sobre el escenario: el contenido debe dejarle sitio. */
@@ -256,7 +260,7 @@ main#page {
   isolation: isolate;
   min-height: 100%;
 }
-/* Capa de fondo que el motor de viaje escala/desenfoca: [data-travel-bg] */
+/* Compat: capas de fondo propias de una pagina. Taparian el mundo; no las uses en paginas nuevas. */
 .bg-layer {
   position: absolute;
   inset: 0;
@@ -271,7 +275,7 @@ main#page {
   height: 100%;
   object-fit: cover;
 }
-/* Contenido que el motor desvanece/cascadea: [data-travel-ui] */
+/* Contenido que travel.ts desvanece al salir y entra en cascada: [data-travel-ui] */
 .ui-layer {
   position: relative;
   z-index: var(--z-ui);
@@ -279,8 +283,9 @@ main#page {
 }
 
 /* Estado de arranque: cada documento nuevo llega con data-boot en <html>;
-   el motor lo retira en cuanto lanza la animacion de entrada. El keyframe
-   es el seguro por si el JS no llega a cargar. */
+   travel.ts lo retira en cuanto lanza la animacion de entrada. El keyframe
+   es el seguro por si el JS no llega a cargar. Solo oculta <main>: el mundo
+   (fuera de main) se ve siempre, nunca hay negro. */
 html[data-boot] main#page {
   opacity: 0;
   animation: boot-failsafe 0s linear 2.2s forwards;
@@ -291,23 +296,14 @@ html[data-boot] main#page {
   }
 }
 
-/* Escritorio: Inicio/Trabajo/Contacto sin scroll */
+/* Escritorio: Inicio/Trabajo/Ficha/Contacto sin scroll */
 @media (min-width: 1024px) and (min-height: 700px) {
-  html[data-page='home'],
-  html[data-page='trabajo'],
-  html[data-page='contacto'] {
+  html:is([data-page='home'], [data-page='trabajo'], [data-page='proyecto'], [data-page='contacto']),
+  html:is([data-page='home'], [data-page='trabajo'], [data-page='proyecto'], [data-page='contacto']) body {
     height: 100dvh;
     overflow: hidden;
   }
-  html[data-page='home'] body,
-  html[data-page='trabajo'] body,
-  html[data-page='contacto'] body {
-    height: 100dvh;
-    overflow: hidden;
-  }
-  html[data-page='home'] main#page,
-  html[data-page='trabajo'] main#page,
-  html[data-page='contacto'] main#page {
+  html:is([data-page='home'], [data-page='trabajo'], [data-page='proyecto'], [data-page='contacto']) main#page {
     height: 100dvh;
     min-height: 0;
     overflow: hidden;
@@ -315,10 +311,22 @@ html[data-boot] main#page {
   .only-scroll {
     display: none !important;
   }
+  /* "Privacidad" de la ficha de proyecto flota abajo, igual que en Inicio y Trabajo */
+  html[data-page='proyecto'] .legal-mini {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: var(--z-ui);
+  }
 }
 
-/* Debajo de eso: scroll normal, apilado, tap en lugar de hover */
+/* Debajo de eso (movil): scroll normal, apilado, tap en lugar de hover, barra inferior de app.
+   --tabbar-h = alto de la barra + safe-area; las paginas que ocupan una pantalla restan esa variable
+   y las que scrollean la dejan como padding-bottom para que nada quede tapado. */
 @media not ((min-width: 1024px) and (min-height: 700px)) {
+  :root {
+    --tabbar-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
   .only-lock {
     display: none !important;
   }
@@ -339,6 +347,40 @@ html[data-boot] main#page {
     flex: 0 0 auto;
     scroll-snap-align: start;
   }
+
+  /* Paginas que scrollean y son nuestras: el final no queda bajo la barra */
+  html:is([data-page='home'], [data-page='legal']) main#page {
+    padding-bottom: var(--tabbar-h);
+  }
+  /* Enlace "Privacidad" de Inicio: compacto, sin sumar otra vez el safe-area (ya lo cubre la barra) */
+  main#page > .legal-mini {
+    min-height: 2rem;
+    padding-bottom: 0;
+  }
+  /* Banner de cookies: encima de la barra, sin taparla (#consent gana a los estilos del componente) */
+  #consent.consent {
+    bottom: calc(var(--tabbar-h) + 0.75rem);
+  }
+}
+@media (max-width: 639px) and (not ((min-width: 1024px) and (min-height: 700px))) {
+  #consent.consent {
+    bottom: var(--tabbar-h);
+    padding-bottom: 0.7rem;
+  }
+}
+/* Movil en horizontal: barra mas baja para dejar pantalla al contenido */
+@media (max-height: 499px) and (not ((min-width: 1024px) and (min-height: 700px))) {
+  :root {
+    --tabbar-h: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Legales: texto largo sobre el mundo atenuado. El velo es mas denso en la columna de texto
+   y deja ver el mundo a los lados (continuidad con el resto del sitio) */
+html[data-page='legal'] main#page {
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 30%, transparent) 50%, transparent),
+    color-mix(in srgb, var(--ink) 60%, transparent);
 }
 
 /* Utilidades de layout */
@@ -358,8 +400,8 @@ html[data-boot] main#page {
   flex-direction: column;
 }
 
-/* View Transitions nativas: el motor propio (travel.ts) anima; la capa
-   nativa solo hace el cambio de DOM, sin fundido por defecto. */
+/* View Transitions nativas: el mundo (world/) hace el viaje y travel.ts anima la interfaz;
+   la capa nativa solo hace el cambio de DOM, sin fundido por defecto. */
 ::view-transition-group(root),
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -386,17 +428,18 @@ html[data-boot] main#page {
 }
 
 /* Tarjeta estándar: logos de Trabajo y opciones de Contacto (valores leídos de Figma 47:32 / 47:58) */
+/* Vidrio ligero: el mundo se lee detras (paralaje visible entre tarjetas), sin perder el texto */
 .card {
   box-sizing: border-box;
-  background: rgb(11 8 32 / .55);
+  background: color-mix(in srgb, var(--ink) 32%, transparent);
   border: 1px solid rgb(242 238 255 / .14);
   border-radius: 14px;
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(9px) saturate(1.25);
+  backdrop-filter: blur(9px) saturate(1.25);
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
 .card:is(:hover, :focus-visible, .is-active) {
-  background: linear-gradient(rgb(77 243 255 / .07), rgb(77 243 255 / .07)), rgb(11 8 32 / .55);
+  background: linear-gradient(rgb(77 243 255 / .07), rgb(77 243 255 / .07)), color-mix(in srgb, var(--ink) 32%, transparent);
   border-color: rgb(77 243 255 / .9);
   box-shadow: 0 0 24px rgb(77 243 255 / .35);
 }
