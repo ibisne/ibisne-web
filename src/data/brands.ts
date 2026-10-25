@@ -16,6 +16,7 @@ import logoDigitalife from '../assets/logos/digitalife.png';
 import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
 import logoCgcac from '../assets/logos/cgcac.png';
+import logoBatauro from '../assets/logos/batauro.png';
 
 import mkIbroker from '../assets/mockups/ibroker.webp';
 import mkNeoterre from '../assets/mockups/neoterre.webp';
@@ -348,7 +349,7 @@ export const brands: Brand[] = [
   {
     slug: 'batauro',
     name: 'Batauro',
-    logo: null,
+    logo: logoBatauro,
     mockup: mkBatauro,
     nicho: 'Industria y comercio',
     tipos: ['eCommerce'],
