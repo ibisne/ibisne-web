@@ -376,3 +376,18 @@ else queueMicrotask(boot);
 
 // Seguro: si algo fallo, la pagina nunca se queda oculta.
 window.setTimeout(() => document.documentElement.removeAttribute('data-boot'), 2000);
+
+/**
+ * En movil, un cambio de viewport a mitad de una View Transition hace que el navegador
+ * la aborte y la promesa rechace con "Transition was aborted because of invalid state".
+ * Es inofensivo (el router ya navego); solo se silencia ese rechazo concreto.
+ */
+window.addEventListener('unhandledrejection', (ev) => {
+  const r = ev.reason as { name?: string; message?: string } | undefined;
+  if (!r) return;
+  const name = String(r.name ?? '');
+  const msg = String(r.message ?? '');
+  const isTransition = /transition/i.test(msg) || /view.?transition/i.test(msg);
+  if ((name === 'AbortError' || name === 'InvalidStateError') && isTransition) ev.preventDefault();
+  else if (/Transition was aborted because of invalid state/i.test(msg)) ev.preventDefault();
+});

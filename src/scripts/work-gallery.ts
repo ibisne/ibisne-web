@@ -69,10 +69,13 @@ function h<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
+/**
+ * Wordmark de marca sin logo entregado (solo el nombre en Geist 600).
+ * LOGO PENDIENTE: busca `data-logo-pending` (aqui, en trabajo/index.astro y en
+ * work-styles.css) para sustituirlo por el logo real cuando llegue.
+ */
 function placeholder(name: string): HTMLElement {
-  const ph = h('span', 'work-ph');
-  ph.append(h('span', 'work-ph__name', {}, name), h('span', 'work-ph__tag', {}, 'Logo pendiente'));
-  return ph;
+  return h('span', 'work-ph', { 'data-logo-pending': '' }, name);
 }
 
 export function initWork(): () => void {
@@ -311,6 +314,7 @@ export function initWork(): () => void {
 
     // Reverso: mockup bajo capa oscura (o fondo oscuro con logo atenuado) + botones.
     const back = h('div', 'work-face work-face--back');
+    if (!b.mockup) back.classList.add('work-face--nomock');
     if (b.mockup) {
       back.append(
         h('img', 'work-face__shot', {
@@ -330,7 +334,7 @@ export function initWork(): () => void {
       }
       back.append(fb);
     }
-    back.append(h('div', 'work-face__scrim'));
+    if (b.mockup) back.append(h('div', 'work-face__scrim'));
 
     const actions = h('div', 'work-face__actions');
     if (b.url) {

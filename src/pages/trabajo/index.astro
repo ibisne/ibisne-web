@@ -127,9 +127,9 @@ const dataJson = JSON.stringify(data).replace(/</g, '\\u003c');
                     />
                   </span>
                 ) : (
-                  <span class="work-ph work-card__logo-ph">
-                    <span class="work-ph__name">{b.name}</span>
-                    <span class="work-ph__tag">Logo pendiente</span>
+                  /* LOGO PENDIENTE: wordmark provisional, sustituir por el logo real */
+                  <span class="work-ph work-card__logo-ph" data-logo-pending>
+                    {b.name}
                   </span>
                 )}
               </button>

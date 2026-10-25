@@ -4,7 +4,7 @@ description: "Cómo iBisne S.A.S. de C.V. recopila, usa y protege tu informació
 updated: "25 de octubre de 2026"
 ---
 
-Este Aviso de privacidad describe cómo iBisne S.A.S. de C.V. (en adelante, "iBisne", "nosotros" o "nuestro") recopila, utiliza y divulga tu información personal cuando visitas www.ibisne.com (en adelante, el "Sitio") o te comunicas con nosotros por WhatsApp o correo electrónico (de manera colectiva, los "Servicios"). Los términos "tú" y "tu" hacen referencia a ti como usuario de los Servicios, ya sea como cliente, visitante del Sitio o cualquier otra persona cuya información hayamos recopilado conforme a este Aviso.
+Este Aviso de privacidad describe cómo iBisne S.A.S. de C.V. (en adelante, "iBisne", "nosotros" o "nuestro") recopila, utiliza y divulga tu información personal cuando visitas [www.ibisne.com](https://www.ibisne.com) (en adelante, el "Sitio") o te comunicas con nosotros por WhatsApp o correo electrónico (de manera colectiva, los "Servicios"). Los términos "tú" y "tu" hacen referencia a ti como usuario de los Servicios, ya sea como cliente, visitante del Sitio o cualquier otra persona cuya información hayamos recopilado conforme a este Aviso.
 
 Léelo con atención. Al utilizar los Servicios, aceptas que tu información se recopile, use y divulgue como se describe aquí. Si no estás de acuerdo, no utilices los Servicios.
 

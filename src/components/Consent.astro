@@ -80,6 +80,18 @@
       min-height: var(--touch);
     }
   }
+  /* Escritorio angosto: banner mas estrecho para no tapar el titular de Inicio */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .consent {
+      width: 300px;
+      font-size: 12px;
+      padding: 0.75rem 0.85rem;
+    }
+    .consent__actions .btn {
+      font-size: 12px;
+      padding: 0 0.6rem;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .consent {
       animation: none;
