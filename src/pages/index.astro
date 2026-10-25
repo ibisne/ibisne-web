@@ -1,55 +1,339 @@
 ---
+import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import BParticles from '../components/BParticles.astro';
+import HomeLayerImg from '../components/HomeLayerImg.astro';
+import fondo from '../assets/bg/c4-fondo.png';
+import ciudad from '../assets/bg/c4-ciudad.png';
+import fondoM from '../assets/bg/m-fondo.png';
+import ciudadM from '../assets/bg/m-ciudad.png';
+
+// Precarga del fondo (candidato a LCP): una por orientacion, para bajar solo la que se usa.
+const opts = { format: 'webp', quality: 72 } as const;
+const [pre, preM] = await Promise.all([
+  getImage({ src: fondo, widths: [960, 1440, 1920, 2560], ...opts }),
+  getImage({ src: fondoM, widths: [640, 960, 1440], ...opts }),
+]);
 ---
 
 <Base
   title="iBisne · Diseñamos tecnología para marcas selectas"
-  description="Diseñamos tecnología para marcas selectas. Estudio de producto y software en Zapopan, Jalisco."
+  description="Tech studio en Zapopan, Jalisco. Construimos hoy la tecnología que tu empresa necesitará mañana."
   page="home"
 >
-  {/* TODO(agente HOME): reemplazar este placeholder. Mantener <Base page="home">,
-      las capas [data-travel-bg] / [data-travel-ui] y el registerPage de abajo. */}
-  <div class="stage ph">
-    <div class="bg-layer ph__bg" data-travel-bg></div>
-    <div class="ph__ui ui-layer">
-      <div data-travel-ui><BParticles size="min(52vh, 480px)" /></div>
-      <h1 class="title" data-travel-ui>
-        <span class="title__thin">Diseñamos tecnología</span>
-        <span class="title__bold">para marcas selectas.</span>
-      </h1>
-      <p class="muted" data-travel-ui>
-        <a class="pill" href="/trabajo/">Trabajo</a>
-        <a class="pill" href="/contacto/">Contacto</a>
-      </p>
+  <Fragment slot="head">
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      imagesrcset={pre.srcSet.attribute}
+      imagesizes="100vw"
+      media="(min-aspect-ratio: 1/1)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      imagesrcset={preM.srcSet.attribute}
+      imagesizes="100vw"
+      media="(max-aspect-ratio: 1/1)"
+      fetchpriority="high"
+    />
+  </Fragment>
+
+  <div class="stage hm" data-home-stage>
+    <!-- 1 · Fondo: valle indigo. Parallax lento (4 px) -->
+    <div class="bg-layer hm-l hm-l--fondo" data-travel-bg>
+      <div class="hm-par" data-depth="4">
+        <HomeLayerImg desktop={fondo} mobile={fondoM} priority />
+      </div>
+    </div>
+
+    <!-- 2 · Ciudad apagada: gris y baja exposicion. Parallax medio (10 px) -->
+    <div class="bg-layer hm-l hm-l--off" data-travel-bg>
+      <div class="hm-par" data-depth="10">
+        <HomeLayerImg desktop={ciudad} mobile={ciudadM} />
+      </div>
+    </div>
+
+    <!-- 3 · Ciudad encendida: la misma imagen, solo visible dentro de la mascara que sigue al cursor -->
+    <div class="bg-layer hm-l hm-l--on" data-travel-bg>
+      <div class="hm-par" data-depth="10">
+        <HomeLayerImg desktop={ciudad} mobile={ciudadM} />
+      </div>
+    </div>
+
+    <!-- 4 · Pulsos de luz cian, pegados al foco -->
+    <div class="bg-layer hm-l hm-l--pulses" data-travel-bg>
+      <div class="hm-pulses">
+        <svg viewBox="0 0 520 520" fill="none" aria-hidden="true" focusable="false">
+          <g class="hm-arc">
+            <path d="M60 330C140 270 240 262 330 292" pathLength="100" class="hm-arc__base"></path>
+            <path d="M60 330C140 270 240 262 330 292" pathLength="100" class="hm-arc__run" style="--d:0s"></path>
+            <circle cx="330" cy="292" r="4" class="hm-dot" style="--d:0s"></circle>
+          </g>
+          <g class="hm-arc">
+            <path d="M130 190C220 150 330 150 420 200" pathLength="100" class="hm-arc__base"></path>
+            <path d="M130 190C220 150 330 150 420 200" pathLength="100" class="hm-arc__run" style="--d:1.4s"></path>
+            <circle cx="420" cy="200" r="4" class="hm-dot" style="--d:1.4s"></circle>
+          </g>
+          <g class="hm-arc">
+            <path d="M90 430C190 390 320 400 440 350" pathLength="100" class="hm-arc__base"></path>
+            <path d="M90 430C190 390 320 400 440 350" pathLength="100" class="hm-arc__run" style="--d:2.7s"></path>
+            <circle cx="440" cy="350" r="4" class="hm-dot" style="--d:2.7s"></circle>
+          </g>
+          <circle cx="300" cy="244" r="9" class="hm-ring"></circle>
+          <circle cx="300" cy="244" r="3" class="hm-ring__core"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 6 · Vinetas arriba y abajo: dan lectura al header y al titular -->
+    <div class="bg-layer hm-vig" data-travel-bg></div>
+
+    <div class="hm-ui">
+      <!-- 5 · La B, mas chica que en el resto de sitios. Parallax rapido (18 px) -->
+      <div class="hm-bpos">
+        <div class="hm-bpar" data-depth="18">
+          <div data-travel-ui>
+            <BParticles size="min(40vh, 360px)" interactive={true} />
+          </div>
+        </div>
+      </div>
+
+      <div class="hm-copy">
+        <h1 class="hm-title" data-travel-ui>
+          <span class="hm-title__thin">Diseñamos tecnología</span>
+          <span class="hm-title__bold">para marcas selectas.</span>
+        </h1>
+        <p class="hm-sub" data-travel-ui>Construimos hoy la tecnología que tu empresa necesitará mañana.</p>
+      </div>
     </div>
   </div>
 </Base>
 
 <style>
-  .ph {
-    height: 100%;
+  /* ---------- Escenario ---------- */
+  .hm {
+    --hm-r: clamp(150px, 46vw, 240px); /* radio del foco (movil) */
+    --mx: 72%; /* sin JS: foco sobre la torre derecha */
+    --my: 60%;
+    min-height: 100svh;
+    background: var(--ink);
+    overflow: hidden;
   }
-  .ph__bg {
+
+  /* Cada capa de imagen lleva dentro un .hm-par: el parallax mueve ese hijo,
+     asi no choca con el transform que el motor de viaje anima en .bg-layer. */
+  .hm-par {
+    position: absolute;
+    inset: -24px; /* margen para los 18 px maximos de desplazamiento */
+    will-change: transform;
+  }
+
+  /* 2 · Ciudad apagada */
+  .hm-l--off {
+    mix-blend-mode: screen;
+  }
+  .hm-l--off .hm-par :global(img) {
+    filter: brightness(0.32) saturate(0.3) contrast(1.1);
+  }
+
+  /* 3 · Ciudad encendida: mascara radial centrada en el foco */
+  .hm-l--on {
+    mix-blend-mode: screen;
+    -webkit-mask-image: radial-gradient(circle var(--hm-r) at var(--mx) var(--my), #000 30%, transparent 100%);
+    mask-image: radial-gradient(circle var(--hm-r) at var(--mx) var(--my), #000 30%, transparent 100%);
+  }
+
+  /* 4 · Pulsos: caja del tamano del foco, desplazada con transform (barato) */
+  .hm-l--pulses {
+    mix-blend-mode: screen;
+  }
+  .hm-pulses {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--hm-r) * 2);
+    height: calc(var(--hm-r) * 2);
+    transform: translate3d(calc(var(--mx) - var(--hm-r)), calc(var(--my) - var(--hm-r)), 0);
+    -webkit-mask-image: radial-gradient(circle at center, #000 25%, transparent 68%);
+    mask-image: radial-gradient(circle at center, #000 25%, transparent 68%);
+  }
+  .hm-pulses svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 0 5px var(--cyan));
+  }
+  .hm-arc__base {
+    stroke: var(--cyan);
+    stroke-opacity: 0.32;
+    stroke-width: 1.4;
+  }
+  .hm-arc__run {
+    stroke: var(--text);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-dasharray: 9 91;
+    stroke-dashoffset: 0;
+    animation: hm-run 4.2s var(--ease-inout) var(--d) infinite;
+  }
+  .hm-dot {
+    fill: var(--cyan);
+    animation: hm-blink 4.2s ease-out var(--d) infinite;
+  }
+  .hm-ring {
+    stroke: var(--cyan);
+    stroke-width: 1.2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hm-ring 3.2s ease-out infinite;
+  }
+  .hm-ring__core {
+    fill: var(--cyan);
+  }
+  @keyframes hm-run {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+  @keyframes hm-blink {
+    0%,
+    78% {
+      opacity: 0.35;
+      r: 3px;
+    }
+    90% {
+      opacity: 1;
+      r: 6px;
+    }
+    100% {
+      opacity: 0.35;
+      r: 3px;
+    }
+  }
+  @keyframes hm-ring {
+    from {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(3.2);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-arc__run,
+    .hm-ring {
+      animation: none !important;
+    }
+    .hm-arc__run {
+      stroke-opacity: 0;
+    }
+    .hm-ring {
+      opacity: 0.5;
+    }
+  }
+
+  /* 6 · Vinetas */
+  .hm-vig {
     background:
-      radial-gradient(40% 40% at 72% 62%, rgb(77 243 255 / 0.35), transparent 70%),
-      radial-gradient(40% 40% at 22% 64%, rgb(255 62 165 / 0.35), transparent 70%),
-      var(--ink-2);
+      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 88%, transparent), transparent 24%),
+      linear-gradient(to top, color-mix(in srgb, var(--ink) 92%, transparent), transparent 50%);
   }
-  .ph__ui {
-    height: 100%;
+
+  /* ---------- Interfaz ---------- */
+  .hm-ui {
+    position: relative;
+    z-index: var(--z-ui);
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    text-align: center;
-    padding-inline: var(--gutter);
+    padding: calc(var(--header-h) + 0.75rem) var(--gutter) 3.5rem;
+  }
+  .hm-bpos {
+    align-self: center;
+    margin-block: 0.5rem 2rem;
+  }
+  .hm-copy {
+    margin-top: auto;
+    max-width: 62rem;
+  }
+  .hm-title {
+    font-size: clamp(2.25rem, 10.5vw, 3.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .hm-title__thin,
+  .hm-title__bold {
+    display: block;
+  }
+  .hm-title__thin {
+    font-weight: var(--w-thin);
+  }
+  .hm-title__bold {
+    font-weight: var(--w-bold);
+  }
+  .hm-sub {
+    margin-top: 1.25rem;
+    max-width: 34ch;
+    font-size: 1.125rem;
+    font-weight: var(--w-regular);
+    line-height: 1.4;
+    color: var(--text-2);
+    text-wrap: pretty;
+  }
+
+  /* ---------- Escritorio sin scroll (mismo umbral que global.css) ---------- */
+  @media (min-width: 1024px) and (min-height: 700px) {
+    .hm {
+      --hm-r: 260px; /* mascara de ~520 px, como la lamina de capas */
+      height: 100%;
+      min-height: 0;
+    }
+    .hm-ui {
+      position: absolute;
+      inset: 0;
+      min-height: 0;
+      padding: var(--header-h) 60px 64px;
+    }
+    .hm-bpos {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      translate: -50% -50%;
+      margin: 0;
+    }
+    .hm-copy {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      bottom: 64px;
+      margin: 0;
+      max-width: none;
+    }
+    .hm-title {
+      /* 6.2vw con tope de 88px; el limite por alto evita que choque con la B en ventanas bajas */
+      font-size: clamp(48px, min(6.2vw, 9.5vh), 88px);
+    }
+    .hm-sub {
+      margin-top: 1.5rem;
+      max-width: none;
+      font-size: 20px;
+    }
   }
 </style>
 
 <script>
   import { registerPage } from '../scripts/travel';
+  import '../scripts/home-light';
   // Punto focal en el fondo de Inicio de cada destino: torre derecha -> Trabajo, piramide izquierda -> Contacto.
-  registerPage('home', { focal: { trabajo: { x: 0.72, y: 0.62 }, contacto: { x: 0.22, y: 0.64 } } });
+  // El motor ya emite b:dissolve al salir y b:assemble al entrar: no hace falta repetirlo aqui.
+  registerPage('home', { focal: { trabajo: { x: 0.74, y: 0.62 }, contacto: { x: 0.22, y: 0.64 } } });
 </script>

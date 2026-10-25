@@ -1,46 +1,428 @@
 ---
+import { getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import BParticles from '../../components/BParticles.astro';
+import ContactOption from '../../components/contact-option.astro';
+import {
+  OPTIONS,
+  WA_BASE,
+  PHONE_LABEL,
+  PHONE_HREF,
+  EMAIL,
+  INSTAGRAM,
+  FACEBOOK,
+  WHATSAPP_ICON,
+} from '../../components/contact-data';
+import fondoDesk from '../../assets/bg/c4-fondo.png';
+import ciudadDesk from '../../assets/bg/c4-ciudad.png';
+import fondoMob from '../../assets/bg/m-fondo.png';
+import ciudadMob from '../../assets/bg/m-ciudad.png';
+
+const [fD, cD, fM, cM] = await Promise.all([
+  getImage({ src: fondoDesk, format: 'webp', width: 1920, quality: 68 }),
+  getImage({ src: ciudadDesk, format: 'webp', width: 1920, quality: 68 }),
+  getImage({ src: fondoMob, format: 'webp', width: 900, quality: 68 }),
+  getImage({ src: ciudadMob, format: 'webp', width: 900, quality: 68 }),
+]);
+const MOBILE = '(max-width: 1023px)';
 ---
 
 <Base
-  title="Contacto"
-  description="Cuéntanos qué quieres construir. Respondemos por WhatsApp o correo."
+  title="Contacto · iBisne"
+  description="Escríbenos por WhatsApp al 33 3723 7525 o a proyectos@ibisne.com. iBisne · Zapopan, Jalisco."
   page="contacto"
 >
-  {/* TODO(agente CONTACTO): reemplazar este placeholder. Mantener <Base page="contacto">,
-      las capas [data-travel-bg] / [data-travel-ui] y el registerPage. */}
-  <div class="stage ph">
-    <div class="bg-layer ph__bg" data-travel-bg></div>
-    <div class="ph__ui ui-layer">
-      <h1 class="title title--h2" data-travel-ui>
-        <span class="title__thin">Contacto</span>
-        <span class="title__bold">(placeholder)</span>
-      </h1>
-      <p data-travel-ui><a class="pill" href="/">Inicio</a> <a class="pill" href="/trabajo/">Trabajo</a></p>
+  <div class="stage ct">
+    <div class="bg-layer ct__bg" data-travel-bg aria-hidden="true">
+      <picture>
+        <source media={MOBILE} srcset={fM.src} width={fM.attributes.width} height={fM.attributes.height} />
+        <img class="ct__fondo" src={fD.src} width={fD.attributes.width} height={fD.attributes.height} alt="" decoding="async" fetchpriority="high" />
+      </picture>
+      <picture>
+        <source media={MOBILE} srcset={cM.src} width={cM.attributes.width} height={cM.attributes.height} />
+        <img class="ct__ciudad" src={cD.src} width={cD.attributes.width} height={cD.attributes.height} alt="" decoding="async" />
+      </picture>
+      <div class="ct__veil"></div>
+      <div class="ct__vig ct__vig--top"></div>
+      <div class="ct__vig ct__vig--bottom"></div>
+    </div>
+
+    <div class="ui-layer ct__ui">
+      <section class="ct__left" aria-labelledby="ct-title">
+        <div class="ct__head" data-travel-ui>
+          <p class="label ct__eyebrow">Contacto</p>
+          <h1 id="ct-title" class="title ct__title">
+            <span class="title__thin">Hablemos de</span>
+            <span class="title__bold">lo que sigue.</span>
+          </h1>
+          <p class="ct__lead">Cuéntanos tu idea por WhatsApp. Te responde una persona del equipo.</p>
+        </div>
+
+        <div class="ct__cta" data-travel-ui>
+          <a class="ct__wa" href={WA_BASE} target="_blank" rel="noopener">
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={WHATSAPP_ICON} />
+            <span>Escríbenos por WhatsApp</span>
+          </a>
+          <a class="ct__tel" href={PHONE_HREF}>{PHONE_LABEL}</a>
+        </div>
+
+        <div class="card ct__info" data-travel-ui>
+          <dl class="ct__rows">
+            <div class="ct__row">
+              <dt class="ct__k">Correo</dt>
+              <dd><a class="ct__v" href={`mailto:${EMAIL}`}>{EMAIL}</a></dd>
+            </div>
+            <div class="ct__row">
+              <dt class="ct__k">Redes</dt>
+              <dd class="ct__social">
+                <a class="ct__v" href={INSTAGRAM.href} target="_blank" rel="noopener"><span>Instagram</span> {INSTAGRAM.handle}</a>
+                <a class="ct__v" href={FACEBOOK.href} target="_blank" rel="noopener"><span>Facebook</span> {FACEBOOK.handle}</a>
+              </dd>
+            </div>
+            <div class="ct__row">
+              <dt class="ct__k">Estudio</dt>
+              <dd class="ct__v">Zapopan, Jalisco</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="ct__right" aria-labelledby="ct-q">
+        <h2 id="ct-q" class="ct__q" data-travel-ui><span class="ct__q-thin">¿Qué te</span> <strong>interesa</strong><span class="ct__q-thin">?</span></h2>
+        <ul class="ct__opts" role="list">
+          {OPTIONS.map((o) => <li><ContactOption option={o} /></li>)}
+        </ul>
+      </section>
+
+      <div class="ct__sig only-lock" data-travel-ui aria-hidden="true">
+        <div class="ct__sig-in"><BParticles size="154px" intensity={0.5} interactive={false} /></div>
+      </div>
     </div>
   </div>
 </Base>
 
 <style>
-  .ph {
-    height: 100%;
+  .ct {
+    --pad-x: clamp(1.5rem, 4.1667vw, 5rem);
+    min-height: 100dvh;
   }
-  .ph__bg {
-    background: radial-gradient(50% 50% at 50% 60%, rgb(255 62 165 / 0.25), transparent 70%), var(--ink-2);
+
+  /* ---------- Fondo ---------- */
+  .ct__bg {
+    background: var(--ink);
   }
-  .ph__ui {
+  .ct__fondo,
+  .ct__ciudad {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+  }
+  .ct__ciudad {
+    top: auto;
+    height: 90%;
+    filter: brightness(0.32) saturate(0.3);
+    mix-blend-mode: screen;
+  }
+  .ct__veil {
+    position: absolute;
+    inset: 0;
+    background: rgb(11 8 32 / 0.45);
+  }
+  .ct__vig {
+    position: absolute;
+    inset-inline: 0;
+  }
+  .ct__vig--top {
+    top: 0;
+    height: 27%;
+    background: linear-gradient(to bottom, rgb(11 8 32 / 0.85), rgb(11 8 32 / 0));
+  }
+  .ct__vig--bottom {
+    bottom: 0;
+    height: 42%;
+    background: linear-gradient(to top, rgb(11 8 32 / 0.9), rgb(11 8 32 / 0));
+  }
+
+  /* ---------- Columnas (movil: una sola, en orden de lectura) ---------- */
+  .ct__ui {
     display: flex;
     flex-direction: column;
+    gap: 1.75rem;
+    padding: calc(var(--header-h) + 1.5rem) var(--gutter) 2rem;
+  }
+  .ct__left {
+    display: contents;
+  }
+  .ct__head {
+    order: 1;
+  }
+  .ct__cta {
+    order: 2;
+  }
+  .ct__right {
+    order: 3;
+  }
+  .ct__info {
+    order: 4;
+  }
+
+  .ct__eyebrow {
+    line-height: 16px;
+    color: var(--cyan);
+    margin-bottom: 0.875rem;
+  }
+  .ct__title {
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .ct__lead {
+    margin-top: 0.875rem;
+    max-width: 30rem;
+    font-size: clamp(1rem, 4.4vw, 1.125rem);
+    line-height: 1.28;
+    font-weight: var(--w-light);
+    color: var(--text-2);
+    text-wrap: pretty;
+  }
+
+  /* CTA */
+  .ct__cta {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    text-align: center;
-    padding-inline: var(--gutter);
+    gap: 0.875rem 1.125rem;
+  }
+  .ct__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 24px;
+    border-radius: var(--radius-pill);
+    background: var(--text);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: var(--w-medium);
+    line-height: 20px;
+    white-space: nowrap;
+    transition:
+      box-shadow 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out);
+  }
+  .ct__wa:is(:hover, :focus-visible) {
+    box-shadow: 0 0 28px rgb(77 243 255 / 0.35);
+  }
+  .ct__wa:active {
+    transform: translateY(1px) scale(0.99);
+  }
+  .ct__tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+  .ct__tel:hover {
+    color: var(--text);
+  }
+
+  /* Tarjeta de datos: no es un enlace, no reacciona al hover de .card */
+  .ct__info.card,
+  .ct__info.card:hover {
+    background: rgb(11 8 32 / 0.55);
+    border-color: rgb(242 238 255 / 0.14);
+    box-shadow: none;
+  }
+  .ct__info {
+    width: 100%;
+    max-width: 460px;
+    padding: var(--ct-info-pad, 24px);
+  }
+  .ct__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .ct__row + .ct__row {
+    margin-top: var(--ct-info-gap, 16px);
+    padding-top: var(--ct-info-gap, 16px);
+    border-top: 1px solid rgb(242 238 255 / 0.1);
+  }
+  .ct__k {
+    margin-bottom: 6px;
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: var(--w-medium);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .ct__row dd {
+    margin: 0;
+    font-size: 16px;
+    line-height: 21px;
+  }
+  .ct__social {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ct__v {
+    font-size: 16px;
+    line-height: 21px;
+    color: var(--text);
+  }
+  a.ct__v {
+    align-self: flex-start;
+    transition: color 0.2s;
+  }
+  a.ct__v:hover {
+    color: var(--cyan);
+  }
+  .ct__v span {
+    color: var(--text-3);
+  }
+
+  /* Pregunta + opciones */
+  .ct__q {
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.75rem, 8vw, 2rem);
+    line-height: 1.3125;
+    letter-spacing: -0.02em;
+    font-weight: var(--w-thin);
+  }
+  .ct__q strong {
+    font-weight: var(--w-bold);
+  }
+  .ct__opts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+  }
+  .ct__opts > li {
+    display: flex;
+  }
+  .ct__opts :global(.opt) {
+    width: 100%;
+  }
+
+  .ct__sig {
+    display: none;
+  }
+
+  /* Movil/tablet: el fondo queda fijo al viewport mientras el contenido scrollea */
+  @media not ((min-width: 1024px) and (min-height: 700px)) {
+    .ct__bg {
+      position: fixed;
+    }
+  }
+
+  /* ---------- Escritorio sin scroll (identico a Figma 46:2 a 1440x900) ---------- */
+  @media (min-width: 1024px) and (min-height: 700px) {
+    .ct {
+      min-height: 0;
+      height: 100%;
+    }
+    .ct__ui {
+      display: grid;
+      height: 100%;
+      grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+      column-gap: 2.5rem;
+      align-content: start;
+      align-items: start;
+      padding: max(calc(var(--header-h) + 1rem), 13.333dvh) var(--pad-x) 0;
+      --ct-info-pad: clamp(15px, calc(2.8dvh - 1px), 24px);
+      --ct-info-gap: clamp(10px, 1.8dvh, 16px);
+    }
+    .ct__left {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(1.25rem, 3.33dvh, 1.875rem);
+    }
+    .ct__head,
+    .ct__cta,
+    .ct__right,
+    .ct__info {
+      order: 0;
+    }
+    .ct__eyebrow {
+      margin-bottom: clamp(0.5rem, 1.55dvh, 0.875rem);
+    }
+    .ct__title {
+      font-size: clamp(2.25rem, min(6.2dvh, 3.9vw), 3.5rem);
+    }
+    .ct__lead {
+      margin-top: clamp(0.5rem, 1.55dvh, 0.875rem);
+      max-width: 29.4rem;
+      font-size: clamp(1rem, 2dvh, 1.125rem);
+    }
+    .ct__q {
+      margin-bottom: clamp(1rem, 2.9dvh, 1.625rem);
+      font-size: clamp(1.625rem, 3.56dvh, 2rem);
+    }
+    .ct__opts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 16px;
+    }
+    .ct__sig {
+      display: none; /* solo desde 1280px: antes se montaria sobre las opciones */
+      position: absolute;
+      right: calc(var(--pad-x) + 2.9rem);
+      bottom: clamp(3rem, 9.33dvh, 5.25rem);
+      pointer-events: none;
+    }
+    .ct__sig-in {
+      opacity: 0.35;
+    }
+  }
+
+  @media (min-width: 1280px) and (min-height: 700px) {
+    .ct__sig {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1360px) and (min-height: 700px) {
+    .ct__ui {
+      grid-template-columns: minmax(0, 470px) minmax(0, 680px);
+      justify-content: space-between;
+    }
+  }
+
+  @media (min-width: 1024px) and (min-height: 700px) and (max-width: 1180px) {
+    .ct__cta {
+      gap: 0.5rem 1rem;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Pie legal de Contacto: en escritorio sin scroll, discreto y alineado a la columna izquierda */
+  @media (min-width: 1024px) and (min-height: 700px) {
+    html[data-page='contacto'] .legal-foot {
+      padding: 0 clamp(1.5rem, 4.1667vw, 5rem) 1.25rem;
+    }
+    html[data-page='contacto'] .legal-foot a {
+      min-height: 1.75rem;
+    }
   }
 </style>
 
 <script>
   import { registerPage } from '../../scripts/travel';
-  registerPage('contacto', { focal: { home: { x: 0.5, y: 0.5 } } });
+  import { contactEnter } from '../../scripts/contact-enter';
+
+  // Punto focal de Contacto hacia sus vecinas; el fondo usa la animacion de serie.
+  registerPage('contacto', {
+    focal: { home: { x: 0.5, y: 0.55 }, trabajo: { x: 0.5, y: 0.55 } },
+    enter: contactEnter,
+  });
 </script>

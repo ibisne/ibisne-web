@@ -1,0 +1,57 @@
+---
+import { getImage } from 'astro:assets';
+
+interface Props {
+  /** Imagen apaisada (escritorio) */
+  desktop: ImageMetadata;
+  /** Imagen vertical (movil / pantallas mas altas que anchas) */
+  mobile: ImageMetadata;
+  /** true: fetchpriority="high" (candidata a LCP) */
+  priority?: boolean;
+}
+
+const { desktop, mobile, priority = false } = Astro.props;
+
+const opts = { format: 'webp', quality: 72 } as const;
+const [d, m] = await Promise.all([
+  getImage({ src: desktop, widths: [960, 1440, 1920, 2560], ...opts }),
+  getImage({ src: mobile, widths: [640, 960, 1440], ...opts }),
+]);
+---
+
+<picture>
+  <source
+    media="(max-aspect-ratio: 1/1)"
+    type="image/webp"
+    srcset={m.srcSet.attribute}
+    sizes="100vw"
+    width={mobile.width}
+    height={mobile.height}
+  />
+  <img
+    src={d.src}
+    srcset={d.srcSet.attribute}
+    sizes="100vw"
+    width={desktop.width}
+    height={desktop.height}
+    alt=""
+    aria-hidden="true"
+    loading="eager"
+    decoding="async"
+    fetchpriority={priority ? 'high' : undefined}
+    draggable="false"
+  />
+</picture>
+
+<style>
+  picture,
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  img {
+    object-fit: cover;
+    user-select: none;
+  }
+</style>

@@ -1,17 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": false,
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
   "trailingSlash": true,
+  "cleanUrls": false,
   "headers": [
-    {
-      "source": "/data/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=60, must-revalidate"
-        }
-      ]
-    },
     {
       "source": "/(.*)",
       "headers": [
@@ -37,21 +32,12 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
         }
       ]
     },
     {
-      "source": "/design-system-v2/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=60, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/site/(.*)",
+      "source": "/_astro/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -60,7 +46,7 @@
       ]
     },
     {
-      "source": "/(.*).html",
+      "source": "/sw.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -76,93 +62,87 @@
           "value": "public, max-age=300, must-revalidate"
         }
       ]
-    },
-    {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/demos/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; script-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=604800, stale-while-revalidate=86400"
-        }
-      ]
-    },
-    {
-      "source": "/brand/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=604800, stale-while-revalidate=86400"
-        }
-      ]
     }
   ],
   "redirects": [
     {
-      "source": "/webs.html",
-      "destination": "/#pricing",
+      "source": "/servicios/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/como-trabajamos/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/inversion/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-ibisne/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/estudio/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/insights/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/portafolio/:path*",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/promos/:path*",
+      "destination": "/contacto/",
+      "permanent": true
+    },
+    {
+      "source": "/empecemos/:path*",
+      "destination": "/contacto/",
+      "permanent": true
+    },
+    {
+      "source": "/legal/cancelacion/:path*",
+      "destination": "/legal/terminos/",
       "permanent": true
     },
     {
       "source": "/webs",
-      "destination": "/#pricing",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/servicios/sitios-web",
-      "destination": "/servicios/comercio/",
+      "source": "/webs.html",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/servicios/ecommerce",
-      "destination": "/servicios/comercio/",
+      "source": "/index.html",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/servicios/apps",
-      "destination": "/servicios/producto/",
+      "source": "/contacto/index.html",
+      "destination": "/contacto/",
       "permanent": true
     },
     {
-      "source": "/servicios/crm",
-      "destination": "/servicios/producto/",
+      "source": "/assets/og-default.png",
+      "destination": "/og.jpg",
       "permanent": true
     },
     {
-      "source": "/servicios/erp",
-      "destination": "/servicios/producto/",
-      "permanent": true
-    },
-    {
-      "source": "/servicios/saas",
-      "destination": "/servicios/producto/",
-      "permanent": true
-    },
-    {
-      "source": "/servicios/ia",
-      "destination": "/servicios/frontera/",
-      "permanent": true
-    },
-    {
-      "source": "/servicios/web3",
-      "destination": "/servicios/frontera/",
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
       "permanent": true
     }
   ]

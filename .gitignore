@@ -41,3 +41,6 @@ Fondo/
 # Astro (sitio 2026)
 dist/
 .astro/
+
+# Capturas y logs del MCP de Playwright
+.playwright-mcp/

@@ -1,46 +1,209 @@
 ---
+import { getImage, Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import { brands, NICHOS, TIPOS } from '../../data/brands';
+import { TIPO_ICONS } from '../../components/work-icons';
+import '../../components/work-styles.css';
+import bgDesktop from '../../assets/bg/c4-trabajo-fondo.png';
+import bgMobile from '../../assets/bg/m-trabajo.png';
+
+const [bgD, bgM] = await Promise.all([
+  getImage({ src: bgDesktop, width: 1920, format: 'webp', quality: 62 }),
+  getImage({ src: bgMobile, width: 828, format: 'webp', quality: 62 }),
+]);
+
+/** Ancho de salida de cada logo: suficiente para 2x en la tarjeta de escritorio. */
+const logoWidth = (w: number) => Math.min(w, 400);
+
+// Datos para el cliente (panel 3x3 y modal): URLs ya optimizadas en build.
+const data = await Promise.all(
+  brands.map(async (b) => {
+    const logo = b.logo
+      ? await getImage({ src: b.logo, width: logoWidth(b.logo.width) })
+      : null;
+    const mockup = b.mockup ? await getImage({ src: b.mockup, width: 1000, format: 'webp', quality: 74 }) : null;
+    return {
+      slug: b.slug,
+      name: b.name,
+      nicho: b.nicho,
+      tipos: b.tipos,
+      url: b.url ?? null,
+      year: b.year ?? null,
+      stack: b.stack ?? null,
+      resumen: b.resumen ?? null,
+      logo: logo ? { src: logo.src, w: logo.attributes.width, h: logo.attributes.height } : null,
+      mockup: mockup ? { src: mockup.src, w: mockup.attributes.width, h: mockup.attributes.height } : null,
+    };
+  }),
+);
+const dataJson = JSON.stringify(data).replace(/</g, '\\u003c');
 ---
 
 <Base
   title="Trabajo"
-  description="Marcas con las que hemos diseñado y construido producto, software y plataformas."
+  description="Últimos trabajos de iBisne: sitios web, eCommerce, apps y sistemas para marcas de construcción, salud, alimentos, turismo, industria y educación."
   page="trabajo"
 >
-  {/* TODO(agente TRABAJO): reemplazar este placeholder. Mantener <Base page="trabajo">,
-      las capas [data-travel-bg] / [data-travel-ui] y el registerPage. */}
-  <div class="stage ph">
-    <div class="bg-layer ph__bg" data-travel-bg></div>
-    <div class="ph__ui ui-layer">
-      <h1 class="title title--h2" data-travel-ui>
-        <span class="title__thin">Trabajo</span>
-        <span class="title__bold">(placeholder)</span>
-      </h1>
-      <p data-travel-ui><a class="pill" href="/">Inicio</a> <a class="pill" href="/contacto/">Contacto</a></p>
+  <div class="stage work-stage">
+    <div class="bg-layer work-bglayer" data-travel-bg>
+      <div class="work-bg" data-work-bg>
+        <picture>
+          <source media="(min-width: 768px)" srcset={bgD.src} width={bgD.attributes.width} height={bgD.attributes.height} />
+          <img
+            src={bgM.src}
+            width={bgM.attributes.width}
+            height={bgM.attributes.height}
+            alt=""
+            decoding="async"
+            fetchpriority="high"
+          />
+        </picture>
+        <div class="work-bg__veil"></div>
+      </div>
+      <div class="work-vignette"></div>
     </div>
+
+    <div class="ui-layer work-ui">
+      <header>
+        <p class="label work-eyebrow" data-travel-ui>Últimos trabajos</p>
+        <h1 class="work-title" data-travel-ui>
+          <span class="work-title__thin">Marcas que</span>
+          {' '}<span class="work-title__bold">confían en nosotros.</span>
+        </h1>
+      </header>
+
+      <div class="work-filters" data-travel-ui>
+        <div class="work-filter" role="group" aria-labelledby="work-f-nicho">
+          <span class="work-filter__label" id="work-f-nicho">Nichos</span>
+          <div class="work-filter__pills">
+            <button type="button" class="work-pill" data-group="nicho" data-value="" aria-pressed="true">Todos</button>
+            {
+              NICHOS.map((n) => (
+                <button type="button" class="work-pill" data-group="nicho" data-value={n} aria-pressed="false">
+                  {n}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+        <div class="work-filter" role="group" aria-labelledby="work-f-tipo">
+          <span class="work-filter__label" id="work-f-tipo">Tipo</span>
+          <div class="work-filter__pills">
+            <button type="button" class="work-pill" data-group="tipo" data-value="" aria-pressed="true">Todos</button>
+            {
+              TIPOS.map((t) => (
+                <button type="button" class="work-pill" data-group="tipo" data-value={t} aria-pressed="false">
+                  <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false" set:html={TIPO_ICONS[t]} />
+                  {t}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="work-gridwrap">
+        <p class="sr-only" role="status" aria-live="polite" id="work-status"></p>
+        <div class="work-grid" role="group" aria-label="Marcas con las que hemos trabajado">
+          {
+            brands.map((b, i) => (
+              <button
+                type="button"
+                class="card work-card"
+                aria-haspopup="dialog"
+                data-slug={b.slug}
+                data-nicho={b.nicho}
+                data-tipos={b.tipos.join('|')}
+                data-travel-ui
+              >
+                {b.logo ? (
+                  <span class="work-card__logo">
+                    <Image
+                      src={b.logo}
+                      alt={b.name}
+                      width={logoWidth(b.logo.width)}
+                      loading={i < 12 ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
+                  </span>
+                ) : (
+                  <span class="work-ph work-card__logo-ph">
+                    <span class="work-ph__name">{b.name}</span>
+                    <span class="work-ph__tag">Logo pendiente</span>
+                  </span>
+                )}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <dialog class="work-modal" id="work-modal" aria-labelledby="work-modal-name" aria-describedby="work-modal-text">
+      <button type="button" class="work-modal__close" data-work-close aria-label="Cerrar">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 3l10 10M13 3 3 13"></path></svg>
+      </button>
+      <figure class="work-modal__shot" data-f="shot" hidden>
+        <img data-f="shot-img" alt="" width="1000" height="563" />
+      </figure>
+      <div class="work-modal__body">
+        <div class="work-modal__head">
+          <div class="work-modal__logo" data-f="logo" hidden>
+            <img data-f="logo-img" alt="" />
+          </div>
+          <div>
+            <h2 class="work-modal__name" id="work-modal-name" data-f="name"></h2>
+            <p class="work-modal__meta" data-f="meta"></p>
+          </div>
+        </div>
+        <p class="work-modal__text" id="work-modal-text" data-f="text"></p>
+        <div data-f="stack-wrap" hidden>
+          <p class="work-modal__sub">Stack</p>
+          <ul class="work-modal__stack" role="list" data-f="stack"></ul>
+        </div>
+        <dl class="work-modal__facts" data-f="facts" hidden>
+          <div data-f="year-wrap" hidden>
+            <dt class="work-modal__sub">Año</dt>
+            <dd data-f="year"></dd>
+          </div>
+          <div data-f="url-wrap" hidden>
+            <dt class="work-modal__sub">Sitio</dt>
+            <dd><a data-f="url" target="_blank" rel="noopener"></a></dd>
+          </div>
+        </dl>
+        <div class="work-modal__actions" data-f="actions" hidden>
+          <a class="work-btn work-btn--solid" data-f="visit" target="_blank" rel="noopener">Ver proyecto</a>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="application/json" id="work-data" set:html={dataJson} />
   </div>
 </Base>
 
-<style>
-  .ph {
-    height: 100%;
-  }
-  .ph__bg {
-    background: radial-gradient(50% 50% at 50% 60%, rgb(77 243 255 / 0.25), transparent 70%), var(--ink-2);
-  }
-  .ph__ui {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    text-align: center;
-    padding-inline: var(--gutter);
-  }
-</style>
-
 <script>
   import { registerPage } from '../../scripts/travel';
-  registerPage('trabajo', { focal: { home: { x: 0.5, y: 0.5 } } });
+  import { initWork } from '../../scripts/work-gallery';
+
+  // Puntos focales (en el fondo de ESTA pagina) hacia Inicio y Contacto.
+  registerPage('trabajo', { focal: { home: { x: 0.5, y: 0.5 }, contacto: { x: 0.5, y: 0.45 } } });
+
+  let cleanup: (() => void) | undefined;
+  let mounted: Element | null = null;
+  const mount = () => {
+    if (document.documentElement.dataset.page !== 'trabajo') return;
+    const grid = document.querySelector('.work-grid');
+    if (!grid || grid === mounted) return;
+    cleanup?.();
+    mounted = grid;
+    cleanup = initWork();
+  };
+  document.addEventListener('astro:page-load', mount);
+  document.addEventListener('astro:before-swap', () => {
+    cleanup?.();
+    cleanup = undefined;
+    mounted = null;
+  });
+  // Carga directa: el estado de la URL se aplica antes de la entrada animada.
+  mount();
 </script>

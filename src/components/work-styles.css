@@ -1,0 +1,624 @@
+/* Trabajo · estilos de pagina. Prefijo work-. Global a proposito: el panel 3x3 y el
+   modal se construyen con JS y no llevan el atributo de alcance de Astro.
+   Solo tokens de tokens.css; los valores sueltos vienen del Figma (26:2 / 26:114 / 28:2). */
+
+/* ---------- Escenario ---------- */
+.work-stage {
+  --work-px: var(--gutter);
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+}
+
+/* Fondo: imagen + velo #0B0820 35% + vineta superior. El parallax mueve .work-bg. */
+.bg-layer.work-bglayer {
+  overflow: visible;
+}
+.work-bg {
+  position: fixed;
+  inset: 0;
+  will-change: transform;
+}
+.work-bg picture,
+.work-bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.work-bg__veil {
+  position: absolute;
+  inset: 0;
+  background: rgb(11 8 32 / 0.35);
+}
+.work-vignette {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 15rem;
+  background: linear-gradient(rgb(11 8 32 / 0.85), rgb(11 8 32 / 0));
+}
+
+/* ---------- UI ---------- */
+.ui-layer.work-ui {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: calc(var(--header-h) + 1rem) var(--work-px) 0;
+}
+.work-eyebrow {
+  display: block;
+  color: var(--cyan);
+  line-height: 1rem;
+}
+.work-title {
+  margin-top: 0.125rem;
+  font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.work-title__thin {
+  font-weight: var(--w-thin);
+}
+.work-title__bold {
+  font-weight: var(--w-bold);
+}
+
+/* ---------- Filtros ---------- */
+.work-filters {
+  display: grid;
+  gap: 0.375rem;
+  margin-top: 1rem;
+}
+.work-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.work-filter__label {
+  flex: 0 0 3.25rem;
+  font-size: 11px;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.work-filter__pills {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0;
+  /* margen negativo + relleno: el anillo de foco no se recorta dentro del scroll */
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, #000 calc(100% - 1.5rem), transparent);
+}
+.work-filter__pills::-webkit-scrollbar {
+  display: none;
+}
+
+.work-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: rgb(11 8 32 / 0.35);
+  color: var(--text-2);
+  font-size: var(--fs-label);
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-label);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    color 0.2s,
+    background-color 0.2s,
+    border-color 0.2s,
+    opacity 0.2s;
+}
+.work-pill:focus-visible {
+  border-radius: var(--radius-pill);
+}
+.work-pill svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.work-pill:hover {
+  color: var(--text);
+  border-color: var(--text-2);
+}
+.work-pill[aria-pressed='true'] {
+  color: var(--ink);
+  background: var(--text);
+  border-color: var(--text);
+}
+.work-pill[aria-disabled='true'] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.work-pill[aria-disabled='true']:hover {
+  color: var(--text-2);
+  border-color: var(--line-strong);
+}
+
+/* ---------- Rejilla y tarjetas ---------- */
+.work-gridwrap {
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+}
+.work-grid {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .work-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.work-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 213 / 144;
+  padding: 0;
+  border-radius: 14px;
+  color: inherit;
+  cursor: pointer;
+  /* declarada aqui porque pisa la transicion de .card: suma opacity para el atenuado */
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    opacity 0.3s ease;
+}
+.work-card:focus-visible {
+  border-radius: 14px;
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.work-card__logo {
+  position: absolute;
+  inset: 25% 19%; /* caja de 62% x 50% centrada */
+}
+.work-card__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.work-grid.has-open > .work-card:not(.is-active) {
+  opacity: 0.3;
+}
+
+/* Placeholder de logo pendiente */
+.work-ph {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 120px;
+  max-width: 80%;
+  padding: 6px 12px;
+  border: 1px dashed rgb(242 238 255 / 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+.work-ph__name {
+  font-size: 12px;
+  font-weight: var(--w-medium);
+  line-height: 1.3;
+  color: rgb(242 238 255 / 0.75);
+}
+.work-ph__tag {
+  font-size: 9px;
+  font-weight: var(--w-medium);
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: rgb(242 238 255 / 0.55);
+}
+
+/* ---------- Panel 3x3 (solo escritorio con puntero fino) ---------- */
+.work-panel {
+  position: absolute;
+  z-index: 5;
+  transform-style: preserve-3d;
+  will-change: left, top, width, height, transform;
+}
+.work-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(77 243 255 / 0.9);
+  border-radius: 14px;
+  background: var(--ink);
+  box-shadow:
+    0 0 24px rgb(77 243 255 / 0.35),
+    0 24px 48px rgb(0 0 0 / 0.5);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.work-face--front {
+  background:
+    linear-gradient(rgb(77 243 255 / 0.07), rgb(77 243 255 / 0.07)),
+    var(--ink);
+}
+.work-face--front > * {
+  flex: none;
+}
+.work-face--back {
+  transform: rotateY(180deg);
+}
+.work-face__shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.work-face__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(60% 60% at 50% 50%, var(--ink-2), var(--ink));
+}
+.work-face__fallback img {
+  width: min(55%, 22rem);
+  height: auto;
+  max-height: 45%;
+  object-fit: contain;
+  opacity: 0.16;
+}
+.work-face__fallback .work-ph {
+  opacity: 0.5;
+  transform: scale(1.6);
+}
+.work-face__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(11 8 32 / 0.82);
+}
+.work-face__actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 1rem;
+}
+
+/* Botones del panel y del modal */
+.work-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s,
+    color 0.2s;
+}
+.work-btn:focus-visible {
+  border-radius: var(--radius-pill);
+}
+.work-btn--solid {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--ink);
+}
+.work-btn--solid:hover {
+  box-shadow: 0 0 24px rgb(77 243 255 / 0.4);
+}
+.work-btn--outline {
+  background: transparent;
+  border-color: rgb(242 238 255 / 0.55);
+  color: var(--text);
+}
+.work-btn--outline:hover {
+  border-color: var(--text);
+  background: rgb(242 238 255 / 0.08);
+}
+
+/* ---------- Modal de resumen tecnico ---------- */
+.work-modal {
+  width: min(560px, calc(100vw - 2rem));
+  max-height: min(88dvh, 780px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid rgb(242 238 255 / 0.14);
+  border-radius: 14px;
+  background: rgb(11 8 32 / 0.92);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  color: var(--text);
+  box-shadow:
+    0 0 24px rgb(77 243 255 / 0.18),
+    0 24px 64px rgb(0 0 0 / 0.6);
+  overscroll-behavior: contain;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s var(--ease-out),
+    overlay 0.25s allow-discrete,
+    display 0.25s allow-discrete;
+}
+.work-modal[open] {
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .work-modal[open] {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+.work-modal::backdrop {
+  background: rgb(11 8 32 / 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    overlay 0.25s allow-discrete,
+    display 0.25s allow-discrete;
+}
+.work-modal[open]::backdrop {
+  opacity: 1;
+}
+@starting-style {
+  .work-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+/* Con el modal abierto la pagina de fondo no se desplaza */
+html:has(.work-modal[open]) {
+  overflow: hidden;
+}
+
+.work-modal__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: rgb(11 8 32 / 0.7);
+  color: var(--text);
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+.work-modal__close:hover {
+  border-color: var(--text);
+  background: rgb(242 238 255 / 0.1);
+}
+.work-modal__close:focus-visible {
+  border-radius: var(--radius-pill);
+}
+.work-modal__close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.work-modal__shot {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  background: var(--ink-2);
+}
+.work-modal__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.work-modal__body {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.5rem;
+}
+.work-modal__head {
+  display: grid;
+  gap: 0.9rem;
+  padding-right: 2.75rem;
+}
+.work-modal__logo {
+  width: min(11rem, 60%);
+  height: 3.5rem;
+}
+.work-modal__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+.work-modal__name {
+  font-size: 1.5rem;
+  font-weight: var(--w-bold);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.work-modal__meta {
+  margin-top: 0.3rem;
+  font-size: var(--fs-label-lg);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.work-modal__text {
+  color: var(--text-2);
+  font-weight: var(--w-light);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.work-modal__text.is-empty {
+  color: var(--text-3);
+  font-style: italic;
+}
+.work-modal__sub {
+  margin-bottom: 0.5rem;
+  font-size: 11px;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.work-modal__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  list-style: none;
+}
+.work-modal__stack li {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: rgb(242 238 255 / 0.04);
+  font-size: var(--fs-label-lg);
+  color: var(--text-2);
+}
+.work-modal__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  margin: 0;
+}
+.work-modal__facts dd {
+  margin: 0;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.work-modal__facts a {
+  border-bottom: 1px solid rgb(77 243 255 / 0.5);
+  color: var(--cyan);
+}
+.work-modal__facts a:hover {
+  border-bottom-color: var(--cyan);
+}
+.work-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* ---------- Escritorio: sin scroll, rejilla de 6 x 4 que llena hasta abajo ---------- */
+@media (min-width: 1024px) and (min-height: 700px) {
+  .work-stage {
+    --work-px: clamp(1.5rem, 4.17vw, 3.75rem);
+    height: 100%;
+    min-height: 0;
+  }
+  .bg-layer.work-bglayer {
+    overflow: hidden;
+  }
+  .work-bg {
+    position: absolute;
+    inset: -14px;
+  }
+  .ui-layer.work-ui {
+    height: 100%;
+    min-height: 0;
+    /* abajo queda 44px para el enlace "Privacidad" */
+    padding: calc(var(--header-h) + 1.75rem) var(--work-px) 44px;
+  }
+  .work-filters {
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .work-filter__label {
+    flex-basis: 64px;
+  }
+  .work-filter__pills {
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    mask-image: none;
+  }
+  .work-pill {
+    min-height: 30px;
+  }
+  .work-gridwrap {
+    flex: 1;
+    min-height: 0;
+    margin-top: 14px;
+    padding-bottom: 0;
+  }
+  .work-grid {
+    height: 100%;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+  .work-card {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  html[data-page='trabajo'] .legal-mini {
+    position: absolute;
+    left: max(0px, calc(clamp(1.5rem, 4.17vw, 3.75rem) - var(--gutter)));
+    bottom: 0;
+    z-index: var(--z-ui);
+  }
+}
+
+/* Laptops de 1280-1439: pills mas compactas para que cada fila de filtros quepa en una linea */
+@media (min-width: 1024px) and (min-height: 700px) and (max-width: 1439px) {
+  .work-filter__pills {
+    gap: 6px;
+  }
+  .work-pill {
+    padding: 0 10px;
+    letter-spacing: 0.08em;
+  }
+}
+@media (min-width: 1024px) and (min-height: 700px) and (max-width: 1319px) {
+  .work-pill {
+    font-size: 11px;
+    padding: 0 8px;
+    letter-spacing: 0.06em;
+  }
+}
