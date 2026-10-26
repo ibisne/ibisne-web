@@ -24,7 +24,14 @@ import bStill from '../assets/b/b-trim.png';
         <span class="hm-title__thin">Diseñamos tecnología</span>
         <span class="hm-title__bold">para marcas selectas.</span>
       </h1>
-      <p class="hm-sub" data-travel-ui>Construimos hoy la tecnología que tu empresa necesitará mañana.</p>
+      <p class="hm-sub" data-travel-ui data-glitch-text>Construimos hoy la tecnología que tu empresa necesitará mañana.</p>
+      <!-- Qué hacemos: etiquetas, no botones (no enlazan). Entran con la cascada de la UI -->
+      <ul class="hm-pills" aria-label="Qué hacemos" data-travel-ui>
+        <li class="hm-pill">eCommerce</li>
+        <li class="hm-pill">Software</li>
+        <li class="hm-pill">Agentización</li>
+        <li class="hm-pill">Apps</li>
+      </ul>
     </div>
   </section>
 </Base>
@@ -40,7 +47,7 @@ import bStill from '../assets/b/b-trim.png';
     transition: padding-bottom 0.35s var(--ease-out); /* la B crece suave al cerrar el banner */
     display: flex;
     flex-direction: column;
-    padding: calc(var(--header-h) + 0.75rem) var(--gutter) calc(1.5rem + max(0px, var(--consent-h, 0px) - 2rem));
+    padding: calc(var(--header-h) + 0.75rem) var(--gutter) calc(1.5rem + max(0px, var(--consent-h, 0px) - 1rem));
     /* Tactil: arrastrar el dedo por la escena mueve la camara, la B y el glitch (engine.ts, eventos
        touch pasivos), como el mouse en escritorio. La pantalla es fija, asi que la escena no cede
        el gesto al navegador (sin scroll, sin tirar para recargar). Solo esta seccion: el header, la
@@ -112,6 +119,48 @@ import bStill from '../assets/b/b-trim.png';
     text-wrap: pretty;
   }
 
+  /* Etiquetas "que hacemos": vidrio tenue, borde con degradado cian a magenta (mascara, para que el
+     relleno no se tina) y letra del texto. Compactas: 26 px en movil, 28 px en escritorio. */
+  .hm-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.875rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hm-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 26px;
+    padding-inline: 0.55rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--text);
+    font-size: var(--fs-label);
+    font-weight: var(--w-medium);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .hm-pill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--cyan) 85%, transparent), color-mix(in srgb, var(--magenta) 85%, transparent));
+    -webkit-mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
   /* ---------- Telefono horizontal: la B a un lado y el titular al otro, todo en una pantalla ---------- */
   @media (max-height: 499px) and (not ((min-width: 1024px) and (min-height: 700px))) {
     .hm {
@@ -142,6 +191,9 @@ import bStill from '../assets/b/b-trim.png';
     .hm-sub {
       margin-top: 0.75rem;
       font-size: 1rem;
+    }
+    .hm-pills {
+      margin-top: 0.625rem;
     }
   }
 
@@ -175,9 +227,25 @@ import bStill from '../assets/b/b-trim.png';
       font-size: clamp(48px, min(6.2vw, 9.5vh), 88px);
     }
     .hm-sub {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       max-width: none;
       font-size: 20px;
+    }
+    .hm-pills {
+      gap: 0.5rem;
+      margin-top: 0.875rem;
+    }
+    .hm-pill {
+      height: 28px;
+      padding-inline: 0.8rem;
+      font-size: var(--fs-label-lg);
+    }
+  }
+
+  /* Ventanas bajas (1024x700): el bloque del titular crece con las etiquetas; la B sube para no rozarlo */
+  @media (min-width: 1024px) and (min-height: 700px) and (max-height: 760px) {
+    .hm-b {
+      top: calc(44% - 40px);
     }
   }
 </style>
