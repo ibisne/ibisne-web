@@ -598,8 +598,7 @@
   .ui-layer.work-ui {
     height: 100%;
     min-height: 0;
-    /* abajo queda 44px para el enlace "Privacidad" */
-    padding: calc(var(--header-h) + 1.75rem) var(--work-px) 44px;
+    padding: calc(var(--header-h) + 1.75rem) var(--work-px) 1.5rem;
   }
   .work-title {
     font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.4rem);
@@ -640,12 +639,6 @@
   .work-card {
     height: 100%;
     aspect-ratio: auto;
-  }
-  html[data-page='trabajo'] .legal-mini {
-    position: absolute;
-    left: max(0px, calc(clamp(1.5rem, 4.17vw, 3.75rem) - var(--gutter)));
-    bottom: 0;
-    z-index: var(--z-ui);
   }
 }
 

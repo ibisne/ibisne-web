@@ -47,7 +47,9 @@ Léelo antes de tocar transiciones o layout.
 - **La B**: la dibuja el mundo WebGL (`src/scripts/world/`). Sin WebGL o con reduced-motion se muestra la silueta estática `src/assets/b/b-trim.png` (Inicio y 404).
 - **Scroll**: en Inicio, Trabajo y Contacto **no hay scroll en escritorio ≥1024x700**
   (`100dvh`, `overflow:hidden`). Debajo de eso (móvil) hay scroll normal, layout apilado,
-  efectos simplificados y tap en lugar de hover. Legales y 404 siempre scrollean.
+  efectos simplificados y tap en lugar de hover. Legales y 404 siempre scrollean. El pie legal (`LegalFooter`)
+  solo aparece en Contacto y en las páginas legales; Inicio, Trabajo y fichas no llevan enlace
+  "Privacidad" (el banner de cookies conserva el suyo).
 - **Estilos**: solo tokens de `src/styles/tokens.css` (`--ink #0B0820`, `--magenta #FF3EA5`,
   `--cyan #4DF3FF`, `--text`...). Cero colores hardcodeados. **Geist es la ÚNICA
   tipografía** (titular: primera línea 100, segunda 700). Tarjeta estándar `.card` (vidrio

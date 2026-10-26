@@ -30,12 +30,12 @@ import bStill from '../assets/b/b-trim.png';
 </Base>
 
 <style>
-  /* ---------- Móvil: apilado. Una pantalla menos barra inferior menos el enlace "Privacidad" ---------- */
+  /* ---------- Móvil: apilado. Una pantalla menos barra inferior ---------- */
   .hm {
     position: relative;
     /* Pantalla fija: la B (flexible) cede alto si hace falta. Mientras el banner de cookies esta
        abierto (--consent-h) se reserva su sitio para que no tape el subtitulo. */
-    height: calc(100svh - var(--tabbar-h) - 2rem - var(--veil-gap, 0px));
+    height: calc(100svh - var(--tabbar-h));
     min-height: 30rem;
     transition: padding-bottom 0.35s var(--ease-out); /* la B crece suave al cerrar el banner */
     display: flex;
@@ -44,14 +44,13 @@ import bStill from '../assets/b/b-trim.png';
     /* Tactil: arrastrar el dedo por la escena mueve la camara, la B y el glitch (engine.ts, eventos
        touch pasivos), como el mouse en escritorio. La pantalla es fija, asi que la escena no cede
        el gesto al navegador (sin scroll, sin tirar para recargar). Solo esta seccion: el header, la
-       barra inferior, "Privacidad" y el banner de cookies quedan fuera y se tocan normal. */
+       barra inferior y el banner de cookies quedan fuera y se tocan normal. */
     touch-action: none;
   }
 
   .hm-vig {
     position: absolute;
-    /* baja hasta la barra: cubre la fila "Privacidad" para que la viñeta no termine en un corte seco sobre ella */
-    inset: 0 0 calc(-2rem - var(--veil-gap, 0px)) 0;
+    inset: 0;
     pointer-events: none;
     background:
       linear-gradient(to bottom, color-mix(in srgb, var(--ink) 70%, transparent), transparent 22%),
@@ -120,7 +119,7 @@ import bStill from '../assets/b/b-trim.png';
       align-items: center;
       gap: 2rem;
       height: auto;
-      min-height: calc(100svh - var(--tabbar-h) - 2rem - var(--veil-gap, 0px));
+      min-height: calc(100svh - var(--tabbar-h));
       padding-top: calc(var(--header-h) - 0.5rem);
       padding-inline: max(3rem, calc(env(safe-area-inset-left, 0px) + 2rem)) max(1.5rem, env(safe-area-inset-right, 0px));
       /* horizontal puede pasar de una pantalla: aqui el scroll manda (el dedo sigue moviendo el mundo, pasivo) */

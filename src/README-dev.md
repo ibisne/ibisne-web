@@ -22,7 +22,7 @@ Cada página usa `src/layouts/Base.astro`:
 </Base>
 ```
 
-Props de `Base`: `title`, `description`, `page` (`home|trabajo|contacto|legal|404`, va a `<html data-page>`), `legalFooter` (`none|mini|full`, alias booleano `footerLegal`), `image`, `noindex`, `rawTitle`. Slot `head` para meter algo extra al `<head>`.
+Props de `Base`: `title`, `description`, `page` (`home|trabajo|contacto|legal|404`, va a `<html data-page>`), `legalFooter` (`none|full`, solo Contacto y legales llevan pie; alias booleano `footerLegal`), `image`, `noindex`, `rawTitle`. Slot `head` para meter algo extra al `<head>`.
 
 - `page` gobierna el scroll: en `home|trabajo|contacto` con pantalla de 1024x700 o más no hay scroll (`html,body{height:100dvh;overflow:hidden}`). Por debajo, scroll normal. `legal` y `404` siempre scrollean.
 - El header es `position:fixed` y flota encima: el contenido que no use `.ui-layer` debe llevar `.under-header` (padding-top = `--header-h`).

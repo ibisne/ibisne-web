@@ -15,8 +15,8 @@ interface Props {
   description?: string;
   /** Define data-page en <html>: gobierna el scroll de escritorio. La estacion del mundo sale de la URL (world/stationForPath) */
   page: PageKind;
-  /** none | mini | full. Por defecto: mini en home/trabajo, full en contacto/legal, none en 404 */
-  legalFooter?: 'none' | 'mini' | 'full';
+  /** none | full. Por defecto: full en contacto/legal, none en el resto */
+  legalFooter?: 'none' | 'full';
   /** Alias booleano: true = pie completo, false = sin pie */
   footerLegal?: boolean;
   /** Ruta absoluta (desde /) de la imagen OG; por defecto /og.jpg */
@@ -28,7 +28,7 @@ interface Props {
 
 const DEFAULT_DESC = 'Diseñamos tecnología para marcas selectas. Estudio de producto y software en Zapopan, Jalisco.';
 const { title, description = DEFAULT_DESC, page, image = '/og.jpg', noindex = false, rawTitle = false } = Astro.props;
-const footerDefault = { home: 'mini', trabajo: 'mini', proyecto: 'mini', contacto: 'full', legal: 'full', '404': 'none' } as const;
+const footerDefault = { home: 'none', trabajo: 'none', proyecto: 'none', contacto: 'full', legal: 'full', '404': 'none' } as const;
 const aliasFooter = Astro.props.footerLegal === undefined ? undefined : Astro.props.footerLegal ? 'full' : 'none';
 const legalFooter = Astro.props.legalFooter ?? aliasFooter ?? footerDefault[page];
 
@@ -96,7 +96,7 @@ const jsonLd = {
     <Header />
     <main id="page" tabindex="-1">
       <slot />
-      {legalFooter !== 'none' && <LegalFooter variant={legalFooter} />}
+      {legalFooter !== 'none' && <LegalFooter />}
     </main>
     <MobileTabBar />
     <Consent />

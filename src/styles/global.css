@@ -311,13 +311,6 @@ html[data-boot] main#page {
   .only-scroll {
     display: none !important;
   }
-  /* "Privacidad" de la ficha de proyecto flota abajo, igual que en Inicio y Trabajo */
-  html[data-page='proyecto'] .legal-mini {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    z-index: var(--z-ui);
-  }
 }
 
 /* Debajo de eso (movil): scroll normal, apilado, tap en lugar de hover, barra inferior de app.
@@ -379,13 +372,6 @@ html[data-boot] main#page {
   }
   html[data-page='contacto'] .legal-foot {
     margin-top: auto;
-  }
-  /* Enlace "Privacidad" de Inicio: compacto, sin sumar otra vez el safe-area (ya lo cubre la barra) */
-  main#page > .legal-mini {
-    position: relative; /* por encima de la viñeta de Inicio */
-    min-height: 2rem;
-    padding-bottom: 0;
-    margin-bottom: var(--veil-gap);
   }
   .legal-foot {
     margin-bottom: var(--veil-gap);

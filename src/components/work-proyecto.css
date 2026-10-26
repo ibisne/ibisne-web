@@ -238,8 +238,7 @@
   .ui-layer.proj-ui {
     height: 100%;
     min-height: 0;
-    /* abajo queda 44px para el enlace "Privacidad" */
-    padding: calc(var(--header-h) + 0.75rem) var(--work-px) 44px;
+    padding: calc(var(--header-h) + 0.75rem) var(--work-px) 1.5rem;
   }
   .proj {
     height: 100%;

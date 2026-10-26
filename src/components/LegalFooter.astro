@@ -1,47 +1,20 @@
 ---
-interface Props {
-  /** mini: enlace discreto "Privacidad" · full: pie legal completo */
-  variant?: 'mini' | 'full';
-}
-const { variant = 'mini' } = Astro.props;
 ---
 
-{
-  variant === 'mini' ? (
-    <a class="legal-mini" href="/legal/privacidad/">
-      Privacidad
-    </a>
-  ) : (
-    <footer class="legal-foot">
-      <nav aria-label="Legales">
-        <a href="/legal/privacidad/">Aviso de privacidad</a>
-        <span aria-hidden="true">·</span>
-        <a href="/legal/terminos/">Términos y condiciones</a>
-        <span aria-hidden="true">·</span>
-        <a href="/legal/cookies/">Cookies</a>
-        <span aria-hidden="true">·</span>
-        <a href="/legal/aviso-legal/">Aviso legal</a>
-      </nav>
-      <p>© 2026 iBisne S.A.S. de C.V.</p>
-    </footer>
-  )
-}
+<footer class="legal-foot">
+  <nav aria-label="Legales">
+    <a href="/legal/privacidad/">Aviso de privacidad</a>
+    <span aria-hidden="true">·</span>
+    <a href="/legal/terminos/">Términos y condiciones</a>
+    <span aria-hidden="true">·</span>
+    <a href="/legal/cookies/">Cookies</a>
+    <span aria-hidden="true">·</span>
+    <a href="/legal/aviso-legal/">Aviso legal</a>
+  </nav>
+  <p>© 2026 iBisne S.A.S. de C.V.</p>
+</footer>
 
 <style is:global>
-  /* Enlace discreto, 11px */
-  .legal-mini {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--touch);
-    padding-inline: var(--gutter);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--text-3);
-    transition: color 0.2s;
-  }
-  .legal-mini:hover {
-    color: var(--text);
-  }
   .legal-foot {
     position: relative;
     z-index: var(--z-ui);
@@ -71,27 +44,11 @@ const { variant = 'mini' } = Astro.props;
     color: var(--text);
   }
 
-  /* Sin scroll (escritorio): el pie flota abajo; en el resto, va al final del flujo */
+  /* Sin scroll (escritorio): el pie de Contacto flota abajo; en el resto, va al final del flujo */
   @media (min-width: 1024px) and (min-height: 700px) {
-    html[data-page='home'] .legal-mini,
-    html[data-page='trabajo'] .legal-mini {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      z-index: var(--z-ui);
-    }
     html[data-page='contacto'] .legal-foot {
       position: fixed;
       inset: auto 0 0 0;
-    }
-  }
-  @media not ((min-width: 1024px) and (min-height: 700px)) {
-    .legal-mini {
-      display: flex;
-      justify-content: center;
-      padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-      /* vive dentro del velo de la barra inferior: un tono mas claro para que se lea sobre el mundo */
-      color: var(--text-2);
     }
   }
 </style>
