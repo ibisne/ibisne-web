@@ -28,6 +28,19 @@ const logoWidth = (w: number) => Math.min(w, 400);
       </header>
 
       <div class="work-filters" data-travel-ui>
+        <!-- Movil: un boton por filtro que abre su hoja de opciones (sin carril horizontal) -->
+        <div class="work-triggers">
+          <button type="button" class="work-trigger" data-open-filter="nicho" aria-haspopup="dialog">
+            <span class="work-trigger__k">Nicho</span>
+            <span class="work-trigger__v" data-trigger-value="nicho">Todos</span>
+            <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3.5 5.5 7 9l3.5-3.5" /></svg>
+          </button>
+          <button type="button" class="work-trigger" data-open-filter="tipo" aria-haspopup="dialog">
+            <span class="work-trigger__k">Tipo</span>
+            <span class="work-trigger__v" data-trigger-value="tipo">Todos</span>
+            <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3.5 5.5 7 9l3.5-3.5" /></svg>
+          </button>
+        </div>
         <div class="work-filter" role="group" aria-labelledby="work-f-nicho">
           <span class="work-filter__label" id="work-f-nicho">Nichos</span>
           <div class="work-filter__pills">
@@ -56,6 +69,40 @@ const logoWidth = (w: number) => Math.min(w, 400);
           </div>
         </div>
       </div>
+
+      <dialog class="work-sheet" data-filter-sheet="nicho" closedby="any" aria-labelledby="work-sheet-nicho">
+        <div class="work-sheet__head">
+          <h2 class="work-sheet__title" id="work-sheet-nicho">¿Qué nicho buscas?</h2>
+          <button type="button" class="work-sheet__close" data-close-sheet aria-label="Cerrar">×</button>
+        </div>
+        <div class="work-sheet__opts">
+          <button type="button" class="work-pill" data-group="nicho" data-value="" aria-pressed="true">Todos</button>
+          {
+            NICHOS.map((n) => (
+              <button type="button" class="work-pill" data-group="nicho" data-value={n} aria-pressed="false">
+                {n}
+              </button>
+            ))
+          }
+        </div>
+      </dialog>
+      <dialog class="work-sheet" data-filter-sheet="tipo" closedby="any" aria-labelledby="work-sheet-tipo">
+        <div class="work-sheet__head">
+          <h2 class="work-sheet__title" id="work-sheet-tipo">¿Qué tipo de proyecto?</h2>
+          <button type="button" class="work-sheet__close" data-close-sheet aria-label="Cerrar">×</button>
+        </div>
+        <div class="work-sheet__opts">
+          <button type="button" class="work-pill" data-group="tipo" data-value="" aria-pressed="true">Todos</button>
+          {
+            TIPOS.map((t) => (
+              <button type="button" class="work-pill" data-group="tipo" data-value={t} aria-pressed="false">
+                <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false" set:html={TIPO_ICONS[t]} />
+                {t}
+              </button>
+            ))
+          }
+        </div>
+      </dialog>
 
       <div class="work-gridwrap">
         <p class="sr-only" role="status" aria-live="polite" id="work-status"></p>

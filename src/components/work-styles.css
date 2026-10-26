@@ -140,6 +140,117 @@
   border-color: var(--line-strong);
 }
 
+/* ---------- Movil: botones que abren una hoja de opciones ---------- */
+.work-filter {
+  display: none;
+}
+.work-triggers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.work-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+  color: var(--text);
+  text-align: left;
+  min-width: 0;
+}
+.work-trigger__k {
+  font-size: 11px;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.work-trigger__v {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-label);
+  font-weight: var(--w-medium);
+}
+.work-trigger svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.work-trigger[data-active] {
+  border-color: var(--cyan);
+}
+
+.work-sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 32rem;
+  max-height: 80dvh;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: 1.25rem 1.25rem 0 0;
+  background: var(--ink);
+  color: var(--text);
+  overscroll-behavior: contain;
+}
+.work-sheet::backdrop {
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+.work-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.875rem;
+}
+.work-sheet__title {
+  font-size: 1rem;
+  font-weight: var(--w-bold);
+}
+.work-sheet__close {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--text-2);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.work-sheet__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.work-sheet .work-pill {
+  min-height: 2.75rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .work-sheet[open] {
+    animation: work-sheet-in 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+@keyframes work-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
 /* ---------- Rejilla y tarjetas ---------- */
 .work-gridwrap {
   margin-top: 0.75rem;
@@ -496,6 +607,12 @@
   .work-filters {
     gap: 6px;
     margin-top: 16px;
+  }
+  .work-filter {
+    display: flex;
+  }
+  .work-triggers {
+    display: none;
   }
   .work-filter__label {
     flex-basis: 64px;

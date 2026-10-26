@@ -70,6 +70,34 @@ export function initWork(): () => void {
       if (hasResults) pill.removeAttribute('aria-disabled');
       else pill.setAttribute('aria-disabled', 'true');
     }
+    // Movil: el boton de cada filtro muestra la opcion elegida
+    for (const v of document.querySelectorAll<HTMLElement>('[data-trigger-value]')) {
+      const g = v.dataset.triggerValue as keyof State;
+      v.textContent = state[g] || 'Todos';
+      v.closest('.work-trigger')?.toggleAttribute('data-active', Boolean(state[g]));
+    }
+  }
+
+  // Hojas de filtros en movil: <dialog> modal con cierre al tocar fuera (closedby="any")
+  const sheets = Array.from(document.querySelectorAll<HTMLDialogElement>('[data-filter-sheet]'));
+  const noClosedBy = !('closedBy' in HTMLDialogElement.prototype);
+  for (const sheet of sheets) {
+    if (noClosedBy) {
+      // Respaldo (Safari): un toque en el backdrop llega con target = el propio dialog
+      on(sheet, 'click', (ev: MouseEvent) => {
+        if (ev.target !== sheet) return;
+        const r = sheet.getBoundingClientRect();
+        const inside = r.top <= ev.clientY && ev.clientY <= r.bottom && r.left <= ev.clientX && ev.clientX <= r.right;
+        if (!inside) sheet.close();
+      });
+    }
+    for (const btn of sheet.querySelectorAll<HTMLButtonElement>('[data-close-sheet]')) on(btn, 'click', () => sheet.close());
+  }
+  for (const trigger of document.querySelectorAll<HTMLButtonElement>('[data-open-filter]')) {
+    on(trigger, 'click', () => {
+      const sheet = sheets.find((s) => s.dataset.filterSheet === trigger.dataset.openFilter);
+      if (sheet && !sheet.open) sheet.showModal();
+    });
   }
 
   function writeUrl() {
@@ -166,6 +194,8 @@ export function initWork(): () => void {
       state[group] = value;
       updatePills();
       writeUrl();
+      const sheet = pill.closest<HTMLDialogElement>('dialog');
+      if (sheet?.open) sheet.close();
       void apply(true);
     });
   }
@@ -191,6 +221,7 @@ export function initWork(): () => void {
 
   return () => {
     for (const c of cards) c.getAnimations().forEach((a) => a.cancel());
+    for (const s of sheets) if (s.open) s.close();
     for (const fn of cleanups) fn();
   };
 }
