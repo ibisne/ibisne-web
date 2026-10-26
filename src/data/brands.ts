@@ -13,6 +13,8 @@ import logoSemilla from '../assets/logos/semilla.png';
 import logoUnframe from '../assets/logos/unframe.png';
 import logoDistenvases from '../assets/logos/distenvases.png';
 import logoDigitalife from '../assets/logos/digitalife.png';
+import logoAlbercasopia from '../assets/logos/albercasopia.png';
+import logoRancho from '../assets/logos/rancho-contento.png';
 import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
 import logoCgcac from '../assets/logos/cgcac.png';
@@ -366,7 +368,7 @@ export const brands: Brand[] = [
   {
     slug: 'albercasopia',
     name: 'Albercasopia',
-    logo: null,
+    logo: logoAlbercasopia,
     mockup: mkAlbercasopia,
     nicho: 'Construcción',
     tipos: ['eCommerce'],
@@ -399,7 +401,7 @@ export const brands: Brand[] = [
   {
     slug: 'rancho-contento',
     name: 'Rancho Contento',
-    logo: null,
+    logo: logoRancho,
     mockup: mkRancho,
     nicho: 'Turismo y hospitalidad',
     tipos: ['Sitio web', 'CRM'],
