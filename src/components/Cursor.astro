@@ -35,8 +35,8 @@
   }
 
   .cursor {
-    --size: 36px;
-    --ring: 54px;
+    --size: 54px;
+    --ring: 81px;
     position: fixed;
     inset: 0 auto auto 0;
     z-index: var(--z-cursor);
@@ -115,11 +115,11 @@
     top: calc(var(--ring) / -2);
     width: var(--ring);
     height: var(--ring);
-    border: 1.5px solid color-mix(in srgb, var(--cyan) 85%, var(--text));
+    border: 2px solid color-mix(in srgb, var(--cyan) 85%, var(--text));
     box-shadow:
       0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent),
       inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent),
-      0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent);
+      0 0 21px color-mix(in srgb, var(--cyan) 30%, transparent);
     opacity: 0;
     scale: 0.5;
     transition:

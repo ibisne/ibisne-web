@@ -30,12 +30,12 @@ const description = `${b.tagline} ${b.reto}`;
             <!-- El logo es el titulo; el nombre queda para lectores de pantalla. Sin logo: wordmark. -->
             <p class="label proj-eyebrow">{b.nicho}</p>
             {b.logo ? (
-              <h1 class="proj-name proj-name--logo">
+              <h1 class="proj-name proj-name--logo" data-glitch-text>
                 <Image src={b.logo} alt="" width={Math.min(b.logo.width, 640)} loading="eager" decoding="async" class="proj-logo" />
                 <span class="sr-only">{b.name}</span>
               </h1>
             ) : (
-              <h1 class="proj-name">{b.name}</h1>
+              <h1 class="proj-name" data-glitch-text>{b.name}</h1>
             )}
             <p class="proj-tagline">{b.tagline}</p>
             <ul class="proj-chips" role="list" aria-label="Tipo de proyecto">

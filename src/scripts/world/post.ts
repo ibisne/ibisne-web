@@ -3,7 +3,8 @@
  * se pinta a un render target y un triangulo a pantalla completa la compone con
  * aberracion cromatica, estela direccional y un vortice leve (proporcionales a la
  * velocidad), con el glitch global (rebanadas, RGB, macrobloques, lineas; ver glitch.ts) y
- * con el glitch local del mouse (estela; ver trail.ts). En reposo, entre rafagas y con el
+ * con el glitch local del mouse (estela; ver trail.ts) y con los micro-glitches (rectangulos
+ * chicos de la imagen; ver micro.ts). En reposo, entre rafagas, sin micro-glitch vivo y con el
  * mouse quieto se pinta directo a pantalla (cero costo extra).
  */
 import {
@@ -34,8 +35,10 @@ import {
   GLITCH_TRAIL_RGB_PX,
   GLITCH_TRAIL_SHIFT_PX,
   MAGENTA,
+  MICRO_GLITCH_SLOTS,
   POST_MOSAIC,
 } from './config';
+import type { MicroGlitch } from './micro';
 import type { MouseTrail } from './trail';
 import { postFrag, postVert } from './shaders';
 
@@ -77,6 +80,9 @@ export class TravelPass {
       uMSeed: { value: 0 },
       uMK: { value: new Vector4() },
       uMBand: { value: GLITCH_TRAIL_BAND_MAX_PX / GLITCH_TRAIL_BAND_MIN_PX },
+      uMicro: { value: Array.from({ length: MICRO_GLITCH_SLOTS }, () => new Vector4()) },
+      uMicroK: { value: Array.from({ length: MICRO_GLITCH_SLOTS }, () => new Vector4()) },
+      uMicroOn: { value: 0 },
       uCyan: { value: new Vector3(...CYAN) },
       uMagenta: { value: new Vector3(...MAGENTA) },
     };
@@ -115,6 +121,7 @@ export class TravelPass {
     dir: number,
     glitch: { level: number; seed: number; lines: number },
     trail: MouseTrail,
+    micro: MicroGlitch,
   ): void {
     this.u.uSpeed.value = speed;
     this.u.uZoom.value = zoom;
@@ -127,6 +134,9 @@ export class TravelPass {
     this.u.uMTrail.value = trail.points;
     this.u.uMAmp.value = trail.amp;
     this.u.uMSeed.value = trail.seed;
+    this.u.uMicro.value = micro.rects;
+    this.u.uMicroK.value = micro.params;
+    this.u.uMicroOn.value = micro.active > 0 ? 1 : 0;
     renderer.setRenderTarget(this.rt);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);

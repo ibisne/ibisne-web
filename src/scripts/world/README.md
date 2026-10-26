@@ -19,14 +19,15 @@ de `vercel.json` tal como está.
 | `layers.ts` | Capas de imagen (planos a distinta Z, ventana del panorama según la posición de viaje). |
 | `bmatrix.ts` | La B en GPU: partículas, glifos que llueven, halo, remolino con resortes y giro hacia el cursor. |
 | `glitch.ts` | Reloj del glitch global (solo CPU): cuándo hay ráfaga, su intensidad y la semilla del patrón. |
-| `trail.ts` | Estela del mouse (solo CPU): velocidad, intensidad del glitch local y los 6 puntos de los últimos 150 ms. |
-| `fragments.ts` | Fragmentos de glitch flotando (astillas y grupos de píxeles que giran, con borde RGB). |
-| `post.ts` | Pase de post-proceso: viaje (aberración cromática, estela, vórtice), glitch global y glitch local del mouse. Solo corre mientras hay movimiento, ráfaga o mouse en movimiento. |
+| `trail.ts` | Estela del mouse o del dedo (solo CPU): velocidad, intensidad del glitch local y los 6 puntos de los últimos 150 ms. |
+| `micro.ts` | Micro-glitches (solo CPU): 2-4 rectángulos chicos de la imagen que se corren y separan RGB 80-200 ms y van rotando de lugar, lejos de los textos. |
+| `post.ts` | Pase de post-proceso: viaje (aberración cromática, estela, vórtice), glitch global, micro-glitches y glitch local del mouse. Solo corre mientras hay movimiento, ráfaga, micro-glitch vivo o mouse en movimiento. |
 | `procedural.ts` | Atlas de glifos (código y numerales mayas), muestreo de la silueta, capa cercana provisional. |
 | `static.ts` | Modo estático: fundido cruzado entre dos pilas de `<img>`. |
 | `router.ts` | Enganche opcional con el ClientRouter (`connectRouter`). |
 | `../../components/World.astro` | El `<div data-world>` persistente: `<img>` de las capas (respaldo y fuente de texturas) y el `<canvas>`. |
 | `../../components/Cursor.astro` + `../cursor.ts` | Cursor propio (DOM, fuera de WebGL): círculo difuminado persistente. Ver "Cursor" abajo. |
+| `../text-glitch.ts` | Glitch de los titulares (DOM, `[data-glitch-text]`), solo bajo el mouse o el dedo, con la estela del mundo (`onGlitchFrame`). Ver "Glitch de titulares" abajo. |
 
 ## API (`import { ... } from '../scripts/world'`)
 
@@ -58,7 +59,11 @@ currentStation(): Station
 stationForPath(pathname: string): Station   // '/'→home, '/trabajo/'→trabajo, '/trabajo/<slug>/'→proyecto, '/contacto/'→contacto, resto→legal
 connectRouter(opts?): void                  // integración con ClientRouter (abajo)
 nextPhase(phase): Promise<void>             // próxima fase de cualquier viaje
-getWorldStats(): WorldStats                 // diagnóstico: fps, calidad, partículas, fragmentos, glitch, post, parallax en px
+getWorldStats(): WorldStats                 // diagnóstico: fps, calidad, partículas, glitch, mouseGlitch, micro, touching, post, parallax en px
+onGlitchFrame(cb: (f: GlitchFeed) => void): () => void
+// Al final de cada cuadro del mundo (mismo rAF; nunca en estático): w, h, mouse (0..1), trail
+// (6 puntos uv + peso), radius, global (ráfaga o viaje), travel, micro (cajas en px CSS).
+// Lo usa text-glitch.ts (solo mouse y trail); el objeto se reutiliza, léelo dentro del callback.
 destroyWorld(): void                        // libera GPU y listeners (pruebas)
 ```
 
@@ -130,19 +135,28 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
 - **Escena**: lejana (Z 22, opaca, bruma índigo y banda de horizonte), media (Z 9,
   aditiva sobre negro, se enciende alrededor del cursor), cercana (Z 2.6, aditiva; se
   aparta alrededor de la B para no taparla y se desvanece al empujar hacia `proyecto`).
-  El polvo (se leía como confeti) se retiró el 25-oct-2026; en su lugar flotan **fragmentos de
-  glitch** (abajo).
-- **Fragmentos de glitch** (`fragments.ts`, `FRAG_*`): 96 en escritorio (64 en calidad baja, 32
-  en táctil o pantalla chica), en dos lotes: detrás de la capa cercana (Z 3 a 20) y delante de
-  ella (Z 1.5 a 2.4, renderOrder 7). Astillas delgadas y grupos de píxeles de 6-24 px aparentes
-  (grandes los cercanos), aditivos y con alfa bajo, borde RGB (magenta y cian desplazados),
-  giro lento (0.12-0.55 rad/s) con volteo aparente, deriva lateral lenta y parallax de viaje por
-  profundidad (el del mouse sale solo de la cámara). Cortes de señal por tramos: 12 % de los
-  tramos se apagan y 6 % se desfasan un instante (salto de ~9 px y RGB fuerte). La mitad
-  reacciona al mouse rápido: se aparta hasta 26 px y se glitchea dentro de 160 px del cursor. Se
-  apagan alrededor de la B. Todo en el shader (`Points`), sin allocations por cuadro.
+  **Nada flota en el aire**: el polvo y luego los fragmentos de glitch se leían como confeti y se
+  retiraron (25-oct-2026). El glitch vive EN la imagen (micro-glitches, abajo).
+- **Micro-glitches** (`micro.ts` + `postFrag`, `MICRO_GLITCH_*`): hasta 4 ranuras en escritorio
+  (2 en táctil o pantalla chica). Cada una enciende un rectángulo de 40-160 × 3-18 px CSS (alto
+  sesgado a lo delgado) durante 80-200 ms; ahí la escena se corre en X (hasta 22 px, en 1-3
+  sub-filas con borde derecho irregular) con RGB separado (hasta 6 px) y un tinte cian o magenta
+  leve; el patrón salta cada ~50 ms. Al terminar, la ranura espera 0.08-0.6 s y reaparece en otro
+  lugar (en reposo se ven 1-2 a la vez, a veces 3-4). Al nacer prueban 9 puntos contra el DOM
+  (`elementFromPoint`) y descartan cualquier lugar detrás de titulares, párrafos, links,
+  botones, tarjetas, header o `[data-world-avoid]`. No nacen durante el viaje. Táctil: intensidad
+  ×0.6 y pausas ×1.8. Mientras hay uno vivo corre el pase de post; sin ninguno, no.
 - **Mouse = cámara** con inercia (lerp 0.06): ±50 px la cercana, ±14 la media, ±6 la
-  lejana a 1440 px, roll ±0.7°. Táctil: deriva automática suave; tocar la B la agita.
+  lejana a 1440 px, roll ±0.7°.
+- **Táctil (el dedo = el mouse)**: eventos `touchstart`/`touchmove` **pasivos** en `window` (a
+  diferencia de `pointermove`, el navegador no los cancela al empezar un scroll). En Inicio la
+  sección `.hm` lleva `touch-action: none` (solo en vertical; horizontal puede scrollear): arrastrar
+  el dedo por la escena mueve la cámara con la misma inercia que el mouse, la B gira hacia el dedo
+  y sus partículas se arremolinan en el punto de contacto, y el glitch local sigue la trayectoria
+  (×`GLITCH_TRAIL_TOUCH_K` = 0.5). Header, barra inferior, "Privacidad" y banner quedan fuera de
+  `.hm` y se tocan normal. En Trabajo y Contacto no se bloquea nada: mientras el dedo desliza, la
+  cámara sigue un poco (`TOUCH_CAMERA_SCROLL_K` = 0.45) y el glitch acompaña. Al soltar, 450 ms
+  después la cámara vuelve sola a la deriva automática.
 - **La B**: 32 000 partículas (alta) / 8 000 (baja), contorno reforzado, volumen (dos
   caras + costado), glifos (código + numerales mayas) en columnas tipo matrix dentro de
   la silueta, halo. Gira hasta 25° hacia el cursor; remolino con flujo rizado, arrastre
@@ -162,12 +176,17 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
   intensidad ×0.6. Estático / `prefers-reduced-motion`: sin glitch. Constantes `GLITCH_*` en
   `config.ts`; para forzar una ráfaga en desarrollo: `__worldGL.glitch.trigger(2, 0.9)`.
 - **Glitch local del mouse** (`trail.ts` + `postFrag`, `GLITCH_TRAIL_*`): al mover el mouse,
-  rebanadas horizontales cortas desplazadas (hasta 16 px) y separación RGB (hasta 3.5 px) dentro
-  de una cápsula de 150 px de radio alrededor del cursor y de su estela de los últimos 150 ms
-  (6 puntos, el más viejo pesa 0.35). Intensidad por velocidad: < 140 px/s nada, 800 px/s 0.06
-  (apenas vibra), 1500 px/s 0.18, 3000 px/s 0.55, ≥ 4000 px/s 0.85 (máximo; nunca ilegible).
-  Al detenerse se apaga en 80-200 ms y el pase deja de correr. Táctil: el arrastre del dedo da
-  el mismo efecto ×0.3. Medido con `getWorldStats().mouseGlitch` / `.mouseSpeed` / `.post`.
+  rebanadas horizontales cortas (4-16 px de alto) desplazadas hasta 48 px y separación RGB hasta
+  14 px, con tinte leve, dentro de una cápsula de 200 px de radio alrededor del cursor y de su
+  estela de los últimos 150 ms (6 puntos, el más viejo pesa 0.35). Intensidad por velocidad
+  (curva raíz): < 120 px/s nada, 500 px/s 0.41, 900 px/s 0.58 (rebanadas de ~28 px, RGB ~8 px),
+  1500 px/s 0.78, ≥ 2400 px/s 1. Al detenerse baja en línea recta y se apaga en ~300 ms
+  (`GLITCH_TRAIL_FADE_S`); luego el pase deja de correr. Táctil: el arrastre del dedo ×0.5.
+  Medido con `getWorldStats().mouseGlitch` / `.mouseSpeed` / `.post`.
+  **Por qué no se veía antes (c7d0d85)**: los eventos sí llegaban (listeners en `window`, la UI
+  no tapaba nada) y el pase sí corría; el problema era la magnitud. A 900 px/s la intensidad
+  medida era 0.16 → rebanadas de ±2.6 px y RGB de 0.6 px, invisibles sobre el índigo, y se
+  apagaba en ~170 ms.
 - **Estático** (sin WebGL, `prefers-reduced-motion`, o contexto perdido): las `<img>`
   encuadradas en la estación; `goTo` = fundido cruzado de 420 ms entre dos pilas.
 
@@ -181,12 +200,13 @@ DOM, no WebGL (funciona aunque el mundo caiga a estático). Montado en `Base.ast
   (se pone tras el primer movimiento del mouse y se repone en `astro:after-swap`, porque el
   ClientRouter reemplaza los atributos de `<html>`). `input`, `textarea` y `contenteditable`
   conservan su cursor nativo y ahí el círculo se oculta.
-- Círculo difuminado de 36 px que sigue con inercia (lerp 0.28 por cuadro a 60 fps); sobre
+- Círculo difuminado de 54 px que sigue con inercia (lerp 0.28 por cuadro a 60 fps); sobre
   `a[href]`, `button`, `[role=button]`, `summary`, `label[for]`, `select` y
-  `[data-cursor-hover]` se encoge a un punto y aparece un anillo nítido de 54 px (cian con filo
-  de tinta, se lee sobre el índigo y sobre botones blancos); deshabilitado (`:disabled`,
-  `aria-disabled`): anillo punteado tenue; clic: se contrae a 0.72. Con el mouse rápido (> 700
-  px/s) dos copias magenta/cian se separan hasta 5 px detrás del movimiento.
+  `[data-cursor-hover]` se encoge a un punto (~17 px) y aparece un anillo nítido de 81 px (borde
+  2 px cian con filo de tinta y brillo de 21 px, se lee sobre el índigo y sobre botones blancos);
+  deshabilitado (`:disabled`, `aria-disabled`): anillo punteado tenue; clic: se contrae a 0.72.
+  Con el mouse rápido (> 700 px/s) dos copias magenta/cian se separan hasta 7.5 px detrás del
+  movimiento.
 - Sin `mix-blend-mode`: `screen` lo borraba sobre los botones blancos y `difference` lo volvía
   amarillo sobre el índigo.
 - `pointer-events: none` y `z-index: var(--z-cursor)` (100, encima del banner de cookies, que
@@ -194,6 +214,22 @@ DOM, no WebGL (funciona aunque el mundo caiga a estático). Montado en `Base.ast
   (equipos híbridos). El foco por teclado conserva su anillo `:focus-visible`.
 - Rendimiento: su propio rAF solo vive mientras el círculo se mueve (en reposo, cero); solo
   escribe `transform` y `opacity`.
+
+## Glitch de titulares (`src/scripts/text-glitch.ts`)
+
+El texto es DOM encima del canvas: el shader no lo toca. Los titulares con `data-glitch-text`
+(Inicio, Trabajo, Contacto y el `h1` de las fichas, también el de logo) reciben dos capas espejo
+`aria-hidden` (cian y magenta, `mix-blend-mode: screen`, sin selección ni clics) superpuestas
+exactamente; fuera del glitch están en `opacity: 0`. **Solo reaccionan al mouse o al dedo**, y solo
+donde pasan: cada capa muestra 1-3 rebanadas delgadas (`clip-path: polygon`) recortadas a un tramo
+horizontal de ~150 px (`LOCAL_R`) alrededor del cursor o de un punto de su estela reciente, corridas
+±6-18 px según la intensidad del glitch local del mundo (`onGlitchFrame`, mismo rAF, sin rAF
+propio). Las letras lejos del puntero quedan intactas y el titular original no se mueve. Ni las
+ráfagas globales, ni los micro-glitches, ni los viajes lo disparan; sin puntero en movimiento, el
+texto queda limpio. El patrón salta cada 40-60 ms y nunca dura más de 240 ms seguidos (descansa
+140 ms). Titular de imagen: máscara del mismo `<img>` (clon con `alt=""`). Los rects se miden en
+carga, resize y scroll, nunca por cuadro. Reduced motion o mundo estático: no se crean capas. Para
+sumarlo a otro titular: `data-glitch-text`.
 
 ## Cambiar a los assets finales
 
@@ -215,11 +251,15 @@ suman). Si `near` llega con transparencia real, cambia su `blend` a `'alpha'` en
   `GLITCH_TRAVEL*`, móvil `GLITCH_MOBILE_*`. Para apagarlo: `GLITCH_AMP_MIN = GLITCH_AMP_MAX = 0`
   y `GLITCH_TRAVEL = 0`.
 - Glitch del mouse: radio `GLITCH_TRAIL_RADIUS_PX`, estela `GLITCH_TRAIL_MS`, sensibilidad
-  `GLITCH_TRAIL_SPEED_MIN` / `_MAX` / `_CURVE`, tope `GLITCH_TRAIL_AMP_MAX`, caída
-  `GLITCH_TRAIL_DECAY_S`, corte y RGB `GLITCH_TRAIL_SHIFT_PX` / `GLITCH_TRAIL_RGB_PX`, alto de
+  `GLITCH_TRAIL_SPEED_MIN` / `_MAX` / `_CURVE`, tope `GLITCH_TRAIL_AMP_MAX`, apagado
+  `GLITCH_TRAIL_FADE_S`, corte y RGB `GLITCH_TRAIL_SHIFT_PX` / `GLITCH_TRAIL_RGB_PX`, alto de
   rebanada `GLITCH_TRAIL_BAND_*`, táctil `GLITCH_TRAIL_TOUCH_K`. Apagarlo: `GLITCH_TRAIL_AMP_MAX = 0`.
-- Fragmentos: cantidad `FRAG_HIGH` / `FRAG_LOW` / `FRAG_MOBILE`, tamaño `FRAG_SIZE_*`, alfa
-  `FRAG_ALPHA`, giro `FRAG_SPIN_*`, cortes `FRAG_FLICKER_RATE` / `FRAG_OFF_CHANCE` /
-  `FRAG_JUMP_CHANCE`, RGB `FRAG_RGB*`, mouse `FRAG_MOUSE_*`. Apagarlos: los tres conteos en 0.
+- Micro-glitches: ranuras `MICRO_GLITCH_SLOTS` / `_MOBILE_SLOTS` (tope 4), tamaño
+  `MICRO_GLITCH_W_*` / `_H_*`, vida `_DUR_*`, pausas `_PAUSE_*`, intensidad `_AMP_*`, corte y RGB
+  `_SHIFT_PX` / `_RGB_PX`, salto `_STEP_MS`, táctil `_MOBILE_AMP_K` / `_MOBILE_PAUSE_K`. Apagarlos:
+  `MICRO_GLITCH_AMP_MAX = 0`.
+- Táctil: cuánto sigue la cámara al dedo en páginas con scroll `TOUCH_CAMERA_SCROLL_K`.
+- Glitch de titulares: constantes al inicio de `src/scripts/text-glitch.ts` (`LOCAL_R`,
+  `MAX_ON_MS`, `SHIFT_*`, `ON_MIN`).
 - Cursor: constantes al inicio de `src/scripts/cursor.ts` (`LERP`, `SPLIT_*`) y tamaños
   `--size` / `--ring` en `Cursor.astro`.

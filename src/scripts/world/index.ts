@@ -11,10 +11,11 @@ export {
   lastTravel,
   stationForPath,
   getWorldStats,
+  onGlitchFrame,
   destroyWorld,
   quality,
 } from './engine';
-export type { TravelListener, WorldStats } from './engine';
+export type { GlitchFeed, TravelListener, WorldStats } from './engine';
 export { connectRouter, nextPhase } from './router';
 export { STATIONS } from './config';
 export type { Station, Quality, BMode, TravelPhase } from './config';

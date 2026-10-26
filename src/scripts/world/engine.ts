@@ -14,10 +14,6 @@ import {
   FOV,
   FPS_MIN,
   FPS_PROBE_S,
-  FRAG_HIGH,
-  FRAG_LOW,
-  FRAG_MOBILE,
-  GLITCH_TRAIL_AMP_MAX,
   INK,
   LAYERS,
   MID2_OFFSET,
@@ -34,6 +30,8 @@ import {
   TRAVEL_MOBILE_K,
   TRAVEL_MIN_S,
   TRAVEL_PUSH,
+  TOUCH_CAMERA_SCROLL_K,
+  GLITCH_TRAIL_RADIUS_PX,
 } from './config';
 import type { BMode, Quality, Station, StationPose, TravelPhase } from './config';
 import { Layer } from './layers';
@@ -41,7 +39,8 @@ import type { LayerBlend, LayerName, LayerSource } from './layers';
 import { BMatrix } from './bmatrix';
 import { Glitch } from './glitch';
 import { MouseTrail } from './trail';
-import { Fragments } from './fragments';
+import { MicroGlitch } from './micro';
+import type { MicroBox } from './micro';
 import type { BPointer } from './bmatrix';
 import { TravelPass } from './post';
 import { StaticWorld, STATIC_FADE_MS } from './static';
@@ -158,6 +157,34 @@ function supersede(t: Travel): void {
 
 /* ======================= API publica ======================= */
 
+/**
+ * Estado del glitch en cada cuadro, para que el DOM (titulares, src/scripts/text-glitch.ts) se
+ * glitchee a la vez que la escena. Un solo objeto reutilizado: leerlo dentro del callback.
+ */
+export interface GlitchFeed {
+  /** ventana, px CSS */
+  w: number;
+  h: number;
+  /** 0..1 glitch local del mouse o del dedo (0 = quieto) */
+  mouse: number;
+  /** estela: x, y en uv de pantalla (0..1, y hacia ARRIBA), z = peso; 0 = cursor */
+  trail: readonly Vector3[];
+  /** radio del glitch del mouse alrededor de la estela, px CSS */
+  radius: number;
+  /** 0..1 rafaga global o glitch de viaje */
+  global: number;
+  /** 0..1 velocidad del viaje */
+  travel: number;
+  /** micro-glitches: x, y (desde arriba), w, h en px CSS; amp 0 = apagado */
+  micro: readonly MicroBox[];
+}
+const feedCbs = new Set<(f: GlitchFeed) => void>();
+/** Se llama al final de cada cuadro pintado del mundo (el mismo rAF del motor; nunca en modo estatico). */
+export function onGlitchFrame(cb: (f: GlitchFeed) => void): () => void {
+  feedCbs.add(cb);
+  return () => feedCbs.delete(cb);
+}
+
 export function onTravel(cb: TravelListener): () => void {
   listeners.add(cb);
   return () => listeners.delete(cb);
@@ -254,8 +281,10 @@ export interface WorldStats {
   /** intensidad del glitch local del mouse (0 = quieto) y velocidad medida, px CSS/s */
   mouseGlitch: number;
   mouseSpeed: number;
-  /** fragmentos de glitch dibujados */
-  fragments: number;
+  /** micro-glitches visibles en este cuadro */
+  micro: number;
+  /** dedo sobre la pantalla (tactil) */
+  touching: boolean;
   /** el pase de post corrio en el ultimo cuadro */
   post: boolean;
   /** desplazamiento en px CSS de cada capa con el mouse en el borde (traslacion pura) */
@@ -279,7 +308,8 @@ export function getWorldStats(): WorldStats {
         glitch: 0,
         mouseGlitch: 0,
         mouseSpeed: 0,
-        fragments: 0,
+        micro: 0,
+        touching: false,
         post: false,
         parallaxPx: { far: 0, mid2: 0, mid: 0, near: 0, b: 0 },
         traveling: !!travel,
@@ -375,7 +405,7 @@ class GLWorld {
   private pass = new TravelPass();
   private glitch: Glitch;
   private trail = new MouseTrail();
-  private frags: Fragments;
+  private micro: MicroGlitch;
   private postOn = false;
   private mobileMq = window.matchMedia(MOBILE_QUERY);
   private lastCX = -1;
@@ -407,6 +437,8 @@ class GLWorld {
   private mouse = false;
   private mouseIn = false;
   private touchUntil = 0;
+  /** dedo apoyado (eventos touch, pasivos: siguen llegando aunque la pagina haga scroll) */
+  private finger = false;
   private bptr: BPointer = { x: 0, y: 0, active: false };
 
   // B
@@ -456,9 +488,7 @@ class GLWorld {
     this.dprCap = this.coarse ? DPR_MOBILE : DPR_HIGH;
     this.camera = new PerspectiveCamera(FOV, 1, 0.05, 100);
     this.glitch = new Glitch(() => this.coarse || this.mobileMq.matches);
-    this.frags = new Fragments(FRAG_HIGH);
-    this.frags.setCount(this.fragCount(startLow ? 'low' : 'high'));
-    this.scene.add(this.frags.back, this.frags.front);
+    this.micro = new MicroGlitch(() => this.coarse || this.mobileMq.matches);
 
     // solo en desarrollo: acceso desde la consola para depurar capas
     if (import.meta.env.DEV) (window as unknown as { __worldGL?: unknown }).__worldGL = this;
@@ -587,16 +617,9 @@ class GLWorld {
     const native = window.devicePixelRatio || 1;
     this.dpr = Math.min(native, q === 'low' ? Math.min(this.dprCap, this.coarse ? DPR_MOBILE : DPR_LOW) : this.dprCap);
     this.b?.setCount(q === 'low' ? B_PARTICLES_LOW : B_PARTICLES_HIGH);
-    this.frags.setCount(this.fragCount(q));
     this.pass.taps = q === 'low' ? 4 : 7;
     if (this.ready) quality = q;
     this.resize();
-  }
-
-  /** tactil o pantalla chica: pocos; escritorio: segun calidad */
-  private fragCount(q: 'high' | 'low'): number {
-    if (this.coarse || this.mobileMq.matches) return FRAG_MOBILE;
-    return q === 'low' ? FRAG_LOW : FRAG_HIGH;
   }
 
   /**
@@ -643,7 +666,6 @@ class GLWorld {
     const bh = Math.floor(h * this.dpr);
     this.res.set(bw, bh);
     this.pass.setSize(bw, bh, this.dpr);
-    this.frags?.setCount(this.fragCount(quality === 'low' ? 'low' : 'high'));
     this.anchorDirty = true;
     // setSize vacia el canvas y ResizeObserver corre antes de pintar: sin este cuadro inmediato
     // (rotar el telefono, cambiar de tamano) se veria un destello vacio hasta el siguiente rAF.
@@ -661,38 +683,61 @@ class GLWorld {
       this.px = (e.clientX / this.cw) * 2 - 1;
       this.py = -((e.clientY / this.ch) * 2 - 1);
     };
+    // mouse (y lapiz): pointer events. El dedo va aparte, con eventos touch (abajo).
     on(
       'pointermove',
       (e) => {
+        if (e.pointerType === 'touch') return;
         setXY(e);
-        // estela del glitch local (mouse; el dedo tambien, mas suave)
-        this.trail.push(performance.now(), e.clientX, e.clientY, e.pointerType === 'touch');
-        if (e.pointerType === 'touch') this.touchUntil = performance.now() + 1200;
-        else {
-          this.mouse = true;
-          this.mouseIn = true;
-          // recorrido del mouse para el glitch reactivo (anchos de pantalla)
-          if (this.lastCX >= 0) this.glitch.pointer(Math.hypot(e.clientX - this.lastCX, e.clientY - this.lastCY) / this.cw);
-          this.lastCX = e.clientX;
-          this.lastCY = e.clientY;
-        }
+        // estela del glitch local
+        this.trail.push(performance.now(), e.clientX, e.clientY, false);
+        this.mouse = true;
+        this.mouseIn = true;
+        // recorrido del mouse para el glitch reactivo (anchos de pantalla)
+        if (this.lastCX >= 0) this.glitch.pointer(Math.hypot(e.clientX - this.lastCX, e.clientY - this.lastCY) / this.cw);
+        this.lastCX = e.clientX;
+        this.lastCY = e.clientY;
       },
       { passive: true },
     );
     on(
       'pointerdown',
       (e) => {
-        setXY(e);
-        if (e.pointerType === 'touch') this.touchUntil = performance.now() + 1200;
+        if (e.pointerType !== 'touch') setXY(e);
       },
       { passive: true },
     );
-    on('pointerup', (e) => {
-      if (e.pointerType === 'touch') {
-        this.touchUntil = performance.now() + 700;
+    // dedo: touch events PASIVOS en window. A diferencia de pointermove (que el navegador cancela
+    // al empezar un scroll), siguen llegando mientras la pagina se desliza: en Trabajo y Contacto
+    // el scroll queda intacto y la camara y el glitch acompanan al dedo. En Inicio la escena
+    // lleva touch-action:none (index.astro), asi que arrastrar no hace scroll ni recarga.
+    const fingerAt = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      this.px = (t.clientX / this.cw) * 2 - 1;
+      this.py = -((t.clientY / this.ch) * 2 - 1);
+      this.trail.push(performance.now(), t.clientX, t.clientY, true);
+      this.touchUntil = performance.now() + 700;
+    };
+    on(
+      'touchstart',
+      (e) => {
+        this.finger = true;
+        // el dedo no hereda la estela del toque anterior
         this.trail.reset();
-      }
-    });
+        fingerAt(e);
+      },
+      { passive: true },
+    );
+    on('touchmove', fingerAt, { passive: true });
+    const lift = (e: TouchEvent) => {
+      if (e.touches.length) return;
+      this.finger = false;
+      // breve espera y la camara vuelve sola a la deriva (con la misma inercia)
+      this.touchUntil = performance.now() + 450;
+    };
+    on('touchend', lift, { passive: true });
+    on('touchcancel', lift, { passive: true });
     on('blur', () => {
       this.mouseIn = false;
       this.trail.reset();
@@ -871,6 +916,7 @@ class GLWorld {
     if (
       this.coarse &&
       !travel &&
+      !this.finger &&
       now >= this.touchUntil &&
       this.postS < 0.004 &&
       this.glitch.level < 0.001 &&
@@ -883,6 +929,7 @@ class GLWorld {
     this.time += dt;
     this.stepTravel(now);
     this.renderFrame(dt, now);
+    if (feedCbs.size) this.feed();
     if (dt > 0) this.probe(now, dt);
     this.fpsWin.push(now);
     while (this.fpsWin.length && now - this.fpsWin[0] > 1000) this.fpsWin.shift();
@@ -898,11 +945,18 @@ class GLWorld {
     let ty = 0;
     const driftX = Math.sin(time * 0.19) * 0.5 + Math.sin(time * 0.071 + 2) * 0.22;
     const driftY = Math.sin(time * 0.13 + 1.3) * 0.38;
+    const touching = this.finger || now < this.touchUntil;
     if (this.mouse) {
       if (this.mouseIn) {
         tx = this.px;
         ty = this.py;
       }
+    } else if (touching) {
+      // tactil: la camara sigue al dedo. En Inicio (pantalla fija) del todo; en las paginas con
+      // scroll solo un poco (el dedo esta deslizando contenido, no apuntando)
+      const k = station === 'home' ? 1 : TOUCH_CAMERA_SCROLL_K;
+      tx = driftX + (this.px - driftX) * k;
+      ty = driftY + (this.py - driftY) * k;
     } else {
       tx = driftX;
       ty = driftY;
@@ -913,7 +967,6 @@ class GLWorld {
     this.sx2 += (this.sx - this.sx2) * kM;
     this.sy2 += (this.sy - this.sy2) * kM;
 
-    const touching = now < this.touchUntil;
     if (this.mouse) {
       this.bptr.x = this.px;
       this.bptr.y = this.py;
@@ -965,23 +1018,8 @@ class GLWorld {
     this.glitch.update(time, dt, this.postS);
     this.trail.update(now, dt, this.cw, this.ch);
 
-    // fragmentos: parallax de viaje por profundidad (la camara ya da el del mouse)
-    const lamFar = this.layers.far?.lambda ?? 3;
-    this.frags.update({
-      time,
-      p: cur.u,
-      tanHalf: this.tanHalf,
-      aspect: this.cw / this.ch,
-      lamFar,
-      lamMid: this.layers.mid?.lambda ?? lamFar * 1.3,
-      lamNear: this.layers.near?.lambda ?? lamFar * 1.8,
-      dim: cur.dim,
-      dpr: this.dpr,
-      res: this.res,
-      mx: this.px,
-      my: this.py,
-      mouseAmp: Math.min(1, (this.trail.amp / GLITCH_TRAIL_AMP_MAX) * 1.8),
-    });
+    // micro-glitches en la imagen (no nacen durante el viaje)
+    this.micro.update(time, this.cw, this.ch, this.dpr, !!travel || this.postS > 0.02);
 
     // B
     if (this.b) {
@@ -1000,17 +1038,36 @@ class GLWorld {
       this.layers.near?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r, 0.85 * pres);
       this.layers.mid?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.15, 0.4 * pres);
       this.layers.mid2?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.2, 0.5 * pres);
-      this.frags.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.1, 0.9 * pres);
     }
 
     // pintar
-    this.postOn = this.postS > 0.004 || this.postZ > 0.004 || this.glitch.level > 0.001 || this.trail.amp > 0;
+    this.postOn = this.postS > 0.004 || this.postZ > 0.004 || this.glitch.level > 0.001 || this.trail.amp > 0 || this.micro.active > 0;
     if (this.postOn) {
-      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir, this.glitch, this.trail);
+      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir, this.glitch, this.trail, this.micro);
     } else {
       this.renderer.setRenderTarget(null);
       this.renderer.render(this.scene, cam);
     }
+  }
+
+  private feedObj: GlitchFeed | null = null;
+  private feed(): void {
+    const f = (this.feedObj ??= {
+      w: 1,
+      h: 1,
+      mouse: 0,
+      trail: this.trail.points,
+      radius: GLITCH_TRAIL_RADIUS_PX,
+      global: 0,
+      travel: 0,
+      micro: this.micro.boxes,
+    });
+    f.w = this.cw;
+    f.h = this.ch;
+    f.mouse = this.trail.amp;
+    f.global = this.glitch.level;
+    f.travel = this.postS;
+    for (const cb of feedCbs) cb(f);
   }
 
   /* ---------- diagnostico ---------- */
@@ -1042,7 +1099,8 @@ class GLWorld {
       glitch: this.glitch.level,
       mouseGlitch: this.trail.amp,
       mouseSpeed: Math.round(this.trail.speed),
-      fragments: this.frags.count,
+      micro: this.micro.active,
+      touching: this.finger,
       post: this.postOn,
       parallaxPx: {
         far: px(LAYERS.far.depth),
@@ -1065,7 +1123,6 @@ class GLWorld {
     for (const f of this.off) f();
     for (const l of Object.values(this.layers)) l?.dispose();
     this.b?.dispose();
-    this.frags.dispose();
     this.pass.dispose();
     this.renderer.dispose();
   }

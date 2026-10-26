@@ -87,4 +87,10 @@ La B ya no es un componente: la dibuja el motor del mundo (WebGL, `src/scripts/w
 
 ## Cursor propio
 
-`src/components/Cursor.astro` (montado una vez en `Base`, persistente) + `src/scripts/cursor.ts`. Solo con mouse real y sin reduced motion: oculta la flecha nativa (`html[data-custom-cursor="on"]`) y pinta un círculo difuminado que se vuelve anillo sobre `a[href]`, `button`, `[role=button]`, `.card`, `summary`, `label[for]`, `select`. Para que otro elemento active el anillo, ponle `data-cursor-hover`. Los campos de texto conservan su cursor nativo. Detalle en `src/scripts/world/README.md` ("Cursor").
+`src/components/Cursor.astro` (montado una vez en `Base`, persistente) + `src/scripts/cursor.ts`. Solo con mouse real y sin reduced motion: oculta la flecha nativa (`html[data-custom-cursor="on"]`) y pinta un círculo difuminado que se vuelve anillo sobre `a[href]`, `button`, `[role=button]`, `.card`, `summary`, `label[for]`, `select`. Para que otro elemento active el anillo, ponle `data-cursor-hover`. Los campos de texto conservan su cursor nativo. Círculo de 54 px; anillo de 81 px. Detalle en `src/scripts/world/README.md` ("Cursor").
+
+## Glitch del mundo y de los titulares
+
+- El glitch vive en la imagen (pase de post del mundo): ráfagas globales, micro-glitches que rotan de lugar y el glitch local del mouse o del dedo. No hay partículas flotando. Constantes en `src/scripts/world/config.ts` (`GLITCH_*`, `GLITCH_TRAIL_*`, `MICRO_GLITCH_*`).
+- Los titulares son DOM y se glitchean aparte, solo bajo el mouse o el dedo (las letras cercanas al puntero, no el titular entero): `src/scripts/text-glitch.ts` (importado en `Base`). Para que un titular participe, ponle `data-glitch-text`. No lo pongas en nav, botones, filtros ni texto largo. Los micro-glitches evitan solos titulares, textos y controles; para que eviten otra zona, `data-world-avoid`.
+- Táctil: el dedo hace de mouse con eventos `touch*` pasivos. En Inicio la sección `.hm` lleva `touch-action: none` (pantalla fija); en Trabajo y Contacto el scroll queda intacto. No pongas links ni botones dentro de `.hm` sin revisar eso.

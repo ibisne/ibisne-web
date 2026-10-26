@@ -19,7 +19,7 @@ const LERP = 0.28;
 /** Separacion RGB: velocidad (px/s) desde la que aparece, a la que llega al maximo, y maximo en px */
 const SPLIT_FROM = 700;
 const SPLIT_FULL = 3200;
-const SPLIT_PX = 5;
+const SPLIT_PX = 7.5;
 
 const INTERACTIVE = 'a[href], button, [role="button"], summary, label[for], select, [data-cursor-hover]';
 const DISABLED = ':disabled, [aria-disabled="true"]';

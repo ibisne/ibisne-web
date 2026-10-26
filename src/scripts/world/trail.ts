@@ -2,15 +2,15 @@
  * Estela del mouse para el glitch local (solo CPU; el dibujo vive en postFrag).
  * Guarda las posiciones del puntero con su hora, mide la velocidad y entrega al shader
  * GLITCH_TRAIL_POINTS puntos repartidos en los ultimos GLITCH_TRAIL_MS (el 0 es el cursor)
- * con su peso, mas una intensidad por velocidad que sube rapido y cae en ~250 ms al
- * detenerse. amp = 0 en reposo: el motor no corre el pase. Sin allocations por cuadro.
+ * con su peso, mas una intensidad por velocidad que sube rapido y, al detenerse, baja en
+ * linea recta hasta 0 en GLITCH_TRAIL_FADE_S (~300 ms). amp = 0 en reposo: el motor no corre el pase. Sin allocations por cuadro.
  */
 import { Vector3 } from 'three';
 import {
   GLITCH_TRAIL_AMP_MAX,
   GLITCH_TRAIL_ATTACK_S,
   GLITCH_TRAIL_CURVE,
-  GLITCH_TRAIL_DECAY_S,
+  GLITCH_TRAIL_FADE_S,
   GLITCH_TRAIL_MS,
   GLITCH_TRAIL_POINTS,
   GLITCH_TRAIL_SPEED_MAX,
@@ -40,6 +40,8 @@ export class MouseTrail {
   private head = -1;
   private n = 0;
   private gain = 1;
+  /** pico de intensidad del movimiento actual: fija la pendiente del apagado */
+  private peak = 0;
   private nextSeedAt = 0;
   private reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -107,10 +109,14 @@ export class MouseTrail {
     const target = Math.pow(v, GLITCH_TRAIL_CURVE) * GLITCH_TRAIL_AMP_MAX * this.gain;
     if (dt > 0) {
       if (target > this.amp) this.amp += (target - this.amp) * (1 - Math.exp(-dt / GLITCH_TRAIL_ATTACK_S));
-      else this.amp = Math.max(target, this.amp * Math.exp(-dt / GLITCH_TRAIL_DECAY_S));
+      else this.amp = Math.max(target, this.amp - (this.peak * dt) / GLITCH_TRAIL_FADE_S);
     }
+    this.peak = Math.max(this.peak, this.amp);
     if (this.amp < 0.01) this.amp = 0;
-    if (this.amp === 0) return;
+    if (this.amp === 0) {
+      this.peak = 0;
+      return;
+    }
 
     if (now >= this.nextSeedAt) {
       this.nextSeedAt = now + GLITCH_TRAIL_STEP_MS * (0.7 + Math.random() * 0.6);

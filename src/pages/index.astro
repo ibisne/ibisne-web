@@ -20,7 +20,7 @@ import bStill from '../assets/b/b-trim.png';
     </div>
 
     <div class="hm-copy">
-      <h1 id="hm-h1" class="hm-title" data-travel-ui>
+      <h1 id="hm-h1" class="hm-title" data-travel-ui data-glitch-text>
         <span class="hm-title__thin">Diseñamos tecnología</span>
         <span class="hm-title__bold">para marcas selectas.</span>
       </h1>
@@ -41,6 +41,11 @@ import bStill from '../assets/b/b-trim.png';
     display: flex;
     flex-direction: column;
     padding: calc(var(--header-h) + 0.75rem) var(--gutter) calc(1.5rem + max(0px, var(--consent-h, 0px) - 2rem));
+    /* Tactil: arrastrar el dedo por la escena mueve la camara, la B y el glitch (engine.ts, eventos
+       touch pasivos), como el mouse en escritorio. La pantalla es fija, asi que la escena no cede
+       el gesto al navegador (sin scroll, sin tirar para recargar). Solo esta seccion: el header, la
+       barra inferior, "Privacidad" y el banner de cookies quedan fuera y se tocan normal. */
+    touch-action: none;
   }
 
   .hm-vig {
@@ -118,6 +123,8 @@ import bStill from '../assets/b/b-trim.png';
       min-height: calc(100svh - var(--tabbar-h) - 2rem - var(--veil-gap, 0px));
       padding-top: calc(var(--header-h) - 0.5rem);
       padding-inline: max(3rem, calc(env(safe-area-inset-left, 0px) + 2rem)) max(1.5rem, env(safe-area-inset-right, 0px));
+      /* horizontal puede pasar de una pantalla: aqui el scroll manda (el dedo sigue moviendo el mundo, pasivo) */
+      touch-action: auto;
     }
     .hm-b {
       flex: 0 0 auto;
