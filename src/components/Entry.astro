@@ -11,6 +11,9 @@
  *
  * Musica: si existe public/audio/ambient.mp3 (y .ogg) al compilar, su ruta va en data-ambient-*;
  * si no, ambient.ts usa el respaldo generativo y nunca pide un archivo inexistente.
+ *
+ * La pregunta es una tarjeta HUD (marco chaflanado, cabecera de terminal, opciones con icono). La
+ * logica (data-entry-choice, cancel = sin sonido) vive en entry.ts y no depende de este marcado.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,16 +41,46 @@ const ogg = pub('ambient.ogg');
 
   <dialog class="entry__dlg" data-entry-dialog aria-labelledby="entry-title" aria-describedby="entry-desc">
     <div class="entry__panel">
-      <h2 class="entry__title" id="entry-title">
-        <span class="entry__thin">¿Cómo quieres</span>
-        <span class="entry__bold">entrar?</span>
-      </h2>
-      <p class="entry__desc" id="entry-desc">
-        La experiencia completa suma música ambiental. Puedes cambiarlo cuando quieras con el control de sonido.
-      </p>
-      <div class="entry__actions">
-        <button type="button" class="btn btn-solid entry__btn" data-entry-choice="immersive" autofocus>Entrar con experiencia</button>
-        <button type="button" class="btn btn-outline entry__btn" data-entry-choice="quiet">Entrar sin sonido</button>
+      <div class="entry__frame">
+        <div class="entry__card">
+          <span class="entry__scan" aria-hidden="true"></span>
+          <div class="entry__hud" aria-hidden="true">
+            <span>iBisne · Sistema</span>
+            <span class="entry__status"><i class="entry__dot"></i>En línea</span>
+          </div>
+          <div class="entry__body">
+            <h2 class="entry__title" id="entry-title">
+              <span class="entry__thin">¿Cómo quieres</span>
+              <span class="entry__bold">entrar?</span>
+            </h2>
+            <p class="entry__desc" id="entry-desc">
+              La experiencia completa suma música ambiental. Puedes cambiarlo cuando quieras con el control de sonido.
+            </p>
+            <div class="entry__actions">
+              <button type="button" class="entry__opt entry__opt--main" data-entry-choice="immersive" autofocus>
+                <svg class="entry__ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"></path>
+                  <path d="M15.5 9.2a4 4 0 0 1 0 5.6"></path>
+                  <path d="M18.3 6.6a8 8 0 0 1 0 10.8"></path>
+                </svg>
+                <span class="entry__lbl">Entrar con experiencia</span>
+                <svg class="entry__arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </button>
+              <button type="button" class="entry__opt" data-entry-choice="quiet">
+                <svg class="entry__ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"></path>
+                  <path d="M16 9.5l4.5 5M20.5 9.5l-4.5 5"></path>
+                </svg>
+                <span class="entry__lbl">Entrar sin sonido</span>
+                <svg class="entry__arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </dialog>
@@ -134,7 +167,7 @@ const ogg = pub('ambient.ogg');
     max-width: none;
     max-height: none;
     margin: 0;
-    padding: var(--gutter);
+    padding: 1.25rem; /* 20px de margen en movil */
     border: 0;
     background: transparent;
     color: var(--text);
@@ -147,19 +180,28 @@ const ogg = pub('ambient.ogg');
   .entry__dlg::backdrop {
     background: transparent;
   }
+
+  /* Tarjeta HUD: marco con chaflan arriba-derecha y abajo-izquierda, brackets en las otras dos
+     esquinas, cabecera tipo terminal. Solo tokens; el borde es un degradado cian a magenta contenido. */
   .entry__panel {
-    width: min(30rem, 100%);
-    padding: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
-    text-align: center;
-    background: color-mix(in srgb, var(--ink) 66%, transparent);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
-    box-shadow: 0 30px 80px color-mix(in srgb, var(--ink) 70%, transparent);
+    --cut: 1.125rem;
+    position: relative;
+    isolation: isolate;
+    width: min(27.5rem, 100%); /* 440px */
     @media (prefers-reduced-motion: no-preference) {
       animation: entry-in 0.5s var(--ease-out) both;
     }
+  }
+  /* Resplandor ambiental detras del marco (el marco recortado no puede proyectar sombra) */
+  .entry__panel::before {
+    content: '';
+    position: absolute;
+    inset: -1.25rem;
+    z-index: -1;
+    background:
+      radial-gradient(60% 55% at 12% 0%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 70%),
+      radial-gradient(60% 55% at 100% 100%, color-mix(in srgb, var(--magenta) 14%, transparent), transparent 70%);
+    filter: blur(22px);
   }
   @keyframes entry-in {
     from {
@@ -167,12 +209,155 @@ const ogg = pub('ambient.ogg');
       translate: 0 14px;
     }
   }
+  .entry__frame {
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--cyan) 85%, transparent),
+      var(--line-strong) 38%,
+      var(--line) 62%,
+      color-mix(in srgb, var(--magenta) 70%, transparent)
+    );
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+  .entry__card {
+    position: relative;
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    /* diagonal a 45 grados: el recorte interior se retrae 0.59px para que el borde mida 1px parejo */
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut) + 0.59px) 0,
+      100% calc(var(--cut) - 0.59px),
+      100% 100%,
+      calc(var(--cut) - 0.59px) 100%,
+      0 calc(100% - var(--cut) + 0.59px)
+    );
+  }
+  /* Brackets en las dos esquinas completas */
+  .entry__card::before,
+  .entry__card::after {
+    content: '';
+    position: absolute;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 0 solid var(--cyan);
+    pointer-events: none;
+  }
+  .entry__card::before {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  .entry__card::after {
+    right: 0;
+    bottom: 0;
+    border-width: 0 2px 2px 0;
+    border-color: var(--magenta);
+  }
+  /* Lineas de escaneo fijas y un barrido unico al aparecer */
+  .entry__scan {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0 2px,
+      color-mix(in srgb, var(--cyan) 3.5%, transparent) 2px 3px
+    );
+  }
+  .entry__scan::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3rem;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--cyan) 14%, transparent) 90%, var(--cyan));
+    opacity: 0;
+    translate: 0 -100%;
+    @media (prefers-reduced-motion: no-preference) {
+      animation: entry-sweep 1s var(--ease-inout) 0.15s 1 both;
+    }
+  }
+  @keyframes entry-sweep {
+    0% {
+      opacity: 0.7;
+      translate: 0 -100%;
+    }
+    100% {
+      opacity: 0;
+      translate: 0 26rem;
+    }
+  }
+
+  .entry__hud {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1.5rem 0.8rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cyan) 7%, transparent), transparent 70%);
+    color: var(--text-3);
+    font-size: 0.6875rem; /* 11px */
+    font-weight: var(--w-medium);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .entry__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cyan);
+  }
+  .entry__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    @media (prefers-reduced-motion: no-preference) {
+      animation: entry-blink 2.4s ease-in-out infinite;
+    }
+  }
+  @keyframes entry-blink {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .entry__body {
+    position: relative;
+    padding: clamp(1.25rem, 1rem + 1.2vw, 1.75rem) 1.25rem clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
+  }
+  @media (min-width: 30em) {
+    .entry__body {
+      padding-inline: 1.75rem;
+    }
+    .entry__hud {
+      padding-inline: 1.75rem 2rem;
+    }
+  }
   .entry__title {
     display: flex;
     flex-direction: column;
-    font-size: clamp(1.9rem, 1.3rem + 2.2vw, 2.75rem);
+    font-size: clamp(1.625rem, 1.35rem + 1.2vw, 2.125rem);
     line-height: var(--lh-tight);
     letter-spacing: -0.01em;
+    @media (prefers-reduced-motion: no-preference) {
+      animation: entry-glitch 0.3s steps(1, end) 0.5s 1 both;
+    }
   }
   .entry__thin {
     font-weight: var(--w-thin);
@@ -180,22 +365,153 @@ const ogg = pub('ambient.ogg');
   .entry__bold {
     font-weight: var(--w-bold);
   }
+  /* Glitch RGB: desfase cian/magenta unico de 300 ms al aparecer la tarjeta */
+  @keyframes entry-glitch {
+    0% {
+      text-shadow:
+        -3px 0 var(--magenta),
+        3px 0 var(--cyan);
+      translate: -2px 0;
+    }
+    25% {
+      text-shadow:
+        2px 0 var(--magenta),
+        -2px 0 var(--cyan);
+      translate: 2px 0;
+    }
+    50% {
+      text-shadow:
+        -2px 0 var(--magenta),
+        2px 0 var(--cyan);
+      translate: -1px 0;
+    }
+    75% {
+      text-shadow:
+        1px 0 var(--magenta),
+        -1px 0 var(--cyan);
+      translate: 1px 0;
+    }
+    100% {
+      text-shadow: none;
+      translate: 0 0;
+    }
+  }
   .entry__desc {
-    margin-top: 1rem;
+    margin-top: 0.875rem;
     color: var(--text-2);
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    font-size: 0.875rem;
+    font-weight: var(--w-light);
+    line-height: 1.55;
     text-wrap: pretty;
   }
   .entry__actions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid transparent;
+    border-image: linear-gradient(90deg, color-mix(in srgb, var(--cyan) 55%, transparent), var(--line) 60%, transparent) 1;
   }
-  .entry__btn {
-    min-height: 3.25rem; /* 52px: comodo al pulgar */
+
+  /* Opciones: fila con icono lineal, etiqueta y flecha */
+  .entry__opt {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.875rem;
     width: 100%;
+    min-height: 3.25rem; /* 52px: comodo al pulgar */
+    padding: 0 1rem 0 0.875rem;
+    border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text-2);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: var(--w-medium);
+    text-align: left;
+    transition:
+      border-color 0.25s var(--ease-out),
+      background-color 0.25s var(--ease-out),
+      color 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out);
+  }
+  .entry__opt--main {
+    border-color: var(--cyan);
+    background: color-mix(in srgb, var(--cyan) 9%, transparent);
+    color: var(--text);
+    box-shadow:
+      0 0 22px color-mix(in srgb, var(--cyan) 22%, transparent),
+      inset 0 0 18px color-mix(in srgb, var(--cyan) 7%, transparent);
+  }
+  .entry__ico {
+    color: var(--text-3);
+    transition: color 0.25s var(--ease-out);
+  }
+  .entry__arrow {
+    color: var(--text-3);
+    transition:
+      translate 0.25s var(--ease-out),
+      color 0.25s var(--ease-out);
+  }
+  .entry__opt--main .entry__ico,
+  .entry__opt--main .entry__arrow {
+    color: var(--cyan);
+  }
+  .entry__opt:hover,
+  .entry__opt:focus-visible {
+    border-color: var(--cyan);
+    background: color-mix(in srgb, var(--cyan) 11%, transparent);
+    color: var(--text);
+  }
+  .entry__opt--main:hover,
+  .entry__opt--main:focus-visible {
+    box-shadow:
+      0 0 30px color-mix(in srgb, var(--cyan) 34%, transparent),
+      inset 0 0 22px color-mix(in srgb, var(--cyan) 10%, transparent);
+  }
+  .entry__opt:hover .entry__ico,
+  .entry__opt:focus-visible .entry__ico,
+  .entry__opt:hover .entry__arrow,
+  .entry__opt:focus-visible .entry__arrow {
+    color: var(--cyan);
+  }
+  .entry__opt:hover .entry__arrow,
+  .entry__opt:focus-visible .entry__arrow {
+    translate: 3px 0;
+  }
+  .entry__opt:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+  .entry__opt:active {
+    translate: 0 1px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .entry__opt:is(:hover, :focus-visible) .entry__lbl {
+      animation: entry-glitch-sm 0.24s steps(1, end) 1 both;
+    }
+  }
+  @keyframes entry-glitch-sm {
+    0% {
+      text-shadow:
+        -2px 0 var(--magenta),
+        2px 0 var(--cyan);
+    }
+    40% {
+      text-shadow:
+        1px 0 var(--magenta),
+        -1px 0 var(--cyan);
+    }
+    70% {
+      text-shadow:
+        -1px 0 var(--magenta),
+        1px 0 var(--cyan);
+    }
+    100% {
+      text-shadow: none;
+    }
   }
 
   /* Mientras corre la entrada la UI de la pagina espera oculta (la B dispersa queda sola sobre la
