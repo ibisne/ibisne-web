@@ -1,0 +1,9 @@
+Pista: Cyberpunk Alleyway Ambient
+Autor: Bertsz
+URL: https://pixabay.com/music/ambient-cyberpunk-alleyway-ambient-188519/
+Archivo fuente: https://cdn.pixabay.com/download/audio/2024/01/28/audio_09042bd511.mp3 (bertsz-cyberpunk-alleyway-ambient-188519.mp3)
+Fecha de descarga: 2026-10-26
+Licencia: Pixabay Content License
+URL de la licencia: https://pixabay.com/service/license-summary/
+Resumen: uso gratuito, sin atribucion obligatoria (se agradece), se permite modificar o adaptar el contenido. Prohibido venderlo o distribuirlo sin cambios de forma independiente (standalone), usarlo como marca o nombre comercial, o usos ilegales o enganosos. La pagina no declara "uso comercial" textualmente, pero la licencia lo permite dentro de esos limites (musica de fondo en un sitio web).
+Modificaciones: normalizada a ~-16 LUFS aprox. (limitada por picos), fade-in y fade-out de 2 s, recodificada a MP3 128 kbps y OGG/Opus 128 kbps.
