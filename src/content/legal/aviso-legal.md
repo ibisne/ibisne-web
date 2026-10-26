@@ -6,7 +6,7 @@ updated: "25 de octubre de 2026"
 
 ## Titular
 
-Este sitio es operado por iBisne S.A.S. de C.V., con domicilio en Zapopan, Jalisco, México. Puedes contactarnos por correo electrónico en proyectos@ibisne.com o por WhatsApp al 33 3723 7525.
+Este sitio es operado por iBisne S.A.S. de C.V., con domicilio en Av. Campestre, C. 3A 11, entre 3 y, Campestre, 97120 Mérida, Yucatán, México, y oficina en Zapopan, Jalisco. Puedes contactarnos por correo electrónico en proyectos@ibisne.com o por WhatsApp al 33 3723 7525.
 
 ## Objeto
 
