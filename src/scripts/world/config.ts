@@ -115,15 +115,15 @@ export const B_THICKNESS = 0.07;
 /* ---------- Glitch (pase de post-proceso, glitch.ts + postFrag) ---------- */
 // Senal digital que se reconecta: rafagas breves y esporadicas; entre rafagas, imagen limpia
 // (el pase no corre). Sin glitch en modo estatico ni con prefers-reduced-motion.
-/** Pausa entre rafagas, segundos (aleatoria en el rango) */
-export const GLITCH_EVERY_MIN_S = 4;
-export const GLITCH_EVERY_MAX_S = 9;
+/** Pausa entre rafagas, segundos (aleatoria en el rango). Espaciadas: el mouse ya da su glitch local */
+export const GLITCH_EVERY_MIN_S = 8;
+export const GLITCH_EVERY_MAX_S = 15;
 /** Duracion de cada rafaga, segundos */
-export const GLITCH_BURST_MIN_S = 0.12;
-export const GLITCH_BURST_MAX_S = 0.28;
+export const GLITCH_BURST_MIN_S = 0.1;
+export const GLITCH_BURST_MAX_S = 0.22;
 /** Intensidad de una rafaga (0..1, aleatoria en el rango). 1 = cortes de GLITCH_SLICE_SHIFT */
-export const GLITCH_AMP_MIN = 0.55;
-export const GLITCH_AMP_MAX = 0.95;
+export const GLITCH_AMP_MIN = 0.35;
+export const GLITCH_AMP_MAX = 0.65;
 /** Una rafaga salta de patron cada 35-70 ms (tramos): eso la hace "digital" y no ruido */
 export const GLITCH_STEP_MIN_S = 0.035;
 export const GLITCH_STEP_MAX_S = 0.07;
@@ -137,15 +137,10 @@ export const GLITCH_RGB = 0.007;
 export const GLITCH_BLOCK_ZONES = 0.07;
 /** Probabilidad de que un tramo traiga 1-2 lineas de escaneo cian/magenta */
 export const GLITCH_LINE_CHANCE = 0.45;
-/** Mouse rapido: velocidad (anchos de pantalla por segundo) desde la que reacciona */
+/** Mouse rapido: velocidad (anchos de pantalla por segundo) desde la que adelanta la siguiente rafaga */
 export const GLITCH_MOUSE_SPEED = 2.2;
 /** Mouse rapido: segundos que adelanta la siguiente rafaga por cada segundo de movimiento rapido */
-export const GLITCH_MOUSE_PULL = 1.5;
-/** Mouse rapido: micro-glitch (probabilidad por segundo, intensidad, duracion y pausa minima) */
-export const GLITCH_MOUSE_RATE = 0.9;
-export const GLITCH_MOUSE_AMP = 0.3;
-export const GLITCH_MOUSE_DUR_S = 0.09;
-export const GLITCH_MOUSE_COOLDOWN_S = 1.4;
+export const GLITCH_MOUSE_PULL = 0.6;
 /** Viaje: intensidad maxima (por velocidad de camara 0..1; pico a mitad del viaje) */
 export const GLITCH_TRAVEL = 0.55;
 /** Viaje: fraccion de tramos con glitch (el resto limpio: tartamudeo, no ruido constante) */
@@ -153,6 +148,71 @@ export const GLITCH_TRAVEL_DUTY = 0.5;
 /** Movil: pausas mas largas (factor) y glitch mas suave (factor de intensidad) */
 export const GLITCH_MOBILE_EVERY_K = 1.7;
 export const GLITCH_MOBILE_AMP_K = 0.6;
+
+/* ---------- Glitch local del mouse (trail.ts + postFrag) ---------- */
+// Alrededor del cursor y de su estela reciente: rebanadas cortas desplazadas y RGB, con
+// intensidad por velocidad. Se apaga solo al detenerse; en reposo el pase no corre.
+/** Puntos de la estela que llegan al shader (fijo: el arreglo del shader mide 6) */
+export const GLITCH_TRAIL_POINTS = 6;
+/** Duracion de la estela, ms (el punto mas viejo es la posicion de hace este tiempo) */
+export const GLITCH_TRAIL_MS = 150;
+/** Radio del glitch alrededor del cursor y de la estela, px CSS */
+export const GLITCH_TRAIL_RADIUS_PX = 150;
+/** Velocidad del mouse (px CSS/s): por debajo de MIN nada; en MAX, intensidad maxima */
+export const GLITCH_TRAIL_SPEED_MIN = 140;
+export const GLITCH_TRAIL_SPEED_MAX = 4000;
+/** Curva velocidad -> intensidad (>1 = mas suave a velocidad normal) */
+export const GLITCH_TRAIL_CURVE = 1.5;
+/** Intensidad maxima (0..1). Con 1, rebanadas de GLITCH_TRAIL_SHIFT_PX */
+export const GLITCH_TRAIL_AMP_MAX = 0.85;
+/** Ataque y caida de la intensidad (constantes de tiempo, s). Caida 0.045: desde el maximo se
+ *  apaga en ~250 ms al detenerse (a velocidad normal, ~120 ms) */
+export const GLITCH_TRAIL_ATTACK_S = 0.035;
+export const GLITCH_TRAIL_DECAY_S = 0.045;
+/** Desplazamiento maximo de una rebanada y separacion RGB maxima, px CSS (con intensidad 1) */
+export const GLITCH_TRAIL_SHIFT_PX = 16;
+export const GLITCH_TRAIL_RGB_PX = 3.5;
+/** Alto de las rebanadas, px CSS (cada tramo elige uno en el rango) */
+export const GLITCH_TRAIL_BAND_MIN_PX = 3;
+export const GLITCH_TRAIL_BAND_MAX_PX = 11;
+/** El patron salta cada tantos ms (como el glitch global) */
+export const GLITCH_TRAIL_STEP_MS = 45;
+/** Tactil: arrastre del dedo, factor de intensidad (0 = sin glitch por toque) */
+export const GLITCH_TRAIL_TOUCH_K = 0.3;
+
+/* ---------- Fragmentos de glitch flotando (fragments.ts) ---------- */
+// Astillas y grupos de pixeles a varias profundidades, girando lento, con borde RGB y cortes
+// de senal. Sustituyen al polvo (que se leia como confeti). Sin fragmentos en modo estatico.
+/** Cantidad: escritorio alta, escritorio baja calidad, tactil o pantalla chica */
+export const FRAG_HIGH = 96;
+export const FRAG_LOW = 64;
+export const FRAG_MOBILE = 32;
+/** Fraccion que va delante de la capa cercana (mas grandes) */
+export const FRAG_FRONT_SHARE = 0.18;
+/** Profundidades: delante de la capa cercana desde FRAG_NEAR_MIN; detras hasta FRAG_FAR_MAX */
+export const FRAG_NEAR_MIN = 1.5;
+export const FRAG_FAR_MAX = 20;
+/** Tamano aparente, px CSS (los cercanos al maximo, los lejanos al minimo) */
+export const FRAG_SIZE_MIN_PX = 6;
+export const FRAG_SIZE_MAX_PX = 24;
+/** Alfa (los lejanos se apagan con la bruma) */
+export const FRAG_ALPHA = 0.32;
+/** Giro, rad/s (aleatorio entre -MAX y MAX, nunca menos de MIN en valor absoluto) */
+export const FRAG_SPIN_MIN = 0.12;
+export const FRAG_SPIN_MAX = 0.55;
+/** Deriva lateral, anchos de vista por segundo (a su profundidad) */
+export const FRAG_DRIFT = 0.006;
+/** Cortes de senal: tramos por segundo, probabilidad de apagarse y de desfasarse en un tramo */
+export const FRAG_FLICKER_RATE = 1.6;
+export const FRAG_OFF_CHANCE = 0.12;
+export const FRAG_JUMP_CHANCE = 0.06;
+/** Separacion RGB del borde, fraccion del tamano (en reposo y desfasado) */
+export const FRAG_RGB = 0.05;
+export const FRAG_RGB_JUMP = 0.18;
+/** Reaccion al mouse: fraccion que reacciona, radio y empuje maximo, px CSS */
+export const FRAG_MOUSE_SHARE = 0.55;
+export const FRAG_MOUSE_RADIUS_PX = 160;
+export const FRAG_MOUSE_PUSH_PX = 26;
 
 /* ---------- Viaje ---------- */
 export const TRAVEL_MIN_S = 1.6;

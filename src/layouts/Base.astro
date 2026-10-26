@@ -5,6 +5,7 @@ import World from '../components/World.astro';
 import Header from '../components/Header.astro';
 import MobileTabBar from '../components/MobileTabBar.astro';
 import Consent from '../components/Consent.astro';
+import Cursor from '../components/Cursor.astro';
 import LegalFooter from '../components/LegalFooter.astro';
 
 export type PageKind = 'home' | 'trabajo' | 'proyecto' | 'contacto' | 'legal' | '404';
@@ -98,5 +99,6 @@ const jsonLd = {
     </main>
     <MobileTabBar />
     <Consent />
+    <Cursor />
   </body>
 </html>

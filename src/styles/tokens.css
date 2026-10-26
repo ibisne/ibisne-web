@@ -50,4 +50,6 @@
   --z-ui: 10;
   --z-header: 50;
   --z-consent: 80;
+  /* cursor propio: encima de todo pero sin eventos (pointer-events:none), el banner sigue clicable */
+  --z-cursor: 100;
 }

@@ -1,0 +1,157 @@
+---
+/**
+ * Cursor propio: circulo difuminado que sigue al mouse (logica en src/scripts/cursor.ts).
+ * Va UNA vez en Base.astro y persiste entre paginas. Solo se enciende con mouse real y sin
+ * prefers-reduced-motion; en tactil no existe y la flecha nativa queda intacta.
+ * pointer-events:none: nunca tapa clics (el banner de cookies sigue clicable); el foco por
+ * teclado conserva su anillo normal.
+ */
+---
+
+<div class="cursor" data-cursor aria-hidden="true" transition:persist="cursor">
+  <div class="cursor__pos" data-cursor-pos>
+    <div class="cursor__fx">
+      <span class="cursor__ghost cursor__ghost--m" data-cursor-m></span>
+      <span class="cursor__ghost cursor__ghost--c" data-cursor-c></span>
+      <span class="cursor__blob"></span>
+      <span class="cursor__ring"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/cursor.ts';
+</script>
+
+<style>
+  /* La flecha nativa se oculta solo con el cursor propio encendido (cursor.ts pone el atributo
+     tras el primer movimiento del mouse). Los campos de texto conservan su cursor. */
+  :global(html[data-custom-cursor='on']),
+  :global(html[data-custom-cursor='on'] *) {
+    cursor: none !important;
+  }
+  :global(html[data-custom-cursor='on'] :is(input, textarea, [contenteditable]:not([contenteditable='false']))) {
+    cursor: auto !important;
+  }
+
+  .cursor {
+    --size: 36px;
+    --ring: 54px;
+    position: fixed;
+    inset: 0 auto auto 0;
+    z-index: var(--z-cursor);
+    pointer-events: none;
+    display: none;
+    /* Sin mix-blend-mode: con screen el circulo desaparecia sobre botones blancos y con
+       difference se volvia amarillo sobre el indigo y rojo sobre el blanco. El brillo es
+       translucido (se mezcla por alfa) y el anillo lleva un filo de tinta para leerse en ambos. */
+  }
+  .cursor[data-on] {
+    display: block;
+  }
+  .cursor__pos {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+  }
+  .cursor__fx {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity 0.25s var(--ease-out),
+      scale 0.3s var(--ease-out);
+  }
+  .cursor[data-visible] .cursor__fx {
+    opacity: 1;
+    scale: 1;
+  }
+  .cursor[data-visible][data-down] .cursor__fx {
+    scale: 0.72;
+    transition-duration: 0.12s;
+  }
+  .cursor[data-text] .cursor__fx {
+    opacity: 0;
+  }
+  .cursor__blob,
+  .cursor__ghost,
+  .cursor__ring {
+    position: absolute;
+    left: calc(var(--size) / -2);
+    top: calc(var(--size) / -2);
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+  }
+  .cursor__blob {
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--text) 72%, transparent) 0%,
+      color-mix(in srgb, var(--text) 30%, transparent) 34%,
+      color-mix(in srgb, var(--cyan) 12%, transparent) 56%,
+      transparent 70%
+    );
+    transition:
+      scale 0.3s var(--ease-out),
+      opacity 0.3s var(--ease-out);
+  }
+  /* copias de color para la separacion RGB (cursor.ts mueve y enciende segun la velocidad) */
+  .cursor__ghost {
+    opacity: 0;
+  }
+  .cursor__ghost--m {
+    background: radial-gradient(circle, color-mix(in srgb, var(--magenta) 70%, transparent) 0%, transparent 62%);
+  }
+  .cursor__ghost--c {
+    background: radial-gradient(circle, color-mix(in srgb, var(--cyan) 70%, transparent) 0%, transparent 62%);
+  }
+  .cursor__ring {
+    left: calc(var(--ring) / -2);
+    top: calc(var(--ring) / -2);
+    width: var(--ring);
+    height: var(--ring);
+    border: 1.5px solid color-mix(in srgb, var(--cyan) 85%, var(--text));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent),
+      0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent);
+    opacity: 0;
+    scale: 0.5;
+    transition:
+      scale 0.35s var(--ease-out),
+      opacity 0.25s var(--ease-out);
+  }
+  /* sobre lo interactivo: el difuminado se encoge a un punto y aparece el anillo nitido */
+  .cursor[data-hover] .cursor__blob {
+    scale: 0.32;
+  }
+  .cursor[data-hover] .cursor__ring {
+    opacity: 1;
+    scale: 1;
+  }
+  /* deshabilitado: anillo tenue y punteado, sin crecer */
+  .cursor[data-off] .cursor__blob {
+    opacity: 0.45;
+  }
+  .cursor[data-off] .cursor__ring {
+    opacity: 0.55;
+    scale: 0.7;
+    border-style: dashed;
+    border-color: var(--text-3);
+  }
+  @media not ((hover: hover) and (pointer: fine)) {
+    .cursor {
+      display: none !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor {
+      display: none !important;
+    }
+  }
+</style>

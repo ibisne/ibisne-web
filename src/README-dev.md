@@ -85,3 +85,6 @@ Reglas:
 
 La B ya no es un componente: la dibuja el motor del mundo (WebGL, `src/scripts/world/`). Inicio solo deja el ancla `<div data-world-b>`. Cuando el mundo cae al respaldo estatico (reduced-motion, sin WebGL o fallo de escena; `engine.ts` pone `data-world-fallback` en `[data-world]`), Inicio muestra la silueta `src/assets/b/b-trim.png` con brillo CSS. La 404 usa esa misma silueta estatica sin ancla.
 
+## Cursor propio
+
+`src/components/Cursor.astro` (montado una vez en `Base`, persistente) + `src/scripts/cursor.ts`. Solo con mouse real y sin reduced motion: oculta la flecha nativa (`html[data-custom-cursor="on"]`) y pinta un círculo difuminado que se vuelve anillo sobre `a[href]`, `button`, `[role=button]`, `.card`, `summary`, `label[for]`, `select`. Para que otro elemento active el anillo, ponle `data-cursor-hover`. Los campos de texto conservan su cursor nativo. Detalle en `src/scripts/world/README.md` ("Cursor").

@@ -3,7 +3,7 @@
  * su intensidad y la semilla del patron. Tres fuentes, se toma la mayor:
  * - rafagas esporadicas (GLITCH_EVERY_*), cada una partida en tramos de 35-70 ms con
  *   semilla nueva: el patron salta, como una senal digital que se reconecta;
- * - mouse rapido: adelanta la siguiente rafaga y a veces dispara un micro-glitch leve;
+ * - mouse rapido: adelanta la siguiente rafaga (el glitch del mouse en si es local: trail.ts);
  * - viaje: proporcional a la velocidad de camara, en tramos alternos (tartamudeo).
  * level = 0 entre rafagas: el motor no corre el pase y la imagen queda limpia.
  */
@@ -18,11 +18,7 @@ import {
   GLITCH_LINE_CHANCE,
   GLITCH_MOBILE_AMP_K,
   GLITCH_MOBILE_EVERY_K,
-  GLITCH_MOUSE_AMP,
-  GLITCH_MOUSE_COOLDOWN_S,
-  GLITCH_MOUSE_DUR_S,
   GLITCH_MOUSE_PULL,
-  GLITCH_MOUSE_RATE,
   GLITCH_MOUSE_SPEED,
   GLITCH_STEP_MAX_S,
   GLITCH_STEP_MIN_S,
@@ -49,7 +45,6 @@ export class Glitch {
   private travelOn = 0;
   private move = 0;
   private mouseV = 0;
-  private lastMicro = -1e9;
   private lastTime = 0;
   private reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -92,17 +87,7 @@ export class Glitch {
       const v = this.move / dt;
       this.mouseV += (v - this.mouseV) * (1 - Math.pow(0.8, dt * 60));
       this.move = 0;
-      if (this.mouseV > GLITCH_MOUSE_SPEED) {
-        this.nextAt -= dt * GLITCH_MOUSE_PULL;
-        if (
-          time >= this.burstEnd &&
-          time - this.lastMicro > GLITCH_MOUSE_COOLDOWN_S &&
-          Math.random() < GLITCH_MOUSE_RATE * dt
-        ) {
-          this.lastMicro = time;
-          this.startBurst(time, GLITCH_MOUSE_DUR_S, GLITCH_MOUSE_AMP, false);
-        }
-      }
+      if (this.mouseV > GLITCH_MOUSE_SPEED) this.nextAt -= dt * GLITCH_MOUSE_PULL;
     }
 
     if (time >= this.nextAt && time >= this.burstEnd) {

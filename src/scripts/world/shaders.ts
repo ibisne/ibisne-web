@@ -258,6 +258,142 @@ void main() {
 }
 `;
 
+/* ---------------- Fragmentos de glitch flotando ---------------- */
+
+export const fragVert = /* glsl */ `
+uniform float uTime;
+uniform float uP;          // posicion en el panorama
+uniform float uTanHalf;
+uniform float uAspect;
+uniform vec3 uLam;         // vistas por unidad de panorama: lejana, media, cercana
+uniform vec3 uInvD;        // 1/profundidad de lejana, media, cercana
+uniform float uDim;
+uniform float uDpr;
+uniform vec2 uRes;         // px del buffer
+uniform vec2 uMouse;       // cursor en NDC
+uniform float uMAmp;       // 0..1 intensidad del mouse (velocidad)
+uniform vec4 uK;           // alfa, deriva, radio del mouse (px CSS), empuje (px CSS)
+uniform vec4 uFlick;       // tramos/s, prob. apagado, prob. desfase, RGB del desfase
+uniform float uRgb;        // RGB en reposo (fraccion del sprite)
+uniform vec4 uClear;       // zona despejada alrededor de la B: x, y (uv), radio (alto), cantidad
+attribute vec4 aF;         // x, y (0..1), profundidad, semilla
+attribute vec4 aG;         // tipo (0..1), giro (rad/s), tamano px CSS, reacciona (0/1)
+varying float vA;
+varying float vAng;
+varying float vTumble;
+varying float vKind;
+varying float vSplit;
+varying float vSeed;
+varying float vPx;
+
+float h1(float n) { return fract(sin(n * 91.3458) * 47453.5453); }
+
+float lambdaAt(float d) {
+  float k = 1.0 / d;
+  if (k <= uInvD.y) return mix(uLam.x, uLam.y, clamp((k - uInvD.x) / (uInvD.y - uInvD.x), 0.0, 1.0));
+  return mix(uLam.y, uLam.z, clamp((k - uInvD.y) / (uInvD.z - uInvD.y), 0.0, 1.5));
+}
+
+void main() {
+  float d = aF.z;
+  float seed = aF.w;
+  float hh = d * uTanHalf;
+  float hw = hh * uAspect;
+  float W = hw * 2.0 * 1.3;
+  float shift = -uP * lambdaAt(d) * hw * 2.0;
+  float drift = uTime * uK.y * (0.5 + seed) * hw * 2.0 * (seed > 0.5 ? 1.0 : -1.0);
+  float x = mod(aF.x * W + shift + drift, W) - W * 0.5;
+  float yf = fract(aF.y + uTime * 0.003 * (0.3 + seed));
+  float y = (yf - 0.5) * hh * 2.2 + sin(uTime * (0.2 + seed * 0.3) + seed * 30.0) * hh * 0.025;
+  vec4 clip = projectionMatrix * modelViewMatrix * vec4(x, y, -d, 1.0);
+  vec2 ndc = clip.xy / clip.w;
+
+  // cortes de senal: tramos; en algunos se apaga, en otros se desfasa un instante
+  float rate = uFlick.x * (0.6 + seed * 0.8);
+  float tt = uTime * rate + seed * 17.0;
+  float slot = floor(tt);
+  float hs = h1(slot * 0.731 + seed * 91.7);
+  float on = step(uFlick.y, hs);
+  float jump = step(1.0 - uFlick.z, hs) * step(fract(tt), 0.3);
+
+  // el mouse aparta a algunos y los glitchea al pasar cerca
+  vec2 dpx = (ndc - uMouse) * 0.5 * uRes;
+  float dist = length(dpx);
+  float near = (1.0 - smoothstep(0.0, uK.z * uDpr, dist)) * uMAmp * aG.w;
+  vec2 away = dist > 0.5 ? dpx / dist : vec2(0.0);
+  ndc += away * near * uK.w * uDpr * 2.0 / uRes;
+  float g = max(jump, near);
+  ndc.x += (h1(slot * 3.1 + seed * 7.0) - 0.5) * 2.0 * jump * 9.0 * uDpr * 2.0 / uRes.x;
+  gl_Position = vec4(ndc * clip.w, clip.zw);
+
+  vPx = aG.z * uDpr * 1.3;
+  gl_PointSize = vPx;
+  vAng = seed * 6.2832 + uTime * aG.y;
+  vTumble = cos(uTime * aG.y * 0.8 + seed * 19.0);
+  vKind = aG.x;
+  vSeed = seed;
+  vSplit = mix(uRgb, uFlick.w, g);
+
+  vec2 suv = ndc * 0.5 + 0.5;
+  vec2 dc = (suv - uClear.xy) * vec2(uAspect, 1.0);
+  float clearM = 1.0 - uClear.w * exp(-dot(dc, dc) / max(uClear.z * uClear.z, 1e-4));
+  float fog = 0.45 + 0.55 * exp(-d * 0.07);
+  float edge = smoothstep(0.0, 0.08, yf) * smoothstep(1.0, 0.92, yf);
+  vA = uK.x * on * fog * edge * clearM * uDim * (1.0 + g * 0.8) * (0.7 + 0.6 * h1(seed * 13.0));
+}
+`;
+
+export const fragFrag = /* glsl */ `
+uniform vec3 uCyan;
+uniform vec3 uMagenta;
+varying float vA;
+varying float vAng;
+varying float vTumble;
+varying float vKind;
+varying float vSplit;
+varying float vSeed;
+varying float vPx;
+
+float h2(vec2 p) {
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+// q en coordenadas del sprite centradas (-0.5..0.5), ya girado
+float shape(vec2 q) {
+  float aa = 1.2 / vPx;
+  if (vKind < 0.62) {
+    // astilla: rectangulo delgado; el ancho aparente sigue el volteo (giro en 3D)
+    float th = mix(0.035, 0.085, fract(vSeed * 7.3)) * max(abs(vTumble), 0.3);
+    vec2 e = abs(q) - vec2(mix(0.26, 0.4, fract(vSeed * 3.1)), th);
+    return 1.0 - smoothstep(-aa, aa, max(e.x, e.y));
+  }
+  // grupo de pixeles: rejilla 4x3 con huecos
+  vec2 g = (q + vec2(0.3, 0.225)) / vec2(0.15, 0.15);
+  if (g.x < 0.0 || g.y < 0.0 || g.x >= 4.0 || g.y >= 3.0) return 0.0;
+  vec2 c = floor(g);
+  float keep = step(0.42, h2(c + vSeed * 31.0));
+  vec2 f = abs(fract(g) - 0.5) - 0.4;
+  return keep * (1.0 - smoothstep(-aa / 0.15, aa / 0.15, max(f.x, f.y)));
+}
+
+void main() {
+  vec2 q = gl_PointCoord - 0.5;
+  float s = sin(vAng);
+  float c = cos(vAng);
+  mat2 rot = mat2(c, s, -s, c);
+  vec2 off = vec2(vSplit, 0.0);
+  float mg = shape(rot * (q - off));
+  float wh = shape(rot * q);
+  float cy = shape(rot * (q + off));
+  vec3 col = uMagenta * mg * 0.55 + uCyan * cy * 0.55 + vec3(0.92, 0.95, 1.0) * wh * 0.6;
+  float a = max(max(mg, cy), wh) * vA;
+  if (a < 0.002) discard;
+  gl_FragColor = vec4(col, a);
+}
+`;
+
 /* ---------------- Pase de post-proceso: viaje (aberracion, estela, vortice) y glitch ---------------- */
 
 export const postVert = /* glsl */ `
@@ -280,6 +416,11 @@ uniform float uGlitch;  // 0..1 intensidad del glitch (0 = limpio)
 uniform float uGSeed;   // semilla del tramo (cambia cada 35-70 ms)
 uniform float uGLines;  // 0..1 lineas de escaneo
 uniform vec3 uGlitchK;  // GLITCH_SLICE_SHIFT, GLITCH_RGB, GLITCH_BLOCK_ZONES
+uniform vec3 uMTrail[6]; // glitch del mouse: estela (xy en uv de pantalla, z peso); 0 = cursor
+uniform float uMAmp;     // 0..1 intensidad por velocidad (0 = sin glitch del mouse)
+uniform float uMSeed;
+uniform vec4 uMK;        // radio, corte, RGB y alto minimo de rebanada, en px del buffer
+uniform float uMBand;    // alto maximo / minimo de rebanada
 uniform vec3 uCyan;
 uniform vec3 uMagenta;
 varying vec2 vUv;
@@ -354,6 +495,36 @@ void main() {
       float l1 = (1.0 - smoothstep(0.0, lw, abs(vUv.y - y1))) * step(x1, vUv.x) * step(vUv.x, x1 + 0.4 + hash1(s * 3.3) * 0.4);
       float l2 = step(0.5, hash1(s * 8.3)) * (1.0 - smoothstep(0.0, lw, abs(vUv.y - y2))) * step(x2, vUv.x) * step(vUv.x, x2 + 0.3 + hash1(s * 2.7) * 0.4);
       gAdd = (uCyan * l1 + uMagenta * l2) * 0.42 * uGLines * uGlitch;
+    }
+  }
+
+  // glitch local del mouse: rebanadas cortas y RGB dentro de una capsula alrededor del cursor
+  // y de su estela de los ultimos ~150 ms (no toca el resto de la pantalla)
+  if (uMAmp > 0.001) {
+    vec2 p = vUv * uRes;
+    float m = 0.0;
+    for (int i = 0; i < 5; i++) {
+      vec2 a = uMTrail[i].xy * uRes;
+      vec2 sg = uMTrail[i + 1].xy * uRes - a;
+      float l2 = dot(sg, sg);
+      float h = l2 > 0.5 ? clamp(dot(p - a, sg) / l2, 0.0, 1.0) : 0.0;
+      float d = length(p - a - sg * h);
+      float w = mix(uMTrail[i].z, uMTrail[i + 1].z, h);
+      m = max(m, w * (1.0 - smoothstep(0.2, 1.0, d / uMK.x)));
+    }
+    m *= uMAmp;
+    if (m > 0.002) {
+      float s = uMSeed;
+      // alto de rebanada por tramo; tramos horizontales cortos (6-14 altos de rebanada)
+      float bh = uMK.w * mix(1.0, uMBand, hash1(s * 3.7));
+      float row = floor(p.y / bh);
+      float col = floor(p.x / (bh * mix(6.0, 14.0, hash1(row * 0.71 + s))));
+      float on = step(1.0 - (0.18 + 0.55 * m), hash1(row * 1.37 + s * 0.11));
+      on *= step(0.3, hash2(vec2(row, col) + s));
+      float sh = (hash1(row * 4.13 + s * 2.9) * 2.0 - 1.0) * uMK.y * m * on;
+      uv.x += sh / uRes.x;
+      gAb += uMK.z / uRes.x * m * (0.45 + 0.55 * on);
+      gAdd += mix(uCyan, uMagenta, step(0.5, hash1(row + s))) * 0.035 * m * on;
     }
   }
 

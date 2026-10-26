@@ -14,6 +14,10 @@ import {
   FOV,
   FPS_MIN,
   FPS_PROBE_S,
+  FRAG_HIGH,
+  FRAG_LOW,
+  FRAG_MOBILE,
+  GLITCH_TRAIL_AMP_MAX,
   INK,
   LAYERS,
   MID2_OFFSET,
@@ -36,6 +40,8 @@ import { Layer } from './layers';
 import type { LayerBlend, LayerName, LayerSource } from './layers';
 import { BMatrix } from './bmatrix';
 import { Glitch } from './glitch';
+import { MouseTrail } from './trail';
+import { Fragments } from './fragments';
 import type { BPointer } from './bmatrix';
 import { TravelPass } from './post';
 import { StaticWorld, STATIC_FADE_MS } from './static';
@@ -245,6 +251,13 @@ export interface WorldStats {
   glyphs: number;
   /** intensidad del glitch en este cuadro (0 = imagen limpia) */
   glitch: number;
+  /** intensidad del glitch local del mouse (0 = quieto) y velocidad medida, px CSS/s */
+  mouseGlitch: number;
+  mouseSpeed: number;
+  /** fragmentos de glitch dibujados */
+  fragments: number;
+  /** el pase de post corrio en el ultimo cuadro */
+  post: boolean;
   /** desplazamiento en px CSS de cada capa con el mouse en el borde (traslacion pura) */
   parallaxPx: { far: number; mid2: number; mid: number; near: number; b: number };
   traveling: boolean;
@@ -264,6 +277,10 @@ export function getWorldStats(): WorldStats {
         particles: 0,
         glyphs: 0,
         glitch: 0,
+        mouseGlitch: 0,
+        mouseSpeed: 0,
+        fragments: 0,
+        post: false,
         parallaxPx: { far: 0, mid2: 0, mid: 0, near: 0, b: 0 },
         traveling: !!travel,
         b: null,
@@ -357,6 +374,9 @@ class GLWorld {
   private b: BMatrix | null = null;
   private pass = new TravelPass();
   private glitch: Glitch;
+  private trail = new MouseTrail();
+  private frags: Fragments;
+  private postOn = false;
   private mobileMq = window.matchMedia(MOBILE_QUERY);
   private lastCX = -1;
   private lastCY = -1;
@@ -436,6 +456,9 @@ class GLWorld {
     this.dprCap = this.coarse ? DPR_MOBILE : DPR_HIGH;
     this.camera = new PerspectiveCamera(FOV, 1, 0.05, 100);
     this.glitch = new Glitch(() => this.coarse || this.mobileMq.matches);
+    this.frags = new Fragments(FRAG_HIGH);
+    this.frags.setCount(this.fragCount(startLow ? 'low' : 'high'));
+    this.scene.add(this.frags.back, this.frags.front);
 
     // solo en desarrollo: acceso desde la consola para depurar capas
     if (import.meta.env.DEV) (window as unknown as { __worldGL?: unknown }).__worldGL = this;
@@ -564,9 +587,16 @@ class GLWorld {
     const native = window.devicePixelRatio || 1;
     this.dpr = Math.min(native, q === 'low' ? Math.min(this.dprCap, this.coarse ? DPR_MOBILE : DPR_LOW) : this.dprCap);
     this.b?.setCount(q === 'low' ? B_PARTICLES_LOW : B_PARTICLES_HIGH);
+    this.frags.setCount(this.fragCount(q));
     this.pass.taps = q === 'low' ? 4 : 7;
     if (this.ready) quality = q;
     this.resize();
+  }
+
+  /** tactil o pantalla chica: pocos; escritorio: segun calidad */
+  private fragCount(q: 'high' | 'low'): number {
+    if (this.coarse || this.mobileMq.matches) return FRAG_MOBILE;
+    return q === 'low' ? FRAG_LOW : FRAG_HIGH;
   }
 
   /**
@@ -612,7 +642,8 @@ class GLWorld {
     const bw = Math.floor(w * this.dpr);
     const bh = Math.floor(h * this.dpr);
     this.res.set(bw, bh);
-    this.pass.setSize(bw, bh);
+    this.pass.setSize(bw, bh, this.dpr);
+    this.frags?.setCount(this.fragCount(quality === 'low' ? 'low' : 'high'));
     this.anchorDirty = true;
     // setSize vacia el canvas y ResizeObserver corre antes de pintar: sin este cuadro inmediato
     // (rotar el telefono, cambiar de tamano) se veria un destello vacio hasta el siguiente rAF.
@@ -634,6 +665,8 @@ class GLWorld {
       'pointermove',
       (e) => {
         setXY(e);
+        // estela del glitch local (mouse; el dedo tambien, mas suave)
+        this.trail.push(performance.now(), e.clientX, e.clientY, e.pointerType === 'touch');
         if (e.pointerType === 'touch') this.touchUntil = performance.now() + 1200;
         else {
           this.mouse = true;
@@ -655,15 +688,23 @@ class GLWorld {
       { passive: true },
     );
     on('pointerup', (e) => {
-      if (e.pointerType === 'touch') this.touchUntil = performance.now() + 700;
+      if (e.pointerType === 'touch') {
+        this.touchUntil = performance.now() + 700;
+        this.trail.reset();
+      }
     });
     on('blur', () => {
       this.mouseIn = false;
+      this.trail.reset();
     });
     on('scroll', () => (this.anchorDirty = true), { passive: true });
     on('resize', () => (this.anchorDirty = true), { passive: true });
     const leave = (e: MouseEvent) => {
-      if (!e.relatedTarget) this.mouseIn = false;
+      if (!e.relatedTarget) {
+        this.mouseIn = false;
+        this.lastCX = -1;
+        this.trail.reset();
+      }
     };
     document.addEventListener('mouseout', leave);
     this.off.push(() => document.removeEventListener('mouseout', leave));
@@ -833,6 +874,7 @@ class GLWorld {
       now >= this.touchUntil &&
       this.postS < 0.004 &&
       this.glitch.level < 0.001 &&
+      this.trail.amp === 0 &&
       now - this.last < MOBILE_IDLE_FRAME_MS
     )
       return;
@@ -919,8 +961,27 @@ class GLWorld {
       l.update(u, cur.dim, time, this.glow, this.res, l.name === 'near' ? nearAlpha : 1);
     }
 
-    // glitch: rafagas esporadicas, mouse rapido y viaje (velocidad del pase)
+    // glitch: rafagas esporadicas, mouse rapido y viaje (velocidad del pase); glitch local del mouse
     this.glitch.update(time, dt, this.postS);
+    this.trail.update(now, dt, this.cw, this.ch);
+
+    // fragmentos: parallax de viaje por profundidad (la camara ya da el del mouse)
+    const lamFar = this.layers.far?.lambda ?? 3;
+    this.frags.update({
+      time,
+      p: cur.u,
+      tanHalf: this.tanHalf,
+      aspect: this.cw / this.ch,
+      lamFar,
+      lamMid: this.layers.mid?.lambda ?? lamFar * 1.3,
+      lamNear: this.layers.near?.lambda ?? lamFar * 1.8,
+      dim: cur.dim,
+      dpr: this.dpr,
+      res: this.res,
+      mx: this.px,
+      my: this.py,
+      mouseAmp: Math.min(1, (this.trail.amp / GLITCH_TRAIL_AMP_MAX) * 1.8),
+    });
 
     // B
     if (this.b) {
@@ -939,11 +1000,13 @@ class GLWorld {
       this.layers.near?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r, 0.85 * pres);
       this.layers.mid?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.15, 0.4 * pres);
       this.layers.mid2?.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.2, 0.5 * pres);
+      this.frags.setClear(clearV.x * 0.5 + 0.5, clearV.y * 0.5 + 0.5, r * 1.1, 0.9 * pres);
     }
 
     // pintar
-    if (this.postS > 0.004 || this.postZ > 0.004 || this.glitch.level > 0.001) {
-      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir, this.glitch);
+    this.postOn = this.postS > 0.004 || this.postZ > 0.004 || this.glitch.level > 0.001 || this.trail.amp > 0;
+    if (this.postOn) {
+      this.pass.render(this.renderer, this.scene, cam, this.postS, this.postZ, -this.lastDir, this.glitch, this.trail);
     } else {
       this.renderer.setRenderTarget(null);
       this.renderer.render(this.scene, cam);
@@ -977,6 +1040,10 @@ class GLWorld {
       particles: this.b?.particleCount ?? 0,
       glyphs: this.b?.glyphCount ?? 0,
       glitch: this.glitch.level,
+      mouseGlitch: this.trail.amp,
+      mouseSpeed: Math.round(this.trail.speed),
+      fragments: this.frags.count,
+      post: this.postOn,
       parallaxPx: {
         far: px(LAYERS.far.depth),
         mid2: px(LAYERS.mid2.depth),
@@ -998,6 +1065,7 @@ class GLWorld {
     for (const f of this.off) f();
     for (const l of Object.values(this.layers)) l?.dispose();
     this.b?.dispose();
+    this.frags.dispose();
     this.pass.dispose();
     this.renderer.dispose();
   }

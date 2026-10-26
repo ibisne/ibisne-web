@@ -2,8 +2,9 @@
  * Pase de post-proceso: solo corre mientras la camara se mueve o hay glitch. La escena
  * se pinta a un render target y un triangulo a pantalla completa la compone con
  * aberracion cromatica, estela direccional y un vortice leve (proporcionales a la
- * velocidad) y con el glitch (rebanadas, RGB, macrobloques, lineas; ver glitch.ts).
- * En reposo y entre rafagas se pinta directo a pantalla (cero costo extra).
+ * velocidad), con el glitch global (rebanadas, RGB, macrobloques, lineas; ver glitch.ts) y
+ * con el glitch local del mouse (estela; ver trail.ts). En reposo, entre rafagas y con el
+ * mouse quieto se pinta directo a pantalla (cero costo extra).
  */
 import {
   BufferAttribute,
@@ -17,10 +18,25 @@ import {
   UnsignedByteType,
   Vector2,
   Vector3,
+  Vector4,
   WebGLRenderTarget,
 } from 'three';
 import type { Camera, IUniform, WebGLRenderer } from 'three';
-import { CYAN, GLITCH_BLOCK_ZONES, GLITCH_RGB, GLITCH_SLICE_SHIFT, MAGENTA, POST_MOSAIC } from './config';
+import {
+  CYAN,
+  GLITCH_BLOCK_ZONES,
+  GLITCH_RGB,
+  GLITCH_SLICE_SHIFT,
+  GLITCH_TRAIL_BAND_MAX_PX,
+  GLITCH_TRAIL_BAND_MIN_PX,
+  GLITCH_TRAIL_POINTS,
+  GLITCH_TRAIL_RADIUS_PX,
+  GLITCH_TRAIL_RGB_PX,
+  GLITCH_TRAIL_SHIFT_PX,
+  MAGENTA,
+  POST_MOSAIC,
+} from './config';
+import type { MouseTrail } from './trail';
 import { postFrag, postVert } from './shaders';
 
 export class TravelPass {
@@ -56,6 +72,11 @@ export class TravelPass {
       uGSeed: { value: 0 },
       uGLines: { value: 0 },
       uGlitchK: { value: new Vector3(GLITCH_SLICE_SHIFT, GLITCH_RGB, GLITCH_BLOCK_ZONES) },
+      uMTrail: { value: Array.from({ length: GLITCH_TRAIL_POINTS }, () => new Vector3()) },
+      uMAmp: { value: 0 },
+      uMSeed: { value: 0 },
+      uMK: { value: new Vector4() },
+      uMBand: { value: GLITCH_TRAIL_BAND_MAX_PX / GLITCH_TRAIL_BAND_MIN_PX },
       uCyan: { value: new Vector3(...CYAN) },
       uMagenta: { value: new Vector3(...MAGENTA) },
     };
@@ -73,9 +94,16 @@ export class TravelPass {
     this.scene.add(this.mesh);
   }
 
-  setSize(w: number, h: number): void {
+  /** w, h en px del buffer; dpr para pasar las medidas del glitch del mouse de px CSS a buffer */
+  setSize(w: number, h: number, dpr = 1): void {
     this.rt.setSize(Math.max(2, w), Math.max(2, h));
     (this.u.uRes.value as Vector2).set(w, h);
+    (this.u.uMK.value as Vector4).set(
+      GLITCH_TRAIL_RADIUS_PX * dpr,
+      GLITCH_TRAIL_SHIFT_PX * dpr,
+      GLITCH_TRAIL_RGB_PX * dpr,
+      GLITCH_TRAIL_BAND_MIN_PX * dpr,
+    );
   }
 
   render(
@@ -86,6 +114,7 @@ export class TravelPass {
     zoom: number,
     dir: number,
     glitch: { level: number; seed: number; lines: number },
+    trail: MouseTrail,
   ): void {
     this.u.uSpeed.value = speed;
     this.u.uZoom.value = zoom;
@@ -95,6 +124,9 @@ export class TravelPass {
     this.u.uGlitch.value = glitch.level;
     this.u.uGSeed.value = glitch.seed;
     this.u.uGLines.value = glitch.lines;
+    this.u.uMTrail.value = trail.points;
+    this.u.uMAmp.value = trail.amp;
+    this.u.uMSeed.value = trail.seed;
     renderer.setRenderTarget(this.rt);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);
