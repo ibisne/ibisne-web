@@ -101,6 +101,18 @@ export class TravelPass {
     renderer.render(this.scene, this.cam);
   }
 
+  /** Compila el programa del pase y reserva su render target (el primer viaje no tropieza con eso) */
+  compile(renderer: WebGLRenderer): Promise<unknown> {
+    renderer.initRenderTarget(this.rt);
+    return renderer.compileAsync(this.scene, this.cam);
+  }
+
+  /** Pinta el pase una vez en un target diminuto: sube buffers y enlaza el programa sin tocar el canvas */
+  probe(renderer: WebGLRenderer, target: WebGLRenderTarget): void {
+    renderer.setRenderTarget(target);
+    renderer.render(this.scene, this.cam);
+  }
+
   dispose(): void {
     this.rt.dispose();
     this.mesh.geometry.dispose();

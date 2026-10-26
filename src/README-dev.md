@@ -60,6 +60,7 @@ Sin hooks, el motor anima de serie lo que esté marcado en el DOM:
 
 - `[data-travel-bg]`: capas de fondo. Salida 650 ms ease-in: `scale 1 → 2.6` con `transform-origin` en el punto focal, `blur 0 → 10px`, y se apaga al final. Entrada 700 ms ease-out: `scale 1.35 → 1`, `blur 8 → 0`. Si se vuelve a Inicio, es inverso: la página que sale se aleja (`0.82`) y Inicio entra desde `scale 2.6 → 1` alrededor del punto focal.
 - `[data-travel-ui]`: interfaz. Sale con opacidad 1 → 0 en 250 ms; entra en cascada (stagger 40 ms, `translateY 12px → 0`, opacidad) cuando el fondo ya va a 45 %.
+- Todo overlay decorativo de una página (viñeta, velo) debe llevar `data-travel-bg`: la salida lo apaga con el `<main>`, pero al llegar el DOM nuevo aparece entero en un cuadro si nadie lo anima (en Inicio la viñeta oscurecía ~20 % de golpe a 2/3 del viaje).
 - Con `prefers-reduced-motion` todo es un fundido de 200 ms sobre `<main>`. Si la página no tiene ni `data-travel-bg` ni `data-travel-ui`, también.
 - Legal y 404 usan fundido.
 

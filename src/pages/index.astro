@@ -10,8 +10,8 @@ import bStill from '../assets/b/b-trim.png';
   page="home"
 >
   <section class="hm" aria-labelledby="hm-h1">
-    <!-- Viñetas: dan lectura al header y al titular sobre el mundo -->
-    <div class="hm-vig" aria-hidden="true"></div>
+    <!-- Viñetas: dan lectura al header y al titular sobre el mundo. data-travel-bg: entran con fundido al llegar (sin él aparecían de golpe al cambiar el DOM) -->
+    <div class="hm-vig" data-travel-bg aria-hidden="true"></div>
 
     <!-- Ancla de la B: la dibuja el motor del mundo (WebGL); este div solo marca dónde y de qué alto -->
     <div class="hm-b" data-world-b aria-hidden="true">

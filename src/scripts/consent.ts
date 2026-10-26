@@ -117,8 +117,21 @@ window.addEventListener('resize', syncHeight, { passive: true });
 function show(focus = false): void {
   const el = banner();
   if (!el) return;
+  const wasHidden = el.hidden;
   el.hidden = false;
   syncHeight();
+  // La entrada va con WAAPI y no con una animacion CSS: el banner persiste entre paginas
+  // (transition:persist) y Astro lo saca y lo vuelve a meter en cada cambio de DOM; una animacion
+  // CSS se reiniciaria en cada viaje (parpadeo). Solo se anima al aparecer de verdad.
+  if (wasHidden && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.animate(
+      [
+        { opacity: 0, transform: 'translateY(10px)' },
+        { opacity: 1, transform: 'none' },
+      ],
+      { duration: 400, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+    );
+  }
   if (focus) el.querySelector<HTMLElement>('[data-consent="all"]')?.focus();
 }
 

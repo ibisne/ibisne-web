@@ -31,7 +31,6 @@
     line-height: 1.45;
     color: var(--text-2);
     box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
-    animation: consent-in 0.4s var(--ease-out) both;
   }
   .consent[hidden] {
     display: none;
@@ -57,12 +56,6 @@
     padding: 0 0.8rem;
     font-size: 13px;
     white-space: nowrap;
-  }
-  @keyframes consent-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
   }
   /* Movil: barra inferior compacta, texto y botones en una fila */
   @media (max-width: 639px) {
@@ -110,11 +103,6 @@
     .consent__actions .btn {
       font-size: 12px;
       padding: 0 0.6rem;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .consent {
-      animation: none;
     }
   }
 </style>

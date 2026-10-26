@@ -2,7 +2,7 @@
  * Motor del mundo: renderer, camara, bucle, viaje entre estaciones, calidad
  * adaptativa y modo estatico. La API publica se reexporta desde ./index.ts.
  */
-import { ColorManagement, LinearSRGBColorSpace, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { ColorManagement, LinearSRGBColorSpace, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRenderTarget } from 'three';
 import {
   B_DEPTH,
   B_PARTICLES_HIGH,
@@ -511,6 +511,7 @@ class GLWorld {
   private async loadB(): Promise<void> {
     const src = this.canvas.dataset.bSrc;
     if (!src) {
+      await this.warmUp();
       this.probeArmed = true;
       return;
     }
@@ -521,6 +522,8 @@ class GLWorld {
       const sample = sampleB(img, count, B_THICKNESS);
       this.b = new BMatrix(sample, atlas, count);
       this.scene.add(this.b.group);
+      await this.warmUp();
+      if (this.disposed) return;
       this.findAnchor();
       const mode = bWanted ?? (station === 'home' && !travel ? 'assembled' : 'hidden');
       this.b.setMode(mode, this.lastDir);
@@ -528,6 +531,31 @@ class GLWorld {
       console.warn('[world] la B no se pudo montar', err);
     }
     this.probeArmed = true;
+  }
+
+  /**
+   * Precalienta la GPU: compila en paralelo los programas de la escena (incluida la B aunque este
+   * oculta) y del pase de post-proceso, y los pinta una vez en un target de 2x2 para subir buffers
+   * y texturas. Sin esto, el primer viaje tras cargar tropieza (50-100 ms) al enlazar el pase y al
+   * mostrarse la B por primera vez. Nada llega al canvas y no bloquea el primer cuadro visible.
+   */
+  private async warmUp(): Promise<void> {
+    try {
+      await Promise.all([this.renderer.compileAsync(this.scene, this.camera), this.pass.compile(this.renderer)]);
+      if (this.disposed) return;
+      const probe = new WebGLRenderTarget(2, 2, { depthBuffer: false, stencilBuffer: false });
+      const group = this.b?.group;
+      const wasVisible = group?.visible ?? false;
+      if (group) group.visible = true;
+      this.renderer.setRenderTarget(probe);
+      this.renderer.render(this.scene, this.camera);
+      this.pass.probe(this.renderer, probe);
+      this.renderer.setRenderTarget(null);
+      if (group) group.visible = wasVisible;
+      probe.dispose();
+    } catch (err) {
+      console.warn('[world] precalentamiento omitido', err);
+    }
   }
 
   /* ---------- calidad ---------- */
@@ -762,7 +790,11 @@ class GLWorld {
     lane.mid2 = t.aLane.mid2 + (bu - t.aLane.mid2) * easeInOutCubic(clamp01((kk - 0.09) / 0.91));
     lane.far = t.aLane.far + (bu - t.aLane.far) * easeInOutCubic(clamp01((kk - 0.18) / 0.82));
     if (k >= TRAVEL_MID_K) markMid(t);
-    if (t.to === 'home' && !t.bDone && k >= 0.55 && this.b) {
+    // La B se arma con el ancla real de Inicio. Tras una carga directa en otra pagina todavia no
+    // hay ancla medida (anchor.set): armarla con la de respaldo y re-medir al cambiar el DOM la
+    // encogia de golpe a mitad del ensamblado. Se espera a que llegue el DOM de Inicio
+    // (astro:page-load mide el ancla); travelEnded la arma en cualquier caso al terminar.
+    if (t.to === 'home' && !t.bDone && k >= 0.55 && this.b && this.anchor.set) {
       t.bDone = true;
       this.b.setMode('assembled', -t.dir);
     }
@@ -970,3 +1002,4 @@ class GLWorld {
     this.renderer.dispose();
   }
 }
+
