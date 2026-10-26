@@ -8,6 +8,8 @@
  *   remolino van con resortes subamortiguados, asi el regreso rebota un poco.
  * - La B entera gira (yaw/pitch hasta 36 grados) hacia el cursor con inercia de dos etapas.
  * - Modos: assembled / dissolved (polvo que se va en la direccion del viaje) / hidden.
+ * - Entrada (src/scripts/entry.ts): con setGather(1) las particulas y los glifos se reparten por
+ *   toda la pantalla (setSpread) y al bajar a 0 se ordenan de afuera hacia adentro hasta la B.
  */
 import {
   AdditiveBlending,
@@ -109,6 +111,7 @@ export class BMatrix {
   private dissolve = 1;
   private dTarget = 1;
   private dRate = 1 / B_DISSOLVE_S;
+  private gather = 0;
 
   constructor(sample: BSample, atlas: HTMLCanvasElement, count: number) {
     this.aspect = sample.aspect;
@@ -122,6 +125,9 @@ export class BMatrix {
       uRadius: { value: B_CURSOR_RADIUS },
       uDissolve: { value: 1 },
       uTravelDir: { value: 1 },
+      uGather: { value: 0 },
+      uSpread: { value: new Vector2(2, 1.2) },
+      uSpreadC: { value: new Vector2(0, 0) },
     };
 
     // --- particulas ---
@@ -271,6 +277,28 @@ export class BMatrix {
     return this.glyphs.geometry.drawRange.count;
   }
 
+  /** 1 = dispersa por toda la pantalla, 0 = la B (entrada) */
+  setGather(g: number): void {
+    this.gather = Math.min(1, Math.max(0, g));
+    this.shared.uGather.value = this.gather;
+  }
+
+  /**
+   * Area de la dispersion, en alturas de B y relativa al centro de la B: centro de la pantalla
+   * (cx, cy) y media pantalla (hx, hy).
+   */
+  setSpread(cx: number, cy: number, hx: number, hy: number): void {
+    (this.shared.uSpreadC.value as Vector2).set(cx, cy);
+    (this.shared.uSpread.value as Vector2).set(hx, hy);
+  }
+
+  /** Armada ya, sin la animacion de ensamblado (la entrada la arma con setGather) */
+  snapAssembled(): void {
+    this.setMode('assembled');
+    this.dissolve = 0;
+    this.shared.uDissolve.value = 0;
+  }
+
   setMode(mode: BMode, travelDir = 1): void {
     this.shared.uTravelDir.value = travelDir;
     if (mode === 'hidden') {
@@ -324,8 +352,10 @@ export class BMatrix {
     const dx = ptr.x - tmpV.x;
     const dy = ptr.y - tmpV.y;
     const k = 1 - Math.pow(1 - B_TILT_LERP, dt * 60);
-    const ty = Math.max(-1, Math.min(1, dx * 1.15)) * B_MAX_TILT + Math.sin(time * 0.31) * 0.035;
-    const tp = -Math.max(-1, Math.min(1, dy * 1.15)) * B_MAX_TILT * 0.9 + Math.sin(time * 0.23 + 1) * 0.025;
+    // dispersa (entrada) no gira: el campo de particulas cubre la pantalla de frente
+    const tk = 1 - this.gather;
+    const ty = (Math.max(-1, Math.min(1, dx * 1.15)) * B_MAX_TILT + Math.sin(time * 0.31) * 0.035) * tk;
+    const tp = (-Math.max(-1, Math.min(1, dy * 1.15)) * B_MAX_TILT * 0.9 + Math.sin(time * 0.23 + 1) * 0.025) * tk;
     // dos etapas en cascada: arranca con velocidad cero, se siente con peso
     this.yaw1 += (ty - this.yaw1) * k;
     this.pitch1 += (tp - this.pitch1) * k;
@@ -396,12 +426,13 @@ export class BMatrix {
     const scale = Math.max(0.6, Math.min(1.6, bpx / 420));
     this.pu.uPxScale.value = dpr * scale;
     this.gu.uCellPx.value = (bpx / GLYPH_ROWS) * dpr * 0.95;
-    this.hu.uAlpha.value = 0.38 * (1 - this.dissolve) * (0.85 + 0.15 * Math.sin(time * 0.8));
+    this.hu.uAlpha.value = 0.38 * (1 - this.dissolve) * Math.pow(1 - this.gather, 3) * (0.85 + 0.15 * Math.sin(time * 0.8));
   }
 
   /** Estado para diagnostico */
-  debug(): { hover: number; swirl: number; dissolve: number; yawDeg: number; pitchDeg: number } {
+  debug(): { hover: number; swirl: number; dissolve: number; gather: number; yawDeg: number; pitchDeg: number } {
     return {
+      gather: this.gather,
       hover: this.hover.x,
       swirl: this.swirl.x,
       dissolve: this.dissolve,

@@ -20,6 +20,7 @@
  */
 import type { TransitionBeforePreparationEvent } from 'astro:transitions/client';
 import { connectRouter, onTravel } from './world';
+import { afterEntry } from './entry-gate';
 import {
   NO_TRAVEL,
   UI_EASE_IN,
@@ -295,7 +296,8 @@ let booted = false;
 function boot(): void {
   if (booted) return;
   booted = true;
-  runEnter(null);
+  // con la entrada inmersiva en curso, la cascada espera a que se abra el velo (entry-gate.ts)
+  afterEntry(() => runEnter(null));
 }
 // Los scripts modulos de la pagina se ejecutan antes de DOMContentLoaded, asi
 // que para entonces ya registraron sus hooks.

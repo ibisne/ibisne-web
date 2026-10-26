@@ -13,6 +13,11 @@ export {
   getWorldStats,
   onGlitchFrame,
   destroyWorld,
+  whenWorldReady,
+  introBegin,
+  introVisible,
+  introProgress,
+  introEnd,
   quality,
 } from './engine';
 export type { GlitchFeed, TravelListener, WorldStats } from './engine';

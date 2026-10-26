@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/ibisne-blanco.png';
+import SoundToggle from './SoundToggle.astro';
 
 const path = Astro.url.pathname;
 const current = path === '/' ? 'home' : path.startsWith('/trabajo') ? 'trabajo' : path.startsWith('/contacto') ? 'contacto' : '';
@@ -30,9 +31,12 @@ const links = [
     <span class="hdr__ind" aria-hidden="true"></span>
   </nav>
 
-  <a class="btn btn-outline hdr__cta" href={WA} target="_blank" rel="noopener">
-    Hablemos <span class="btn__arrow" aria-hidden="true">↳</span>
-  </a>
+  <div class="hdr__end">
+    <SoundToggle />
+    <a class="btn btn-outline hdr__cta" href={WA} target="_blank" rel="noopener">
+      Hablemos <span class="btn__arrow" aria-hidden="true">↳</span>
+    </a>
+  </div>
 </header>
 
 <style>
@@ -115,14 +119,19 @@ const links = [
     background: var(--grad-accent);
     transform: translateX(-50%);
   }
-  .hdr__cta {
+  .hdr__end {
     justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
-  /* Movil (modo scroll): solo el logo. La navegacion vive en la barra inferior (MobileTabBar). */
+  /* Movil (modo scroll): el logo y, a la derecha, el control de sonido. La navegacion vive en la barra
+     inferior (MobileTabBar); el control no flota sobre el contenido (tapaba las pills de Inicio). */
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     .hdr {
-      grid-template-columns: 1fr;
+      /* logo a la izquierda; a la derecha solo el control de sonido */
+      grid-template-columns: 1fr auto;
       /* el contenido que scrollea pasa por debajo del logo: velo casi opaco arriba para que no se mezclen */
       background: linear-gradient(to bottom, var(--ink), color-mix(in srgb, var(--ink) 88%, transparent) 55%, transparent);
     }

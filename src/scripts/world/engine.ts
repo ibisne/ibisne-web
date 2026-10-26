@@ -67,6 +67,28 @@ const setLanes = (u: number) => {
   lane.near = lane.mid2 = lane.far = u;
 };
 let bWanted: BMode | null = null;
+/**
+ * Entrada (src/scripts/entry.ts): la B arranca dispersa por toda la pantalla con la escena velada
+ * y se ordena hasta su lugar. gather 1 = dispersa, 0 = armada; veil 1 = escena oscura.
+ * center: la B se dibuja al centro de la pantalla aunque la estacion no sea Inicio.
+ */
+const intro = {
+  active: false,
+  gather: 1,
+  target: 1,
+  veil: 0,
+  veilTarget: 0,
+  center: false,
+  dissolving: false,
+  nextGlitch: 0,
+  ended: null as null | (() => void),
+};
+let resolveB: (ok: boolean) => void = () => {};
+/** La B esta montada (true) o el mundo cayo a estatico (false) */
+const bPromise = new Promise<boolean>((r) => (resolveB = r));
+let resolveReady: () => void = () => {};
+/** Escena lista para viajar sin tirones: texturas subidas, B montada y shaders precalentados (o modo estatico) */
+const readyPromise = new Promise<void>((r) => (resolveReady = r));
 let gl: GLWorld | null = null;
 let still: StaticWorld | null = null;
 let rootEl: HTMLElement | null = null;
@@ -261,6 +283,67 @@ export function setBMode(mode: BMode): void {
   gl?.setB(mode);
 }
 
+/**
+ * Se resuelve cuando el mundo ya puede viajar sin tirones: capas subidas a la GPU, B montada y
+ * programas precalentados (warmUp). En modo estatico o si la escena falla, se resuelve igual.
+ */
+export function whenWorldReady(): Promise<void> {
+  return readyPromise;
+}
+
+/**
+ * Entrada con la B del mundo. Devuelve false si no hay WebGL (estatico o reduced motion): la
+ * entrada usa entonces un fundido simple. Llamar una vez, al cargar.
+ */
+export function introBegin(): boolean {
+  if (!gl) return false;
+  intro.active = true;
+  intro.gather = intro.target = 1;
+  intro.veil = intro.veilTarget = 1;
+  intro.center = station !== 'home';
+  intro.dissolving = false;
+  gl.introBegin();
+  return true;
+}
+
+/** Se resuelve cuando la B ya esta montada (true) o si el mundo cayo a estatico (false) */
+export function introVisible(): Promise<boolean> {
+  return bPromise;
+}
+
+/** 0..1 cuanto esta armada la B (lo decide la precarga y el reloj de la entrada); nunca retrocede */
+export function introProgress(p: number): void {
+  if (!intro.active) return;
+  intro.target = Math.min(intro.target, 1 - Math.min(1, Math.max(0, p)));
+}
+
+/**
+ * Cierra la entrada: la B termina de armarse, el velo se abre y la escena aparece. En Inicio la B
+ * queda en su lugar (es la misma); en otra estacion se disuelve hacia la escena como en un viaje.
+ * Se resuelve cuando el velo ya se abrio.
+ */
+export function introEnd(): Promise<void> {
+  if (!intro.active) return Promise.resolve();
+  intro.target = 0;
+  intro.veilTarget = 0;
+  return new Promise<void>((resolve) => {
+    intro.ended = resolve;
+    // seguro por si la pestana esta oculta (sin cuadros)
+    window.setTimeout(() => finishIntro(), 1600);
+  });
+}
+
+function finishIntro(): void {
+  if (!intro.active) return;
+  intro.active = false;
+  intro.gather = intro.target = 0;
+  intro.veil = intro.veilTarget = 0;
+  gl?.introFinish();
+  const done = intro.ended;
+  intro.ended = null;
+  done?.();
+}
+
 /** La B se coloca sobre este elemento (centro y alto) cuando la camara esta en Inicio. */
 export function setBAnchor(el: HTMLElement | null): void {
   gl?.setAnchor(el);
@@ -381,6 +464,9 @@ function toStatic(): void {
     rootEl.dataset.worldFallback = '';
   }
   still?.set(cur);
+  resolveReady();
+  resolveB(false);
+  finishIntro();
 }
 
 /* ======================= mundo WebGL ======================= */
@@ -566,6 +652,9 @@ class GLWorld {
     if (!src) {
       await this.warmUp();
       this.probeArmed = true;
+      resolveReady();
+      resolveB(false);
+      finishIntro();
       return;
     }
     try {
@@ -578,12 +667,70 @@ class GLWorld {
       await this.warmUp();
       if (this.disposed) return;
       this.findAnchor();
-      const mode = bWanted ?? (station === 'home' && !travel ? 'assembled' : 'hidden');
-      this.b.setMode(mode, this.lastDir);
+      if (intro.active) {
+        this.b.setGather(intro.gather);
+        this.b.snapAssembled();
+      } else {
+        const mode = bWanted ?? (station === 'home' && !travel ? 'assembled' : 'hidden');
+        this.b.setMode(mode, this.lastDir);
+      }
     } catch (err) {
       console.warn('[world] la B no se pudo montar', err);
     }
     this.probeArmed = true;
+    resolveReady();
+    resolveB(!!this.b);
+    if (!this.b) finishIntro();
+  }
+
+  introBegin(): void {
+    if (this.b) {
+      this.b.setGather(1);
+      this.b.snapAssembled();
+    }
+  }
+
+  /** Fin de la entrada: en Inicio la B queda armada; fuera de Inicio se disuelve en su sitio */
+  introFinish(): void {
+    const b = this.b;
+    if (!b) {
+      intro.center = false;
+      return;
+    }
+    b.setGather(0);
+    if (station === 'home' && !travel) {
+      intro.center = false;
+      return;
+    }
+    intro.dissolving = true;
+    b.setMode('dissolved', this.lastDir);
+  }
+
+  /** Avance de la entrada en cada cuadro: armado suave, velo y rafagas de glitch */
+  private stepIntro(dt: number, time: number): void {
+    if (intro.active) {
+      // exponencial con tope de velocidad: sin saltos aunque la precarga avance a golpes
+      const d = intro.target - intro.gather;
+      const lim = dt * 1.8;
+      let mv = d * (1 - Math.pow(0.02, dt));
+      // al cerrar, un piso lineal: la cola exponencial no alarga el final
+      if (intro.ended) mv = Math.sign(d) * Math.max(Math.abs(mv), Math.min(Math.abs(d), dt * 0.6));
+      intro.gather += Math.max(-lim, Math.min(lim, mv));
+      if (Math.abs(intro.target - intro.gather) < 0.002) intro.gather = intro.target;
+      const opening = intro.veilTarget < intro.veil;
+      intro.veil += (intro.veilTarget - intro.veil) * (1 - Math.pow(opening ? 0.004 : 0.2, dt));
+      this.b?.setGather(intro.gather);
+      // glitch de rebanadas y RGB del pase de post mientras se ordena (y tenue mientras espera)
+      if (time >= intro.nextGlitch) {
+        const busy = intro.gather > 0.04 && intro.gather < 0.98;
+        this.glitch.trigger(0.1 + Math.random() * 0.12, busy ? 0.55 + Math.random() * 0.35 : 0.35 + Math.random() * 0.2, time);
+        intro.nextGlitch = time + (busy ? 0.35 + Math.random() * 0.45 : 1.1 + Math.random() * 1.2);
+      }
+      if (intro.ended && intro.gather <= 0.001 && intro.veil <= 0.02) finishIntro();
+    } else if (intro.dissolving && this.b && this.b.presence <= 0) {
+      intro.dissolving = false;
+      intro.center = false;
+    }
   }
 
   /**
@@ -628,6 +775,11 @@ class GLWorld {
    * compilacion no cuentan, una GPU lenta si.
    */
   private probe(now: number, dt: number): void {
+    // durante la entrada (B dispersa + glitch continuo) no se mide: no es el costo normal
+    if (intro.active || intro.dissolving) {
+      this.probeStart = 0;
+      return;
+    }
     if (this.probed || document.hidden || !this.probeArmed) return;
     if (!this.probeStart) {
       this.probeStart = now + 700;
@@ -1011,7 +1163,7 @@ class GLWorld {
     for (const l of Object.values(this.layers)) {
       if (!l) continue;
       const u = l.name === 'mid' ? cur.u : lane[l.name];
-      l.update(u, cur.dim, time, this.glow, this.res, l.name === 'near' ? nearAlpha : 1);
+      l.update(u, cur.dim * (1 - 0.8 * intro.veil), time, this.glow, this.res, l.name === 'near' ? nearAlpha : 1);
     }
 
     // glitch: rafagas esporadicas, mouse rapido y viaje (velocidad del pase); glitch local del mouse
@@ -1022,14 +1174,18 @@ class GLWorld {
     this.micro.update(time, this.cw, this.ch, this.dpr, !!travel || this.postS > 0.02);
 
     // B
+    this.stepIntro(dt, time);
     if (this.b) {
       if (this.anchorDirty) this.measureAnchor();
       const a = this.anchor;
       const fh = 2 * B_DEPTH * this.tanHalf;
       const fw = fh * (this.cw / this.ch);
-      const x = (a.cx / this.cw - 0.5) * fw - (cur.u - STATIONS.home.u) * this.lambdaAt(B_DEPTH) * fw;
+      // en la entrada fuera de Inicio la B va al centro de la pantalla (sin el desfase del panorama)
+      const pan = intro.center ? 0 : (cur.u - STATIONS.home.u) * this.lambdaAt(B_DEPTH) * fw;
+      const x = (a.cx / this.cw - 0.5) * fw - pan;
       const y = -(a.cy / this.ch - 0.5) * fh;
       const h = (a.h / this.ch) * fh;
+      if (intro.active) this.b.setSpread((this.cw / 2 - a.cx) / a.h, -(this.ch / 2 - a.cy) / a.h, (this.cw / 2 / a.h) * 1.08, (this.ch / 2 / a.h) * 1.1);
       this.b.update(dt, time, cam, this.bptr, { x, y, z: -B_DEPTH, h }, a.h, this.dpr);
       // la capa cercana (y un poco la media) se apartan de la B: el primer plano no la tapa
       const pres = this.b.presence;

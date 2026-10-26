@@ -85,6 +85,17 @@ Reglas:
 
 La B ya no es un componente: la dibuja el motor del mundo (WebGL, `src/scripts/world/`). Inicio solo deja el ancla `<div data-world-b>`. Cuando el mundo cae al respaldo estatico (reduced-motion, sin WebGL o fallo de escena; `engine.ts` pone `data-world-fallback` en `[data-world]`), Inicio muestra la silueta `src/assets/b/b-trim.png` con brillo CSS. La 404 usa esa misma silueta estatica sin ancla.
 
+## Entrada inmersiva y música
+
+`src/components/Entry.astro` (montado una vez en `Base`, persistente) + `src/scripts/entry.ts`.
+
+- **Primera visita** (cualquier URL): `<dialog>` modal "¿Cómo quieres entrar?" con "Entrar con experiencia" (música + efectos) y "Entrar sin sonido". Escape = sin sonido. La elección queda en `localStorage.ib_entry` (`immersive` | `quiet`) y no se vuelve a preguntar.
+- **Loader = la B del mundo**, no una animación aparte: mientras se pregunta, la B de partículas (`bmatrix.ts`) está dispersa por toda la pantalla con la escena velada y glitch de rebanadas/RGB; tras la elección se ordena de afuera hacia adentro hasta su lugar. El avance real de la precarga (`preload.ts`: mundo, fuentes, HTML e imágenes de Inicio/Trabajo/Contacto, música solo con experiencia) decide cuánto se arma, con tope: ~2.3 s tras elegir, ~1 s en recargas. Al abrir el velo, en Inicio la B queda en su sitio; en otra página se disuelve como en los viajes. API en `world/README.md` (`introBegin`, `introProgress`, `introEnd`).
+- Mientras corre, la UI espera oculta (`html[data-entry-hold]`, `entry-gate.ts`) y `travel.ts` retrasa su cascada de arranque hasta que se abre el velo.
+- Sin WebGL o con `prefers-reduced-motion`: fundido simple (~530 ms). Sin JS: no aparece (`<noscript>` en `Base`); si el JS no llega, el seguro CSS la retira a los 4 s.
+- **Música** (`src/scripts/ambient.ts`): si al compilar existe `public/audio/ambient.mp3` (o `.ogg`), `Entry.astro` deja su ruta en `data-ambient-*` y se usa ese archivo en loop (solo se descarga con experiencia). Si no existe, respaldo generativo con Web Audio. Volumen 0.3, fundido de 2 s al entrar, se pausa con la pestaña oculta. Nunca suena sin gesto: en la primera visita el clic de "Entrar con experiencia"; en recargas con `immersive`, el primer clic o tecla en la página.
+- **Control de sonido**: `src/components/SoundToggle.astro` en el header (escritorio junto a "Hablemos"; móvil a la derecha del logo). `aria-pressed` = suena; cambiarlo guarda `ib_entry`.
+
 ## Cursor propio
 
 `src/components/Cursor.astro` (montado una vez en `Base`, persistente) + `src/scripts/cursor.ts`. Solo con mouse real y sin reduced motion: oculta la flecha nativa (`html[data-custom-cursor="on"]`) y pinta un círculo difuminado que se vuelve anillo sobre `a[href]`, `button`, `[role=button]`, `.card`, `summary`, `label[for]`, `select`. Para que otro elemento active el anillo, ponle `data-cursor-hover`. Los campos de texto conservan su cursor nativo. Círculo de 54 px; anillo de 81 px. Detalle en `src/scripts/world/README.md` ("Cursor").

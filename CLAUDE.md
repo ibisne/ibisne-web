@@ -28,7 +28,7 @@ automático de Vercel desde `main`. URL: https://www.ibisne.com
 src/pages/        index · trabajo/ · contacto/ · legal/[slug] (privacidad, terminos, cookies, aviso-legal) · 404
 src/layouts/Base.astro   shell de todas las páginas (head, header, consent, scroll por página)
 src/components/   Header, Consent, LegalFooter, HomeLayerImg, contact-option, work-*
-src/scripts/      travel.ts (motor de viaje), world/ (mundo WebGL), consent.ts, home-light, work-gallery, contact-enter
+src/scripts/      travel.ts (motor de viaje), world/ (mundo WebGL), entry.ts (entrada inmersiva + loader), ambient.ts (música), consent.ts, home-light, work-gallery, contact-enter
 src/data/brands.ts      datos de las marcas de Trabajo
 src/content/legal/*.md  textos legales
 src/styles/       tokens.css + global.css
@@ -143,6 +143,8 @@ No edites el fondo jurídico por tu cuenta; los textos son de Eduardo.
   ni con `on*=`. `style-src` sí admite inline (Astro). Mantén `frame-ancestors 'none'` y
   `inlineStylesheets: 'never'` en `astro.config.mjs`.
 - Si agregas un dominio externo (fuente, imagen, API), amplía la CSP en el mismo cambio.
+- `media-src 'self'` en la CSP: la música de la entrada (`public/audio/ambient.mp3`) solo se
+  descarga con "Entrar con experiencia" y nunca suena sin un clic. Detalle en `src/README-dev.md`.
 
 ## Corte desde el sitio viejo
 

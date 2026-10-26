@@ -50,6 +50,8 @@
   --z-ui: 10;
   --z-header: 50;
   --z-consent: 80;
+  /* entrada inmersiva (pregunta + loader): encima del banner, debajo del cursor propio */
+  --z-entry: 90;
   /* cursor propio: encima de todo pero sin eventos (pointer-events:none), el banner sigue clicable */
   --z-cursor: 100;
 }

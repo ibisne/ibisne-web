@@ -65,6 +65,13 @@ onGlitchFrame(cb: (f: GlitchFeed) => void): () => void
 // (6 puntos uv + peso), radius, global (ráfaga o viaje), travel, micro (cajas en px CSS).
 // Lo usa text-glitch.ts (solo mouse y trail); el objeto se reutiliza, léelo dentro del callback.
 destroyWorld(): void                        // libera GPU y listeners (pruebas)
+whenWorldReady(): Promise<void>             // capas en GPU + B montada + warmUp (o estatico)
+
+// Entrada (src/scripts/entry.ts): la B arranca dispersa por toda la pantalla, escena velada
+introBegin(): boolean                       // false = sin WebGL / reduced motion (usar fundido)
+introVisible(): Promise<boolean>            // la B dispersa ya se ve (false si cayo a estatico)
+introProgress(p: number): void              // 0..1 cuanto esta armada (nunca retrocede)
+introEnd(): Promise<void>                   // termina de armar y abre el velo; fuera de Inicio la B se disuelve
 ```
 
 Estación inicial: `<html data-world-station="...">` si existe; si no, sale de la URL.
@@ -146,6 +153,12 @@ Estación inicial: `<html data-world-station="...">` si existe; si no, sale de l
   (`elementFromPoint`) y descartan cualquier lugar detrás de titulares, párrafos, links,
   botones, tarjetas, header o `[data-world-avoid]`. No nacen durante el viaje. Táctil: intensidad
   ×0.6 y pausas ×1.8. Mientras hay uno vivo corre el pase de post; sin ninguno, no.
+- **Entrada** (`introBegin` ... `introEnd`): `bmatrix.ts` tiene `setGather(1..0)` y `setSpread`; en
+  los shaders (`gatherAmt`, `spreadPos`) cada partícula tiene una posición dispersa sobre toda la
+  pantalla y se ordena según su distancia al centro (las de afuera primero, con un giro en espiral);
+  los glifos llueven por toda la pantalla y reaparecen dentro de la B. Las capas se velan
+  (`dim × (1 − 0.8·veil)`) y el reloj de glitch dispara ráfagas cada 0.35-0.8 s mientras se arma. La
+  medición de FPS espera a que termine. Fuera de Inicio la B se dibuja al centro durante la entrada.
 - **Mouse = cámara** con inercia (lerp 0.06): ±50 px la cercana, ±14 la media, ±6 la
   lejana a 1440 px, roll ±0.7°.
 - **Táctil (el dedo = el mouse)**: eventos `touchstart`/`touchmove` **pasivos** en `window` (a

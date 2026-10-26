@@ -84,6 +84,9 @@ uniform float uSwirl;     // angulo del remolino en el centro (rad)
 uniform float uRadius;
 uniform float uDissolve;  // 0 armada, 1 polvo
 uniform float uTravelDir; // -1 o 1
+uniform float uGather;    // entrada: 1 dispersa por la pantalla, 0 la B
+uniform vec2 uSpread;     // media pantalla en alturas de B
+uniform vec2 uSpreadC;    // centro de la pantalla relativo a la B
 
 // rizo analitico de un potencial de senos (divergencia cero, barato)
 vec2 flow(vec2 p, float t) {
@@ -116,6 +119,24 @@ vec3 bDisplace(vec3 p, float seed, out float f) {
   return vec3(q, z);
 }
 
+// Entrada: cuanto sigue dispersa una pieza segun su distancia al centro (r 0..1, 1 = borde).
+// Las de afuera se ordenan primero.
+float gatherAmt(float r) {
+  float k = clamp((1.0 - uGather) * 1.7 - (1.0 - r) * 0.7, 0.0, 1.0);
+  return 1.0 - k * k * (3.0 - 2.0 * k);
+}
+
+// posicion dispersa: h en [-1, 1]^2 sobre toda la pantalla, con deriva lenta y un giro que
+// se cierra al ordenarse (espiral hacia la B)
+vec3 spreadPos(vec2 h, float z, float seed, float g) {
+  vec2 q = uSpreadC + h * uSpread;
+  q += flow(q * 0.9 + seed * 5.0, uTime * 0.22) * 0.035;
+  float a = (1.0 - g) * (0.9 + seed * 0.6);
+  float s = sin(a);
+  float c = cos(a);
+  return vec3(mat2(c, s, -s, c) * q, z);
+}
+
 float dissolveAmt(float stagger) {
   float s = clamp(uDissolve * 1.6 - stagger * 0.6, 0.0, 1.0);
   return s * s * (3.0 - 2.0 * s);
@@ -145,6 +166,14 @@ void main() {
   p.x += uTravelDir * s * s * (1.4 + aRand.z * 3.0);
   p.y += (aRand.w - 0.5) * s * 0.4;
 
+  // entrada: dispersa por toda la pantalla -> la B
+  float gk = 0.0;
+  if (uGather > 0.0) {
+    vec2 h = vec2(fract(aRand.x * 7.31 + aRand.w * 3.17), fract(aRand.y * 5.13 + aRand.x * 9.71)) * 2.0 - 1.0;
+    gk = gatherAmt(length(h) * 0.7071);
+    p = mix(p, spreadPos(h, (aRand.w - 0.5) * 0.8, aRand.x, gk), gk);
+  }
+
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
 
@@ -162,7 +191,7 @@ void main() {
   col = mix(col, vec3(1.0), clamp(f * 0.2, 0.0, 0.25));
 
   float fade = 1.0 - smoothstep(0.7, 1.0, uDissolve) ;
-  vAlpha = uAlpha * tw * (1.0 + aEdge * 0.9) * (1.0 + f * 0.4) * (1.0 - s * 0.55) * fade;
+  vAlpha = uAlpha * tw * (1.0 + aEdge * 0.9 * (1.0 - gk)) * (1.0 + f * 0.4) * (1.0 - s * 0.55) * fade * (1.0 + 0.3 * gk);
   vColor = col;
 }
 `;
@@ -213,13 +242,30 @@ void main() {
   p.x += uTravelDir * s * s * (1.6 + aG.z * 2.5);
   p.y += (aG.z - 0.5) * s * 0.6;
 
+  // entrada: lluvia por toda la pantalla mientras esta dispersa; al ordenarse cada glifo se
+  // apaga en su columna y reaparece dentro de la B (nunca cruza la pantalla encendido)
+  float gk = 0.0;
+  float rainA = 1.0;
+  if (uGather > 0.0) {
+    float cols = floor(uAspect / uCell);
+    vec2 h = vec2(((aG.x + 0.5) / cols) * 2.0 - 1.0 + (aG.w - 1.0) * (0.66 / cols), y * 2.0);
+    gk = gatherAmt(length(vec2(h.x, clamp(h.y, -1.0, 1.0))) * 0.7071);
+    if (gk > 0.5) {
+      p = vec3(uSpreadC + h * uSpread, uFrontZ);
+      inside = 1.0;
+      rainA = (gk - 0.5) * 2.0 * 0.7;
+    } else {
+      rainA = 1.0 - gk * 2.0;
+    }
+  }
+
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
   gl_PointSize = uCellPx;
 
   float trail = pow(1.0 - aG.y / uTrail, 1.5);
   float fade = 1.0 - smoothstep(0.5, 0.9, uDissolve);
-  vA = inside * trail * uAlpha * fade * (1.0 + f * 0.6);
+  vA = inside * trail * uAlpha * fade * (1.0 + f * 0.6) * rainA;
   vHead = aG.y < 0.5 ? 1.0 : 0.0;
   float gi = floor(h1(vec2(aG.x * 7.0 + row, floor(uTime * (1.5 + aG.z * 4.0)) + aG.w * 13.0)) * 64.0);
   vCell = vec2(mod(gi, 8.0), floor(gi / 8.0));

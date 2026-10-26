@@ -129,36 +129,21 @@ import bStill from '../assets/b/b-trim.png';
     padding: 0;
     list-style: none;
   }
+  /* Etiquetas limpias: texto chico con un filo fino, sin vidrio, sin degradado ni brillo.
+     Mismo tamano en escritorio y movil. */
   .hm-pill {
-    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    height: 26px;
-    padding-inline: 0.55rem;
+    height: 24px;
+    padding-inline: 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--ink) 55%, transparent);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    color: var(--text);
+    color: var(--text-2);
     font-size: var(--fs-label);
     font-weight: var(--w-medium);
     letter-spacing: 0.02em;
     line-height: 1;
     white-space: nowrap;
-  }
-  .hm-pill::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--cyan) 85%, transparent), color-mix(in srgb, var(--magenta) 85%, transparent));
-    -webkit-mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
   }
 
   /* ---------- Telefono horizontal: la B a un lado y el titular al otro, todo en una pantalla ---------- */
@@ -232,13 +217,7 @@ import bStill from '../assets/b/b-trim.png';
       font-size: 20px;
     }
     .hm-pills {
-      gap: 0.5rem;
       margin-top: 0.875rem;
-    }
-    .hm-pill {
-      height: 28px;
-      padding-inline: 0.8rem;
-      font-size: var(--fs-label-lg);
     }
   }
 

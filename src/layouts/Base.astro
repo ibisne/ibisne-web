@@ -7,6 +7,7 @@ import MobileTabBar from '../components/MobileTabBar.astro';
 import Consent from '../components/Consent.astro';
 import Cursor from '../components/Cursor.astro';
 import LegalFooter from '../components/LegalFooter.astro';
+import Entry from '../components/Entry.astro';
 
 export type PageKind = 'home' | 'trabajo' | 'proyecto' | 'contacto' | 'legal' | '404';
 
@@ -81,7 +82,7 @@ const jsonLd = {
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <ClientRouter />
-    <noscript><style>html[data-boot] main#page { opacity: 1; }</style></noscript>
+    <noscript><style>html[data-boot] main#page { opacity: 1; } [data-entry] { display: none !important; }</style></noscript>
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <slot name="head" />
@@ -101,5 +102,6 @@ const jsonLd = {
     <MobileTabBar />
     <Consent />
     <Cursor />
+    <Entry />
   </body>
 </html>

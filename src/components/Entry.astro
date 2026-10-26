@@ -1,0 +1,223 @@
+---
+/**
+ * Entrada inmersiva: cubierta + pregunta (primera visita) + loader (src/scripts/entry.ts). El
+ * loader es la B del mundo (WebGL): arranca dispersa por la pantalla y se ordena hasta su lugar.
+ * La cubierta solo tapa hasta que esa B dispersa ya se ve (o hace el fundido sin WebGL).
+ *
+ * Va UNA vez en Base.astro y persiste entre paginas (transition:persist): al terminar queda con
+ * `hidden` y la navegacion SPA ya no la vuelve a mostrar. Sin JS no aparece (<noscript> en Base
+ * la oculta) y si el JS no llega, el seguro CSS la retira a los 4 s. Detras, el HTML de la
+ * pagina esta completo (bots y lectores no pierden nada).
+ *
+ * Musica: si existe public/audio/ambient.mp3 (y .ogg) al compilar, su ruta va en data-ambient-*;
+ * si no, ambient.ts usa el respaldo generativo y nunca pide un archivo inexistente.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+
+const pub = (f: string) => (fs.existsSync(path.join(process.cwd(), 'public', 'audio', f)) ? `/audio/${f}` : undefined);
+const mp3 = pub('ambient.mp3');
+const ogg = pub('ambient.ogg');
+---
+
+<div class="entry" data-entry data-ambient-mp3={mp3} data-ambient-ogg={ogg} transition:persist="entry">
+  <div class="entry__load" data-entry-load hidden>
+    <div
+      class="entry__bar"
+      role="progressbar"
+      aria-label="Cargando la experiencia"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      data-entry-bar
+    >
+      <span class="entry__fill" data-entry-fill></span>
+    </div>
+    <span class="label entry__pct" data-entry-pct aria-hidden="true">0%</span>
+  </div>
+
+  <dialog class="entry__dlg" data-entry-dialog aria-labelledby="entry-title" aria-describedby="entry-desc">
+    <div class="entry__panel">
+      <h2 class="entry__title" id="entry-title">
+        <span class="entry__thin">¿Cómo quieres</span>
+        <span class="entry__bold">entrar?</span>
+      </h2>
+      <p class="entry__desc" id="entry-desc">
+        La experiencia completa suma música ambiental generada en vivo. Puedes cambiarlo cuando quieras con el control de sonido.
+      </p>
+      <div class="entry__actions">
+        <button type="button" class="btn btn-solid entry__btn" data-entry-choice="immersive" autofocus>Entrar con experiencia</button>
+        <button type="button" class="btn btn-outline entry__btn" data-entry-choice="quiet">Entrar sin sonido</button>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  import '../scripts/entry.ts';
+</script>
+
+<style>
+  .entry {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-entry);
+    /* seguro: si el JS nunca toma el control, la cubierta se retira sola */
+    animation: entry-failsafe 0s linear 4s forwards;
+  }
+  /* El tinte vive en una capa propia: se abre (opacidad) cuando la B dispersa ya se ve */
+  .entry::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(70% 55% at 50% 46%, var(--ink-2), transparent 75%),
+      var(--ink);
+    transition: opacity 0.45s var(--ease-out);
+  }
+  .entry[data-state] {
+    animation: none;
+  }
+  @keyframes entry-failsafe {
+    to {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+  /* La B dispersa ya se ve: la cubierta se aparta (sigue bloqueando clics hasta terminar) */
+  .entry[data-veil='open']::before {
+    opacity: 0;
+  }
+
+  /* Progreso: raya fina abajo, del ancho de una frase */
+  .entry__load {
+    position: absolute;
+    left: 50%;
+    bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 2rem));
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: min(16rem, 60vw);
+  }
+  .entry__load[hidden] {
+    display: none;
+  }
+  .entry__bar {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .entry__fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+    transition: transform 0.25s var(--ease-out);
+  }
+  .entry__pct {
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Pregunta: dialogo modal a pantalla completa y transparente (la cubierta se ve detras) */
+  .entry__dlg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: var(--gutter);
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    overflow: auto;
+  }
+  .entry__dlg[open] {
+    display: grid;
+    place-items: center;
+  }
+  .entry__dlg::backdrop {
+    background: transparent;
+  }
+  .entry__panel {
+    width: min(30rem, 100%);
+    padding: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+    text-align: center;
+    background: color-mix(in srgb, var(--ink) 66%, transparent);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    box-shadow: 0 30px 80px color-mix(in srgb, var(--ink) 70%, transparent);
+    @media (prefers-reduced-motion: no-preference) {
+      animation: entry-in 0.5s var(--ease-out) both;
+    }
+  }
+  @keyframes entry-in {
+    from {
+      opacity: 0;
+      translate: 0 14px;
+    }
+  }
+  .entry__title {
+    display: flex;
+    flex-direction: column;
+    font-size: clamp(1.9rem, 1.3rem + 2.2vw, 2.75rem);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.01em;
+  }
+  .entry__thin {
+    font-weight: var(--w-thin);
+  }
+  .entry__bold {
+    font-weight: var(--w-bold);
+  }
+  .entry__desc {
+    margin-top: 1rem;
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .entry__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .entry__btn {
+    min-height: 3.25rem; /* 52px: comodo al pulgar */
+    width: 100%;
+  }
+
+  /* Mientras corre la entrada la UI de la pagina espera oculta (la B dispersa queda sola sobre la
+     escena velada); al soltarse, el header y la barra se encienden (entry-gate.ts) y <main> entra en cascada
+     (travel.ts). Solo existe con JS: html[data-entry-hold] lo pone entry-gate.ts. */
+  :global(html[data-entry-hold] main#page) {
+    visibility: hidden;
+  }
+  :global(html[data-entry-hold] :is(.hdr, .tabbar, #consent)) {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Mientras se pregunta: la flecha nativa vuelve (el cursor propio queda debajo de la capa superior) */
+  :global(html[data-entry-open][data-entry-open]),
+  :global(html[data-entry-open][data-entry-open] *) {
+    cursor: auto !important;
+  }
+  :global(html[data-entry-open][data-entry-open] button) {
+    cursor: pointer !important;
+  }
+  :global(html[data-entry-open] [data-cursor]) {
+    opacity: 0 !important;
+  }
+</style>
