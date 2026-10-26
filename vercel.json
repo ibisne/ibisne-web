@@ -257,6 +257,26 @@
       "source": "/trabajo/iwellscore/",
       "destination": "/trabajo/",
       "permanent": true
+    },
+    {
+      "source": "/trabajo/semilla",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/semilla/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/farmacias-hernandez",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/farmacias-hernandez/",
+      "destination": "/trabajo/",
+      "permanent": true
     }
   ]
 }
