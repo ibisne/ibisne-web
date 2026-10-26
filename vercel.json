@@ -247,6 +247,16 @@
       "source": "/sitemap.xml",
       "destination": "/sitemap-index.xml",
       "permanent": true
+    },
+    {
+      "source": "/trabajo/iwellscore",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/iwellscore/",
+      "destination": "/trabajo/",
+      "permanent": true
     }
   ]
 }
