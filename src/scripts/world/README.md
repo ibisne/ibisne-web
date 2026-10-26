@@ -182,7 +182,7 @@ DOM, no WebGL (funciona aunque el mundo caiga a estático). Montado en `Base.ast
   ClientRouter reemplaza los atributos de `<html>`). `input`, `textarea` y `contenteditable`
   conservan su cursor nativo y ahí el círculo se oculta.
 - Círculo difuminado de 36 px que sigue con inercia (lerp 0.28 por cuadro a 60 fps); sobre
-  `a[href]`, `button`, `[role=button]`, `.card`, `summary`, `label[for]`, `select` y
+  `a[href]`, `button`, `[role=button]`, `summary`, `label[for]`, `select` y
   `[data-cursor-hover]` se encoge a un punto y aparece un anillo nítido de 54 px (cian con filo
   de tinta, se lee sobre el índigo y sobre botones blancos); deshabilitado (`:disabled`,
   `aria-disabled`): anillo punteado tenue; clic: se contrae a 0.72. Con el mouse rápido (> 700

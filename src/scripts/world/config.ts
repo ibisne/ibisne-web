@@ -160,9 +160,9 @@ export const GLITCH_TRAIL_MS = 150;
 export const GLITCH_TRAIL_RADIUS_PX = 150;
 /** Velocidad del mouse (px CSS/s): por debajo de MIN nada; en MAX, intensidad maxima */
 export const GLITCH_TRAIL_SPEED_MIN = 140;
-export const GLITCH_TRAIL_SPEED_MAX = 4000;
+export const GLITCH_TRAIL_SPEED_MAX = 3000;
 /** Curva velocidad -> intensidad (>1 = mas suave a velocidad normal) */
-export const GLITCH_TRAIL_CURVE = 1.5;
+export const GLITCH_TRAIL_CURVE = 1.25;
 /** Intensidad maxima (0..1). Con 1, rebanadas de GLITCH_TRAIL_SHIFT_PX */
 export const GLITCH_TRAIL_AMP_MAX = 0.85;
 /** Ataque y caida de la intensidad (constantes de tiempo, s). Caida 0.045: desde el maximo se
@@ -196,7 +196,7 @@ export const FRAG_FAR_MAX = 20;
 export const FRAG_SIZE_MIN_PX = 6;
 export const FRAG_SIZE_MAX_PX = 24;
 /** Alfa (los lejanos se apagan con la bruma) */
-export const FRAG_ALPHA = 0.32;
+export const FRAG_ALPHA = 0.45;
 /** Giro, rad/s (aleatorio entre -MAX y MAX, nunca menos de MIN en valor absoluto) */
 export const FRAG_SPIN_MIN = 0.12;
 export const FRAG_SPIN_MAX = 0.55;

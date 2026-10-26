@@ -21,7 +21,7 @@ const SPLIT_FROM = 700;
 const SPLIT_FULL = 3200;
 const SPLIT_PX = 5;
 
-const INTERACTIVE = 'a[href], button, [role="button"], .card, summary, label[for], select, [data-cursor-hover]';
+const INTERACTIVE = 'a[href], button, [role="button"], summary, label[for], select, [data-cursor-hover]';
 const DISABLED = ':disabled, [aria-disabled="true"]';
 const TEXT = 'input, textarea, [contenteditable]:not([contenteditable="false"])';
 
