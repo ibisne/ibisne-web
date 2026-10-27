@@ -8,6 +8,21 @@ export const EMAIL = 'proyectos@ibisne.com';
 export const INSTAGRAM = { handle: '@ibisnemx', href: 'https://www.instagram.com/ibisnemx' };
 export const FACEBOOK = { handle: '/ibisnecom', href: 'https://www.facebook.com/ibisnecom' };
 
+/** Sede principal. Una sola fuente: Contacto, datos estructurados (Base.astro) y cualquier pie. */
+export const SEDE = {
+  ciudad: 'Mérida, Yucatán',
+  etiqueta: 'Sede principal',
+  direccion: 'Av. Campestre, C. 3A 11, entre 3 y, Campestre',
+  /** La misma direccion partida en dos lineas para la tarjeta (la segunda cierra con el CP) */
+  lineas: ['Av. Campestre, C. 3A 11,', 'entre 3 y, Campestre'] as const,
+  cp: '97120',
+  mapsUrl:
+    'https://www.google.com/maps/search/?api=1&query=Avenida+Campestre+C.+3A+11+Campestre+97120+M%C3%A9rida+Yucat%C3%A1n',
+} as const;
+
+/** Oficina secundaria. Sin direccion ni horarios publicados. */
+export const OFICINA = { ciudad: 'Zapopan, Jalisco', etiqueta: 'Oficina' } as const;
+
 /** Mensaje prellenado de WhatsApp para un interes concreto */
 export const waLink = (interest: string): string =>
   `${WA_BASE}?text=${encodeURIComponent(`Hola iBisne, me interesa: ${interest}.`)}`;
@@ -74,6 +89,11 @@ export const ICONS: Record<IconName, string> = {
 /** Icono lineal de WhatsApp (globo con cola y auricular), caja 20x20 */
 export const WHATSAPP_ICON =
   '<path d="M10 2.1a7.9 7.9 0 0 0-6.8 11.9L2.1 17.9l4-1.05A7.9 7.9 0 1 0 10 2.1z"/><path d="M7.5 6.4c-.35.4-.5 1-.2 1.8.5 1.3 1.6 2.6 3 3.3.9.4 1.5.4 2-.1l.4-.7-1.5-.9-.6.5c-.8-.3-1.7-1.2-2-2l.5-.6-.9-1.5z"/>';
+
+/** Pin de mapa y flecha de salida, caja 20x20, trazo 1.5 */
+export const PIN_ICON =
+  '<path d="M10 18.2s5.6-4.9 5.6-9.5a5.6 5.6 0 0 0-11.2 0c0 4.6 5.6 9.5 5.6 9.5z"/><circle cx="10" cy="8.7" r="2.1"/>';
+export const ARROW_UP_RIGHT_ICON = '<path d="M6 14 14 6M7.5 6H14v6.5"/>';
 
 /** Iconos lineales de la fila de contacto movil (telefono, correo, Instagram, Facebook), caja 20x20, trazo 1.5 */
 export const SOCIAL_ICONS = {

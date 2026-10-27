@@ -8,6 +8,7 @@ import Consent from '../components/Consent.astro';
 import Cursor from '../components/Cursor.astro';
 import LegalFooter from '../components/LegalFooter.astro';
 import Entry from '../components/Entry.astro';
+import { SEDE } from '../components/contact-data';
 
 export type PageKind = 'home' | 'trabajo' | 'proyecto' | 'contacto' | 'legal' | '404';
 
@@ -45,7 +46,8 @@ const jsonLd = {
   url: 'https://www.ibisne.com/',
   logo: new URL('/icon-512.png', Astro.site).href,
   description: DEFAULT_DESC,
-  address: { '@type': 'PostalAddress', streetAddress: 'Av. Campestre, C. 3A 11, entre 3 y, Campestre', postalCode: '97120', addressLocality: 'Mérida', addressRegion: 'Yucatán', addressCountry: 'MX' },
+  address: { '@type': 'PostalAddress', streetAddress: SEDE.direccion, postalCode: SEDE.cp, addressLocality: 'Mérida', addressRegion: 'Yucatán', addressCountry: 'MX' },
+  hasMap: SEDE.mapsUrl,
 };
 ---
 

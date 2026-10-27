@@ -11,6 +11,10 @@ import {
   FACEBOOK,
   WHATSAPP_ICON,
   SOCIAL_ICONS,
+  SEDE,
+  OFICINA,
+  PIN_ICON,
+  ARROW_UP_RIGHT_ICON,
 } from '../../components/contact-data';
 ---
 
@@ -31,10 +35,7 @@ import {
             <span class="title__thin">Hablemos de</span>
             <span class="title__bold">lo que sigue.</span>
           </h1>
-          <p class="ct__lead">
-            <span class="ct__lead-long">Cuéntanos tu idea por WhatsApp. Te responde una persona del equipo.</span>
-            <span class="ct__lead-short">Elige un tema y te abrimos WhatsApp.</span>
-          </p>
+          <p class="ct__lead">Cuéntanos tu idea por WhatsApp. Te responde una persona del equipo.</p>
         </div>
 
         <div class="ct__cta" data-ct-in>
@@ -42,51 +43,62 @@ import {
             <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={WHATSAPP_ICON} />
             <span>Escríbenos por WhatsApp</span>
           </a>
-          <a class="ct__tel" href={PHONE_HREF}>{PHONE_LABEL}</a>
+          <a class="ct__tel" href={PHONE_HREF} aria-label={`Llamar al ${PHONE_LABEL}`}>{PHONE_LABEL}</a>
         </div>
 
-        <!-- Escritorio: tarjeta de datos -->
-        <div class="card ct__info only-lock" data-ct-in>
-          <dl class="ct__rows">
-            <div class="ct__row">
-              <dt class="ct__k">Correo</dt>
-              <dd><a class="ct__v" href={`mailto:${EMAIL}`}>{EMAIL}</a></dd>
-            </div>
-            <div class="ct__row">
-              <dt class="ct__k">Redes</dt>
-              <dd class="ct__social">
-                <a class="ct__v" href={INSTAGRAM.href} target="_blank" rel="noopener"><span>Instagram</span> {INSTAGRAM.handle}</a>
-                <a class="ct__v" href={FACEBOOK.href} target="_blank" rel="noopener"><span>Facebook</span> {FACEBOOK.handle}</a>
-              </dd>
-            </div>
-            <div class="ct__row">
-              <dt class="ct__k">Oficinas</dt>
-              <dd class="ct__v">
-                <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Campestre+C.+3A+11+Campestre+97120+M%C3%A9rida+Yucat%C3%A1n" target="_blank" rel="noopener">Mérida, Yucatán · sede principal</a><br />
-                <span class="ct__addr">Av. Campestre, C. 3A 11, entre 3 y, Campestre, 97120</span><br />
-                Zapopan, Jalisco
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <!-- Donde estamos: tarjeta HUD (marco chaflanado, brackets, mapa decorativo propio) -->
+        <section class="ct__where" aria-labelledby="ct-where-t" data-ct-in>
+          <div class="ct__where-frame">
+            <div class="ct__where-card">
+              <svg class="ct__map" viewBox="0 0 200 140" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
+                <g class="ct__map-grid" fill="none" stroke="currentColor" stroke-width="1">
+                  <path d="M0 20H200M0 50H200M0 80H200M0 110H200M30 0V140M70 0V140M110 0V140M150 0V140M190 0V140" />
+                </g>
+                <g class="ct__map-roads" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M-10 120 80 92 168 62 210 34" />
+                  <path d="M96 150 128 98 168 62 168 -10" />
+                  <path d="M0 44 90 52 168 62 210 80" />
+                </g>
+                <g class="ct__map-pin">
+                  <circle class="ct__map-ring" cx="168" cy="62" r="22" fill="none" stroke="currentColor" stroke-width="1" />
+                  <circle class="ct__map-ping" cx="168" cy="62" r="6" />
+                  <circle class="ct__map-dot" cx="168" cy="62" r="4.5" />
+                </g>
+              </svg>
 
-        <!-- Movil: WhatsApp y los demas canales en UNA fila (sin tarjeta, sin scroll) -->
-        <div class="ct__links only-scroll" data-ct-in>
-          <a class="ct__wa ct__wa--row" href={WA_BASE} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
-            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={WHATSAPP_ICON} />
-            <span class="ct__wa-label">WhatsApp</span>
+              <div class="ct__where-body">
+                <p class="ct__where-k" id="ct-where-t">
+                  <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={PIN_ICON} />
+                  <span>Dónde estamos</span>
+                </p>
+                <p class="ct__city"><span class="ct__city-tag">{SEDE.etiqueta}</span> · {SEDE.ciudad}</p>
+                <address class="ct__addr">
+                  {SEDE.lineas[0]}<br />
+                  {SEDE.lineas[1]} · CP {SEDE.cp}
+                </address>
+                <a class="ct__maps" href={SEDE.mapsUrl} target="_blank" rel="noopener">
+                  <span>Abrir en Google Maps</span>
+                  <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={ARROW_UP_RIGHT_ICON} />
+                </a>
+                <p class="ct__office"><span class="ct__city-tag">{OFICINA.etiqueta}</span> · {OFICINA.ciudad}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Correo y redes: tarjeta de filas tactiles en movil, fila discreta en escritorio -->
+        <div class="ct__contact" data-ct-in>
+          <a class="ct__c" href={`mailto:${EMAIL}`} aria-label={`Correo ${EMAIL}`}>
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.mail} />
+            <span>{EMAIL}</span>
           </a>
-          <a class="ct__ic" href={PHONE_HREF} aria-label={`Llamar al ${PHONE_LABEL}`}>
-            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.phone} />
+          <a class="ct__c" href={INSTAGRAM.href} target="_blank" rel="noopener" aria-label={`Instagram ${INSTAGRAM.handle}`}>
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.instagram} />
+            <span><span class="ct__c-name">Instagram </span>{INSTAGRAM.handle}</span>
           </a>
-          <a class="ct__ic" href={`mailto:${EMAIL}`} aria-label={`Correo ${EMAIL}`}>
-            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.mail} />
-          </a>
-          <a class="ct__ic" href={INSTAGRAM.href} target="_blank" rel="noopener" aria-label={`Instagram ${INSTAGRAM.handle}`}>
-            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.instagram} />
-          </a>
-          <a class="ct__ic" href={FACEBOOK.href} target="_blank" rel="noopener" aria-label={`Facebook ${FACEBOOK.handle}`}>
-            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.facebook} />
+          <a class="ct__c" href={FACEBOOK.href} target="_blank" rel="noopener" aria-label={`Facebook ${FACEBOOK.handle}`}>
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={SOCIAL_ICONS.facebook} />
+            <span><span class="ct__c-name">Facebook </span>{FACEBOOK.handle}</span>
           </a>
         </div>
       </section>
@@ -118,12 +130,13 @@ import {
       color-mix(in srgb, var(--ink) 34%, transparent);
   }
 
-  /* ---------- Columnas (movil: una sola, compacta, en orden de lectura) ---------- */
+  /* ---------- Movil: una columna que scrollea, en orden de lectura ----------
+     titular, WhatsApp, opciones, Donde estamos, correo/redes, legales */
   .ct__ui {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: calc(var(--header-h) + 0.25rem) var(--gutter) 12px;
+    gap: 20px;
+    padding: calc(var(--header-h) + 0.25rem) var(--gutter) 16px;
   }
   .ct__left {
     display: contents;
@@ -131,16 +144,16 @@ import {
   .ct__head {
     order: 1;
   }
-  .ct__right {
+  .ct__cta {
     order: 2;
   }
-  .ct__cta {
+  .ct__right {
     order: 3;
   }
-  .ct__links {
+  .ct__where {
     order: 4;
   }
-  .ct__info {
+  .ct__contact {
     order: 5;
   }
 
@@ -157,19 +170,19 @@ import {
   .ct__lead {
     margin-top: 8px;
     max-width: 30rem;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 15px;
+    line-height: 22px;
     font-weight: var(--w-light);
     color: var(--text-2);
     text-wrap: pretty;
   }
-  .ct__lead-long {
-    display: none;
-  }
 
   /* CTA */
   .ct__cta {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
   }
   .ct__wa {
     display: flex;
@@ -199,6 +212,7 @@ import {
   .ct__tel {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     min-height: var(--touch);
     font-size: 16px;
     letter-spacing: 0.02em;
@@ -208,108 +222,228 @@ import {
   .ct__tel:hover {
     color: var(--text);
   }
-  /* El telefono vive en la fila de iconos */
-  .ct__cta .ct__tel {
-    display: none;
-  }
 
-  /* Fila de iconos (movil) */
-  .ct__links {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .ct__ic {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
-    background: var(--glass);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    color: var(--text-2);
-    transition:
-      color 0.2s,
-      border-color 0.2s,
-      box-shadow 0.2s;
-  }
-  .ct__ic:is(:hover, :active) {
-    color: var(--cyan);
-    border-color: color-mix(in srgb, var(--cyan) 90%, transparent);
-  }
-  /* WhatsApp dentro de la fila: ocupa lo que dejan los iconos */
-  .ct__wa--row {
-    flex: 1;
-    min-width: 0;
-    width: auto;
-    min-height: 44px;
-    padding: 0 16px;
-    font-size: 14px;
-  }
-
-  /* Tarjeta de datos: no es un enlace, no reacciona al hover de .card */
-  .ct__info.card,
-  .ct__info.card:hover {
-    background: var(--glass);
-    border-color: color-mix(in srgb, var(--text) 14%, transparent);
-    box-shadow: none;
-  }
-  .ct__info {
+  /* ---------- Donde estamos: tarjeta HUD (mismo lenguaje que la tarjeta de entrada) ---------- */
+  .ct__where {
+    --cut: 1rem;
+    position: relative;
     width: 100%;
     max-width: 460px;
-    padding: var(--ct-info-pad, 24px);
   }
-  .ct__rows {
+  .ct__where-frame {
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--cyan) 85%, transparent),
+      var(--line-strong) 38%,
+      var(--line) 62%,
+      color-mix(in srgb, var(--magenta) 70%, transparent)
+    );
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+  }
+  .ct__where-card {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut) + 0.59px) 0,
+      100% calc(var(--cut) - 0.59px),
+      100% 100%,
+      calc(var(--cut) - 0.59px) 100%,
+      0 calc(100% - var(--cut) + 0.59px)
+    );
+  }
+  /* Brackets en las dos esquinas completas */
+  .ct__where-card::before,
+  .ct__where-card::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 0 solid var(--cyan);
+    pointer-events: none;
+  }
+  .ct__where-card::before {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  .ct__where-card::after {
+    right: 0;
+    bottom: 0;
+    border-width: 0 2px 2px 0;
+    border-color: var(--magenta);
+  }
+
+  /* Mapa decorativo: reticula, calles y un punto que late. SVG propio, sin servicios externos. */
+  .ct__map {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 62%;
+    height: 100%;
+    color: var(--cyan);
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 55%);
+    mask-image: linear-gradient(to right, transparent, #000 55%);
+  }
+  .ct__map-grid {
+    opacity: 0.1;
+  }
+  .ct__map-roads {
+    opacity: 0.32;
+  }
+  .ct__map-ring {
+    opacity: 0.35;
+  }
+  .ct__map-dot {
+    fill: var(--cyan);
+    filter: drop-shadow(0 0 5px var(--cyan));
+  }
+  .ct__map-ping {
+    fill: var(--cyan);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ct__map-ping {
+      animation: ct-ping 2.4s var(--ease-out) infinite;
+    }
+  }
+  @keyframes ct-ping {
+    0% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    80%,
+    100% {
+      opacity: 0;
+      transform: scale(4.2);
+    }
+  }
+
+  .ct__where-body {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    align-items: flex-start;
+    gap: var(--ct-where-gap, 8px);
+    padding: var(--ct-where-pad, 20px);
   }
-  .ct__row + .ct__row {
-    margin-top: var(--ct-info-gap, 16px);
-    padding-top: var(--ct-info-gap, 16px);
-    border-top: 1px solid var(--line);
-  }
-  .ct__k {
-    margin-bottom: 6px;
+  .ct__where-k {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 11px;
     line-height: 14px;
     font-weight: var(--w-medium);
     letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    color: var(--text-3);
+    color: var(--cyan);
   }
-  .ct__row dd {
-    margin: 0;
-    font-size: 16px;
+  .ct__city {
+    font-size: 17px;
+    line-height: 22px;
+    font-weight: var(--w-medium);
+    color: var(--text);
+  }
+  .ct__city-tag {
+    color: var(--text-2);
+    font-weight: var(--w-regular);
+  }
+  .ct__addr {
+    font-style: normal;
+    font-size: 15px;
     line-height: 21px;
+    font-weight: var(--w-light);
+    color: var(--text-2);
   }
-  .ct__social {
+  .ct__maps {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    width: 100%;
+    margin-top: 4px;
+    padding: 0 20px;
+    border: 1px solid color-mix(in srgb, var(--cyan) 70%, transparent);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--cyan) 8%, transparent);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: var(--w-medium);
+    line-height: 20px;
+    white-space: nowrap;
+    transition:
+      box-shadow 0.25s var(--ease-out),
+      border-color 0.2s,
+      background 0.2s;
+  }
+  .ct__maps:is(:hover, :focus-visible) {
+    border-color: var(--cyan);
+    background: color-mix(in srgb, var(--cyan) 16%, transparent);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 35%, transparent);
+  }
+  .ct__maps svg {
+    flex: none;
+    color: var(--cyan);
+  }
+  .ct__office {
+    padding-top: var(--ct-where-gap, 8px);
+    width: 100%;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text);
+  }
+
+  /* ---------- Correo y redes (movil: tarjeta de vidrio con filas tactiles) ---------- */
+  .ct__contact {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    width: 100%;
+    max-width: 460px;
+    padding: 4px 16px;
+    border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+    border-radius: 14px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
-  .ct__v {
+  .ct__c {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
     font-size: 16px;
     line-height: 21px;
     color: var(--text);
-  }
-  a.ct__v {
-    align-self: flex-start;
     transition: color 0.2s;
   }
-  a.ct__v:hover {
+  .ct__c + .ct__c {
+    border-top: 1px solid var(--line);
+  }
+  .ct__c svg {
+    flex: none;
     color: var(--cyan);
   }
-  .ct__v span {
+  .ct__c-name {
     color: var(--text-3);
+  }
+  .ct__c:is(:hover, :active, :focus-visible) {
+    color: var(--cyan);
   }
 
   /* Pregunta + opciones */
   .ct__q {
-    margin-bottom: 1.25rem;
-    font-size: clamp(1.75rem, 8vw, 2rem);
+    margin-bottom: 1rem;
+    font-size: clamp(1.625rem, 7.4vw, 2rem);
     line-height: 1.3125;
     letter-spacing: -0.02em;
     font-weight: var(--w-thin);
@@ -319,8 +453,8 @@ import {
   }
   .ct__opts {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
     list-style: none;
     padding: 0;
   }
@@ -331,73 +465,13 @@ import {
     width: 100%;
   }
 
-  /* ---------- Movil/tablet: cabe en ~1 pantalla ---------- */
-  @media not ((min-width: 1024px) and (min-height: 700px)) {
-    .ct__lead-long {
-      display: none;
-    }
-    .ct__lead-short {
-      display: inline;
-    }
-    /* La pregunta queda para lectores de pantalla: el subtitulo ya la formula */
-    .ct__q {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-    .ct__opts {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-    /* El CTA grande vive en la fila de iconos */
-    .ct__cta {
-      display: none;
-    }
-  }
-  /* Telefonos angostos: el boton de WhatsApp queda solo con su icono */
+  /* Telefonos muy angostos */
   @media (max-width: 359px) {
-    .ct__wa--row {
-      flex: 0 0 64px;
-      padding: 0;
+    .ct__where-body {
+      padding: 16px;
     }
-    .ct__wa-label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-  }
-  /* Pantallas bajas (telefonos chicos, o navegador con barras): todo cabe en una pantalla */
-  @media (max-height: 760px) and (not ((min-width: 1024px) and (min-height: 700px))) {
-    .ct__ui {
-      gap: 12px;
-      padding-top: calc(var(--header-h) - 0.25rem);
-    }
-    .ct__eyebrow {
-      display: none;
-    }
-    .ct__title {
-      font-size: clamp(1.75rem, 8vw, 2.25rem);
-    }
-    .ct__lead {
-      margin-top: 6px;
-    }
-    .ct__opts {
-      gap: 6px;
-    }
-  }
-  @media (max-height: 620px) and (not ((min-width: 1024px) and (min-height: 700px))) {
-    .ct__ui {
-      gap: 10px;
-    }
-    .ct__lead {
-      display: none;
+    .ct__c {
+      font-size: 15px;
     }
   }
   @media (min-width: 640px) and (not ((min-width: 1024px) and (min-height: 700px))) {
@@ -406,9 +480,14 @@ import {
       max-width: 640px;
       margin-inline: auto;
     }
+    .ct__where,
+    .ct__contact {
+      max-width: none;
+    }
   }
 
-  /* ---------- Escritorio sin scroll (identico a Figma 46:2 a 1440x900) ---------- */
+  /* ---------- Escritorio sin scroll (Figma 46:2 a 1440x900) ----------
+     Todo se mide en dvh: a 1024x700 el bloque izquierdo cabe sin scroll. */
   @media (min-width: 1024px) and (min-height: 700px) {
     .ct {
       min-height: 0;
@@ -427,60 +506,100 @@ import {
       column-gap: 2.5rem;
       align-content: start;
       align-items: start;
-      padding: max(calc(var(--header-h) + 1rem), 13.333dvh) var(--pad-x) 0;
-      --ct-info-pad: clamp(15px, calc(2.8dvh - 1px), 24px);
-      --ct-info-gap: clamp(10px, 1.8dvh, 16px);
+      padding: max(calc(var(--header-h) + 0.5rem), 11.5dvh) var(--pad-x) 0;
+      --ct-where-pad: clamp(12px, 2dvh, 18px);
+      --ct-where-gap: clamp(5px, 0.9dvh, 8px);
     }
     .ct__left {
       display: flex;
       flex-direction: column;
-      gap: clamp(1.25rem, 3.33dvh, 1.875rem);
+      gap: clamp(0.75rem, 2.6dvh, 1.5rem);
     }
     .ct__head,
     .ct__cta,
     .ct__right,
-    .ct__info {
+    .ct__where,
+    .ct__contact {
       order: 0;
     }
     .ct__eyebrow {
-      margin-bottom: clamp(0.5rem, 1.55dvh, 0.875rem);
+      margin-bottom: clamp(0.375rem, 1.2dvh, 0.875rem);
     }
     .ct__title {
       font-size: clamp(2.25rem, min(6.2dvh, 3.9vw), 3.5rem);
     }
     .ct__lead {
-      margin-top: clamp(0.5rem, 1.55dvh, 0.875rem);
+      margin-top: clamp(0.375rem, 1.2dvh, 0.875rem);
       max-width: 29.4rem;
-      font-size: clamp(1rem, 2dvh, 1.125rem);
+      font-size: clamp(0.9375rem, 2dvh, 1.125rem);
       line-height: 1.28;
     }
-    .ct__lead-long {
-      display: inline;
-    }
-    .ct__lead-short {
-      display: none;
-    }
     .ct__cta {
-      display: flex;
+      flex-direction: row;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.875rem 1.125rem;
+      gap: 0.5rem 1.125rem;
     }
     .ct__wa {
       display: inline-flex;
       width: auto;
       min-height: 48px;
     }
-    .ct__cta .ct__tel {
-      display: inline-flex;
-    }
     .ct__q {
       margin-bottom: clamp(1rem, 2.9dvh, 1.625rem);
       font-size: clamp(1.625rem, 3.56dvh, 2rem);
     }
     .ct__opts {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px 16px;
+    }
+
+    /* Tarjeta de sede compacta */
+    .ct__city {
+      font-size: clamp(15px, 2.1dvh, 17px);
+      line-height: 1.25;
+    }
+    .ct__addr {
+      font-size: clamp(13px, 1.8dvh, 15px);
+      line-height: 1.38;
+    }
+    .ct__maps {
+      width: auto;
+      min-height: clamp(36px, 5dvh, 44px);
+      margin-top: 2px;
+      padding: 0 18px;
+      font-size: 14px;
+    }
+    .ct__office {
+      font-size: clamp(13px, 1.8dvh, 14px);
+      line-height: 1.3;
+    }
+
+    /* Correo y redes: fila discreta sin tarjeta */
+    .ct__contact {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0 18px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    .ct__c {
+      min-height: 30px;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .ct__c + .ct__c {
+      border-top: 0;
+    }
+    .ct__c:first-child {
+      flex: 1 0 100%;
+    }
+    .ct__c-name {
+      display: none;
     }
   }
 
@@ -488,12 +607,6 @@ import {
     .ct__ui {
       grid-template-columns: minmax(0, 470px) minmax(0, 680px);
       justify-content: space-between;
-    }
-  }
-
-  @media (min-width: 1024px) and (min-height: 700px) and (max-width: 1180px) {
-    .ct__cta {
-      gap: 0.5rem 1rem;
     }
   }
 </style>
