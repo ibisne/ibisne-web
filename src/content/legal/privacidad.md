@@ -13,7 +13,7 @@ Léelo con atención. Al utilizar los Servicios, aceptas que tu información se 
 El responsable del tratamiento de tus datos personales es iBisne S.A.S. de C.V., sociedad mercantil con domicilio en Av. Campestre, C. 3A 11, entre 3 y, Campestre, 97120 Mérida, Yucatán, México, y oficina en Zapopan, Jalisco.
 
 - Correo electrónico: proyectos@ibisne.com
-- WhatsApp: 33 3723 7525
+- WhatsApp: 33 2957 5274
 
 ## Cambios en este Aviso de privacidad
 
@@ -121,6 +121,6 @@ Podemos transferir, almacenar y tratar tu información personal fuera del país 
 
 ## Contacto
 
-Si tienes alguna pregunta sobre nuestras prácticas de privacidad o sobre este Aviso, o si deseas ejercer cualquiera de tus derechos, escríbenos a proyectos@ibisne.com o por WhatsApp al 33 3723 7525.
+Si tienes alguna pregunta sobre nuestras prácticas de privacidad o sobre este Aviso, o si deseas ejercer cualquiera de tus derechos, escríbenos a proyectos@ibisne.com o por WhatsApp al 33 2957 5274.
 
 <!-- PENDIENTE: revisión de abogado, semana del 26-oct-2026 -->

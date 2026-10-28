@@ -49,5 +49,5 @@ Datos sobre adjetivos. Español de México.
 
 ## CTA
 
-- Botón del header y de cierre: **"Hablemos"** → WhatsApp `https://wa.me/523337237525`.
+- Botón del header y de cierre: **"Hablemos"** → WhatsApp `https://wa.me/523329575274`.
 - Contacto: proyectos@ibisne.com · IG @ibisnemx · FB /ibisnecom.

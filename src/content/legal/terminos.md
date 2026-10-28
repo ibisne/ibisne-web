@@ -10,7 +10,7 @@ iBisne S.A.S. de C.V. es una sociedad mercantil constituida bajo las leyes de lo
 
 En el desarrollo de nuestras actividades cumplimos con las normativas vigentes en materia de comercio electrónico, protección de datos personales y propiedad intelectual, tanto a nivel nacional como internacional. Nuestro equipo está formado por profesionales con experiencia en tecnología digital, que brindan soluciones personalizadas y eficientes.
 
-Puedes contactarnos por WhatsApp al 33 3723 7525 o por correo electrónico en proyectos@ibisne.com.
+Puedes contactarnos por WhatsApp al 33 2957 5274 o por correo electrónico en proyectos@ibisne.com.
 
 ## 2. Aceptación de los términos
 

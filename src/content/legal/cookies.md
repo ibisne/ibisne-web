@@ -31,6 +31,6 @@ El tratamiento de los datos que se recopilan con Google Analytics se describe en
 
 ## Contacto
 
-Para dudas sobre esta política, escríbenos a proyectos@ibisne.com o por WhatsApp al 33 3723 7525.
+Para dudas sobre esta política, escríbenos a proyectos@ibisne.com o por WhatsApp al 33 2957 5274.
 
 <!-- PENDIENTE: revisión de abogado, semana del 26-oct-2026 -->

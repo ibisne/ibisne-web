@@ -95,7 +95,7 @@ consola limpia, sin 404 en red, 375px, y 1024x700 sin scroll en Inicio/Trabajo/C
 
 ## Contacto (datos oficiales)
 
-- **WhatsApp 33 3723 7525** → `https://wa.me/523337237525`, en **todos** los "Hablemos".
+- **WhatsApp 33 2957 5274** → `https://wa.me/523329575274`, en **todos** los "Hablemos".
 - Correo: **proyectos@ibisne.com**
 - Instagram **@ibisnemx** · Facebook **/ibisnecom**
 - Fuente única en el código: `src/components/contact-data.ts`. No dupliques estos datos.

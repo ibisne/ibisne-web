@@ -1,9 +1,9 @@
 /** Datos y vinculos de Contacto. Un solo lugar para telefono, correo, redes y opciones. */
 
-export const WA_NUMBER = '523337237525';
+export const WA_NUMBER = '523329575274';
 export const WA_BASE = `https://wa.me/${WA_NUMBER}`;
-export const PHONE_LABEL = '33 3723 7525';
-export const PHONE_HREF = 'tel:+523337237525';
+export const PHONE_LABEL = '33 2957 5274';
+export const PHONE_HREF = 'tel:+523329575274';
 export const EMAIL = 'proyectos@ibisne.com';
 export const INSTAGRAM = { handle: '@ibisnemx', href: 'https://www.instagram.com/ibisnemx' };
 export const FACEBOOK = { handle: '/ibisnecom', href: 'https://www.facebook.com/ibisnecom' };
