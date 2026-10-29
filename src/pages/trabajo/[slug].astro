@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import { waLink } from '../../components/contact-data';
 import Base from '../../layouts/Base.astro';
 import { brands } from '../../data/brands';
 import type { Brand } from '../../data/brands';
@@ -16,9 +17,11 @@ interface Props {
 const { brand: b } = Astro.props;
 
 const description = `${b.tagline} ${b.reto}`;
+// Vista previa al compartir (WhatsApp, redes): la foto de la marca a 1200x630
+const og = b.foto ? await getImage({ src: b.foto, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 }) : null;
 ---
 
-<Base title={`${b.name} · Trabajo`} description={description} page="proyecto">
+<Base title={`${b.name} · Trabajo`} description={description} page="proyecto" image={og?.src}>
   <div class="stage proj-stage">
     <!-- Velo de legibilidad sobre el mundo 3D -->
     <div class="proj-veil" data-travel-bg aria-hidden="true"></div>
@@ -76,9 +79,13 @@ const description = `${b.tagline} ${b.reto}`;
               <a class="work-btn work-btn--outline" href="/trabajo/" data-back-to-work>
                 <span aria-hidden="true">←</span>&nbsp;Volver a Trabajo
               </a>
+              <a class="work-btn work-btn--solid" href={waLink(`un proyecto como ${b.name}`)} target="_blank" rel="noopener">
+                Quiero algo así
+                <span class="sr-only"> (abre WhatsApp)</span>
+              </a>
               {
                 b.url && (
-                  <a class="work-btn work-btn--solid" href={b.url} target="_blank" rel="noopener">
+                  <a class="work-btn work-btn--outline" href={b.url} target="_blank" rel="noopener">
                     Sitio en vivo&nbsp;<span aria-hidden="true">↗</span>
                     <span class="sr-only"> (se abre en otra pestaña)</span>
                   </a>
