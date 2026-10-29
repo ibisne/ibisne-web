@@ -618,12 +618,12 @@ import {
     }
   }
 
-  /* Movil: legales en una linea pequena. --tabbar-h = barra inferior fija + safe-area (global.css) */
+  /* Movil: legales en una linea pequena. --tabbar-h = capsula inferior flotante + safe-area (global.css) */
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     html[data-page='contacto'] .legal-foot {
       justify-content: center;
       gap: 0;
-      padding: 0 var(--gutter) calc(var(--tabbar-h) + var(--consent-h, 0px) + 8px);
+      padding: 0 var(--gutter) calc(var(--tabbar-h) + var(--consent-h, 0px));
       text-align: center;
     }
     html[data-page='contacto'] .legal-foot nav {

@@ -57,7 +57,8 @@ import bStill from '../assets/b/b-trim.png';
 
   .hm-vig {
     position: absolute;
-    inset: 0;
+    /* baja hasta el borde de la pantalla (la capsula flotante deja ver lo que hay debajo: sin corte en seco) */
+    inset: 0 0 calc(var(--tabbar-h) * -1) 0;
     pointer-events: none;
     background:
       linear-gradient(to bottom, color-mix(in srgb, var(--ink) 70%, transparent), transparent 22%),

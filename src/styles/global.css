@@ -313,16 +313,15 @@ html[data-boot] main#page {
   }
 }
 
-/* Debajo de eso (movil): scroll normal, apilado, tap en lugar de hover, barra inferior de app.
-   --tabbar-h = alto de la barra + safe-area; las paginas que ocupan una pantalla restan esa variable
-   y las que scrollean la dejan como padding-bottom para que nada quede tapado. */
+/* Debajo de eso (movil): scroll normal, apilado, tap en lugar de hover, capsula flotante de navegacion.
+   --tabbar-h = lo que ocupa la capsula desde el borde inferior (separacion + alto + 8px de respiro + safe-area);
+   las paginas que ocupan una pantalla restan esa variable y las que scrollean la dejan como padding-bottom
+   para que nada quede tapado. --tabbar-bottom = separacion de la capsula al borde (MobileTabBar). */
 @media not ((min-width: 1024px) and (min-height: 700px)) {
   :root {
-    --tabbar-h: calc(64px + env(safe-area-inset-bottom, 0px));
-    /* Velo sobre la barra inferior (MobileTabBar) y hueco que deja el pie legal para quedar POR ENCIMA
-       del velo: al final del scroll "Privacidad" se lee entero; mientras se scrollea, se funde con la barra. */
-    --veil-h: 2.75rem;
-    --veil-gap: 1.75rem;
+    --tabbar-bottom: 14px;
+    --tabbar-cap-h: 60px;
+    --tabbar-h: calc(var(--tabbar-bottom) + var(--tabbar-cap-h) + 8px + env(safe-area-inset-bottom, 0px));
   }
   .only-lock {
     display: none !important;
@@ -373,24 +372,27 @@ html[data-boot] main#page {
   html[data-page='contacto'] .legal-foot {
     margin-top: auto;
   }
-  .legal-foot {
-    margin-bottom: var(--veil-gap);
-  }
-  /* Banner de cookies: encima de la barra, sin taparla (#consent gana a los estilos del componente) */
+  /* Banner de cookies: encima de la capsula, sin taparla (#consent gana a los estilos del componente) */
   #consent.consent {
-    bottom: calc(var(--tabbar-h) + 0.75rem);
+    bottom: calc(var(--tabbar-h) + 0.25rem);
   }
 }
+/* Telefono: el banner es una tarjeta flotante a lo ancho, justo sobre la capsula */
 @media (max-width: 639px) and (not ((min-width: 1024px) and (min-height: 700px))) {
   #consent.consent {
+    right: max(0.75rem, env(safe-area-inset-right));
+    left: max(0.75rem, env(safe-area-inset-left));
     bottom: var(--tabbar-h);
+    width: auto;
+    border-width: 1px;
+    border-radius: 1rem;
     padding-bottom: 0.7rem;
   }
 }
-/* Movil en horizontal: barra mas baja para dejar pantalla al contenido */
+/* Movil en horizontal: capsula mas pegada al borde para dejar pantalla al contenido */
 @media (max-height: 499px) and (not ((min-width: 1024px) and (min-height: 700px))) {
   :root {
-    --tabbar-h: calc(52px + env(safe-area-inset-bottom, 0px));
+    --tabbar-bottom: 8px;
   }
 }
 
