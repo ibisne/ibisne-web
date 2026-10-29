@@ -523,6 +523,11 @@ class GLWorld {
   private mouse = false;
   private mouseIn = false;
   private touchUntil = 0;
+  /** Giroscopio (tactil): inclinacion relativa a una base que se re-centra despacio. */
+  private tiltOn = false;
+  private tiltX = 0;
+  private tiltY = 0;
+  private tiltB: [number, number] | null = null;
   /** dedo apoyado (eventos touch, pasivos: siguen llegando aunque la pagina haga scroll) */
   private finger = false;
   private bptr: BPointer = { x: 0, y: 0, active: false };
@@ -889,6 +894,38 @@ class GLWorld {
       this.touchUntil = performance.now() + 450;
     };
     on('touchend', lift, { passive: true });
+
+    // giroscopio: inclinar el telefono mueve la camara y la B. La base se re-centra despacio
+    // (~4 s) para que la postura en que se sostiene el telefono sea siempre "al centro".
+    const tilt = (e: DeviceOrientationEvent) => {
+      if (e.beta == null || e.gamma == null) return;
+      const land = Math.abs((screen.orientation?.angle ?? 0) % 180) === 90;
+      const a = land ? e.beta : e.gamma; // horizontal
+      const b = land ? -e.gamma : e.beta; // vertical
+      if (!this.tiltB) this.tiltB = [a, b];
+      this.tiltB[0] += (a - this.tiltB[0]) * 0.004;
+      this.tiltB[1] += (b - this.tiltB[1]) * 0.004;
+      const c = (v: number) => Math.max(-1, Math.min(1, v));
+      this.tiltX = c((a - this.tiltB[0]) / 20);
+      this.tiltY = c(-(b - this.tiltB[1]) / 20);
+      this.tiltOn = true;
+    };
+    if (matchMedia('(pointer: coarse)').matches && 'DeviceOrientationEvent' in window) {
+      const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+      if (typeof DOE.requestPermission === 'function') {
+        // iOS: el permiso solo se puede pedir dentro de un toque
+        const ask = () => {
+          window.removeEventListener('touchend', ask);
+          DOE.requestPermission!()
+            .then((r) => r === 'granted' && on('deviceorientation', tilt, { passive: true }))
+            .catch(() => {});
+        };
+        window.addEventListener('touchend', ask, { passive: true });
+        this.off.push(() => window.removeEventListener('touchend', ask));
+      } else {
+        on('deviceorientation', tilt, { passive: true });
+      }
+    }
     on('touchcancel', lift, { passive: true });
     on('blur', () => {
       this.mouseIn = false;
@@ -1095,8 +1132,13 @@ class GLWorld {
     // objetivo de camara: mouse real, o deriva automatica en tactil
     let tx = 0;
     let ty = 0;
-    const driftX = Math.sin(time * 0.19) * 0.5 + Math.sin(time * 0.071 + 2) * 0.22;
-    const driftY = Math.sin(time * 0.13 + 1.3) * 0.38;
+    let driftX = Math.sin(time * 0.19) * 0.5 + Math.sin(time * 0.071 + 2) * 0.22;
+    let driftY = Math.sin(time * 0.13 + 1.3) * 0.38;
+    // con giroscopio la inclinacion manda y la deriva queda como respiro leve
+    if (this.tiltOn && !this.mouse) {
+      driftX = this.tiltX + driftX * 0.15;
+      driftY = this.tiltY + driftY * 0.15;
+    }
     const touching = this.finger || now < this.touchUntil;
     if (this.mouse) {
       if (this.mouseIn) {
@@ -1124,8 +1166,9 @@ class GLWorld {
       this.bptr.y = this.py;
       this.bptr.active = this.mouseIn;
     } else {
-      this.bptr.x = touching ? this.px : driftX * 0.6;
-      this.bptr.y = touching ? this.py : driftY * 0.6;
+      const kD = this.tiltOn ? 1 : 0.6;
+      this.bptr.x = touching ? this.px : driftX * kD;
+      this.bptr.y = touching ? this.py : driftY * kD;
       this.bptr.active = touching;
     }
     const gTarget = this.mouse ? (this.mouseIn ? [this.px, this.py] : [0, -0.1]) : touching ? [this.px, this.py] : [driftX, driftY];
