@@ -49,6 +49,11 @@ import foto8 from '../assets/fotos/otomi.webp';
 import foto9 from '../assets/fotos/steelbeird.webp';
 import foto10 from '../assets/fotos/albercasopia.webp';
 import foto11 from '../assets/fotos/rancho-contento.webp';
+import fotoG0 from '../assets/fotos/digitalife.webp';
+import fotoG1 from '../assets/fotos/unframe.webp';
+import fotoG2 from '../assets/fotos/distenvases.webp';
+import fotoG3 from '../assets/fotos/docer.webp';
+import fotoG4 from '../assets/fotos/cgcac.webp';
 
 export type Nicho =
   | 'Construcción'
@@ -171,7 +176,7 @@ export const brands: Brand[] = [
     logo: logoDci,
     mockup: mkDci,
     foto: foto2,
-    fotoAlt: 'Letrero iluminado de DCI al atardecer',
+    fotoAlt: 'Casa con alberca entre palmeras de la península al atardecer',
     nicho: 'Construcción',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://www.inmobiliariadci.com',
@@ -226,6 +231,8 @@ export const brands: Brand[] = [
     name: 'Digitalife',
     logo: logoDigitalife,
     mockup: mkDigitalife,
+    foto: fotoG0,
+    fotoAlt: 'Escritorio con laptop, monitor y teclado iluminados de noche',
     nicho: 'Industria y comercio',
     tipos: ['eCommerce'],
     url: 'https://www.digitalife.com.mx',
@@ -334,6 +341,8 @@ export const brands: Brand[] = [
     name: 'Unframe',
     logo: logoUnframe,
     mockup: mkUnframe,
+    foto: fotoG1,
+    fotoAlt: 'Estudio de motion con animación de luz en pantalla grande',
     nicho: 'Educación y servicios',
     tipos: ['Sitio web'],
     // url de staging oculta hasta tener dominio propio: https://unframe.ibisne-apps.com
@@ -351,6 +360,8 @@ export const brands: Brand[] = [
     name: 'Distenvases',
     logo: logoDistenvases,
     mockup: null,
+    foto: fotoG2,
+    fotoAlt: 'Frascos y botellas de vidrio de distintos tamaños',
     nicho: 'Alimentos y bebidas',
     tipos: ['Sitio web'],
     stack: ['Python', 'Visión por IA', 'Sitio estático', 'Datos curados'],
@@ -365,6 +376,8 @@ export const brands: Brand[] = [
     name: 'Docer',
     logo: logoDocer,
     mockup: null,
+    foto: fotoG3,
+    fotoAlt: 'Flotilla de volteos con material en un camino de banco',
     nicho: 'Turismo y hospitalidad',
     tipos: ['Backoffice'],
     stack: ['Next.js', 'Supabase', 'Importación de Excel'],
@@ -378,6 +391,8 @@ export const brands: Brand[] = [
     name: 'CGCAC',
     logo: logoCgcac,
     mockup: null,
+    foto: fotoG4,
+    fotoAlt: 'Registro con código QR a la entrada de un foro',
     nicho: 'Educación y servicios',
     tipos: ['Landing page'],
     stack: ['Registro en línea', 'Pases con QR', 'Verificador', 'Vercel'],
