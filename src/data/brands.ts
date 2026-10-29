@@ -138,11 +138,11 @@ export const brands: Brand[] = [
     logo: logoThcc,
     mockup: mkThcc,
     foto: foto0,
-    fotoAlt: 'Bebidas High Tide con fruta fresca',
+    fotoAlt: 'Gomitas Cherry Fuel con cerezas frescas',
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce'],
     url: 'https://www.thcc.com.mx',
-    stack: ['Shopify', 'Liquid', 'Asistente IA', 'Verificación de edad', 'PWA', 'Vercel'],
+    stack: ['Shopify', 'Liquid', 'JavaScript', 'Asistente IA', 'PWA'],
     resumen:
       'Tienda multimarca que ordena varias marcas bajo un mismo catálogo, con verificación de edad, carrito, buscador y filtros, tres idiomas y un asistente conversacional que devuelve tarjetas de producto comparables dentro del chat.',
     tagline: 'Varias marcas, un solo catálogo y una tienda confiable.',
@@ -255,7 +255,7 @@ export const brands: Brand[] = [
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce', 'Landing page'],
     url: 'https://medicalmexicanna.store',
-    stack: ['Tailwind', 'JavaScript', 'Serverless', 'PWA', 'Vercel'],
+    stack: ['HTML', 'Tailwind', 'JavaScript', 'Node.js', 'PWA'],
     resumen:
       'Tienda en línea de gomitas CBD full spectrum con dosis a medida. Landing de conversión y checkout propio dentro de un ecosistema de bienestar.',
     tagline: 'Gomitas CBD con la dosis calculada para cada persona.',
@@ -292,7 +292,7 @@ export const brands: Brand[] = [
     nicho: 'Salud y bienestar',
     tipos: ['SaaS'],
     url: 'https://sem-org.com',
-    stack: ['Next.js', 'React', 'Tailwind', 'Design system', 'CMS', 'Vercel'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Tailwind', 'CMS'],
     resumen:
       'Centro de mando que concentra, como un marketplace, todos los sistemas dados de alta: un ecommerce que unifica el ecosistema de marcas en una sola plataforma.',
     tagline: 'La casa de marcas de un ecosistema de bienestar.',
@@ -310,7 +310,7 @@ export const brands: Brand[] = [
     nicho: 'Alimentos y bebidas',
     tipos: ['eCommerce', 'PWA'],
     url: 'https://otomitequila.com',
-    stack: ['HTML, CSS y JS', 'Botella 3D', 'Animaciones', 'PWA', 'i18n'],
+    stack: ['HTML', 'CSS', 'JavaScript', 'Three.js', 'PWA', 'i18n'],
     resumen:
       'Sitio animado premium para una marca de tequila artesanal inspirada en la cultura Otomí: narrativa envolvente, catálogo y checkout propio con versión instalable (PWA).',
     tagline: 'Tequila plata super premium, con su botella en 3D.',
@@ -346,7 +346,7 @@ export const brands: Brand[] = [
     nicho: 'Educación y servicios',
     tipos: ['Sitio web'],
     // url de staging oculta hasta tener dominio propio: https://unframe.ibisne-apps.com
-    stack: ['Vite', 'React', 'Framer Motion', 'Tailwind', 'Vercel'],
+    stack: ['Vite', 'React', 'TypeScript', 'Framer Motion', 'Tailwind'],
     resumen:
       'Plataforma editorial "motion as memory", con CMS autoadministrable e identidad ultra-minimal. Ritmo, tipografía y movimiento como eje del contenido.',
     tagline: 'Motion as memory, hecho sitio web.',
@@ -380,7 +380,7 @@ export const brands: Brand[] = [
     fotoAlt: 'Flotilla de volteos con material en un camino de banco',
     nicho: 'Turismo y hospitalidad',
     tipos: ['Backoffice'],
-    stack: ['Next.js', 'Supabase', 'Importación de Excel'],
+    stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Importación de Excel'],
     tagline: 'La operación de material y flete, medida y en orden.',
     reto: 'Toda la operación vivía en un Excel donde distintos tipos de viaje convivían en la misma tabla.',
     solucion: 'Se midió el Excel de la empresa y se separaron los tipos de operación. Un backoffice organiza viajes, notas y folios, y avisa de lo que falta o está por confirmar.',
@@ -395,7 +395,7 @@ export const brands: Brand[] = [
     fotoAlt: 'Registro con código QR a la entrada de un foro',
     nicho: 'Educación y servicios',
     tipos: ['Landing page'],
-    stack: ['Registro en línea', 'Pases con QR', 'Verificador', 'Vercel'],
+    stack: ['HTML', 'JavaScript', 'Registro en línea', 'Pases con QR', 'Verificador'],
     tagline: 'Registro y pases con QR para un foro nacional.',
     reto: 'Registrar a los asistentes de un foro nacional y validar su pase en la puerta.',
     solucion: 'Sitio del evento con formulario de registro, pase personal con código QR y un verificador para validarlo el día del foro. Terminado el evento, el sitio se sustituyó por un cartel de agradecimiento.',

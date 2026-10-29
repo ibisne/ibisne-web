@@ -205,21 +205,6 @@
   object-fit: cover;
   object-position: top center;
 }
-/* Captura del sistema en miniatura sobre la foto de la marca */
-.proj-shot__pip {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  width: 34%;
-  height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  object-position: top center;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
-  box-shadow: 0 12px 30px rgb(0 0 0 / 0.55);
-  transform: translateZ(30px);
-}
 .proj-shot__brand {
   display: grid;
   place-items: center;
