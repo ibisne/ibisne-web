@@ -43,9 +43,9 @@
 
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     .tabbar {
-      --tab: 60px; /* ancho del toque (cabe "Contacto") */
+      --tab: 84px; /* ancho del toque: aire horizontal */
       --tab-h: 52px; /* alto del toque: 44 minimo */
-      --tab-gap: 2px;
+      --tab-gap: 8px;
       position: fixed;
       z-index: var(--z-header);
       inset-inline: 0;
@@ -56,7 +56,7 @@
       align-items: center;
       gap: var(--tab-gap);
       height: var(--tabbar-cap-h);
-      padding: 3px 4px;
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
       /* Cristal: indigo translucido; sin backdrop-filter queda mas opaco para no perder lectura */
       background: color-mix(in srgb, var(--ink) 88%, transparent);
@@ -79,7 +79,7 @@
   .tabbar__ind {
     position: absolute;
     top: 3px; /* contra el borde de relleno: igual al padding de la capsula (3px 4px) */
-    left: 4px;
+    left: 10px;
     width: var(--tab);
     height: var(--tab-h);
     pointer-events: none;
