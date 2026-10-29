@@ -91,7 +91,31 @@ const description = `${b.tagline} ${b.reto}`;
         <div class="proj-media" data-travel-ui>
           <figure class="card proj-shot" data-tilt>
             {
-              b.mockup ? (
+              b.foto ? (
+                <>
+                  <Image
+                    class="proj-shot__img"
+                    src={b.foto}
+                    alt={b.fotoAlt ?? b.name}
+                    widths={[640, 960, 1280]}
+                    sizes="(min-width: 1024px) 55vw, 100vw"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                  />
+                  {b.mockup && (
+                    <Image
+                      class="proj-shot__pip"
+                      src={b.mockup}
+                      alt={`Captura de ${b.name}`}
+                      widths={[320, 480]}
+                      sizes="(min-width: 1024px) 20vw, 40vw"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                </>
+              ) : b.mockup ? (
                 <Image
                   class="proj-shot__img"
                   src={b.mockup}

@@ -37,6 +37,19 @@ import mkDigitalife from '../assets/mockups/digitalife.webp';
 import mkBatauro from '../assets/mockups/batauro.webp';
 import mkRancho from '../assets/mockups/rancho-contento.webp';
 
+import foto0 from '../assets/fotos/thcc.webp';
+import foto1 from '../assets/fotos/ibroker.webp';
+import foto2 from '../assets/fotos/dci.webp';
+import foto3 from '../assets/fotos/neoterre.webp';
+import foto4 from '../assets/fotos/batauro.webp';
+import foto5 from '../assets/fotos/medical-mexicanna.webp';
+import foto6 from '../assets/fotos/albercasvip.webp';
+import foto7 from '../assets/fotos/sem.webp';
+import foto8 from '../assets/fotos/otomi.webp';
+import foto9 from '../assets/fotos/steelbeird.webp';
+import foto10 from '../assets/fotos/albercasopia.webp';
+import foto11 from '../assets/fotos/rancho-contento.webp';
+
 export type Nicho =
   | 'Construcción'
   | 'Salud y bienestar'
@@ -82,6 +95,10 @@ export interface Brand {
   logo: ImageMetadata | null;
   /** Captura horizontal real. null = sin captura disponible. */
   mockup: ImageMetadata | null;
+  /** Foto de la marca (su mundo, no el sistema). Si existe, va al frente y la captura queda en miniatura. */
+  foto?: ImageMetadata;
+  /** Texto alternativo de la foto. */
+  fotoAlt?: string;
   nicho: Nicho;
   tipos: Tipo[];
   /** Solo si está publicada en las páginas del sitio viejo. */
@@ -115,6 +132,8 @@ export const brands: Brand[] = [
     name: 'THCC',
     logo: logoThcc,
     mockup: mkThcc,
+    foto: foto0,
+    fotoAlt: 'Bebidas High Tide con fruta fresca',
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce'],
     url: 'https://www.thcc.com.mx',
@@ -132,6 +151,8 @@ export const brands: Brand[] = [
     name: 'iBroker',
     logo: logoIbroker,
     mockup: mkIbroker,
+    foto: foto1,
+    fotoAlt: 'Terraza con alberca de una casa campestre',
     nicho: 'Construcción',
     tipos: ['CRM'],
     url: 'https://ibroker.com.mx',
@@ -149,6 +170,8 @@ export const brands: Brand[] = [
     name: 'DCI de la Península',
     logo: logoDci,
     mockup: mkDci,
+    foto: foto2,
+    fotoAlt: 'Letrero iluminado de DCI al atardecer',
     nicho: 'Construcción',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://www.inmobiliariadci.com',
@@ -166,6 +189,8 @@ export const brands: Brand[] = [
     name: 'Neoterre',
     logo: logoNeoterre,
     mockup: mkNeoterre,
+    foto: foto3,
+    fotoAlt: 'Casa con alberca y terraza de madera en la selva',
     nicho: 'Construcción',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://www.neoterre.org/es',
@@ -182,6 +207,8 @@ export const brands: Brand[] = [
     name: 'Batauro',
     logo: logoBatauro,
     mockup: mkBatauro,
+    foto: foto4,
+    fotoAlt: 'Gabinete gamer Batauro bajo un anillo de neón',
     nicho: 'Industria y comercio',
     tipos: ['eCommerce'],
     url: 'https://batauro.com/',
@@ -216,6 +243,8 @@ export const brands: Brand[] = [
     name: 'Medical Mexicanna',
     logo: logoMedical,
     mockup: mkMedical,
+    foto: foto5,
+    fotoAlt: 'Mujer sonriente con una bolsa de gomitas Medical Mexicanna',
     nicho: 'Salud y bienestar',
     tipos: ['eCommerce', 'Landing page'],
     url: 'https://medicalmexicanna.store',
@@ -232,6 +261,8 @@ export const brands: Brand[] = [
     name: 'AlbercasVIP',
     logo: logoAlbercasvip,
     mockup: mkAlbercasvip,
+    foto: foto6,
+    fotoAlt: 'Alberca infinita con pérgola y camastros de madera',
     nicho: 'Construcción',
     tipos: ['Sitio web', 'PWA'],
     url: 'https://albercasvip.com',
@@ -249,6 +280,8 @@ export const brands: Brand[] = [
     name: 'SEM (Semillas Endémicas Mexicanna)',
     logo: logoSem,
     mockup: mkSem,
+    foto: foto7,
+    fotoAlt: 'Persona saltando al atardecer sobre una colina',
     nicho: 'Salud y bienestar',
     tipos: ['SaaS'],
     url: 'https://sem-org.com',
@@ -265,6 +298,8 @@ export const brands: Brand[] = [
     name: 'Otomí',
     logo: logoOtomi,
     mockup: mkOtomi,
+    foto: foto8,
+    fotoAlt: 'Botella de tequila Otomí',
     nicho: 'Alimentos y bebidas',
     tipos: ['eCommerce', 'PWA'],
     url: 'https://otomitequila.com',
@@ -281,6 +316,8 @@ export const brands: Brand[] = [
     name: 'Steelbeird',
     logo: logoSteelbeird,
     mockup: mkSteelbeird,
+    foto: foto9,
+    fotoAlt: 'Excavadora cargando un camión en obra',
     nicho: 'Industria y comercio',
     tipos: ['Landing page'],
     url: 'https://www.steelbeird.com',
@@ -355,6 +392,8 @@ export const brands: Brand[] = [
     name: 'Albercasopia',
     logo: logoAlbercasopia,
     mockup: mkAlbercasopia,
+    foto: foto10,
+    fotoAlt: 'Alberca infinita frente al mar al anochecer',
     nicho: 'Construcción',
     tipos: ['eCommerce'],
     url: 'https://albercasopia.com',
@@ -371,6 +410,8 @@ export const brands: Brand[] = [
     name: 'Rancho Contento',
     logo: logoRancho,
     mockup: mkRancho,
+    foto: foto11,
+    fotoAlt: 'Vista aérea de la casa del rancho con alberca y palmeras',
     nicho: 'Turismo y hospitalidad',
     tipos: ['Sitio web', 'CRM'],
     url: 'https://ranchocontentoyucatan.com.mx',
