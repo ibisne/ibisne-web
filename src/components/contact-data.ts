@@ -20,8 +20,6 @@ export const SEDE = {
     'https://www.google.com/maps/search/?api=1&query=Avenida+Campestre+C.+3A+11+Campestre+97120+M%C3%A9rida+Yucat%C3%A1n',
 } as const;
 
-/** Oficina secundaria. Sin direccion ni horarios publicados. */
-export const OFICINA = { ciudad: 'Zapopan, Jalisco', etiqueta: 'Oficina' } as const;
 
 /** Mensaje prellenado de WhatsApp para un interes concreto */
 export const waLink = (interest: string): string =>

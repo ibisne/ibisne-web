@@ -28,7 +28,7 @@ interface Props {
   rawTitle?: boolean;
 }
 
-const DEFAULT_DESC = 'Diseñamos tecnología para marcas selectas. Estudio de producto y software en Mérida, Yucatán y Zapopan, Jalisco.';
+const DEFAULT_DESC = 'Diseñamos tecnología para marcas selectas. Estudio de producto y software en Mérida, Yucatán.';
 const { title, description = DEFAULT_DESC, page, image = '/og.jpg', noindex = false, rawTitle = false } = Astro.props;
 const footerDefault = { home: 'none', trabajo: 'none', proyecto: 'none', contacto: 'full', legal: 'full', '404': 'none' } as const;
 const aliasFooter = Astro.props.footerLegal === undefined ? undefined : Astro.props.footerLegal ? 'full' : 'none';

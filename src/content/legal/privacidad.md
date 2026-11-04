@@ -10,7 +10,7 @@ Léelo con atención. Al utilizar los Servicios, aceptas que tu información se 
 
 ## Responsable del tratamiento
 
-El responsable del tratamiento de tus datos personales es iBisne S.A.S. de C.V., sociedad mercantil con domicilio en Av. Campestre, C. 3A 11, entre 3 y, Campestre, 97120 Mérida, Yucatán, México, y oficina en Zapopan, Jalisco.
+El responsable del tratamiento de tus datos personales es iBisne S.A.S. de C.V., sociedad mercantil con domicilio en Av. Campestre, C. 3A 11, entre 3 y, Campestre, 97120 Mérida, Yucatán, México.
 
 - Correo electrónico: proyectos@ibisne.com
 - WhatsApp: 33 2957 5274

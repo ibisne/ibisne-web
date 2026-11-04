@@ -6,7 +6,7 @@ updated: "25 de octubre de 2026"
 
 ## 1. Identificación de la empresa
 
-iBisne S.A.S. de C.V. es una sociedad mercantil constituida bajo las leyes de los Estados Unidos Mexicanos, con domicilio en Zapopan, Jalisco, México. Somos un tech studio: diseñamos, desarrollamos y escalamos productos de software a la medida. Nuestro trabajo se organiza en tres dominios de ingeniería: producto y plataformas (SaaS multi-tenant, CRM, ERP, apps), comercio digital (tiendas B2B y B2C, sitios y páginas de campaña) e IA y frontera (agentes, automatización con modelos de lenguaje y aplicaciones on-chain).
+iBisne S.A.S. de C.V. es una sociedad mercantil constituida bajo las leyes de los Estados Unidos Mexicanos, con domicilio en Mérida, Yucatán, México. Somos un tech studio: diseñamos, desarrollamos y escalamos productos de software a la medida. Nuestro trabajo se organiza en tres dominios de ingeniería: producto y plataformas (SaaS multi-tenant, CRM, ERP, apps), comercio digital (tiendas B2B y B2C, sitios y páginas de campaña) e IA y frontera (agentes, automatización con modelos de lenguaje y aplicaciones on-chain).
 
 En el desarrollo de nuestras actividades cumplimos con las normativas vigentes en materia de comercio electrónico, protección de datos personales y propiedad intelectual, tanto a nivel nacional como internacional. Nuestro equipo está formado por profesionales con experiencia en tecnología digital, que brindan soluciones personalizadas y eficientes.
 

@@ -10,7 +10,8 @@ import {
   WHATSAPP_ICON,
   SOCIAL_ICONS,
   SEDE,
-  OFICINA,
+  PHONE_LABEL,
+  PHONE_HREF,
   PIN_ICON,
   ARROW_UP_RIGHT_ICON,
 } from '../../components/contact-data';
@@ -18,7 +19,7 @@ import {
 
 <Base
   title="Contacto · iBisne"
-  description="Escríbenos por WhatsApp al 33 2957 5274 o a proyectos@ibisne.com. iBisne · Mérida, Yucatán y Zapopan, Jalisco."
+  description="Escríbenos por WhatsApp al 33 2957 5274 o a proyectos@ibisne.com. iBisne · Mérida, Yucatán."
   page="contacto"
 >
   <div class="stage ct" data-travel-self>
@@ -76,7 +77,7 @@ import {
                   <span>Abrir en Google Maps</span>
                   <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={ARROW_UP_RIGHT_ICON} />
                 </a>
-                <p class="ct__office"><span class="ct__city-tag">{OFICINA.etiqueta}</span> · {OFICINA.ciudad}</p>
+                <p class="ct__office"><span class="ct__city-tag">Atención a clientes</span> · <a href={PHONE_HREF}>{PHONE_LABEL}</a></p>
               </div>
             </div>
           </div>
