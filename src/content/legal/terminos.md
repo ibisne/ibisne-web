@@ -105,9 +105,9 @@ Esta indemnización también cubre cualquier incumplimiento en relación con la 
 
 ## 15. Legislación aplicable y jurisdicción
 
-Estos Términos y Condiciones están regidos por las leyes de los Estados Unidos Mexicanos, independientemente del lugar desde donde el cliente acceda al sitio web o contrate los servicios. Para la resolución de cualquier controversia derivada del uso del sitio web o de la contratación de servicios, el cliente e iBisne S.A.S. de C.V. se someten a la jurisdicción de los tribunales competentes de Zapopan, Jalisco, México.
+Estos Términos y Condiciones están regidos por las leyes de los Estados Unidos Mexicanos, independientemente del lugar desde donde el cliente acceda al sitio web o contrate los servicios. Para la resolución de cualquier controversia derivada del uso del sitio web o de la contratación de servicios, el cliente e iBisne S.A.S. de C.V. se someten a la jurisdicción de los tribunales competentes de Mérida, Yucatán, México.
 
-Cualquier controversia que no se resuelva de manera amistosa será litigada bajo las leyes aplicables del Estado de Jalisco, México, sin perjuicio de las disposiciones en materia de derecho internacional privado.
+Cualquier controversia que no se resuelva de manera amistosa será litigada bajo las leyes aplicables del Estado de Yucatán, México, sin perjuicio de las disposiciones en materia de derecho internacional privado.
 
 ## 16. Resolución de conflictos
 
