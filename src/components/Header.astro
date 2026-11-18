@@ -31,6 +31,22 @@ const links = [
     <span class="hdr__ind" aria-hidden="true"></span>
   </nav>
 
+  <!-- Movil: sin menu inferior. Flechas a la seccion vecina (o deslizar el dedo: swipe-nav.ts) -->
+  <nav class="hdr__pager" aria-label="Secciones">
+    <a class="hdr__pager-arrow" data-pg="prev" href="/" aria-label="Ir a Inicio">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <span class="hdr__pager-mid">
+      <span class="label hdr__pager-name" aria-live="polite"></span>
+      <span class="hdr__pager-dots" aria-hidden="true">
+        <span class="hdr__pager-dot"></span><span class="hdr__pager-dot"></span><span class="hdr__pager-dot"></span>
+      </span>
+    </span>
+    <a class="hdr__pager-arrow" data-pg="next" href="/contacto/" aria-label="Ir a Contacto">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </a>
+  </nav>
+
   <div class="hdr__end">
     <SoundToggle />
     <a class="btn btn-outline hdr__cta" href={WA} target="_blank" rel="noopener">
@@ -126,12 +142,15 @@ const links = [
     gap: 0.75rem;
   }
 
-  /* Movil (modo scroll): el logo y, a la derecha, el control de sonido. La navegacion vive en la barra
-     inferior (MobileTabBar); el control no flota sobre el contenido (tapaba las pills de Inicio). */
+  .hdr__pager {
+    display: none;
+  }
+
+  /* Movil (modo scroll): logo, paginador de secciones al centro y control de sonido. No hay menu
+     inferior: se navega con las flechas o deslizando el dedo en horizontal (swipe-nav.ts). */
   @media not ((min-width: 1024px) and (min-height: 700px)) {
     .hdr {
-      /* logo a la izquierda; a la derecha solo el control de sonido */
-      grid-template-columns: 1fr auto;
+      grid-template-columns: auto 1fr auto;
       /* el contenido que scrollea pasa por debajo del logo: velo casi opaco arriba para que no se mezclen */
       background: linear-gradient(to bottom, var(--ink), color-mix(in srgb, var(--ink) 88%, transparent) 55%, transparent);
     }
@@ -142,10 +161,71 @@ const links = [
     .hdr__cta {
       display: none;
     }
+    .hdr__pager {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+    }
+    .hdr__pager-arrow {
+      display: grid;
+      place-items: center;
+      width: var(--touch);
+      height: var(--touch);
+      border-radius: var(--radius-pill);
+      color: var(--cyan);
+      transition:
+        opacity 0.25s var(--ease-out),
+        transform 0.15s var(--ease-out),
+        background-color 0.15s;
+    }
+    .hdr__pager-arrow:active {
+      transform: scale(0.9);
+      background: color-mix(in srgb, var(--cyan) 14%, transparent);
+    }
+    .hdr__pager-arrow[data-off] {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .hdr__pager-mid {
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      min-width: 5.25rem;
+    }
+    .hdr__pager-name {
+      color: var(--text);
+      line-height: 1;
+      min-height: 1em;
+    }
+    .hdr__pager-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .hdr__pager-dot {
+      width: 5px;
+      height: 3px;
+      border-radius: 3px;
+      background: color-mix(in srgb, var(--text) 28%, transparent);
+      transition:
+        width 0.3s var(--ease-out),
+        background-color 0.3s;
+    }
+    .hdr__pager-dot[data-on] {
+      width: 16px;
+      background: var(--cyan);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hdr__pager-arrow,
+    .hdr__pager-dot {
+      transition: none;
+    }
   }
 </style>
 
 <script>
+  import { initSwipeNav, syncPager } from '../scripts/swipe-nav';
+
   const idFor = (pathname: string): string =>
     pathname === '/' ? 'home' : pathname.startsWith('/trabajo') ? 'trabajo' : pathname.startsWith('/contacto') ? 'contacto' : '';
 
@@ -206,8 +286,16 @@ const links = [
   // (antes esperaba al cambio de DOM, ~1.4 s despues del toque).
   document.addEventListener('astro:before-preparation', (ev) => {
     const to = (ev as Event & { to?: URL }).to;
-    if (to) setActive(idFor(to.pathname));
+    if (to) {
+      setActive(idFor(to.pathname));
+      syncPager(to.pathname);
+    }
   });
   // Red de seguridad: si la navegacion fallo o llego por atras/adelante, se alinea con la URL real.
-  document.addEventListener('astro:page-load', () => setActive(idFor(location.pathname)));
+  document.addEventListener('astro:page-load', () => {
+    setActive(idFor(location.pathname));
+    syncPager(location.pathname);
+  });
+  syncPager(location.pathname);
+  initSwipeNav();
 </script>

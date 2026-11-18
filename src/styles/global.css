@@ -316,12 +316,11 @@ html[data-boot] main#page {
 /* Debajo de eso (movil): scroll normal, apilado, tap en lugar de hover, capsula flotante de navegacion.
    --tabbar-h = lo que ocupa la capsula desde el borde inferior (separacion + alto + 8px de respiro + safe-area);
    las paginas que ocupan una pantalla restan esa variable y las que scrollean la dejan como padding-bottom
-   para que nada quede tapado. --tabbar-bottom = separacion de la capsula al borde (MobileTabBar). */
+   para que nada quede tapado. */
 @media not ((min-width: 1024px) and (min-height: 700px)) {
   :root {
-    --tabbar-bottom: 14px;
-    --tabbar-cap-h: 60px;
-    --tabbar-h: calc(var(--tabbar-bottom) + var(--tabbar-cap-h) + 8px + env(safe-area-inset-bottom, 0px));
+    /* ya no hay barra inferior (se navega desde el header o deslizando): solo queda el area segura */
+    --tabbar-h: env(safe-area-inset-bottom, 0px);
   }
   .only-lock {
     display: none !important;
@@ -350,7 +349,7 @@ html[data-boot] main#page {
     padding-bottom: var(--tabbar-h);
   }
   html:is([data-page='legal'], [data-page='trabajo'], [data-page='proyecto'], [data-page='404']) main#page {
-    padding-bottom: calc(var(--tabbar-h) + var(--consent-h, 0px));
+    padding-bottom: calc(var(--tabbar-h) + 1rem + var(--consent-h, 0px));
   }
   /* La UI entra/sale del viaje con translateX de +-64/80 px (ui-motion.ts). Sin recorte, ese
      desborde horizontal agranda el ancho de contenido y el navegador movil encoge el layout
@@ -374,7 +373,7 @@ html[data-boot] main#page {
   }
   /* Banner de cookies: encima de la capsula, sin taparla (#consent gana a los estilos del componente) */
   #consent.consent {
-    bottom: calc(var(--tabbar-h) + 0.25rem);
+    bottom: calc(var(--tabbar-h) + 0.75rem);
   }
 }
 /* Telefono: el banner es una tarjeta flotante a lo ancho, justo sobre la capsula */
@@ -382,17 +381,11 @@ html[data-boot] main#page {
   #consent.consent {
     right: max(0.75rem, env(safe-area-inset-right));
     left: max(0.75rem, env(safe-area-inset-left));
-    bottom: var(--tabbar-h);
+    bottom: calc(var(--tabbar-h) + 0.75rem);
     width: auto;
     border-width: 1px;
     border-radius: 1rem;
     padding-bottom: 0.7rem;
-  }
-}
-/* Movil en horizontal: capsula mas pegada al borde para dejar pantalla al contenido */
-@media (max-height: 499px) and (not ((min-width: 1024px) and (min-height: 700px))) {
-  :root {
-    --tabbar-bottom: 8px;
   }
 }
 

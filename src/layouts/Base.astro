@@ -3,7 +3,6 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import World from '../components/World.astro';
 import Header from '../components/Header.astro';
-import MobileTabBar from '../components/MobileTabBar.astro';
 import Consent from '../components/Consent.astro';
 import Cursor from '../components/Cursor.astro';
 import LegalFooter from '../components/LegalFooter.astro';
@@ -101,7 +100,6 @@ const jsonLd = {
       <slot />
       {legalFooter !== 'none' && <LegalFooter />}
     </main>
-    <MobileTabBar />
     <Consent />
     <Cursor />
     <Entry />

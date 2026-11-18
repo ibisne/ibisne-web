@@ -13,7 +13,7 @@ export function holdEntry(): void {
   document.documentElement.setAttribute('data-entry-hold', '');
 }
 
-const CHROME = '.hdr, .tabbar, #consent';
+const CHROME = '.hdr, #consent';
 
 export function releaseEntry(): void {
   const root = document.documentElement;
