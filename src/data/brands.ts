@@ -19,6 +19,7 @@ import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
 import logoCgcac from '../assets/logos/cgcac.png';
 import logoBatauro from '../assets/logos/batauro.png';
+import logoAmbrosio from '../assets/logos/ambrosio.png';
 
 import mkIbroker from '../assets/mockups/ibroker.webp';
 import mkNeoterre from '../assets/mockups/neoterre.webp';
@@ -54,6 +55,7 @@ import fotoG1 from '../assets/fotos/unframe.webp';
 import fotoG2 from '../assets/fotos/distenvases.webp';
 import fotoG3 from '../assets/fotos/docer.webp';
 import fotoG4 from '../assets/fotos/cgcac.webp';
+import fotoAmbrosio from '../assets/fotos/ambrosio.webp';
 
 export type Nicho =
   | 'Construcción'
@@ -187,6 +189,23 @@ export const brands: Brand[] = [
     reto: 'Mostrar propiedades y desarrollos de Yucatán y Quintana Roo de forma clara, con lotes que se pudieran explorar a detalle.',
     solucion: 'Sitio bilingüe con catálogo de inmuebles, masterplans interactivos para elegir lote y un blog con guías. Nicté, un chatbot con IA, atiende dudas, y un CRM aparte da seguimiento a los leads.',
     resultado: 'Los visitantes recorren los masterplans y resuelven dudas con el chatbot sin salir del sitio.',
+    borrador: true,
+  },
+  {
+    slug: 'ambrosio',
+    name: 'Ambrosio Arquitectura',
+    logo: logoAmbrosio,
+    mockup: null,
+    foto: fotoAmbrosio,
+    fotoAlt: 'Casa de muros claros tras una barda color terracota con árboles al frente',
+    nicho: 'Construcción',
+    tipos: ['Sitio web', 'PWA'],
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Animación', 'Bilingüe'],
+    resumen:
+      'Sitio de un estudio de arquitectura de Mérida: portada con foto a pantalla completa, cuadrícula de proyectos y ficha con galería de cada obra, en español e inglés.',
+    tagline: 'La obra de un estudio de arquitectura, en primer plano.',
+    reto: 'Presentar la obra de un estudio de arquitectura de Mérida dejando que las fotos hablen, sin que el sitio estorbe.',
+    solucion: 'Sitio bilingüe con portada de foto a pantalla completa, cuadrícula de proyectos y una ficha con galería para cada obra. Se instala en el celular como app.',
     borrador: true,
   },
   {
