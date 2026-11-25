@@ -1,22 +1,27 @@
 ---
 /**
- * Cursor propio: circulo difuminado que sigue al mouse (logica en src/scripts/cursor.ts).
- * Va UNA vez en Base.astro y persiste entre paginas. Solo se enciende con mouse real y sin
- * prefers-reduced-motion; en tactil no existe y la flecha nativa queda intacta.
- * pointer-events:none: nunca tapa clics (el banner de cookies sigue clicable); el foco por
- * teclado conserva su anillo normal.
+ * Cursor propio: un triangulo con glitch (punta = punto del clic) que sigue al mouse
+ * (logica en src/scripts/cursor.ts). Va UNA vez en Base.astro y persiste entre paginas.
+ * Con mouse real y sin prefers-reduced-motion sustituye la flecha nativa. En tactil no hay
+ * puntero: al tocar aparece un triangulo breve en el punto del dedo (.tap-tri).
+ * pointer-events:none: nunca tapa clics; el foco por teclado conserva su anillo normal.
  */
+const TRI = 'M1.5 1.5 L20 9 L9 20 Z';
 ---
 
 <div class="cursor" data-cursor aria-hidden="true" transition:persist="cursor">
   <div class="cursor__pos" data-cursor-pos>
     <div class="cursor__fx">
-      <span class="cursor__ghost cursor__ghost--m" data-cursor-m></span>
-      <span class="cursor__ghost cursor__ghost--c" data-cursor-c></span>
-      <span class="cursor__blob"></span>
-      <span class="cursor__ring"></span>
+      <svg class="cursor__tri cursor__tri--m" data-cursor-m viewBox="0 0 22 22"><path d={TRI}></path></svg>
+      <svg class="cursor__tri cursor__tri--c" data-cursor-c viewBox="0 0 22 22"><path d={TRI}></path></svg>
+      <svg class="cursor__tri cursor__tri--main" viewBox="0 0 22 22"><path d={TRI}></path></svg>
     </div>
   </div>
+</div>
+<div class="tap-tri" data-tap-tri aria-hidden="true" transition:persist="tap-tri">
+  <svg class="tap-tri__s tap-tri__s--m" viewBox="0 0 22 22"><path d={TRI}></path></svg>
+  <svg class="tap-tri__s tap-tri__s--c" viewBox="0 0 22 22"><path d={TRI}></path></svg>
+  <svg class="tap-tri__s" viewBox="0 0 22 22"><path d={TRI}></path></svg>
 </div>
 
 <script>
@@ -35,16 +40,12 @@
   }
 
   .cursor {
-    --size: 54px;
-    --ring: 81px;
+    --tri: 22px;
     position: fixed;
     inset: 0 auto auto 0;
     z-index: var(--z-cursor);
     pointer-events: none;
     display: none;
-    /* Sin mix-blend-mode: con screen el circulo desaparecia sobre botones blancos y con
-       difference se volvia amarillo sobre el indigo y rojo sobre el blanco. El brillo es
-       translucido (se mezcla por alfa) y el anillo lleva un filo de tinta para leerse en ambos. */
   }
   .cursor[data-on] {
     display: block;
@@ -57,100 +58,191 @@
     height: 0;
     will-change: transform;
   }
+  /* la punta del triangulo (1.5, 1.5 en su caja) cae en el punto del mouse */
   .cursor__fx {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: -2px;
+    top: -2px;
+    width: var(--tri);
+    height: var(--tri);
+    transform-origin: 2px 2px;
     opacity: 0;
     scale: 0.6;
     transition:
-      opacity 0.25s var(--ease-out),
-      scale 0.3s var(--ease-out);
+      opacity 0.2s var(--ease-out),
+      scale 0.25s var(--ease-out),
+      rotate 0.35s var(--ease-out);
   }
   .cursor[data-visible] .cursor__fx {
     opacity: 1;
     scale: 1;
   }
   .cursor[data-visible][data-down] .cursor__fx {
-    scale: 0.72;
-    transition-duration: 0.12s;
+    scale: 0.78;
+    transition-duration: 0.1s;
   }
   .cursor[data-text] .cursor__fx {
     opacity: 0;
   }
-  .cursor__blob,
-  .cursor__ghost,
-  .cursor__ring {
+  .cursor__tri {
     position: absolute;
-    left: calc(var(--size) / -2);
-    top: calc(var(--size) / -2);
-    width: var(--size);
-    height: var(--size);
-    border-radius: 50%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
-  .cursor__blob {
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--text) 72%, transparent) 0%,
-      color-mix(in srgb, var(--text) 30%, transparent) 34%,
-      color-mix(in srgb, var(--cyan) 12%, transparent) 56%,
-      transparent 70%
-    );
-    transition:
-      scale 0.3s var(--ease-out),
-      opacity 0.3s var(--ease-out);
+  .cursor__tri path {
+    stroke-width: 1.6;
+    stroke-linejoin: miter;
   }
-  /* copias de color para la separacion RGB (cursor.ts mueve y enciende segun la velocidad) */
-  .cursor__ghost {
+  .cursor__tri--main path {
+    fill: color-mix(in srgb, var(--ink) 55%, transparent);
+    stroke: var(--cyan);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--cyan) 55%, transparent));
+    transition: fill 0.25s var(--ease-out);
+  }
+  /* copias de color: separacion RGB por velocidad (cursor.ts) y tic de glitch en reposo */
+  .cursor__tri--m path {
+    fill: none;
+    stroke: var(--magenta);
+  }
+  .cursor__tri--c path {
+    fill: none;
+    stroke: var(--cyan);
+  }
+  .cursor__tri--m,
+  .cursor__tri--c {
     opacity: 0;
   }
-  .cursor__ghost--m {
-    background: radial-gradient(circle, color-mix(in srgb, var(--magenta) 70%, transparent) 0%, transparent 62%);
+  .cursor[data-visible] .cursor__tri--main {
+    animation: tri-glitch 3.2s steps(1, end) infinite;
   }
-  .cursor__ghost--c {
-    background: radial-gradient(circle, color-mix(in srgb, var(--cyan) 70%, transparent) 0%, transparent 62%);
+  /* sobre lo interactivo: crece, gira y se llena */
+  .cursor[data-hover] .cursor__fx {
+    scale: 1.35;
+    rotate: -12deg;
   }
-  .cursor__ring {
-    left: calc(var(--ring) / -2);
-    top: calc(var(--ring) / -2);
-    width: var(--ring);
-    height: var(--ring);
-    border: 2px solid color-mix(in srgb, var(--cyan) 85%, var(--text));
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent),
-      0 0 21px color-mix(in srgb, var(--cyan) 30%, transparent);
+  .cursor[data-hover] .cursor__tri--main path {
+    fill: color-mix(in srgb, var(--cyan) 30%, transparent);
+  }
+  .cursor[data-off] .cursor__tri--main path {
+    stroke: var(--text-3);
+    stroke-dasharray: 3 2;
+  }
+
+  /* tic de glitch: casi siempre quieto, de vez en cuando un salto y un recorte de 1-2 cuadros */
+  @keyframes tri-glitch {
+    0%,
+    100% {
+      translate: 0 0;
+      clip-path: none;
+    }
+    91% {
+      translate: 2px 0;
+      clip-path: inset(0 0 45% 0);
+    }
+    93% {
+      translate: -2px 1px;
+      clip-path: inset(40% 0 0 0);
+    }
+    95% {
+      translate: 0 0;
+      clip-path: none;
+    }
+  }
+
+  /* Tactil: triangulo breve donde se toca */
+  .tap-tri {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: var(--z-cursor);
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    pointer-events: none;
     opacity: 0;
-    scale: 0.5;
-    transition:
-      scale 0.35s var(--ease-out),
-      opacity 0.25s var(--ease-out);
   }
-  /* sobre lo interactivo: el difuminado se encoge a un punto y aparece el anillo nitido */
-  .cursor[data-hover] .cursor__blob {
-    scale: 0.32;
+  .tap-tri[data-go] {
+    animation: tap-fade 0.48s var(--ease-out) forwards;
   }
-  .cursor[data-hover] .cursor__ring {
-    opacity: 1;
-    scale: 1;
+  .tap-tri__s {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
-  /* deshabilitado: anillo tenue y punteado, sin crecer */
-  .cursor[data-off] .cursor__blob {
-    opacity: 0.45;
+  .tap-tri__s path {
+    fill: color-mix(in srgb, var(--cyan) 18%, transparent);
+    stroke: var(--cyan);
+    stroke-width: 1.6;
   }
-  .cursor[data-off] .cursor__ring {
-    opacity: 0.55;
-    scale: 0.7;
-    border-style: dashed;
-    border-color: var(--text-3);
+  .tap-tri__s--m path {
+    fill: none;
+    stroke: var(--magenta);
   }
+  .tap-tri__s--c path {
+    fill: none;
+  }
+  .tap-tri[data-go] .tap-tri__s--m {
+    animation: tap-split-m 0.48s steps(4, end) forwards;
+  }
+  .tap-tri[data-go] .tap-tri__s--c {
+    animation: tap-split-c 0.48s steps(4, end) forwards;
+  }
+  @keyframes tap-fade {
+    0% {
+      opacity: 0;
+      scale: 0.5;
+    }
+    20% {
+      opacity: 1;
+      scale: 1.1;
+    }
+    100% {
+      opacity: 0;
+      scale: 1.35;
+      rotate: 25deg;
+    }
+  }
+  @keyframes tap-split-m {
+    0% {
+      translate: -4px 1px;
+      clip-path: inset(0 0 50% 0);
+    }
+    50% {
+      translate: 3px -1px;
+      clip-path: inset(45% 0 0 0);
+    }
+    100% {
+      translate: 0 0;
+      clip-path: none;
+    }
+  }
+  @keyframes tap-split-c {
+    0% {
+      translate: 4px -1px;
+      clip-path: inset(50% 0 0 0);
+    }
+    50% {
+      translate: -3px 1px;
+      clip-path: inset(0 0 40% 0);
+    }
+    100% {
+      translate: 0 0;
+      clip-path: none;
+    }
+  }
+
   @media not ((hover: hover) and (pointer: fine)) {
     .cursor {
       display: none !important;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cursor {
+    .cursor,
+    .tap-tri {
       display: none !important;
     }
   }

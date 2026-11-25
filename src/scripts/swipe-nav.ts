@@ -1,7 +1,7 @@
 /**
- * Navegacion movil sin menu: paginador del header (flechas) y deslizar el dedo en horizontal.
- * El orden es el del mundo: Inicio · Trabajo · Contacto. Deslizar "pulsa" la flecha, asi el
- * ClientRouter y el viaje de camara hacen lo de siempre.
+ * Navegacion movil sin menu: flechas sutiles en las orillas (SwipeHint.astro) y deslizar el
+ * dedo en horizontal. Orden del mundo: Inicio · Trabajo · Contacto. Deslizar "pulsa" la flecha,
+ * asi el ClientRouter y el viaje de camara hacen lo de siempre.
  */
 const MOBILE = 'not ((min-width: 1024px) and (min-height: 700px))';
 const ORDER = [
@@ -32,29 +32,44 @@ function setArrow(a: HTMLAnchorElement | null, to: { href: string; label: string
   }
 }
 
-/** Alinea flechas, nombre y puntos con la ruta dada. */
-export function syncPager(pathname: string): void {
-  const pager = document.querySelector<HTMLElement>('.hdr__pager');
-  if (!pager) return;
+const hint = (): HTMLElement | null => document.querySelector<HTMLElement>('[data-swipe-hint]');
+
+/** Alinea las flechas con la ruta dada. Legales y 404 quedan sin flechas ni deslizar. */
+function sync(pathname: string): void {
+  const h = hint();
+  if (!h) return;
   const i = indexFor(pathname);
   const inFicha = i === 1 && pathname !== '/trabajo/' && pathname !== '/trabajo';
-  // legales / 404: sin seccion propia, las flechas llevan a Inicio y a Contacto
-  const prev = i === -1 ? ORDER[0] : inFicha ? ORDER[1] : (ORDER[i - 1] ?? null);
-  const next = i === -1 ? ORDER[2] : (ORDER[i + 1] ?? null);
-  setArrow(pager.querySelector<HTMLAnchorElement>('[data-pg="prev"]'), prev);
-  setArrow(pager.querySelector<HTMLAnchorElement>('[data-pg="next"]'), next);
-  const name = pager.querySelector<HTMLElement>('.hdr__pager-name');
-  if (name) name.textContent = i === -1 ? '' : ORDER[i].label;
-  pager.querySelectorAll<HTMLElement>('.hdr__pager-dot').forEach((d, n) => {
-    if (n === i) d.setAttribute('data-on', '');
-    else d.removeAttribute('data-on');
-  });
+  const prev = i === -1 ? null : inFicha ? ORDER[1] : (ORDER[i - 1] ?? null);
+  const next = i === -1 || inFicha ? null : (ORDER[i + 1] ?? null);
+  setArrow(h.querySelector<HTMLAnchorElement>('[data-pg="prev"]'), prev);
+  setArrow(h.querySelector<HTMLAnchorElement>('[data-pg="next"]'), next);
+}
+
+function syncScroll(): void {
+  const h = hint();
+  if (!h) return;
+  const down = window.scrollY > 80;
+  if (down !== h.hasAttribute('data-scrolled')) h.toggleAttribute('data-scrolled', down);
 }
 
 let wired = false;
 export function initSwipeNav(): void {
   if (wired) return;
   wired = true;
+  sync(location.pathname);
+  syncScroll();
+  // la flecha responde al tocar, no al llegar
+  document.addEventListener('astro:before-preparation', (ev) => {
+    const to = (ev as Event & { to?: URL }).to;
+    if (to) sync(to.pathname);
+  });
+  document.addEventListener('astro:page-load', () => {
+    sync(location.pathname);
+    syncScroll();
+  });
+  window.addEventListener('scroll', syncScroll, { passive: true });
+
   const mq = window.matchMedia(MOBILE);
   const EDGE = 24; // el borde es del gesto "atras" del sistema
   let x0 = 0;
@@ -98,7 +113,7 @@ export function initSwipeNav(): void {
       const dy = t.clientY - y0;
       if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.6 || e.timeStamp - t0 > 800) return;
       // el dedo va a la izquierda = avanzar (la pagina siguiente esta a la derecha)
-      const a = document.querySelector<HTMLAnchorElement>(`.hdr__pager [data-pg="${dx < 0 ? 'next' : 'prev'}"]`);
+      const a = hint()?.querySelector<HTMLAnchorElement>(`[data-pg="${dx < 0 ? 'next' : 'prev'}"]`);
       if (a && !a.hasAttribute('data-off')) a.click();
     },
     { passive: true },

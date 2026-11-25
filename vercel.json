@@ -74,6 +74,16 @@
   ],
   "redirects": [
     {
+      "source": "/trabajo/cgcac",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
+      "source": "/trabajo/cgcac/",
+      "destination": "/trabajo/",
+      "permanent": true
+    },
+    {
       "source": "/trabajo/ipools",
       "destination": "/trabajo/",
       "permanent": true

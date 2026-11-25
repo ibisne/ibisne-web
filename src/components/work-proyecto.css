@@ -89,8 +89,9 @@
   height: auto;
   max-width: min(320px, 70vw);
   max-height: clamp(56px, 9vh, 96px);
+  margin-inline: auto; /* el logo de la marca va centrado, aunque quede chico */
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 .proj-tagline {
   margin-top: 0.5rem;
@@ -124,6 +125,12 @@
   font-size: 12px;
   font-weight: var(--w-medium);
   line-height: 1;
+}
+.proj-chip--propio {
+  border-color: color-mix(in srgb, var(--magenta) 60%, transparent);
+  color: var(--magenta);
+  background: color-mix(in srgb, var(--magenta) 10%, transparent);
+  letter-spacing: 0.04em;
 }
 .proj-chip--tipo {
   border-color: color-mix(in srgb, var(--cyan) 55%, transparent);

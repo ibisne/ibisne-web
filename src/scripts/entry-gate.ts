@@ -13,7 +13,7 @@ export function holdEntry(): void {
   document.documentElement.setAttribute('data-entry-hold', '');
 }
 
-const CHROME = '.hdr, #consent';
+const CHROME = '.hdr, .swipe-hint, #consent';
 
 export function releaseEntry(): void {
   const root = document.documentElement;

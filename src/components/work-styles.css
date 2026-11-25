@@ -146,7 +146,7 @@
 }
 .work-triggers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.5rem;
 }
 .work-trigger {

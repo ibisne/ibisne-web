@@ -1,7 +1,7 @@
 /**
- * Cursor propio (DOM): un circulo difuminado que sigue al puntero con inercia, se vuelve
- * anillo nitido sobre lo interactivo, se contrae al hacer clic y se separa en RGB cuando
- * el mouse va rapido (coherente con el glitch del mundo).
+ * Cursor propio (DOM): un triangulo con glitch que sigue al puntero con inercia, crece y gira
+ * sobre lo interactivo, se contrae al hacer clic y se separa en RGB cuando el mouse va rapido
+ * (coherente con el glitch del mundo). En tactil: triangulo breve donde se toca (tapAt).
  *
  * Solo con mouse real ((hover: hover) and (pointer: fine)) y sin prefers-reduced-motion;
  * si no, no hace nada y queda la flecha nativa. La flecha se oculta (html[data-custom-cursor="on"])
@@ -184,6 +184,17 @@ function sync(): void {
   if (FINE.matches && !REDUCE.matches) enable();
   else disable();
 }
+
+/* ---------- Tactil: triangulo breve en el punto del toque ---------- */
+const tap = document.querySelector<HTMLElement>('[data-tap-tri]');
+function tapAt(e: PointerEvent): void {
+  if (!tap || e.pointerType !== 'touch' || REDUCE.matches) return;
+  tap.style.translate = `${e.clientX}px ${e.clientY}px`;
+  tap.removeAttribute('data-go');
+  void tap.offsetWidth; // reinicia la animacion si se toca seguido
+  tap.setAttribute('data-go', '');
+}
+window.addEventListener('pointerdown', tapAt, { passive: true });
 
 if (root && pos) {
   sync();

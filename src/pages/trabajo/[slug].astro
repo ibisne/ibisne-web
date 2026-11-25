@@ -42,6 +42,7 @@ const og = b.foto ? await getImage({ src: b.foto, width: 1200, height: 630, fit:
             )}
             <p class="proj-tagline">{b.tagline}</p>
             <ul class="proj-chips" role="list" aria-label="Tipo de proyecto">
+              {b.propio && <li class="proj-chip proj-chip--propio">Desarrollo propio</li>}
               {b.tipos.map((t) => <li class="proj-chip proj-chip--tipo">{t}</li>)}
             </ul>
           </header>

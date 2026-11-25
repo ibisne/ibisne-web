@@ -17,7 +17,6 @@ import logoAlbercasopia from '../assets/logos/albercasopia.png';
 import logoRancho from '../assets/logos/rancho-contento.png';
 import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
-import logoCgcac from '../assets/logos/cgcac.png';
 import logoBatauro from '../assets/logos/batauro.png';
 import logoAmbrosio from '../assets/logos/ambrosio.png';
 
@@ -54,7 +53,6 @@ import fotoG0 from '../assets/fotos/digitalife.webp';
 import fotoG1 from '../assets/fotos/unframe.webp';
 import fotoG2 from '../assets/fotos/distenvases.webp';
 import fotoG3 from '../assets/fotos/docer.webp';
-import fotoG4 from '../assets/fotos/cgcac.webp';
 import fotoAmbrosio from '../assets/fotos/ambrosio.webp';
 
 export type Nicho =
@@ -165,11 +163,11 @@ export const brands: Brand[] = [
     url: 'https://ibroker.com.mx',
     stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards', 'IA'],
     resumen:
-      'CRM inmobiliario que automatiza el seguimiento de cada prospecto y publica propiedades en minutos. Un panel que trabaja solo para que el bróker capture menos y cierre más.',
+      'Desarrollo propio de iBisne vía Smart Capital, nacido como Venture Capital: un ARM inmobiliario que automatiza el seguimiento de cada prospecto y publica propiedades en minutos.',
     propio: true,
-    tagline: 'Un ARM que agentiza el día del broker.',
-    reto: 'El broker vivía entre hojas de cálculo y chats, sin un lugar donde viera todo su día.',
-    solucion: 'Junto con el cliente se concluyó que el CRM ya no basta, y se creó un ARM que agentiza su día. Seguimiento de prospectos, agenda, inventario y publicación de propiedades en un mismo panel, con un portal público de inmuebles al frente.',
+    tagline: 'Desarrollo propio: un ARM que agentiza el día del broker.',
+    reto: 'Los brokers viven entre hojas de cálculo y chats, sin un lugar donde ver todo su día. Lo detectamos y decidimos construirlo nosotros.',
+    solucion: 'Nació como Venture Capital y hoy crece vía Smart Capital. Concluimos que el CRM ya no basta y creamos un ARM que agentiza el día del broker: seguimiento de prospectos, agenda, inventario y publicación de propiedades en un mismo panel, con un portal público de inmuebles al frente.',
     borrador: true,
   },
   {
@@ -200,6 +198,7 @@ export const brands: Brand[] = [
     fotoAlt: 'Casa de muros claros tras una barda color terracota con árboles al frente',
     nicho: 'Construcción',
     tipos: ['Sitio web', 'PWA'],
+    url: 'https://www.ambrosioarquitectura.com',
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Animación', 'Bilingüe'],
     resumen:
       'Sitio de un estudio de arquitectura de Mérida: portada con foto a pantalla completa, cuadrícula de proyectos y ficha con galería de cada obra, en español e inglés.',
@@ -262,6 +261,43 @@ export const brands: Brand[] = [
     reto: 'Modernizar la experiencia y la identidad de una tienda de tecnología de referencia en México, con una interfaz más clara para comprar.',
     solucion: 'Investigación, arquitectura de información, flujo de compra y sistema visual, diseñados en Figma y Adobe XD con metodologías ágiles. La participación fue en la capa de diseño UX/UI, sin desarrollo.',
     resultado: 'Se entregó el rediseño UX/UI completo, listo para implementación.',
+    borrador: true,
+  },
+  {
+    slug: 'rancho-contento',
+    name: 'Rancho Contento',
+    logo: logoRancho,
+    mockup: mkRancho,
+    foto: foto11,
+    fotoAlt: 'Vista aérea de la casa del rancho con alberca y palmeras',
+    nicho: 'Turismo y hospitalidad',
+    tipos: ['Sitio web', 'CRM'],
+    url: 'https://ranchocontentoyucatan.com.mx',
+    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
+    resumen:
+      'Plataforma de renta de ranchos y eventos al aire libre, con reservas y CRM de leads. Naturaleza, animales y experiencia presentados con una estética cálida y editorial.',
+    tagline: 'Ranchos y eventos al aire libre, con reservas en línea.',
+    reto: 'Dar a una renta de ranchos una plataforma que transmitiera su naturaleza y ordenara las reservas.',
+    solucion: 'Plataforma con reservas y CRM de leads, con una estética cálida y editorial que presenta naturaleza, animales y experiencia.',
+    borrador: true,
+  },
+  {
+    slug: 'unframe',
+    name: 'Unframe',
+    logo: logoUnframe,
+    mockup: mkUnframe,
+    foto: fotoG1,
+    fotoAlt: 'Estudio de motion con animación de luz en pantalla grande',
+    nicho: 'Educación y servicios',
+    tipos: ['Sitio web'],
+    // url de staging oculta hasta tener dominio propio: https://unframe.ibisne-apps.com
+    stack: ['Vite', 'React', 'TypeScript', 'Framer Motion', 'Tailwind'],
+    resumen:
+      'Plataforma editorial "motion as memory", con CMS autoadministrable e identidad ultra-minimal. Ritmo, tipografía y movimiento como eje del contenido.',
+    tagline: 'Motion as memory, hecho sitio web.',
+    reto: 'Que el sitio de un estudio de motion se moviera con la misma intención que su trabajo.',
+    solucion: 'Sitio multipágina con transiciones cinematográficas entre páginas y cuatro modos para que el cliente elija el que más le guste. Tipografía y ritmo llevan el contenido.',
+    resultado: 'El sitio funciona hoy como MVP, listo para validarse y crecer.',
     borrador: true,
   },
   {
@@ -356,25 +392,6 @@ export const brands: Brand[] = [
     borrador: true,
   },
   {
-    slug: 'unframe',
-    name: 'Unframe',
-    logo: logoUnframe,
-    mockup: mkUnframe,
-    foto: fotoG1,
-    fotoAlt: 'Estudio de motion con animación de luz en pantalla grande',
-    nicho: 'Educación y servicios',
-    tipos: ['Sitio web'],
-    // url de staging oculta hasta tener dominio propio: https://unframe.ibisne-apps.com
-    stack: ['Vite', 'React', 'TypeScript', 'Framer Motion', 'Tailwind'],
-    resumen:
-      'Plataforma editorial "motion as memory", con CMS autoadministrable e identidad ultra-minimal. Ritmo, tipografía y movimiento como eje del contenido.',
-    tagline: 'Motion as memory, hecho sitio web.',
-    reto: 'Que el sitio de un estudio de motion se moviera con la misma intención que su trabajo.',
-    solucion: 'Sitio multipágina con transiciones cinematográficas entre páginas y cuatro modos para que el cliente elija el que más le guste. Tipografía y ritmo llevan el contenido.',
-    resultado: 'El sitio funciona hoy como MVP, listo para validarse y crecer.',
-    borrador: true,
-  },
-  {
     slug: 'distenvases',
     name: 'Distenvases',
     logo: logoDistenvases,
@@ -406,22 +423,6 @@ export const brands: Brand[] = [
     borrador: true,
   },
   {
-    slug: 'cgcac',
-    name: 'CGCAC',
-    logo: logoCgcac,
-    mockup: null,
-    foto: fotoG4,
-    fotoAlt: 'Registro con código QR a la entrada de un foro',
-    nicho: 'Educación y servicios',
-    tipos: ['Landing page'],
-    stack: ['HTML', 'JavaScript', 'Registro en línea', 'Pases con QR', 'Verificador'],
-    tagline: 'Registro y pases con QR para un foro nacional.',
-    reto: 'Registrar a los asistentes de un foro nacional y validar su pase en la puerta.',
-    solucion: 'Sitio del evento con formulario de registro, pase personal con código QR y un verificador para validarlo el día del foro. Terminado el evento, el sitio se sustituyó por un cartel de agradecimiento.',
-    resultado: 'El foro se celebró con registro en línea, y los registros quedaron exportados.',
-    borrador: true,
-  },
-  {
     slug: 'albercasopia',
     name: 'Albercasopia',
     logo: logoAlbercasopia,
@@ -437,24 +438,6 @@ export const brands: Brand[] = [
     tagline: 'Equipo y refacciones para albercas, en tienda propia.',
     reto: 'Vender en línea equipamiento y refacciones para albercas con un catálogo fácil de recorrer.',
     solucion: 'Tienda en Shopify con catálogo de equipamiento y refacciones, carrito y pago en línea, lista para escalar.',
-    borrador: true,
-  },
-  {
-    slug: 'rancho-contento',
-    name: 'Rancho Contento',
-    logo: logoRancho,
-    mockup: mkRancho,
-    foto: foto11,
-    fotoAlt: 'Vista aérea de la casa del rancho con alberca y palmeras',
-    nicho: 'Turismo y hospitalidad',
-    tipos: ['Sitio web', 'CRM'],
-    url: 'https://ranchocontentoyucatan.com.mx',
-    stack: ['Next.js', 'PostgreSQL', 'Automatización', 'Dashboards'],
-    resumen:
-      'Plataforma de renta de ranchos y eventos al aire libre, con reservas y CRM de leads. Naturaleza, animales y experiencia presentados con una estética cálida y editorial.',
-    tagline: 'Ranchos y eventos al aire libre, con reservas en línea.',
-    reto: 'Dar a una renta de ranchos una plataforma que transmitiera su naturaleza y ordenara las reservas.',
-    solucion: 'Plataforma con reservas y CRM de leads, con una estética cálida y editorial que presenta naturaleza, animales y experiencia.',
     borrador: true,
   },
 ];

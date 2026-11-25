@@ -5,6 +5,7 @@ import World from '../components/World.astro';
 import Header from '../components/Header.astro';
 import Consent from '../components/Consent.astro';
 import Cursor from '../components/Cursor.astro';
+import SwipeHint from '../components/SwipeHint.astro';
 import LegalFooter from '../components/LegalFooter.astro';
 import Entry from '../components/Entry.astro';
 import { SEDE } from '../components/contact-data';
@@ -100,6 +101,7 @@ const jsonLd = {
       <slot />
       {legalFooter !== 'none' && <LegalFooter />}
     </main>
+    <SwipeHint />
     <Consent />
     <Cursor />
     <Entry />

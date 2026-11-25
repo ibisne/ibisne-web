@@ -1,0 +1,109 @@
+---
+/**
+ * Movil: dos flechas sutiles a media altura, una en cada orilla, que indican que se puede
+ * deslizar entre secciones (Inicio · Trabajo · Contacto). Tocarlas navega; deslizar el dedo
+ * "pulsa" la flecha correspondiente (src/scripts/swipe-nav.ts). Se apagan al bajar con scroll
+ * y donde no hay a donde ir. En escritorio no existen (el nav del header manda).
+ */
+---
+
+<div class="swipe-hint" data-swipe-hint transition:persist="swipe-hint">
+  <a class="swipe-hint__a swipe-hint__a--prev" data-pg="prev" href="/" aria-label="Ir a Inicio" data-off>
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5l-7 7 7 7"></path></svg>
+  </a>
+  <a class="swipe-hint__a swipe-hint__a--next" data-pg="next" href="/trabajo/" aria-label="Ir a Trabajo">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5l7 7-7 7"></path></svg>
+  </a>
+</div>
+
+<script>
+  import { initSwipeNav } from '../scripts/swipe-nav';
+  initSwipeNav();
+</script>
+
+<style>
+  .swipe-hint {
+    display: none;
+  }
+  @media not ((min-width: 1024px) and (min-height: 700px)) {
+    .swipe-hint {
+      display: block;
+    }
+    .swipe-hint__a {
+      position: fixed;
+      top: 50svh;
+      z-index: var(--z-header);
+      display: grid;
+      place-items: center;
+      width: var(--touch);
+      height: calc(var(--touch) * 1.4);
+      margin-top: calc(var(--touch) * -0.7);
+      color: var(--cyan);
+      opacity: 0.75;
+      /* media pastilla de vidrio pegada a la orilla: se lee sobre fotos y tarjetas sin pesar */
+      background: color-mix(in srgb, var(--ink) 42%, transparent);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      transition:
+        opacity 0.35s var(--ease-out),
+        visibility 0s linear 0s;
+    }
+    .swipe-hint__a--prev {
+      left: max(0px, env(safe-area-inset-left));
+      width: 30px;
+      border-radius: 0 999px 999px 0;
+    }
+    .swipe-hint__a--next {
+      right: max(0px, env(safe-area-inset-right));
+      width: 30px;
+      border-radius: 999px 0 0 999px;
+    }
+    .swipe-hint__a svg {
+      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cyan) 45%, transparent));
+    }
+    .swipe-hint__a--prev svg {
+      animation: swipe-nudge-l 2.8s var(--ease-out) infinite;
+    }
+    .swipe-hint__a--next svg {
+      animation: swipe-nudge-r 2.8s var(--ease-out) infinite;
+    }
+    .swipe-hint__a:active {
+      opacity: 0.9;
+    }
+    /* sin destino, o ya leyendo mas abajo: fuera */
+    .swipe-hint__a[data-off],
+    .swipe-hint[data-scrolled] .swipe-hint__a {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity 0.35s var(--ease-out),
+        visibility 0s linear 0.35s;
+    }
+  }
+  @keyframes swipe-nudge-r {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+    }
+    75% {
+      translate: 4px 0;
+    }
+  }
+  @keyframes swipe-nudge-l {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+    }
+    75% {
+      translate: -4px 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .swipe-hint__a svg {
+      animation: none !important;
+    }
+  }
+</style>
