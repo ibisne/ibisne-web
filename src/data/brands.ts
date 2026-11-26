@@ -19,6 +19,7 @@ import logoDocer from '../assets/logos/docer.png';
 import logoAlbercasvip from '../assets/logos/albercasvip.png';
 import logoBatauro from '../assets/logos/batauro.png';
 import logoAmbrosio from '../assets/logos/ambrosio.png';
+import logoParpro from '../assets/logos/parpro.png';
 
 import mkIbroker from '../assets/mockups/ibroker.webp';
 import mkNeoterre from '../assets/mockups/neoterre.webp';
@@ -36,6 +37,7 @@ import mkAlbercasopia from '../assets/mockups/albercasopia.webp';
 import mkDigitalife from '../assets/mockups/digitalife.webp';
 import mkBatauro from '../assets/mockups/batauro.webp';
 import mkRancho from '../assets/mockups/rancho-contento.webp';
+import mkParpro from '../assets/mockups/parpro.webp';
 
 import foto0 from '../assets/fotos/thcc.webp';
 import foto1 from '../assets/fotos/ibroker.webp';
@@ -53,6 +55,7 @@ import fotoG0 from '../assets/fotos/digitalife.webp';
 import fotoG1 from '../assets/fotos/unframe.webp';
 import fotoG2 from '../assets/fotos/distenvases.webp';
 import fotoG3 from '../assets/fotos/docer.webp';
+import fotoParpro from '../assets/fotos/parpro.webp';
 import fotoAmbrosio from '../assets/fotos/ambrosio.webp';
 
 export type Nicho =
@@ -438,6 +441,24 @@ export const brands: Brand[] = [
     tagline: 'Equipo y refacciones para albercas, en tienda propia.',
     reto: 'Vender en línea equipamiento y refacciones para albercas con un catálogo fácil de recorrer.',
     solucion: 'Tienda en Shopify con catálogo de equipamiento y refacciones, carrito y pago en línea, lista para escalar.',
+    borrador: true,
+  },
+  {
+    slug: 'parpro',
+    name: 'Par Producciones',
+    logo: logoParpro,
+    mockup: mkParpro,
+    foto: fotoParpro,
+    fotoAlt: 'Equipo de rodaje filmando de noche en una hacienda yucateca',
+    nicho: 'Educación y servicios',
+    tipos: ['Landing page'],
+    // url pendiente: sin dominio público confirmado (proyecto Vercel "parpro")
+    stack: ['HTML', 'CSS', 'JavaScript', 'Animaciones', 'Video', 'SEO'],
+    resumen:
+      'Landing de una casa productora y de publicidad en Mérida: servicios de video, foto, dron, redes y pauta, formas de trabajo, proceso y equipo, con cierre a un diagnóstico de marca sin costo.',
+    tagline: 'Ideas que se ven, de la idea a la pantalla.',
+    reto: 'Explicar en una sola página todo lo que hace una casa productora y de publicidad, sin que se sintiera como un catálogo de servicios.',
+    solucion: 'Una landing en HTML, CSS y JavaScript con un hero en video, servicios por área, tres formas de trabajar en pestañas, el proceso paso a paso y preguntas frecuentes. Cada sección lleva a agendar un diagnóstico de marca.',
     borrador: true,
   },
 ];
