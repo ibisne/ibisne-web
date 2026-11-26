@@ -171,7 +171,7 @@ Fuera del sitio, pero rigen conversaciones y documentos:
 
 | Modelo de entrada | Qué pasa con la IP al liquidar |
 |---|---|
-| **Venta** (proyecto de cliente) | Todo pasa al cliente: código, plataforma y piezas. |
+| **Venta** (proyecto de cliente) | Desde el 26-oct-2026: **licencia de uso perpetua**. El software y el código siguen siendo de iBisne, que puede crear para otros; el cliente es dueño de su marca, diseño y datos, que nunca se replican. El pago inicial se llama **Licenciamiento perpetuo y desarrollo de software**; el mantenimiento se paga anual (20%) o en 12 mensualidades +25%. La cesión total del código ya no lleva fórmula (antes ×2.5): se cotiza por convenio aparte. Pendiente de validar con abogado. |
 | **Venture Capital / Incubadora** | iBisne conserva total o parcialmente los activos que desarrolló, como inversor del proyecto. |
 
 La titularidad se transfiere **al cerrar el desarrollo**, nunca antes. Términos válidos
