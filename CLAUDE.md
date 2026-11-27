@@ -143,8 +143,9 @@ No edites el fondo jurídico por tu cuenta; los textos son de Eduardo.
   ni con `on*=`. `style-src` sí admite inline (Astro). Mantén `frame-ancestors 'none'` y
   `inlineStylesheets: 'never'` en `astro.config.mjs`.
 - Si agregas un dominio externo (fuente, imagen, API), amplía la CSP en el mismo cambio.
-- `media-src 'self'` en la CSP: la música de la entrada (`public/audio/ambient.mp3`) solo se
-  descarga con "Con sonido" y nunca suena sin un clic. Detalle en `src/README-dev.md`.
+- `media-src 'self'` en la CSP: la música de la entrada (`public/audio/ambient.mp3`) se descarga
+  al terminar la intro y suena por defecto (con el primer gesto donde el navegador lo exige); la
+  entrada ya no pregunta. Detalle en `src/README-dev.md`.
 
 ## Corte desde el sitio viejo
 

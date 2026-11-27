@@ -56,7 +56,10 @@ async function variant(layer: WorldLayerAsset) {
   const zoom = LAYERS[layer.name].zoom;
   // ancho de UNA repeticion del arte en pantalla: ~1.15 alturas de viewport x aspecto x zoom
   const k = (1.15 * aspect * zoom).toFixed(2);
-  const kMobile = (0.6 * aspect * zoom).toFixed(2);
+  // En movil el navegador multiplica por la densidad (3x) y elegia el arte de 6144 px: ~90 MB en la
+  // GPU y ~0.5 s de subida con la entrada congelada. Un tercio basta para un fondo con glow (3072 px
+  // en 3x, 2048 en 2x).
+  const kMobile = ((0.6 * aspect * zoom) / 3).toFixed(2);
   const d = framing(layer, 1.6);
   const m = framing(layer, 0.46);
   return {

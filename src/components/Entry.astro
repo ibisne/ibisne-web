@@ -1,6 +1,6 @@
 ---
 /**
- * Entrada inmersiva: cubierta + pregunta (primera visita) + loader (src/scripts/entry.ts). El
+ * Entrada inmersiva: cubierta + loader (src/scripts/entry.ts), sin pregunta desde el 26-nov-2026. El
  * loader es la B del mundo (WebGL): arranca dispersa por la pantalla y se ordena hasta su lugar.
  * La cubierta solo tapa hasta que esa B dispersa ya se ve (o hace el fundido sin WebGL).
  *
@@ -12,8 +12,7 @@
  * Musica: si existe public/audio/ambient.mp3 (y .ogg) al compilar, su ruta va en data-ambient-*;
  * si no, ambient.ts usa el respaldo generativo y nunca pide un archivo inexistente.
  *
- * La pregunta va centrada y sin tarjeta: onda de sonido que reacciona a cada opcion, titular y dos
- * botones. La logica (data-entry-choice, cancel = sin sonido) vive en entry.ts y no depende de este marcado.
+ * La musica ya no se pregunta: suena por defecto donde el navegador lo permite, o con el primer gesto.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,34 +37,6 @@ const ogg = pub('ambient.ogg');
     </div>
     <span class="label entry__pct" data-entry-pct aria-hidden="true">0%</span>
   </div>
-
-  <dialog class="entry__dlg" data-entry-dialog aria-labelledby="entry-title" aria-describedby="entry-desc">
-    <div class="entry__panel">
-      <div class="entry__wave" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i><i style="--i:16"></i><i style="--i:17"></i><i style="--i:18"></i><i style="--i:19"></i><i style="--i:20"></i></div>
-      <h2 class="entry__title" id="entry-title">
-        <span class="entry__thin">¿Entras con</span>
-        <span class="entry__bold">sonido?</span>
-      </h2>
-      <div class="entry__actions">
-        <button type="button" class="entry__opt entry__opt--main" data-entry-choice="immersive" autofocus>
-          <svg class="entry__ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"></path>
-            <path d="M15.5 9.2a4 4 0 0 1 0 5.6"></path>
-            <path d="M18.3 6.6a8 8 0 0 1 0 10.8"></path>
-          </svg>
-          <span class="entry__lbl">Con sonido</span>
-        </button>
-        <button type="button" class="entry__opt entry__opt--quiet" data-entry-choice="quiet">
-          <svg class="entry__ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"></path>
-            <path d="M16 9.5l4.5 5M20.5 9.5l-4.5 5"></path>
-          </svg>
-          <span class="entry__lbl">Sin sonido</span>
-        </button>
-      </div>
-      <p class="entry__desc" id="entry-desc">Lo cambias cuando quieras.</p>
-    </div>
-  </dialog>
 </div>
 
 <script>
@@ -140,202 +111,6 @@ const ogg = pub('ambient.ogg');
     font-variant-numeric: tabular-nums;
   }
 
-  /* Pregunta: dialogo modal a pantalla completa y transparente (la cubierta se ve detras) */
-  .entry__dlg {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    margin: 0;
-    padding: 1.25rem; /* 20px de margen en movil */
-    border: 0;
-    background: transparent;
-    color: var(--text);
-    overflow: auto;
-  }
-  .entry__dlg[open] {
-    display: grid;
-    place-items: center;
-  }
-  .entry__dlg::backdrop {
-    background: transparent;
-  }
-
-  /* Pregunta centrada, sin tarjeta: una onda de sonido, el titular y dos opciones. La onda es el
-     unico gesto: late sola, crece al apuntar "Con sonido" y se aplana al apuntar "Sin sonido". */
-  .entry__panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: min(26rem, 100%);
-    text-align: center;
-    @media (prefers-reduced-motion: no-preference) {
-      animation: entry-in 0.5s var(--ease-out) both;
-    }
-  }
-  @keyframes entry-in {
-    from {
-      opacity: 0;
-      translate: 0 14px;
-    }
-  }
-
-  .entry__wave {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    height: 4.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .entry__wave i {
-    --h: calc(0.25 + 0.75 * (1 - abs(var(--i) - 10) / 10));
-    width: 3px;
-    height: 100%;
-    border-radius: 2px;
-    background: linear-gradient(to top, var(--cyan), var(--magenta));
-    opacity: calc(0.45 + 0.55 * var(--h));
-    scale: 1 calc(var(--h) * var(--amp, 0.55));
-    transition: scale 0.45s var(--ease-out);
-    @media (prefers-reduced-motion: no-preference) {
-      animation: entry-beat 1.1s var(--ease-inout) calc(var(--i) * -0.13s) infinite alternate;
-    }
-  }
-  @keyframes entry-beat {
-    from {
-      scale: 1 calc(var(--h) * var(--amp, 0.55) * 0.35);
-    }
-  }
-  /* sin abs() en CSS (navegadores viejos): barras parejas que igual laten */
-  @supports not (width: calc(abs(-1px))) {
-    .entry__wave i {
-      --h: 0.7;
-    }
-  }
-  .entry__panel:has(.entry__opt--main:is(:hover, :focus-visible)) .entry__wave {
-    --amp: 1;
-  }
-  .entry__panel:has(.entry__opt--quiet:is(:hover, :focus-visible)) .entry__wave {
-    --amp: 0.08;
-  }
-
-  .entry__title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: clamp(2rem, 1.6rem + 1.8vw, 2.75rem);
-    line-height: var(--lh-tight);
-    letter-spacing: -0.015em;
-    @media (prefers-reduced-motion: no-preference) {
-      animation: entry-glitch 0.3s steps(1, end) 0.5s 1 both;
-    }
-  }
-  .entry__thin {
-    font-weight: var(--w-thin);
-  }
-  .entry__bold {
-    font-weight: var(--w-bold);
-  }
-  /* Glitch RGB: desfase cian/magenta unico de 300 ms al aparecer */
-  @keyframes entry-glitch {
-    0% {
-      text-shadow:
-        -3px 0 var(--magenta),
-        3px 0 var(--cyan);
-      translate: -2px 0;
-    }
-    25% {
-      text-shadow:
-        2px 0 var(--magenta),
-        -2px 0 var(--cyan);
-      translate: 2px 0;
-    }
-    50% {
-      text-shadow:
-        -2px 0 var(--magenta),
-        2px 0 var(--cyan);
-      translate: -1px 0;
-    }
-    100% {
-      text-shadow: none;
-      translate: 0 0;
-    }
-  }
-
-  .entry__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    margin-top: 2rem;
-  }
-  .entry__opt {
-    flex: 1 1 10rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    min-height: 3.25rem; /* 52px: comodo al pulgar */
-    padding: 0 1.25rem;
-    border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-2);
-    font: inherit;
-    font-size: 0.9375rem;
-    font-weight: var(--w-medium);
-    white-space: nowrap;
-    transition:
-      border-color 0.25s var(--ease-out),
-      background-color 0.25s var(--ease-out),
-      color 0.25s var(--ease-out),
-      box-shadow 0.25s var(--ease-out);
-  }
-  .entry__opt--main {
-    border-color: var(--cyan);
-    background: color-mix(in srgb, var(--cyan) 12%, transparent);
-    color: var(--text);
-    box-shadow: 0 0 24px color-mix(in srgb, var(--cyan) 24%, transparent);
-  }
-  .entry__ico {
-    flex: none;
-    color: var(--text-3);
-    transition: color 0.25s var(--ease-out);
-  }
-  .entry__opt--main .entry__ico {
-    color: var(--cyan);
-  }
-  .entry__opt:hover,
-  .entry__opt:focus-visible {
-    border-color: var(--cyan);
-    background: color-mix(in srgb, var(--cyan) 14%, transparent);
-    color: var(--text);
-  }
-  .entry__opt--main:hover,
-  .entry__opt--main:focus-visible {
-    box-shadow: 0 0 34px color-mix(in srgb, var(--cyan) 38%, transparent);
-  }
-  .entry__opt:is(:hover, :focus-visible) .entry__ico {
-    color: var(--cyan);
-  }
-  .entry__opt:focus-visible {
-    outline: 2px solid var(--cyan);
-    outline-offset: 3px;
-  }
-  .entry__opt:active {
-    translate: 0 1px;
-  }
-
-  .entry__desc {
-    margin-top: 1.25rem;
-    color: var(--text-3);
-    font-size: 0.8125rem;
-    font-weight: var(--w-light);
-  }
-
   /* Mientras corre la entrada la UI de la pagina espera oculta (la B dispersa queda sola sobre la
      escena velada); al soltarse, el header y la barra se encienden (entry-gate.ts) y <main> entra en cascada
      (travel.ts). Solo existe con JS: html[data-entry-hold] lo pone entry-gate.ts. */
@@ -347,15 +122,4 @@ const ogg = pub('ambient.ogg');
     visibility: hidden;
   }
 
-  /* Mientras se pregunta: la flecha nativa vuelve (el cursor propio queda debajo de la capa superior) */
-  :global(html[data-entry-open][data-entry-open]),
-  :global(html[data-entry-open][data-entry-open] *) {
-    cursor: auto !important;
-  }
-  :global(html[data-entry-open][data-entry-open] button) {
-    cursor: pointer !important;
-  }
-  :global(html[data-entry-open] [data-cursor]) {
-    opacity: 0 !important;
-  }
 </style>

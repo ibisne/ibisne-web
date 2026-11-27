@@ -5,25 +5,23 @@
  *   fuentes   document.fonts.ready
  *   paginas   el HTML de Inicio / Trabajo / Contacto (las que no son la actual) y sus <img>
  *             (logos, mockups) con el mismo srcset/sizes que usaran, decodificadas
- *   audio     solo con experiencia completa (prepareAmbient; generativo = nada que bajar)
+ *   audio     NO: la musica se baja al terminar la intro (entry.ts), para no competir con la B
  *
  * El progreso es real (peso por tarea) y nunca retrocede. No bloquea: quien llama decide
  * cuanto espera; lo pendiente sigue cargando detras.
  */
 import { whenWorldReady } from './world';
-import { prepareAmbient } from './ambient';
 
 const PAGES = ['/', '/trabajo/', '/contacto/'];
 const PAGE_WEIGHT = 3;
 const IMG_CONCURRENCY = 6;
 
 export interface PreloadOpts {
-  audio: boolean;
   onProgress?: (p: number) => void;
 }
 
 export function preloadSite(opts: PreloadOpts): Promise<void> {
-  const total = 4 + 1 + PAGE_WEIGHT * PAGES.length + (opts.audio ? 1 : 0);
+  const total = 4 + 1 + PAGE_WEIGHT * PAGES.length;
   let done = 0;
   let reported = 0;
   const add = (w: number) => {
@@ -43,7 +41,6 @@ export function preloadSite(opts: PreloadOpts): Promise<void> {
     task(1, document.fonts ? document.fonts.ready : Promise.resolve()),
     ...PAGES.map((path) => (path === current ? (add(PAGE_WEIGHT), Promise.resolve()) : preloadPage(path, (w) => add(w * PAGE_WEIGHT)))),
   ];
-  if (opts.audio) tasks.push(task(1, prepareAmbient()));
   return Promise.all(tasks).then(() => undefined);
 }
 

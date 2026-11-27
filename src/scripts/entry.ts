@@ -1,26 +1,25 @@
 /**
  * Entrada inmersiva (componente src/components/Entry.astro).
  *
- *   primera visita  pregunta en un <dialog> modal: "Con sonido" (musica + efectos) o
- *                   "Sin sonido". Escape = sin sonido. La eleccion queda en
- *                   localStorage.ib_entry ('immersive' | 'quiet').
+ *   sin pregunta    la entrada ya no pregunta nada (26-nov-2026): la musica esta encendida por
+ *                   defecto salvo que el visitante la haya apagado (localStorage.ib_entry = 'quiet').
  *   loader          la MISMA B del mundo (world/bmatrix.ts): arranca dispersa por toda la pantalla
- *                   (particulas y glifos, escena velada, glitch de rebanadas y RGB) mientras se
- *                   pregunta, y se ordena de afuera hacia adentro hasta su lugar. El avance real de
- *                   la precarga decide cuanto se arma, con tope: ~2.6 s tras la eleccion, ~1.5 s en
- *                   recargas. Al terminar el velo se abre: en Inicio la B queda en su sitio; en otra
- *                   pagina se disuelve hacia la escena como en los viajes.
- *                   Sin WebGL o con reduced motion: fundido simple (< 600 ms).
- *   precarga        preload.ts (mundo, fuentes, paginas e imagenes; musica solo con experiencia).
- *   musica          ambient.ts. El AudioContext nace en el clic de "Con sonido". En
- *                   recargas con 'immersive' arranca con el primer gesto del usuario en la pagina
- *                   (politica de autoplay: nunca sin gesto).
+ *                   (particulas y glifos, escena velada, glitch de rebanadas y RGB) y se ordena de
+ *                   afuera hacia adentro hasta su lugar. El avance real de la precarga decide cuanto
+ *                   se arma, con tope: ~2 s en la primera visita, ~1 s en recargas. Al terminar el
+ *                   velo se abre: en Inicio la B queda en su sitio; en otra pagina se disuelve hacia
+ *                   la escena como en los viajes. Sin WebGL o con reduced motion: fundido simple.
+ *   precarga        preload.ts (mundo, fuentes, paginas e imagenes). La musica NO se baja durante
+ *                   la intro: compite con la B (3 MB).
+ *   musica          ambient.ts. Al abrirse el velo se intenta reproducir (y empieza la descarga);
+ *                   solo suena donde el navegador lo permite sin gesto. Si no, arranca con el primer
+ *                   clic, toque o tecla en la pagina.
  *   control         [data-sound-toggle] (SoundToggle.astro): enciende/apaga y guarda la eleccion.
  *
  * Corre una vez por documento (modulo); la cubierta persiste oculta entre navegaciones SPA.
  */
 import { introBegin, introEnd, introProgress, introVisible } from './world';
-import { fadeInAmbient, isAmbientOn, onAmbientChange, startAmbient, stopAmbient } from './ambient';
+import { isAmbientAudible, onAmbientChange, startAmbient, stopAmbient } from './ambient';
 import { preloadSite } from './preload';
 import { holdEntry, releaseEntry } from './entry-gate';
 
@@ -32,6 +31,8 @@ const AGAIN = { min: 0.75, max: 0.95 };
 /** Al llegar a este armado se abre el velo y la B termina de armarse a la vez (~0.6 s) */
 const OPEN_AT = 0.82;
 const REDUCED_HOLD_MS = 220;
+/** Espera maxima a que la B dispersa sea visible antes de empezar a armarla */
+const VISIBLE_WAIT_MS = 3000;
 const REDUCED_FADE_MS = 300;
 /** Si el JS llego tarde (el seguro CSS de 4 s ya retiro la cubierta), no se vuelve a tapar */
 const LATE_MS = 3600;
@@ -58,7 +59,7 @@ const cover = document.querySelector<HTMLElement>('[data-entry]');
 /* ---------- control de sonido ---------- */
 
 function syncToggles(): void {
-  const on = isAmbientOn();
+  const on = isAmbientAudible();
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-sound-toggle]')) {
     b.hidden = false;
     b.setAttribute('aria-pressed', String(on));
@@ -75,7 +76,7 @@ function bindToggles(): void {
     const btn = (e.target as Element | null)?.closest?.('[data-sound-toggle]');
     if (!btn) return;
     disarm();
-    if (isAmbientOn()) {
+    if (isAmbientAudible()) {
       stopAmbient();
       save('quiet');
     } else {
@@ -89,7 +90,7 @@ function bindToggles(): void {
   });
 }
 
-/* ---------- recargas con 'immersive': la musica espera el primer gesto ---------- */
+/* ---------- donde el navegador no deja sonar sin gesto, la musica espera el primero ---------- */
 
 const GESTURES = ['pointerdown', 'keydown', 'touchend'] as const;
 let armed = false;
@@ -98,7 +99,7 @@ function onGesture(e: Event): void {
   if (e.type === 'keydown' && (e as KeyboardEvent).key === 'Escape') return;
   if ((e.target as Element | null)?.closest?.('[data-sound-toggle]')) return; // el control decide solo
   disarm();
-  if (read() === 'immersive' && !isAmbientOn()) startAmbient();
+  if (read() !== 'quiet' && !isAmbientAudible()) startAmbient();
 }
 function arm(): void {
   if (armed) return;
@@ -116,17 +117,20 @@ function disarm(): void {
 async function main(el: HTMLElement): Promise<void> {
   el.dataset.state = 'boot';
   const saved = read();
+  const first = !saved;
+  const sound = saved !== 'quiet';
   bindToggles();
+  if (first) save('immersive'); // la siguiente visita ya usa el armado corto
 
-  if (saved && performance.now() > LATE_MS) {
+  if (performance.now() > LATE_MS) {
     finish(el);
-    if (saved === 'immersive') arm();
+    if (sound) music();
     return;
   }
   // la UI de la pagina espera oculta; entra en cascada cuando se abre el velo
   holdEntry();
-  // recarga con 'immersive': cualquier gesto (incluso durante el loader) enciende la musica
-  if (saved === 'immersive') arm();
+  // cualquier gesto (incluso durante el loader) enciende la musica
+  if (sound) arm();
 
   // La B del mundo arranca dispersa; la cubierta se aparta en cuanto se ve
   const webgl = !reduced && introBegin();
@@ -136,25 +140,15 @@ async function main(el: HTMLElement): Promise<void> {
     });
   }
 
-  let choice: Choice;
-  let first = false;
-  if (saved) {
-    choice = saved;
-  } else {
-    first = true;
-    choice = await ask(el);
-  }
-
   // precarga: nunca se espera mas que el tope del armado
   const load = el.querySelector<HTMLElement>('[data-entry-load]');
   const bar = el.querySelector<HTMLElement>('[data-entry-bar]');
   const fill = el.querySelector<HTMLElement>('[data-entry-fill]');
   const pct = el.querySelector<HTMLElement>('[data-entry-pct]');
-  if (load && first) load.hidden = false;
+  // sin barra visible: la B que se arma ES el indicador de carga (la barra solo lee el avance)
   el.dataset.state = 'loading';
   let progress = 0;
   void preloadSite({
-    audio: choice === 'immersive',
     onProgress: (p) => {
       progress = p;
       const n = Math.round(p * 100);
@@ -164,17 +158,16 @@ async function main(el: HTMLElement): Promise<void> {
     },
   });
 
-  const music = () => {
-    if (choice === 'immersive' && isAmbientOn()) fadeInAmbient();
-  };
-
   if (!webgl) {
     await wait(REDUCED_HOLD_MS);
-    music();
+    if (sound) music();
     releaseEntry();
     await fade(el, REDUCED_FADE_MS);
   } else {
     const T = first ? FIRST : AGAIN;
+    // el reloj del armado corre desde que la B dispersa SE VE: en equipos lentos el arranque de
+    // WebGL tarda (hasta ~1.7 s en movil medio) y antes se comia el armado; ahora siempre luce entero
+    await Promise.race([introVisible(), wait(VISIBLE_WAIT_MS)]);
     const t0 = performance.now();
     await new Promise<void>((resolve) => {
       let done = false;
@@ -198,48 +191,17 @@ async function main(el: HTMLElement): Promise<void> {
     });
     if (load) load.hidden = true;
     el.dataset.veil = 'open';
-    music();
     releaseEntry();
     await introEnd();
+    if (sound) music(); // despues de la B: la descarga del audio ya no le compite
   }
   finish(el);
-  if (choice === 'immersive' && !isAmbientOn()) arm();
 }
 
-function ask(el: HTMLElement): Promise<Choice> {
-  const dlg = el.querySelector<HTMLDialogElement>('[data-entry-dialog]');
-  if (!dlg || typeof dlg.showModal !== 'function') return Promise.resolve('quiet');
-  el.dataset.state = 'ask';
-  document.documentElement.setAttribute('data-entry-open', '');
-  return new Promise((resolve) => {
-    const done = (c: Choice) => {
-      save(c);
-      document.documentElement.removeAttribute('data-entry-open');
-      dlg.removeEventListener('click', onClick);
-      dlg.removeEventListener('cancel', onCancel);
-      if (dlg.open) dlg.close();
-      resolve(c);
-    };
-    const onClick = (e: Event) => {
-      const btn = (e.target as Element | null)?.closest<HTMLElement>('[data-entry-choice]');
-      if (!btn) return;
-      if (btn.dataset.entryChoice === 'immersive') {
-        // EL gesto: el AudioContext nace aqui, en silencio; sube al revelar la escena
-        startAmbient({ silent: true });
-        done('immersive');
-      } else {
-        done('quiet');
-      }
-    };
-    // Escape (y el gesto de volver en movil) = entrar sin sonido
-    const onCancel = (e: Event) => {
-      e.preventDefault();
-      done('quiet');
-    };
-    dlg.addEventListener('click', onClick);
-    dlg.addEventListener('cancel', onCancel);
-    dlg.showModal();
-  });
+/** Intenta sonar ya (solo donde el navegador lo permite sin gesto); si no, espera el primer gesto. */
+function music(): void {
+  if (!isAmbientAudible()) startAmbient();
+  arm();
 }
 
 function fade(el: HTMLElement, ms: number): Promise<void> {
@@ -255,7 +217,6 @@ function finish(el: HTMLElement): void {
   el.dataset.state = 'done';
   el.hidden = true;
   el.getAnimations().forEach((a) => a.cancel());
-  document.documentElement.removeAttribute('data-entry-open');
   syncToggles();
 }
 

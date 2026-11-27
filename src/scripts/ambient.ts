@@ -3,7 +3,7 @@
  *
  * Si existe public/audio/ambient.mp3 (y opcional .ogg), se usa ese archivo en loop: Entry.astro lo
  * detecta AL COMPILAR y deja la ruta en [data-entry] (data-ambient-mp3 / data-ambient-ogg), asi que
- * nunca se pide un archivo que no existe. Solo se descarga con "Con sonido".
+ * nunca se pide un archivo que no existe. Se descarga al terminar la intro, nunca durante.
  * Si no hay archivo, respaldo generativo con Web Audio:
  *
  *   pads     3 voces x 2 osciladores desafinados -> paso bajo lento con LFO
@@ -16,9 +16,10 @@
  *   acordes  progresion menor lenta (i - VI - iv - v, 4 compases cada uno)
  *   master   bus -> compresor -> volumen (MASTER_VOL) -> salida
  *
- * Politica de autoplay: el AudioContext SOLO se crea dentro de un gesto del usuario (start()
- * se llama desde el clic). Fundido de entrada de 2 s; fundido de salida al apagar o al ocultar
- * la pestana (y el contexto se suspende: costo cero).
+ * Politica de autoplay: la entrada llama start() al terminar la intro; si el navegador no deja
+ * sonar sin gesto, el audio queda en espera (isAmbientAudible() = false) y entry.ts lo reanuda en
+ * el primer clic, toque o tecla. Fundido de entrada de 2 s; fundido de salida al apagar o al
+ * ocultar la pestana (y el contexto se suspende: costo cero).
  *
  * Archivo y generador comparten el master (compresor + volumen) y los fundidos.
  */
@@ -96,6 +97,11 @@ const listeners = new Set<(on: boolean) => void>();
 /** Hay musica sonando (o arrancando) */
 export function isAmbientOn(): boolean {
   return wantOn;
+}
+
+/** De verdad suena: encendida Y el navegador ya dejo reproducir (sin gesto puede quedar en espera) */
+export function isAmbientAudible(): boolean {
+  return wantOn && eng?.ctxState() === 'running';
 }
 
 export function onAmbientChange(cb: (on: boolean) => void): () => void {
@@ -222,7 +228,9 @@ function runScheduler(): void {
 function newContext(): AudioContext {
   const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!AC) throw new Error('sin AudioContext');
-  return new AC({ latencyHint: 'playback' });
+  const ctx = new AC({ latencyHint: 'playback' });
+  ctx.addEventListener('statechange', emit); // el control del header sigue si de verdad suena
+  return ctx;
 }
 
 function masterChain(ctx: AudioContext, reverb: boolean): { master: GainNode; bus: GainNode; verb: GainNode } {
@@ -275,6 +283,9 @@ function gainEngine(ctx: AudioContext, master: GainNode) {
  */
 function buildFile(src: string): Engine {
   const el = audioEl(src);
+  // el control del header refleja si de verdad suena (play() sin gesto puede rechazarse)
+  el.addEventListener('playing', emit);
+  el.addEventListener('pause', emit);
   el.volume = 0.5;
   const volumeWorks = Math.abs(el.volume - 0.5) < 0.01;
   el.volume = 0;
