@@ -144,7 +144,7 @@ No edites el fondo jurídico por tu cuenta; los textos son de Eduardo.
   `inlineStylesheets: 'never'` en `astro.config.mjs`.
 - Si agregas un dominio externo (fuente, imagen, API), amplía la CSP en el mismo cambio.
 - `media-src 'self'` en la CSP: la música de la entrada (`public/audio/ambient.mp3`) solo se
-  descarga con "Entrar con experiencia" y nunca suena sin un clic. Detalle en `src/README-dev.md`.
+  descarga con "Con sonido" y nunca suena sin un clic. Detalle en `src/README-dev.md`.
 
 ## Corte desde el sitio viejo
 

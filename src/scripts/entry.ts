@@ -1,8 +1,8 @@
 /**
  * Entrada inmersiva (componente src/components/Entry.astro).
  *
- *   primera visita  pregunta en un <dialog> modal: "Entrar con experiencia" (musica + efectos) o
- *                   "Entrar sin sonido". Escape = sin sonido. La eleccion queda en
+ *   primera visita  pregunta en un <dialog> modal: "Con sonido" (musica + efectos) o
+ *                   "Sin sonido". Escape = sin sonido. La eleccion queda en
  *                   localStorage.ib_entry ('immersive' | 'quiet').
  *   loader          la MISMA B del mundo (world/bmatrix.ts): arranca dispersa por toda la pantalla
  *                   (particulas y glifos, escena velada, glitch de rebanadas y RGB) mientras se
@@ -12,7 +12,7 @@
  *                   pagina se disuelve hacia la escena como en los viajes.
  *                   Sin WebGL o con reduced motion: fundido simple (< 600 ms).
  *   precarga        preload.ts (mundo, fuentes, paginas e imagenes; musica solo con experiencia).
- *   musica          ambient.ts. El AudioContext nace en el clic de "Entrar con experiencia". En
+ *   musica          ambient.ts. El AudioContext nace en el clic de "Con sonido". En
  *                   recargas con 'immersive' arranca con el primer gesto del usuario en la pagina
  *                   (politica de autoplay: nunca sin gesto).
  *   control         [data-sound-toggle] (SoundToggle.astro): enciende/apaga y guarda la eleccion.

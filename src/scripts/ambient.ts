@@ -3,7 +3,7 @@
  *
  * Si existe public/audio/ambient.mp3 (y opcional .ogg), se usa ese archivo en loop: Entry.astro lo
  * detecta AL COMPILAR y deja la ruta en [data-entry] (data-ambient-mp3 / data-ambient-ogg), asi que
- * nunca se pide un archivo que no existe. Solo se descarga con "Entrar con experiencia".
+ * nunca se pide un archivo que no existe. Solo se descarga con "Con sonido".
  * Si no hay archivo, respaldo generativo con Web Audio:
  *
  *   pads     3 voces x 2 osciladores desafinados -> paso bajo lento con LFO
